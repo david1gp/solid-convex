@@ -1,5 +1,7 @@
 # Podman volume for the self-hosted Convex backend data.
 # Quadlet generates a `solid-convex-data-volume.service`; VolumeName pins the
 # actual podman volume name (without the default `systemd-` prefix).
+# VolumeName intentionally keeps the pre-rename `convex-auth-data` value so the
+# existing local dev data survives the convex-auth-solid -> solid-convex rename.
 [Volume]
-VolumeName=solid-convex-data
+VolumeName=convex-auth-data

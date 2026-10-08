@@ -9,7 +9,7 @@ if (targetArgument !== "production" && targetArgument !== "dev")
 
 const target: "production" | "dev" = targetArgument
 const baseUrl = e2eBaseUrlGet(process.env, target)
-const checkpointDirectory = "/tmp/opencode/convex-auth-solid/e2e"
+const checkpointDirectory = "/tmp/opencode/solid-convex/e2e"
 
 await e2eRunnerRun({
   target,

@@ -4,7 +4,7 @@ import { envAuthSecretResult } from "#src/app/env/private/envAuthSecretResult.ts
 
 const oidcTransactionCookieName = "__Host-oidc-transaction"
 const oidcTransactionCookieDurationInSeconds = 600
-const oidcTransactionCookieIssuer = "convex-auth-solid/oidc-transaction"
+const oidcTransactionCookieIssuer = "solid-convex/oidc-transaction"
 const oidcTransactionCookieFallbackReturnTo = "/"
 const oidcTransactionCookieReturnToOrigin = "https://oidc.invalid"
 const oidcTransactionCookieMaxReturnToLength = 2048

@@ -1,7 +1,7 @@
 # Self-hosted Convex backend (Podman Quadlet), dev-only — this project has no
 # self-hosted prod deployment. Per-machine values live in ./.env.docker
 # (gitignored, see env.docker.example).
-# Quadlet turns this into `convex-auth-backend.service` on `daemon-reload`.
+# Quadlet turns this into `solid-convex-backend.service` on `daemon-reload`.
 #
 # No host networking: the backend always listens on 3210/3211 in-container and
 # Other local deployments already use the adjacent host-port range. Publish
@@ -10,18 +10,18 @@
 # https://github.com/get-convex/convex-backend/pkgs/container/convex-backend
 # https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html
 [Unit]
-Description=convex-auth-solid self-hosted Convex backend (Podman Quadlet)
+Description=solid-convex self-hosted Convex backend (Podman Quadlet)
 After=network-online.target
 Wants=network-online.target
 
 [Container]
-ContainerName=convex-auth-backend
+ContainerName=solid-convex-backend
 Image=ghcr.io/get-convex/convex-backend:latest
 AutoUpdate=registry
 PublishPort=127.0.0.1:3240:3210
 PublishPort=127.0.0.1:3241:3211
-Volume=convex-auth-data.volume:/convex/data
-EnvironmentFile=%h/convex-auth-solid/ops/convex/.env.docker
+Volume=solid-convex-data.volume:/convex/data
+EnvironmentFile=%h/solid-convex/ops/convex/.env.docker
 # Compose defaults that aren't in .env.docker:
 Environment=DOCUMENT_RETENTION_DELAY=172800
 Environment=RUST_LOG=info

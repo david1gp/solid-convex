@@ -1,4 +1,4 @@
-app.convex-auth.com, app.convex-auth.dev {
+app.solid-convex.com, app.solid-convex.dev {
 	import shared_config_web
 	header {
 		Routed "app"
@@ -6,17 +6,17 @@ app.convex-auth.com, app.convex-auth.dev {
 	reverse_proxy localhost:3016
 }
 
-dist.convex-auth.com, dist.convex-auth.dev {
+dist.solid-convex.com, dist.solid-convex.dev {
 	import shared_config_web
 	import shared_config_caching
 	header {
 		Routed "dist"
 	}
-	root * /home/david/Coding/adaptive/convex-auth-solid/public
+	root * /home/david/adaptive/solid-convex/public
 	file_server
 }
 
-convex.convex-auth.com, convex.convex-auth.dev {
+convex.solid-convex.com, convex.solid-convex.dev {
 	import shared_config_simple
 	header {
 		Routed "convex"
@@ -24,7 +24,7 @@ convex.convex-auth.com, convex.convex-auth.dev {
 	reverse_proxy localhost:3240
 }
 
-api.convex-auth.com, api.convex-auth.dev {
+api.solid-convex.com, api.solid-convex.dev {
 	import shared_config_simple
 	header {
 		Routed "api"
@@ -32,7 +32,7 @@ api.convex-auth.com, api.convex-auth.dev {
 	reverse_proxy localhost:3241
 }
 
-dash.convex-auth.com, dash.convex-auth.dev {
+dash.solid-convex.com, dash.solid-convex.dev {
 	import shared_config_simple
 	header {
 		Routed "dash"

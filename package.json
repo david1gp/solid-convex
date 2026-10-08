@@ -1,5 +1,5 @@
 {
-  "name": "@adaptive-ds/convex-auth-solid",
+  "name": "@adaptive-ds/solid-convex",
   "version": "0.1.0",
   "scripts": {
     "cc": "clear && bun --env-file=.env.development run convex codegen",
@@ -7,9 +7,9 @@
     "type-check": "bun tsc --noEmit",
     "deploy": "bun run frontend:deploy",
     "frontend:deploy": "bun run rsbuild:deploy",
-    "frontend:upload": "bun run wrangler pages deploy ./dist --project-name=convex-auth-solid --commit-dirty=true",
+    "frontend:upload": "bun run wrangler pages deploy ./dist --project-name=solid-convex --commit-dirty=true",
     "frontend:tag": "git branch -f frontend",
-    "frontend:create": "bunx wrangler pages project create convex-auth-solid --production-branch=main",
+    "frontend:create": "bunx wrangler pages project create solid-convex --production-branch=main",
     "dev": "bun run rsbuild:dev",
     "vite:dev": "clear && nice -5 vite dev --debug hmr",
     "vite:build": "nice -15 vite build",
@@ -36,8 +36,8 @@
     "convex:dev:dev": "export CI=1 && clear && convex dev --local",
     "convex:dev:test": "export CI=1 && convex dev --local --once",
     "convex:test": "export CI=1 && convex dev --local --once",
-    "convex:backend:up": "systemctl --user start convex-auth-backend convex-auth-dashboard",
-    "convex:backend:down": "systemctl --user stop convex-auth-backend convex-auth-dashboard",
+    "convex:backend:up": "systemctl --user start solid-convex-backend solid-convex-dashboard",
+    "convex:backend:down": "systemctl --user stop solid-convex-backend solid-convex-dashboard",
     "convex:backend:update": "podman auto-update",
     "ui": "rsync -avh --delete ../../adaptive/solid-ui/ui/ ./ui/",
     "ui:push": "rsync -avh --delete ./ui/  ../../adaptive/solid-ui/ui/",
@@ -116,7 +116,7 @@
   "type": "module",
   "private": true,
   "license": "MIT",
-  "homepage": "https://github.com/david1gp/convex-auth-solid",
+  "homepage": "https://github.com/david1gp/solid-convex",
   "description": "Build authenticated SolidJS apps lightning-fast with Convex",
   "keywords": [
     "convex",
@@ -136,6 +136,6 @@
     "jwt"
   ],
   "repository": {
-    "url": "git+https://github.com/david1gp/convex-auth-solid.git"
+    "url": "git+https://github.com/david1gp/solid-convex.git"
   }
 }

@@ -17,7 +17,7 @@ afterEach(async () => {
 })
 
 async function testRoot(): Promise<string> {
-  const root = await mkdtemp(join(tmpdir(), "convex-auth-e2e-runner-test-"))
+  const root = await mkdtemp(join(tmpdir(), "solid-convex-e2e-runner-test-"))
   roots.push(root)
   return root
 }

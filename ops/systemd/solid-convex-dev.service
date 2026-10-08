@@ -1,15 +1,15 @@
 [Unit]
-Description=convex-auth-solid Convex dev watcher (pushes convex/ functions to the backend)
-# %h/convex-auth-solid is a symlink to the repo checkout, created by
+Description=solid-convex Convex dev watcher (pushes convex/ functions to the backend)
+# %h/solid-convex is a symlink to the repo checkout, created by
 # ops/systemd/install.bash. See ops/README.md.
 # The watcher pushes to this machine's CONVEX_SELF_HOSTED_URL, so it needs the
 # self-hosted backend (and the reverse proxy) up first. Wants= starts the backend.
-After=network-online.target convex-auth-backend.service
-Wants=convex-auth-backend.service
+After=network-online.target solid-convex-backend.service
+Wants=solid-convex-backend.service
 
 [Service]
 Type=simple
-WorkingDirectory=%h/convex-auth-solid
+WorkingDirectory=%h/solid-convex
 Environment=PATH=%h/.local/bin:%h/.bun/bin:/usr/local/bin:/usr/bin:/bin
 Environment=CI=1
 # Same as `bun run convex:dev` without `clear`.

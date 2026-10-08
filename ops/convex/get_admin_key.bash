@@ -2,4 +2,4 @@
 set -x # Print all executed commands to the terminal
 set -e # Exit immediately if a command exits with a non-zero status
 
-podman exec convex-auth-backend ./generate_admin_key.sh
+podman exec solid-convex-backend ./generate_admin_key.sh

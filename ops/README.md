@@ -8,7 +8,7 @@ is no self-hosted prod Convex deployment.
 ## Machine
 
 - **david (local)** — dev. Domains
-  `app./convex./api./dash.convex-auth.dev` (+ `.com` variants, in `/etc/hosts`,
+  `app./convex./api./dash.solid-convex.dev` (+ `.com` variants, in `/etc/hosts`,
   behind david's user Caddy which imports `ops/caddy/Caddyfile`). Localhost
   direct origins are also available: UI `http://localhost:3012`, Convex
   backend `http://127.0.0.1:3240`, and Convex HTTP actions/API
@@ -28,22 +28,22 @@ is no self-hosted prod Convex deployment.
 
 ## Services (`ops/systemd/`, installed via `bash ops/systemd/install.bash`)
 
-Units reference `%h/convex-auth-solid`, a symlink to the repo checkout that
+Units reference `%h/solid-convex`, a symlink to the repo checkout that
 `install.bash` creates. The backend + dashboard are **Podman quadlets**
 (`ops/convex/*.container` + `*.volume`); `install.bash` symlinks them into
 `~/.config/containers/systemd/`. The two bun processes are plain
 `~/.config/systemd/user` units.
 
-- **`convex-auth-backend.service`** — self-hosted Convex backend, published on
+- **`solid-convex-backend.service`** — self-hosted Convex backend, published on
   `127.0.0.1:3240`/`:3241` (container ports 3210/3211; other local services
   own adjacent host ports).
   `Notify=healthy` keeps it "activating" until its healthcheck passes.
-- **`convex-auth-dashboard.service`** — Convex dashboard on `127.0.0.1:6793`.
+- **`solid-convex-dashboard.service`** — Convex dashboard on `127.0.0.1:6793`.
   `Requires=`/`After=` the backend.
-- **`convex-auth-dev.service`** — Convex dev watcher (`convex dev
+- **`solid-convex-dev.service`** — Convex dev watcher (`convex dev
   --env-file=.env.development`): compiles `convex/` and pushes to this
   machine's backend. `Wants=` starts the backend.
-- **`convex-auth-ui.service`** — demo frontend dev server (`bun run dev` →
+- **`solid-convex-ui.service`** — demo frontend dev server (`bun run dev` →
   rsbuild, `:3012` from `.env.development`; `:3016` is the standalone fallback).
 
 Quadlet services auto-enable on boot via their `[Install]` section — just

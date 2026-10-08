@@ -1,4 +1,4 @@
-# Convex Auth Solid
+# Solid Convex
 
 Build authenticated SolidJS apps with Convex, without turning setup into a side quest.
 
@@ -9,7 +9,7 @@ Build authenticated SolidJS apps with Convex, without turning setup into a side 
 
 Quick link
 
-- code - https://github.com/david1gp/convex-auth-solid
+- code - https://github.com/david1gp/solid-convex
 
 ## Features
 
@@ -49,8 +49,8 @@ Quick link
 1. **Clone the template:**
 
    ```bash
-   git clone https://github.com/david1gp/convex-auth-solid.git
-   cd convex-auth-solid
+   git clone https://github.com/david1gp/solid-convex.git
+   cd solid-convex
    ```
 
 2. **Install dependencies:**

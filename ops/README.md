@@ -7,11 +7,10 @@ is no self-hosted prod Convex deployment.
 
 ## Machine
 
-- **david (local)** — dev. Domains
-  `app./convex./api./dash.solid-convex.dev` (+ `.com` variants, in `/etc/hosts`,
-  behind david's user Caddy which imports `ops/caddy/Caddyfile`). Localhost
-  direct origins are also available: UI `http://localhost:3012`, Convex
-  backend `http://127.0.0.1:3240`, and Convex HTTP actions/API
+- **david (local)** — dev. Routing goes through the Project Registry;
+  no ad-hoc Caddy vhosts live in this repo. Localhost direct origins are
+  available: UI `http://localhost:3012`, Convex backend
+  `http://127.0.0.1:3240`, and Convex HTTP actions/API
   `http://127.0.0.1:3241`.
 
 ## Env files (all gitignored; template: `ops/convex/env.docker.example`)

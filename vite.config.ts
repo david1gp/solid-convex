@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
       watch: {
         ignored: ["**/.github/**", "**/data/**", "**/dist/**", "**/ops/**", "**/out/**", "**/docs/**", "**/test/**"],
       },
-      allowedHosts: [...appHosts, "solid-convex.dev", "app.solid-convex.com"],
+      allowedHosts: [...appHosts],
       fs: {
         // Allow serving files from one level up to the project root
         allow: [".."],

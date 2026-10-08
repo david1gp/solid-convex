@@ -5,7 +5,7 @@
 #
 # No host networking: the backend always listens on 3210/3211 in-container and
 # Other local deployments already use the adjacent host-port range. Publish
-# distinct localhost ports instead; Caddy may proxy the dev hostnames here.
+# distinct localhost ports instead.
 #
 # https://github.com/get-convex/convex-backend/pkgs/container/convex-backend
 # https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html

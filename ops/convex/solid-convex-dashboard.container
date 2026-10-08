@@ -12,7 +12,7 @@ ContainerName=solid-convex-dashboard
 Image=ghcr.io/get-convex/convex-dashboard:latest
 AutoUpdate=registry
 # Dashboard listens on 6791 in-container; 6791/6792 are taken by allgroups/dcc
-# on the host, publish as 6793 (dash.solid-convex.dev proxies to it).
+# on the host, publish as 6793 on localhost.
 PublishPort=127.0.0.1:6793:6791
 EnvironmentFile=%h/solid-convex/ops/convex/.env.docker
 

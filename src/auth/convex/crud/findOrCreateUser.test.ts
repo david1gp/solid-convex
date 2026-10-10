@@ -85,6 +85,12 @@ function authAccount(overrides: Record<string, unknown> = {}) {
   }
 }
 
+type TestRows = {
+  users: ReturnType<typeof existingUser>[]
+  authAccounts: ReturnType<typeof authAccount>[]
+  orgMembers: Record<string, unknown>[]
+}
+
 test("OIDC role synchronization upgrades and downgrades an existing user on each login", async () => {
   const user = {
     _id: "user-1",
@@ -252,7 +258,7 @@ test("the first social link refreshes supplied profile fields but keeps the matc
 })
 
 test("a new social user persists the provider name and picture", async () => {
-  const rows = { users: [], authAccounts: [], orgMembers: [] }
+  const rows: TestRows = { users: [], authAccounts: [], orgMembers: [] }
 
   const result = await findOrCreateUserFn(persistenceCtx(rows), provider())
 
@@ -267,7 +273,7 @@ test("a new social user persists the provider name and picture", async () => {
 })
 
 test("a new social user without profile fields gets the existing minimal defaults", async () => {
-  const rows = { users: [], authAccounts: [], orgMembers: [] }
+  const rows: TestRows = { users: [], authAccounts: [], orgMembers: [] }
   const authData = provider({ givenName: "", familyName: "", username: "", image: "", email: undefined })
 
   const result = await findOrCreateUserFn(persistenceCtx(rows), authData)
@@ -337,7 +343,7 @@ test("an existing social account cannot claim another user's email", async () =>
 
 test("OIDC does not link an account by email", async () => {
   const existing = existingUser({ email: "collision@example.test" })
-  const rows = { users: [existing], authAccounts: [], orgMembers: [] }
+  const rows: TestRows = { users: [existing], authAccounts: [], orgMembers: [] }
   const oidcProvider = {
     provider: "oidc" as const,
     issuer: "https://issuer.example.test",

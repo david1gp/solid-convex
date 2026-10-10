@@ -6,7 +6,7 @@ import { oidcUserInfoGet } from "#src/auth/server/oidc/oidcUserInfoGet.ts"
 import { oidcZitadelRoleGet } from "#src/auth/server/oidc/oidcZitadelRoleGet.ts"
 import { getUserNameFromCommonAuthProvider } from "#src/auth/server/social_identity_providers/CommonAuthProvider.ts"
 
-const discovery: OidcDiscovery = {
+const discovery: OidcDiscovery & { userinfo_endpoint: string } = {
   issuer: "https://issuer.example.test",
   authorization_endpoint: "https://issuer.example.test/authorize",
   token_endpoint: "https://issuer.example.test/token",

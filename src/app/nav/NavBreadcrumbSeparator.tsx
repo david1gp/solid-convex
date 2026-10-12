@@ -1,3 +1,3 @@
 export function NavBreadcrumbSeparator() {
-  return <div class="text-muted-foreground py-3 select-none">/</div>
+  return <span class="select-none text-content-muted">/</span>
 }

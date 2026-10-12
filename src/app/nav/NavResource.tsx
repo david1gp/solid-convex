@@ -2,9 +2,9 @@ import { Show, splitProps } from "solid-js"
 import { languageSignalGet } from "#src/app/i18n/languageSignal.ts"
 import { NavLinkButton } from "#src/app/nav/links/NavLinkButton.tsx"
 import { ResourceListNavButton } from "#src/app/nav/links/ResourceListNavButton.tsx"
+import { SiteNavLinkButton } from "#src/app/nav/links/SiteNavLinkButton.tsx"
 import { NavBreadcrumbSeparator } from "#src/app/nav/NavBreadcrumbSeparator.tsx"
-import { NavCenter } from "#src/app/nav/NavCenter.tsx"
-import { NavStatic } from "#src/app/nav/NavStatic.tsx"
+import { NavCrumbs } from "#src/app/nav/NavCrumbs.tsx"
 import { resourceNameGet, resourceNameRecordSignalRegisterHandler } from "#src/resource/ui/resourceNameRecordSignal.ts"
 import { urlResourceSiteList, urlResourceSiteView, urlResourceView } from "#src/resource/url/urlResource.ts"
 import { SetPageTitle } from "#ui/static/meta/SetPageTitle.jsx"
@@ -16,18 +16,12 @@ export interface NavAppDirProps extends NavResourceBreadcrumbsProps, MayHaveChil
 export function NavResource(p: NavAppDirProps) {
   const [s, rest] = splitProps(p, ["children", "class"])
   return (
-    <NavStatic
-      dense={true}
-      class={p.class}
-      childrenCenter={
-        <NavCenter>
-          <div class="flex flex-wrap gap-2">
-            <NavResourceBreadcrumbs {...rest}>{s.children}</NavResourceBreadcrumbs>
-          </div>
-        </NavCenter>
-      }
-      sitePath={getSitePath(p.resourceId)}
-    />
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-2">
+      <NavCrumbs class="mb-0">
+        <NavResourceBreadcrumbs {...rest}>{s.children}</NavResourceBreadcrumbs>
+      </NavCrumbs>
+      <SiteNavLinkButton sitePath={getSitePath(p.resourceId)} />
+    </div>
   )
 }
 

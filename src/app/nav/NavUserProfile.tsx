@@ -1,6 +1,6 @@
-import { type JSX, splitProps } from "solid-js"
-import { NavCenter } from "#src/app/nav/NavCenter.tsx"
-import { NavStatic } from "#src/app/nav/NavStatic.tsx"
+import type { JSX } from "solid-js"
+import { splitProps } from "solid-js"
+import { NavCrumbs } from "#src/app/nav/NavCrumbs.tsx"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 export interface NavUserProfileProps extends MayHaveClass {
@@ -12,12 +12,9 @@ export interface NavUserProfileProps extends MayHaveClass {
 export function NavUserProfile(p: NavUserProfileProps) {
   const [s, rest] = splitProps(p, ["childrenLeft", "children", "childrenRight"])
   return (
-    <NavStatic
-      dense={true}
-      childrenLeft={s.childrenLeft}
-      childrenCenter={<NavCenter hasBreadcrumbs={false} />}
-      childrenRight={s.children ?? s.childrenRight}
-      {...rest}
-    />
+    <NavCrumbs {...rest}>
+      {s.childrenLeft}
+      {s.children ?? s.childrenRight}
+    </NavCrumbs>
   )
 }

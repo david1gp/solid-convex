@@ -2,8 +2,7 @@ import { Show, splitProps } from "solid-js"
 import { NavLinkButton } from "#src/app/nav/links/NavLinkButton.tsx"
 import { ResourceListNavButton } from "#src/app/nav/links/ResourceListNavButton.tsx"
 import { NavBreadcrumbSeparator } from "#src/app/nav/NavBreadcrumbSeparator.tsx"
-import { NavCenter } from "#src/app/nav/NavCenter.tsx"
-import { NavStatic } from "#src/app/nav/NavStatic.tsx"
+import { NavCrumbs } from "#src/app/nav/NavCrumbs.tsx"
 import { fileNameGet, fileNameRecordSignalRegisterHandler } from "#src/file/ui/fileNameRecordSignal.ts"
 import { urlFileEdit } from "#src/file/url/urlFile.ts"
 import type { HasResourceId } from "#src/resource/model/HasResourceId.ts"
@@ -18,17 +17,9 @@ export interface NavFileProps extends NavFileBreadcrumbsProps, MayHaveChildren, 
 export function NavFile(p: NavFileProps) {
   const [s, rest] = splitProps(p, ["children", "class"])
   return (
-    <NavStatic
-      dense={true}
-      class={p.class}
-      childrenCenter={
-        <NavCenter>
-          <div class="flex flex-wrap gap-2">
-            <NavFileBreadcrumbs {...rest}>{s.children}</NavFileBreadcrumbs>
-          </div>
-        </NavCenter>
-      }
-    />
+    <NavCrumbs class={p.class}>
+      <NavFileBreadcrumbs {...rest}>{s.children}</NavFileBreadcrumbs>
+    </NavCrumbs>
   )
 }
 

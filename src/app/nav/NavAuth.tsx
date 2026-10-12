@@ -1,9 +1,9 @@
-import { Show, splitProps } from "solid-js"
+import { splitProps } from "solid-js"
 import { LinkLikeNavText } from "#src/app/nav/links/LinkLikeNavText.tsx"
-import { NavBreadcrumbSeparator } from "#src/app/nav/NavBreadcrumbSeparator.tsx"
-import { NavCenter } from "#src/app/nav/NavCenter.tsx"
-import { NavStatic } from "#src/app/nav/NavStatic.tsx"
-import { userSessionGet } from "#src/auth/ui/signals/userSessionSignal.ts"
+import { urlOverview } from "#src/app/pages/urlOverview.ts"
+import { appNameClient } from "#src/app/text/appName.ts"
+import { LogoImageText } from "#ui/static/logo/LogoImageText.jsx"
+import { classMerge } from "#ui/utils/classMerge.ts"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
@@ -11,24 +11,16 @@ export interface NavAuthProps extends MayHaveChildren, MayHaveClass {
   title: string
 }
 
+/** Slim centered header for unauthenticated auth pages (no sidebar there). */
 export function NavAuth(p: NavAuthProps) {
   const [s, rest] = splitProps(p, ["title", "children"])
   return (
-    <NavStatic
-      dense={false}
-      childrenLeft={
-        <>
-          <NavBreadcrumbSeparator />
-          <LinkLikeNavText>{s.title}</LinkLikeNavText>
-        </>
-      }
-      childrenCenter={
-        <Show when={userSessionGet()}>
-          <NavCenter />
-        </Show>
-      }
-      childrenRight={s.children}
-      {...rest}
-    />
+    <header class={classMerge("mx-auto flex w-full max-w-md flex-col items-center gap-3 px-4 pt-10", rest.class)}>
+      <LogoImageText to={urlOverview()} logoText={appNameClient()} logoTextClass="text-xl font-semibold" />
+      <LinkLikeNavText isActive={false} class="p-0 text-lg">
+        {s.title}
+      </LinkLikeNavText>
+      {s.children}
+    </header>
   )
 }

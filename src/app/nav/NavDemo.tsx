@@ -1,6 +1,6 @@
 import type { ComponentProps } from "solid-js"
 import { Show, splitProps } from "solid-js"
-import { NavStatic } from "#src/app/nav/NavStatic.tsx"
+import { NavCrumbs } from "#src/app/nav/NavCrumbs.tsx"
 import type { DemoNavDataProps } from "#ui/demo_pages/DemoNavDataProps.ts"
 import { LinkBlock } from "#ui/demo_pages/LinkBlock.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
@@ -12,14 +12,11 @@ import { objectKeys } from "#utils/obj/objectKeys.js"
 export interface DemoNavProps extends DemoNavDataProps, ComponentProps<"nav"> {}
 
 export function NavDemo(p: DemoNavProps) {
-  const [s, rest] = splitProps(p, ["children", "category", "compName", "demoList", "demoPrefix", "class"])
+  const [s] = splitProps(p, ["children", "category", "compName", "demoList", "demoPrefix", "class"])
   return (
-    <NavStatic
-      dense={!!(p.category || p.compName)}
-      class="max-w-4xl"
-      {...rest}
-      childrenLeft={<ChildrenLeft {...s} />}
-    />
+    <NavCrumbs class={p.class}>
+      <ChildrenLeft {...s} />
+    </NavCrumbs>
   )
 }
 
@@ -33,7 +30,7 @@ function ChildrenLeft(p: DemoNavDataProps) {
         <ChildrenLeftComp {...p} />
       </Show>
       <NavSeparatingSlash />
-      <LinkButtonInternal variant={buttonVariant.ghost} to="/demos" class="text-lg font-medium">
+      <LinkButtonInternal variant={buttonVariant.link} to="/demos" class="text-sm font-medium">
         All demos
       </LinkButtonInternal>
     </>
@@ -45,9 +42,9 @@ function ChildrenLeftCategory(s: DemoNavDataProps) {
     <>
       <NavSeparatingSlash />
       <LinkButtonInternal
-        variant={buttonVariant.ghost}
+        variant={buttonVariant.link}
         to={`${s.demoPrefix}/${s.category}/`}
-        class="text-lg font-medium"
+        class="text-sm font-medium"
       >
         {s.category}
       </LinkButtonInternal>
@@ -73,12 +70,12 @@ function ComponentPopover(
     .flatMap(([category, tree]) => objectKeys(tree).map((compName) => `${s.demoPrefix}/${category}/${compName}`))
   if (!links || links.length <= 0) return null
   return (
-    <CorvuPopover variant={buttonVariant.ghost} buttonChildren={s.compName} class="text-lg font-medium">
+    <CorvuPopover variant={buttonVariant.ghost} buttonChildren={s.compName} class="text-sm font-medium">
       <LinkBlock header={s.category} removeUrlPrefix={`${s.demoPrefix}/${s.category}/`} links={links} />
     </CorvuPopover>
   )
 }
 
 function NavSeparatingSlash() {
-  return <span class={"py-1.5 text-gray-500 text-lg font-medium select-none"}>/</span>
+  return <span class="select-none text-sm font-medium text-content-muted">/</span>
 }

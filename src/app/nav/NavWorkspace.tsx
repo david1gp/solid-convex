@@ -1,8 +1,7 @@
 import { Show, splitProps } from "solid-js"
 import { NavLinkButton } from "#src/app/nav/links/NavLinkButton.tsx"
 import { WorkspaceListLinkNavButton } from "#src/app/nav/links/WorkspaceListLinkNavButton.tsx"
-import { NavCenter } from "#src/app/nav/NavCenter.tsx"
-import { NavStatic } from "#src/app/nav/NavStatic.tsx"
+import { NavCrumbs } from "#src/app/nav/NavCrumbs.tsx"
 import { workspaceNameGet } from "#src/workspace/workspace_ui/workspaceNameRecordSignal.ts"
 import { urlWorkspaceView } from "#src/workspace/workspace_url/urlWorkspace.ts"
 import { SetPageTitle } from "#ui/static/meta/SetPageTitle.jsx"
@@ -15,16 +14,9 @@ export interface NavWorkspaceProps extends NavWorkspaceBreadcrumbsProps, MayHave
 export function NavWorkspace(p: NavWorkspaceProps) {
   const [s, rest] = splitProps(p, ["children", "class"])
   return (
-    <NavStatic
-      dense={true}
-      class={p.class}
-      childrenLeft={<NavWorkspaceBreadcrumbs {...rest}>{s.children}</NavWorkspaceBreadcrumbs>}
-      childrenCenter={
-        <NavCenter>
-          <NavWorkspaceBreadcrumbs {...rest}>{s.children}</NavWorkspaceBreadcrumbs>
-        </NavCenter>
-      }
-    />
+    <NavCrumbs class={p.class}>
+      <NavWorkspaceBreadcrumbs {...rest}>{s.children}</NavWorkspaceBreadcrumbs>
+    </NavCrumbs>
   )
 }
 

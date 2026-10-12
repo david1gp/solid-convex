@@ -1,4 +1,5 @@
 import { Match, Switch } from "solid-js"
+import { AppShell } from "#src/app/layout/AppShell.tsx"
 import { LayoutWrapperConvex } from "#src/app/layout/LayoutWrapperConvex.tsx"
 import { SignInPageLoader } from "#src/auth/ui/sign_in/page/SignInPageLoader.tsx"
 import { userSessionSignal } from "#src/auth/ui/signals/userSessionSignal.ts"
@@ -17,7 +18,9 @@ export function LayoutWrapperAuth(p: LayoutWrapperAuthProps) {
         <SignInPageLoader />
       </Match>
       <Match when={true}>
-        <LayoutWrapperConvex title={p.title}>{p.children}</LayoutWrapperConvex>
+        <LayoutWrapperConvex title={p.title}>
+          <AppShell>{p.children}</AppShell>
+        </LayoutWrapperConvex>
       </Match>
     </Switch>
   )

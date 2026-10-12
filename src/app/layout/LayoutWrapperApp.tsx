@@ -1,5 +1,6 @@
 import { useLocation } from "@tanstack/solid-router"
 import { Match, Switch } from "solid-js"
+import { AppShell } from "#src/app/layout/AppShell.tsx"
 import { appMembershipAccessIsBlocked } from "#src/app/layout/appMembershipAccessIsBlocked.ts"
 import { LayoutWrapperConvex } from "#src/app/layout/LayoutWrapperConvex.tsx"
 import { AccessBlocked } from "#src/auth/ui/locked/AccessBlocked.tsx"
@@ -24,7 +25,9 @@ export function LayoutWrapperApp(p: LayoutWrapperAppProps) {
         <AccessBlocked />
       </Match>
       <Match when={true}>
-        <LayoutWrapperConvex title={p.title}>{p.children}</LayoutWrapperConvex>
+        <LayoutWrapperConvex title={p.title}>
+          <AppShell>{p.children}</AppShell>
+        </LayoutWrapperConvex>
       </Match>
     </Switch>
   )

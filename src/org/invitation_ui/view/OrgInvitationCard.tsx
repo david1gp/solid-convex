@@ -36,7 +36,7 @@ export function OrgInvitationCard(p: OrgInvitationCardProps) {
     <section
       class={classMerge(
         "p-4", // padding
-        "border border-gray-200 dark:border-gray-500 rounded-lg ", // border
+        "border border-gray-200 dark:border-slate-700 rounded-lg ", // border
         "bg-gray-50 dark:bg-stone-800", // bg
         "flex flex-col justify-start gap-2", // layout children
         p.class,

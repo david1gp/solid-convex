@@ -24,7 +24,7 @@ export function PageHeader(p: PageHeaderProps) {
         <h1 class={classMerge("text-2xl font-semibold", p.titleClass)}>{p.title}</h1>
         {p.children}
       </div>
-      {p.subtitle && <p class={classMerge("text-lg", p.subtitleClass)}>{p.subtitle}</p>}
+      {p.subtitle && <p class={classMerge("text-lg text-content-muted", p.subtitleClass)}>{p.subtitle}</p>}
       {p.subtitleChildren}
     </header>
   )

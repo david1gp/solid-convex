@@ -1,18 +1,19 @@
 import { describe, expect, test } from "bun:test"
 
-describe("overview page demo navigation", () => {
-  test("omits the live nav with its logout control in demo mode", async () => {
+describe("overview page navigation", () => {
+  test("uses the sidebar instead of the old top navbar", async () => {
     const source = await Bun.file(new URL("./OverviewPage.tsx", import.meta.url)).text()
 
-    expect(source).toMatch(/\{!p\.demo && \(\s*<NavStatic/)
-    expect(source.match(/<NavStatic/g)).toHaveLength(1)
+    expect(source).not.toMatch(/NavStatic|NavCenter|UserNavButton/)
   })
 
-  test("keeps the live navigation for production overview pages", async () => {
+  test("links to the main sections and the account page", async () => {
     const source = await Bun.file(new URL("./OverviewPage.tsx", import.meta.url)).text()
 
-    expect(source).toContain("{!p.demo && (")
-    expect(source).toContain("<NavLinkButton href={urlOverview()} isActive={true}>")
-    expect(source).toContain("childrenCenter={<NavCenter />}")
+    expect(source).toContain("urlOrgList()")
+    expect(source).toContain("urlWorkspaceList()")
+    expect(source).toContain("urlResourceList()")
+    expect(source).toContain("urlUserProfileMe()")
+    expect(source).toContain("<AuthLinks")
   })
 })

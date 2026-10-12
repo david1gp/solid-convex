@@ -200,7 +200,7 @@ function OrgDemoMemberView() {
       </nav>
       <Show when={state.member()} fallback={<p>Member not found in demo fixtures.</p>}>
         {(member) => (
-          <section class="mx-auto max-w-2xl space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6 dark:border-gray-500 dark:bg-stone-800">
+          <section class="mx-auto max-w-2xl space-y-4 rounded-lg border border-gray-200 bg-gray-50 p-6 dark:border-slate-700 dark:bg-stone-800">
             <h1 class="text-2xl font-semibold">{member().profile.name}</h1>
             <dl class="grid gap-2 sm:grid-cols-2">
               <div>

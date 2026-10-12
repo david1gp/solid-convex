@@ -98,8 +98,8 @@ function ProfileSectionImage(p: ProfileSectionImageProps) {
         {p.image ? (
           <img src={p.image} alt={ttc("Profile picture")} class="w-full h-full object-cover" />
         ) : (
-          <div class="w-full h-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
-            <span class="text-3xl font-bold text-gray-600 dark:text-gray-300">{p.name.charAt(0).toUpperCase()}</span>
+          <div class="w-full h-full bg-surface-muted flex items-center justify-center">
+            <span class="text-3xl font-bold text-content-muted">{p.name.charAt(0).toUpperCase()}</span>
           </div>
         )}
         <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -116,13 +116,16 @@ function ProfileSectionInfo(p: {
   demo?: boolean
 }) {
   return (
-    <section id="info" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 space-y-4">
+    <section
+      id="info"
+      class="rounded-card border border-border-subtle bg-surface shadow-sm shadow-slate-900/5 dark:shadow-black/20 p-6 space-y-4"
+    >
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">{p.userProfile.name}</h2>
+        <h2 class="text-2xl font-bold text-content">{p.userProfile.name}</h2>
         <LinkButtonIconOnlyInternal to={p.editHref} icon={mdiSquareEditOutline} variant={buttonVariant.link} />
       </div>
 
-      {p.userProfile.bio && <p class="text-gray-600 dark:text-gray-400 whitespace-pre-wrap">{p.userProfile.bio}</p>}
+      {p.userProfile.bio && <p class="text-content-muted whitespace-pre-wrap">{p.userProfile.bio}</p>}
 
       {p.userProfile.url && !p.demo && (
         <a
@@ -140,11 +143,14 @@ function ProfileSectionInfo(p: {
 
 function ProfileSectionEmail(p: { email?: string; emailHref: string }) {
   return (
-    <section id="email" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+    <section
+      id="email"
+      class="rounded-card border border-border-subtle bg-surface shadow-sm shadow-slate-900/5 dark:shadow-black/20 p-6"
+    >
       <div class="flex items-center justify-between">
         <div>
           <span class="text-sm text-muted-foreground font-medium">{ttc("Email")}</span>
-          <p class="text-gray-900 dark:text-gray-100">{p.email ?? ""}</p>
+          <p class="text-content">{p.email ?? ""}</p>
         </div>
         <LinkButtonIconOnlyInternal to={p.emailHref} icon={mdiSquareEditOutline} variant={buttonVariant.link} />
       </div>
@@ -154,13 +160,16 @@ function ProfileSectionEmail(p: { email?: string; emailHref: string }) {
 
 function ProfileSectionOrg(p: { orgHandle?: string; orgRole?: string; demo?: boolean }) {
   return (
-    <section id="org" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+    <section
+      id="org"
+      class="rounded-card border border-border-subtle bg-surface shadow-sm shadow-slate-900/5 dark:shadow-black/20 p-6"
+    >
       <Show
         when={p.orgHandle}
         fallback={
           <div>
             <span class="text-sm text-muted-foreground font-medium">{ttc("Organization")}</span>
-            <p class="text-gray-900 dark:text-gray-100">{ttc("None")}</p>
+            <p class="text-content">{ttc("None")}</p>
             <p class="text-sm text-muted-foreground mt-1">{ttc("You are not part of any organization")}</p>
           </div>
         }
@@ -180,7 +189,7 @@ function ProfileSectionOrg(p: { orgHandle?: string; orgRole?: string; demo?: boo
                   >
                     {orgName ?? orgHandle()}
                   </LinkButtonInternal>
-                  {p.orgRole && <p class="text-gray-600 dark:text-gray-400 py-2">{capitalizeFirstLetter(p.orgRole)}</p>}
+                  {p.orgRole && <p class="text-content-muted py-2">{capitalizeFirstLetter(p.orgRole)}</p>}
                 </div>
               </div>
               <Show when={!p.demo}>
@@ -200,7 +209,10 @@ function ProfileSectionOrg(p: { orgHandle?: string; orgRole?: string; demo?: boo
 
 function ProfileSectionActions(p: { passwordHref: string; apiKeysHref: string }) {
   return (
-    <section id="actions" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+    <section
+      id="actions"
+      class="rounded-card border border-border-subtle bg-surface shadow-sm shadow-slate-900/5 dark:shadow-black/20 p-6"
+    >
       <h3 class="text-sm text-muted-foreground font-medium">{ttc("Account Actions")}</h3>
       <div class={classArr("grid grid-cols-1 md:grid-cols-3 gap-4")}>
         <LinkButtonInternal to={p.passwordHref} variant={buttonVariant.link} class="justify-start pl-0">

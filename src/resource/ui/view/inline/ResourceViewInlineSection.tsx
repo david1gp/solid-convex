@@ -18,7 +18,7 @@ interface ResourceViewInlineSectionProps extends HasResourceModel, MayHaveClass 
 
 export function ResourceViewInlineSection(p: ResourceViewInlineSectionProps) {
   return (
-    <section class={classArr("border border-gray-400 rounded-xl", "p-4", p.class)}>
+    <section class={classArr("rounded-xl border border-slate-200 dark:border-slate-700", "p-4", p.class)}>
       <ResourceViewInline showCardWrapper={false} showMetaDates={false} {...p} />
       <h3 class="text-xl font-semibold mt-4 mb-2">{ttc("Files")}</h3>
       <FileLoader {...p} />

@@ -1,40 +1,87 @@
-import { NavLinkButton } from "#src/app/nav/links/NavLinkButton.tsx"
-import { NavBreadcrumbSeparator } from "#src/app/nav/NavBreadcrumbSeparator.tsx"
-import { NavCenter } from "#src/app/nav/NavCenter.tsx"
-import { NavStatic } from "#src/app/nav/NavStatic.tsx"
-import { urlOverview } from "#src/app/pages/urlOverview.ts"
-import { AuthLinks } from "#src/auth/ui/AuthLinks.tsx"
-import { PageHeader } from "#src/ui/header/PageHeader.tsx"
+import { mdiAccountGroup } from "@adaptive-ds/mdi/mdiAccountGroup.js"
+import { mdiAccountOutline } from "@adaptive-ds/mdi/mdiAccountOutline.js"
+import { mdiBriefcase } from "@adaptive-ds/mdi/mdiBriefcase.js"
+import { mdiChevronRight } from "@adaptive-ds/mdi/mdiChevronRight.js"
+import { mdiFileDocument } from "@adaptive-ds/mdi/mdiFileDocument.js"
+import { Link } from "@tanstack/solid-router"
+import { For } from "solid-js"
 import { ttt } from "#ui/i18n/ttt.ts"
+import { AuthLinks } from "#src/auth/ui/AuthLinks.tsx"
+import { urlUserProfileMe } from "#src/auth/url/pageRouteAuth.ts"
+import { urlOrgList } from "#src/org/org_url/urlOrg.ts"
+import { urlResourceList } from "#src/resource/url/urlResource.ts"
+import { PageHeader } from "#src/ui/header/PageHeader.tsx"
+import { urlWorkspaceList } from "#src/workspace/workspace_url/urlWorkspace.ts"
+import { Icon } from "#ui/static/icon/Icon.jsx"
 import { PageWrapper } from "#ui/static/page/PageWrapper.jsx"
 
 export function OverviewPage(p: { demo?: boolean } = {}) {
-  const getTitle = () => ttt("Overview")
   return (
     <PageWrapper>
-      {!p.demo && (
-        <NavStatic
-          dense={true}
-          childrenLeft={
-            <>
-              <NavBreadcrumbSeparator />
-              <NavLinkButton href={urlOverview()} isActive={true}>
-                {getTitle()}
-              </NavLinkButton>
-            </>
-          }
-          childrenCenter={<NavCenter />}
-        />
-      )}
       <PageHeader
-        title={getTitle()}
-        subtitle={ttt("This is a private page seen only to logged in users")}
-        class="py-20"
+        title={ttt("Overview")}
+        subtitle={ttt("Everything you need — organizations, workspaces and resources in one place.")}
+        class="pb-8 pt-4"
       />
-      <section>
-        <h2 class="text-lg font-semibold mb-2">{ttt("Demo Auth Links")}</h2>
-        <AuthLinks demo={p.demo} />
+      <section aria-label={ttt("Shortcuts")} class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <For each={overviewCards()}>
+          {(card) => (
+            <Link
+              to={card.href}
+              class="focus-ring group flex flex-col gap-3 rounded-card border border-border-subtle bg-surface p-5 shadow-sm shadow-slate-900/5 transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-slate-900/10 dark:shadow-black/20"
+            >
+              <span class="flex size-11 items-center justify-center rounded-control bg-brand-soft text-brand-accent">
+                <Icon path={card.icon} class="size-6" />
+              </span>
+              <span>
+                <span class="flex items-center gap-1 text-base font-semibold">
+                  {card.title}
+                  <Icon
+                    path={mdiChevronRight}
+                    class="size-4 text-content-muted transition-transform group-hover:translate-x-0.5"
+                  />
+                </span>
+                <span class="mt-1 block text-sm text-content-muted">{card.description}</span>
+              </span>
+            </Link>
+          )}
+        </For>
+      </section>
+      <section class="mt-8">
+        <h2 class="mb-3 text-lg font-semibold">{ttt("Demo Auth Links")}</h2>
+        <div class="rounded-card border border-border-subtle bg-surface p-5 shadow-sm shadow-slate-900/5 dark:shadow-black/20">
+          <AuthLinks demo={p.demo} />
+        </div>
       </section>
     </PageWrapper>
   )
+}
+
+function overviewCards() {
+  return [
+    {
+      href: urlOrgList(),
+      icon: mdiAccountGroup,
+      title: ttt("Organizations"),
+      description: ttt("Manage organizations and their members."),
+    },
+    {
+      href: urlWorkspaceList(),
+      icon: mdiBriefcase,
+      title: ttt("Workspaces"),
+      description: ttt("Collaborate in workspaces with invitations."),
+    },
+    {
+      href: urlResourceList(),
+      icon: mdiFileDocument,
+      title: ttt("Resources"),
+      description: ttt("Create resources, files and share them."),
+    },
+    {
+      href: urlUserProfileMe(),
+      icon: mdiAccountOutline,
+      title: ttt("Account"),
+      description: ttt("View and update your profile and settings."),
+    },
+  ]
 }

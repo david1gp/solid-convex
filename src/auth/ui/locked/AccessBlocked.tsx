@@ -5,7 +5,7 @@ import { DevModeToggle } from "#src/app/config/DevModeToggle.tsx"
 import { inDevModeSignal } from "#src/app/config/inDevModeSignal.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { LogoutButton } from "#src/app/nav/LogoutButton.tsx"
-import { NavStatic } from "#src/app/nav/NavStatic.tsx"
+import { NavAuth } from "#src/app/nav/NavAuth.tsx"
 import { urlSupportMailTo, urlSupportTelegram } from "#src/app/url/urlSupport.ts"
 import { DeleteEarlierSessions } from "#src/auth/ui/sign_in/existing/DeleteEarlierSessions.tsx"
 import { userSessionGet } from "#src/auth/ui/signals/userSessionSignal.ts"
@@ -20,7 +20,7 @@ export function AccessBlocked() {
 
   return (
     <LayoutWrapperDemo title={ttc("Access Blocked")}>
-      <NavStatic dense={false} />
+      <NavAuth title={ttc("Access Blocked")} />
       <SuccessPage title={ttc("Thank you for signing up!")}>
         <p class="text-lg font-medium my-6">{ttc("Access is by invitation only.")}</p>
 

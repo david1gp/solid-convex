@@ -37,7 +37,7 @@ export function WorkspaceInvitationCard(p: WorkspaceInvitationCardProps) {
     <section
       class={classMerge(
         "p-4",
-        "border border-gray-200 dark:border-gray-500 rounded-lg ",
+        "border border-gray-200 dark:border-slate-700 rounded-lg ",
         "bg-gray-50 dark:bg-stone-800",
         "flex flex-col justify-start gap-2",
         p.class,

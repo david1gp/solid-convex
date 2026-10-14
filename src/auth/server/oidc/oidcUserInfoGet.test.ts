@@ -23,7 +23,13 @@ test("UserInfo fills a missing name without replacing existing picture", async (
     response: { sub: "subject-123", name: "Ada Lovelace", picture: "userinfo-picture" },
   })
 
-  expect(result).toEqual({ success: true, data: { name: "Ada Lovelace" } })
+  expect(result).toEqual({
+    success: true,
+    data: {
+      name: "Ada Lovelace",
+      claims: { sub: "subject-123", name: "Ada Lovelace", picture: "userinfo-picture" },
+    },
+  })
 })
 
 test("UserInfo fills a missing picture without replacing existing name", async () => {
@@ -33,7 +39,13 @@ test("UserInfo fills a missing picture without replacing existing name", async (
     response: { sub: "subject-123", name: "userinfo-name", picture: "https://example.test/avatar.png" },
   })
 
-  expect(result).toEqual({ success: true, data: { picture: "https://example.test/avatar.png" } })
+  expect(result).toEqual({
+    success: true,
+    data: {
+      picture: "https://example.test/avatar.png",
+      claims: { sub: "subject-123", name: "userinfo-name", picture: "https://example.test/avatar.png" },
+    },
+  })
 })
 
 test("blank ID-token name and picture are filled from matching UserInfo", async () => {
@@ -43,7 +55,10 @@ test("blank ID-token name and picture are filled from matching UserInfo", async 
     response: { sub: "subject-123", name: "Ada", picture: "avatar" },
   })
 
-  expect(result).toEqual({ success: true, data: { name: "Ada", picture: "avatar" } })
+  expect(result).toEqual({
+    success: true,
+    data: { name: "Ada", picture: "avatar", claims: { sub: "subject-123", name: "Ada", picture: "avatar" } },
+  })
 })
 
 test("UserInfo with a different subject is rejected", async () => {
@@ -56,7 +71,7 @@ test("UserInfo with a different subject is rejected", async () => {
   expect(result).toEqual({ success: true, data: undefined })
 })
 
-test("UserInfo is not fetched when ID-token profile fields are complete", async () => {
+test("UserInfo is not fetched when profile fields are complete and claims are not needed", async () => {
   let fetchCount = 0
   const previousFetch = globalThis.fetch
   globalThis.fetch = Object.assign(
@@ -79,6 +94,38 @@ test("UserInfo is not fetched when ID-token profile fields are complete", async 
   } finally {
     globalThis.fetch = previousFetch
   }
+})
+
+test("UserInfo preserves Zitadel role claims when only claims are needed", async () => {
+  const claims = {
+    sub: "subject-123",
+    name: "UserInfo Name",
+    picture: "userinfo-picture",
+    "urn:zitadel:iam:org:project:roles": { admin: { "org-123": "example.test" } },
+    arbitrary_claim: { nested: ["preserved"] },
+  }
+  const result = await userInfoFetch({
+    needsName: false,
+    needsPicture: false,
+    needsClaims: true,
+    response: claims,
+  })
+
+  expect(result).toEqual({ success: true, data: { claims } })
+})
+
+test("UserInfo role claims with a different subject are rejected", async () => {
+  const result = await userInfoFetch({
+    needsName: false,
+    needsPicture: false,
+    needsClaims: true,
+    response: {
+      sub: "other-subject",
+      "urn:zitadel:iam:org:project:roles": { admin: { "org-123": "example.test" } },
+    },
+  })
+
+  expect(result).toEqual({ success: true, data: undefined })
 })
 
 test("UserInfo enrichment preserves verified ID-token email and roles only", async () => {
@@ -147,7 +194,12 @@ test("a full UserInfo name does not duplicate an ID-token family name", () => {
   expect(getUserNameFromCommonAuthProvider(profile, "New User")).toBe("Ada Lovelace")
 })
 
-async function userInfoFetch(input: { needsName: boolean; needsPicture: boolean; response: Record<string, unknown> }) {
+async function userInfoFetch(input: {
+  needsName: boolean
+  needsPicture: boolean
+  needsClaims?: boolean
+  response: Record<string, unknown>
+}) {
   const previousFetch = globalThis.fetch
   globalThis.fetch = Object.assign(
     async (url: RequestInfo | URL, init?: RequestInit) => {
@@ -164,6 +216,7 @@ async function userInfoFetch(input: { needsName: boolean; needsPicture: boolean;
       subject: "subject-123",
       needsName: input.needsName,
       needsPicture: input.needsPicture,
+      needsClaims: input.needsClaims,
     })
   } finally {
     globalThis.fetch = previousFetch

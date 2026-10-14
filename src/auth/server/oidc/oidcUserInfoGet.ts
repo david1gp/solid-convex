@@ -2,7 +2,7 @@ import * as a from "valibot"
 import { createResult, type PromiseResult } from "#result"
 import type { OidcDiscovery } from "#src/auth/server/oidc/oidcDiscoverySchema.ts"
 
-const oidcUserInfoSchema = a.object({
+const oidcUserInfoSchema = a.looseObject({
   sub: a.pipe(a.string(), a.minLength(1)),
   name: a.optional(a.string()),
   picture: a.optional(a.string()),
@@ -11,6 +11,7 @@ const oidcUserInfoSchema = a.object({
 type OidcUserInfoProfile = {
   name?: string
   picture?: string
+  claims?: Record<string, unknown>
 }
 
 export async function oidcUserInfoGet(input: {
@@ -19,8 +20,13 @@ export async function oidcUserInfoGet(input: {
   subject: string
   needsName: boolean
   needsPicture: boolean
+  needsClaims?: boolean
 }): PromiseResult<OidcUserInfoProfile | undefined> {
-  if ((!input.needsName && !input.needsPicture) || !input.accessToken || !input.discovery.userinfo_endpoint) {
+  if (
+    (!input.needsName && !input.needsPicture && !input.needsClaims) ||
+    !input.accessToken ||
+    !input.discovery.userinfo_endpoint
+  ) {
     return createResult(undefined)
   }
 
@@ -39,6 +45,7 @@ export async function oidcUserInfoGet(input: {
   const parsed = a.safeParse(oidcUserInfoSchema, json)
   if (!parsed.success || parsed.output.sub !== input.subject) return createResult(undefined)
   return createResult({
+    claims: parsed.output as Record<string, unknown>,
     ...(input.needsName && parsed.output.name?.trim() ? { name: parsed.output.name } : {}),
     ...(input.needsPicture && parsed.output.picture?.trim() ? { picture: parsed.output.picture } : {}),
   })

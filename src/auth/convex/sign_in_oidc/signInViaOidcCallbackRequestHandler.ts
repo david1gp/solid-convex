@@ -82,11 +82,13 @@ export async function signInViaOidcCallbackRequestHandler(ctx: ActionCtx, reques
     subject: claimsResult.data.sub,
     needsName: !idTokenName,
     needsPicture: !claimsResult.data.picture?.trim(),
+    needsClaims: Boolean(configResult.data.zitadelOrgId),
   })
-  const rawRoles = oidcZitadelRawRolesExtract(
-    claimsResult.data as Record<string, unknown>,
-    process.env.ZITADEL_PROJECT_ID,
-  )
+  const combinedClaims = {
+    ...(claimsResult.data as Record<string, unknown>),
+    ...(userInfoResult.success ? (userInfoResult.data?.claims ?? {}) : {}),
+  }
+  const rawRoles = oidcZitadelRawRolesExtract(combinedClaims, process.env.ZITADEL_PROJECT_ID)
   const zitadelRoles = configResult.data.zitadelOrgId
     ? oidcZitadelRolesGet(rawRoles, configResult.data.zitadelOrgId)
     : undefined

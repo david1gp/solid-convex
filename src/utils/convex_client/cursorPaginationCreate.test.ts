@@ -32,9 +32,9 @@ describe("cursorPaginationCreate", () => {
       pagination = cursorPaginationCreate({
         query,
         queryKey: "members",
-        args: () => ({ token: "secret", workspaceHandle: "one" }),
+        args: () => ({ token: "secret", orgHandle: "one" }),
         identity: () => "user-1",
-        scope: () => "workspace-one",
+        scope: () => "org-one",
         filters: () => ({ role: "member" }),
         itemSchema: a.string(),
         debounceMs: 0,

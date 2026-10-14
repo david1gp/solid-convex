@@ -28,7 +28,7 @@ describe("demo catalog data", () => {
   test("lists all component examples and page inventory entries in distinct groups", () => {
     const catalog = demoCatalogDataCreate(demoList)
     expect(catalog.componentCategories.flatMap(({ demos }) => demos)).toHaveLength(10)
-    expect(catalog.pageDemos).toHaveLength(48)
+    expect(catalog.pageDemos).toHaveLength(pageRouteInventory.length)
     expect(catalog.pageDemos[0]).toMatchObject({ route: "/sign-up", href: "/demos/sign-up" })
     expect(catalog.pageDemos.find(({ route }) => route === "/")?.href).toBe("/demos/root")
   })

@@ -12,11 +12,9 @@ import { userProfileMeApiKeysDemoStateCreate } from "#src/auth/ui/profile_me/use
 import { orgDemoRendererMap } from "#src/org/org_ui/demo/orgDemoRendererMap.tsx"
 import { ResourcePageDemoRenderer } from "#src/resource/ui/demo/ResourcePageDemoRenderer.tsx"
 import { ConvexContext } from "#src/utils/convex_client/convexContext.ts"
-import { WorkspaceCorePageDemos } from "#src/workspace/workspace_ui/WorkspaceCorePageDemos.tsx"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.tsx"
 
 const orgDemoRoutes = Object.keys(orgDemoRendererMap)
-const workspaceDemoRoutes = Object.keys(WorkspaceCorePageDemos)
 const authDemoRoutes = ["/sign-in", "/sign-in-enter-otp", "/sign-in-error"]
 const authRemainingDemoRoutes = [
   "/sign-up",
@@ -97,9 +95,6 @@ export function PageDemoBoundary(p: { entry?: (typeof pageRouteInventory)[number
                 </Show>
                 <Show when={orgDemoRoutes.includes(entry().route)}>
                   <Dynamic component={orgDemoRendererMap[entry().route as keyof typeof orgDemoRendererMap]} />
-                </Show>
-                <Show when={workspaceDemoRoutes.includes(entry().route)}>
-                  <Dynamic component={WorkspaceCorePageDemos[entry().route as keyof typeof WorkspaceCorePageDemos]} />
                 </Show>
                 <Show when={resourceDemoRoutes.includes(entry().route)}>
                   <ResourcePageDemoRenderer route={entry().route} />

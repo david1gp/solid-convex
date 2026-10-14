@@ -16,7 +16,6 @@ import { userDeleteHardEmailLoginCodes } from "../src/auth/convex/user/delete_ha
 import { userDeleteHardFiles } from "../src/auth/convex/user/delete_hard_parts/userDeleteHardFiles.ts"
 import { userDeleteHardOrgMemberships } from "../src/auth/convex/user/delete_hard_parts/userDeleteHardOrgMemberships.ts"
 import { orgLeaveFn } from "../src/org/member_convex/orgLeaveMutation.ts"
-import { workspaceLeaveFn } from "../src/workspace/member_convex/workspaceMemberLeaveMutation.ts"
 
 const modules = import.meta.glob("../convex/**/*.ts")
 const createdAt = "2026-09-18T00:00:00.000Z"
@@ -489,64 +488,5 @@ test("organization leave uses the exact userId/orgId pair, preserves near-misses
     matching.before.filter((row) => row._id !== matching.first),
   )
   expect(await t.run((ctx) => ctx.db.get("orgs", fixture.orgId))).not.toBeNull()
-  expect(await t.run((ctx) => ctx.db.query("authSessions").take(1))).toEqual([])
-})
-
-test("workspace leave uses the exact userId/workspaceId pair, preserves near-misses and removes only the first duplicate", async () => {
-  const t = convexTest(schema, modules)
-  const fixture = await t.run(async (ctx) => {
-    const userId = await userInsert(ctx, "Departing member")
-    const otherUserId = await userInsert(ctx, "Remaining member")
-    const workspaceId = await ctx.db.insert("workspaces", {
-      workspaceHandle: "leave-workspace",
-      name: "Target",
-      ...timestamps,
-    })
-    const otherWorkspaceId = await ctx.db.insert("workspaces", {
-      workspaceHandle: "other-workspace",
-      name: "Other",
-      ...timestamps,
-    })
-    const fields = {
-      workspaceHandle: "leave-workspace",
-      role: "member",
-      invitedBy: otherUserId,
-      ...timestamps,
-    } as const
-    await ctx.db.insert("workspaceMembers", { ...fields, userId, workspaceId: otherWorkspaceId })
-    await ctx.db.insert("workspaceMembers", { ...fields, userId: otherUserId, workspaceId })
-    return { userId, workspaceId, fields, before: await ctx.db.query("workspaceMembers").take(20) }
-  })
-  const args = { userId: fixture.userId, workspaceHandle: "leave-workspace" }
-
-  expect(await t.run((ctx) => workspaceLeaveFn(ctx, args))).toMatchObject({
-    success: false,
-    errorMessage: "Member not found",
-  })
-  expect(await t.run((ctx) => ctx.db.query("workspaceMembers").take(20))).toEqual(fixture.before)
-
-  const matching = await t.run(async (ctx) => {
-    const first = await ctx.db.insert("workspaceMembers", {
-      ...fixture.fields,
-      userId: fixture.userId,
-      workspaceId: fixture.workspaceId,
-    })
-    await ctx.db.insert("workspaceMembers", {
-      ...fixture.fields,
-      userId: fixture.userId,
-      workspaceId: fixture.workspaceId,
-    })
-    // Exercise indexed removal without requiring auth configuration or minting a session.
-    await ctx.db.delete("users", fixture.userId)
-    return { first, before: await ctx.db.query("workspaceMembers").take(20) }
-  })
-
-  expect(await t.run((ctx) => workspaceLeaveFn(ctx, args))).toMatchObject({
-    success: false,
-    errorMessage: "User not found",
-  })
-  expect(await t.run((ctx) => ctx.db.query("workspaceMembers").take(20))).toEqual(
-    matching.before.filter((row) => row._id !== matching.first),
-  )
   expect(await t.run((ctx) => ctx.db.query("authSessions").take(1))).toEqual([])
 })

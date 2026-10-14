@@ -6,8 +6,8 @@ import { pageRouteInventory } from "#src/app/demos/pageRouteInventory.ts"
 describe("page demo routing", () => {
   test("registers a catalog and exactly one dedicated route per inventory entry", () => {
     const paths = pageDemoRoutePathsCreate()
-    expect(paths).toHaveLength(48)
-    expect(new Set(paths).size).toBe(48)
+    expect(paths).toHaveLength(36)
+    expect(new Set(paths).size).toBe(36)
     expect(paths).toEqual(pageRouteInventory.map(({ route }) => `/demos${route === "/" ? "/root" : route}`))
     expect(paths).toContain("/demos/root")
     expect(paths).not.toContain("/demos/pages")
@@ -65,7 +65,7 @@ describe("page demo routing", () => {
       Bun.file(new URL("../../auth/ui/profile_me/UserProfileMeApiKeysPage.tsx", import.meta.url)).text(),
       Bun.file(new URL("../../auth/ui/profile_me/userProfileMeApiKeysDemoStateCreate.ts", import.meta.url)).text(),
     ])
-    expect(pageRouteInventory.filter((entry) => entry.route !== "/profile/api-keys")).toHaveLength(47)
+    expect(pageRouteInventory.filter((entry) => entry.route !== "/profile/api-keys")).toHaveLength(35)
     expect(boundary).toContain('route === "/profile/api-keys"')
     expect(boundary).toContain("pageDemoRouteIsMounted(entry().route)")
     expect(boundary).toContain("Page view not mounted yet")
@@ -116,20 +116,6 @@ describe("page demo routing", () => {
     expect(renderer).toContain('"/org": OrgDemoList')
     expect(renderer).toContain('"/org/create": OrgDemoCreate')
     expect(renderer).toContain('"/org/:orgHandle": OrgDemoView')
-  })
-
-  test("activates only workspace list, add, and view demos", async () => {
-    const [boundary, renderer] = await Promise.all([
-      Bun.file(new URL("./PageDemoBoundary.tsx", import.meta.url)).text(),
-      Bun.file(new URL("../../workspace/workspace_ui/WorkspaceCorePageDemos.tsx", import.meta.url)).text(),
-    ])
-    expect(boundary).toContain("workspaceDemoRoutes.includes(entry().route)")
-    expect(boundary).toContain(
-      "component={WorkspaceCorePageDemos[entry().route as keyof typeof WorkspaceCorePageDemos]}",
-    )
-    expect(renderer).toContain('"/w/list": WorkspaceListDemo')
-    expect(renderer).toContain('"/w/add": WorkspaceAddDemo')
-    expect(renderer).toContain('"/w/:workspaceHandle/view": WorkspaceViewDemo')
   })
 
   test("activates all prepared resource demos", async () => {

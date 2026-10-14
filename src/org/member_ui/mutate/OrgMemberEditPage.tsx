@@ -37,6 +37,6 @@ export function OrgMemberEditPage() {
   )
 }
 
-function getPageTitle(orgName?: string, workspaceName?: string) {
+function getPageTitle() {
   return getFormModeTitle(mode, ttc("Organization Member"))
 }

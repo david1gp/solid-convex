@@ -32,7 +32,7 @@ export function OrgViewPage() {
   )
 }
 
-function getPageTitle(orgName?: string, _workspaceName?: string) {
+function getPageTitle(orgName?: string) {
   return orgName ?? ttc("Organization")
 }
 

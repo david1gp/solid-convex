@@ -1,6 +1,5 @@
 import { mdiAccountGroup } from "@adaptive-ds/mdi/mdiAccountGroup.js"
 import { mdiAccountOutline } from "@adaptive-ds/mdi/mdiAccountOutline.js"
-import { mdiBriefcase } from "@adaptive-ds/mdi/mdiBriefcase.js"
 import { mdiChevronRight } from "@adaptive-ds/mdi/mdiChevronRight.js"
 import { mdiFileDocument } from "@adaptive-ds/mdi/mdiFileDocument.js"
 import { Link } from "@tanstack/solid-router"
@@ -11,7 +10,6 @@ import { urlUserProfileMe } from "#src/auth/url/pageRouteAuth.ts"
 import { urlOrgList } from "#src/org/org_url/urlOrg.ts"
 import { urlResourceList } from "#src/resource/url/urlResource.ts"
 import { PageHeader } from "#src/ui/header/PageHeader.tsx"
-import { urlWorkspaceList } from "#src/workspace/workspace_url/urlWorkspace.ts"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { PageWrapper } from "#ui/static/page/PageWrapper.jsx"
 
@@ -20,7 +18,7 @@ export function OverviewPage(p: { demo?: boolean } = {}) {
     <PageWrapper>
       <PageHeader
         title={ttt("Overview")}
-        subtitle={ttt("Everything you need — organizations, workspaces and resources in one place.")}
+        subtitle={ttt("Everything you need — organizations and resources in one place.")}
         class="pb-8 pt-4"
       />
       <section aria-label={ttt("Shortcuts")} class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -64,12 +62,6 @@ function overviewCards() {
       icon: mdiAccountGroup,
       title: ttt("Organizations"),
       description: ttt("Manage organizations and their members."),
-    },
-    {
-      href: urlWorkspaceList(),
-      icon: mdiBriefcase,
-      title: ttt("Workspaces"),
-      description: ttt("Collaborate in workspaces with invitations."),
     },
     {
       href: urlResourceList(),

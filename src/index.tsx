@@ -12,9 +12,6 @@ import { getRoutesOrgInvitation } from "#src/org/invitation_url/getRoutesOrgInvi
 import { getRoutesOrgMember } from "#src/org/member_url/getRoutesOrgMember.ts"
 import { getRoutesOrg } from "#src/org/org_url/getRoutesOrg.ts"
 import { getRoutesResource } from "#src/resource/url/getRoutesResource.ts"
-import { getRoutesWorkspaceInvitation } from "#src/workspace/invitation_url/getRoutesWorkspaceInvitation.ts"
-import { getRoutesWorkspaceMember } from "#src/workspace/member_url/getRoutesWorkspaceMember.ts"
-import { getRoutesWorkspace } from "#src/workspace/workspace_url/getRoutesWorkspace.ts"
 import { LayoutWrapperDemo } from "#ui/static/layout/LayoutWrapperDemo.tsx"
 import "./tailwind.css"
 
@@ -29,9 +26,6 @@ const routesApp = [
       ...getRoutesOrgMember(),
       ...getRoutesOrgInvitation(),
       ...getRoutesResource(),
-      ...getRoutesWorkspace(),
-      ...getRoutesWorkspaceMember(),
-      ...getRoutesWorkspaceInvitation(),
     ],
   },
 ]

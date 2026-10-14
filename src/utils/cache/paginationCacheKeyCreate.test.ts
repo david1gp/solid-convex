@@ -6,8 +6,8 @@ describe("paginationCacheKeyCreate", () => {
     const first = paginationCacheKeyCreate({
       identity: "user-1",
       query: "members",
-      args: { token: "secret", workspaceHandle: "one", filters: { role: "member", page: 1 } },
-      scope: "workspace-one",
+      args: { token: "secret", orgHandle: "one", filters: { role: "member", page: 1 } },
+      scope: "org-one",
       filters: { role: "member" },
       cursor: null,
       pageSize: 50,
@@ -15,8 +15,8 @@ describe("paginationCacheKeyCreate", () => {
     const second = paginationCacheKeyCreate({
       identity: "user-1",
       query: "members",
-      args: { filters: { page: 1, role: "member" }, workspaceHandle: "one", token: "different" },
-      scope: "workspace-one",
+      args: { filters: { page: 1, role: "member" }, orgHandle: "one", token: "different" },
+      scope: "org-one",
       filters: { role: "member" },
       cursor: null,
       pageSize: 50,
@@ -33,8 +33,8 @@ describe("paginationCacheKeyCreate", () => {
       paginationCacheKeyCreate({
         identity: "user-1",
         query: "members",
-        args: { workspaceHandle: "one" },
-        scope: "workspace-one",
+        args: { orgHandle: "one" },
+        scope: "org-one",
         filters: { role: "member" },
         cursor: null,
         pageSize: 50,
@@ -42,7 +42,7 @@ describe("paginationCacheKeyCreate", () => {
       })
 
     expect(makeKey({ identity: "user-2" })).not.toBe(makeKey())
-    expect(makeKey({ scope: "workspace-two" })).not.toBe(makeKey())
+    expect(makeKey({ scope: "org-two" })).not.toBe(makeKey())
     expect(makeKey({ filters: { role: "admin" } })).not.toBe(makeKey())
     expect(makeKey({ cursor: "cursor-1" })).not.toBe(makeKey())
   })

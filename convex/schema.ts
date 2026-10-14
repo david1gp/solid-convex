@@ -6,18 +6,12 @@ import { orgInvitationTables } from "#src/org/invitation_convex/orgInvitationTab
 import { orgMemberTables } from "#src/org/member_convex/orgMemberTables.ts"
 import { orgTables } from "#src/org/org_convex/orgTables.ts"
 import { resourceTables } from "#src/resource/convex/resourceTables.ts"
-import { workspaceInvitationTables } from "#src/workspace/invitation_convex/workspaceInvitationTables.ts"
-import { workspaceMemberTables } from "#src/workspace/member_convex/workspaceMemberTables.ts"
-import { workspaceTables } from "#src/workspace/workspace_convex/workspaceTables.ts"
 
 const schema = defineSchema({
   ...authTables,
   ...orgTables,
   ...orgInvitationTables,
   ...orgMemberTables,
-  ...workspaceTables,
-  ...workspaceInvitationTables,
-  ...workspaceMemberTables,
   ...resourceTables,
   ...fileTables,
   ...kvTables,

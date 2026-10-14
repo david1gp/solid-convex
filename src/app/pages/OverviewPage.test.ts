@@ -11,7 +11,6 @@ describe("overview page navigation", () => {
     const source = await Bun.file(new URL("./OverviewPage.tsx", import.meta.url)).text()
 
     expect(source).toContain("urlOrgList()")
-    expect(source).toContain("urlWorkspaceList()")
     expect(source).toContain("urlResourceList()")
     expect(source).toContain("urlUserProfileMe()")
     expect(source).toContain("<AuthLinks")

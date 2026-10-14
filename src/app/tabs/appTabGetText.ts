@@ -5,8 +5,6 @@ export function appTabGetText(tab: string): string {
   switch (tab as AppTab) {
     case appTab.org:
       return ttc("Organization")
-    case appTab.workspace:
-      return ttc("Workspaces")
     case appTab.resource:
       return ttc("Resources")
   }

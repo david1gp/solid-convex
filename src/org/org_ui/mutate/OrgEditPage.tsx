@@ -35,6 +35,6 @@ export function OrgEditPage() {
   )
 }
 
-function getPageTitle(orgName?: string, workspaceName?: string) {
-  return getFormModeTitle(mode, workspaceName ?? ttc("Organization"))
+function getPageTitle(orgName?: string, orgNameAlt?: string) {
+  return getFormModeTitle(mode, orgNameAlt ?? ttc("Organization"))
 }

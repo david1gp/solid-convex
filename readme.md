@@ -13,7 +13,20 @@ Quick link
 
 ## Features
 
-- **User Management**
+- **Organization Hierarchy & Notes**
+  - Explicit four-level hierarchy: Organizations → Teams → Projects → Notes
+  - Three-column markdown notes view with title derived automatically from the first line
+  - Contextual URL navigation and cascading deletions removing descendant subtrees and attached files/R2 objects
+  - Hierarchy assignments for resources and uploaded files at any level
+
+- **User Management & Administration**
+  - Dedicated admin-only User Management interface
+  - Reactive Convex projection synchronized with Zitadel identities
+  - Role management supporting `admin`, `member`, and `user` roles
+  - Team assignments and multi-role selection powered by `CheckMultiple`
+  - Zitadel is authoritative for roles and team metadata; changes propagate reactively
+
+- **Authentication & Identity**
   - User registration with username and password
   - Email/password authentication with secure session handling
   - Login via email address
@@ -27,13 +40,12 @@ Quick link
   - Bash deployment scripts for self hosted convex 
 
 - **Multi-Tenant Architecture**
-  - Workspaces for organizing projects and resources
   - Organizations with team collaboration support
 
 - **Storage & Data**
   - Infinitely scaling R2 object storage for files
   - Direct file uploads from browser
-  - Persistent UI state: draft resources/workspaces survive navigation
+  - Persistent UI state: draft resources survive navigation
   - Intelligent browser caching: instant client-side loading with background refresh
 
 - **Technical Foundation**
@@ -216,6 +228,34 @@ The `admin` provider is available only in development environments at
 `/api/auth/admin`. It creates ordinary `user` accounts; only trusted OIDC role
 synchronization can assign the `admin` role. The canonical persisted values are
 the `user`/`admin` roles and the `admin` provider.
+
+### User Management & Zitadel Admin Configuration
+
+Global user administration is accessible to users with the `admin` role at `/user-management`.
+The application maintains a reactive projection of Zitadel users in Convex:
+- **Roles:** Zitadel project roles (`admin`, `member`, `user`) are managed through `CheckMultiple`.
+- **Teams:** Team assignments are persisted in Zitadel user metadata under the application namespace and projected locally in Convex.
+- **Reactivity:** Updates written via backend Convex actions sync to Zitadel and refresh the reactive projection immediately.
+- **Server Environment Variables:**
+  - `ZITADEL_BASE_URL` (or `OIDC_ISSUER`): Base URL of the Zitadel instance (HTTPS).
+  - `ZITADEL_TOKEN` (or `ZITADEL_SERVICE_ACCOUNT_TOKEN`): Server service account token for Zitadel API access.
+  - `ZITADEL_ORGANIZATION_ID` (or `OIDC_ZITADEL_ORG_ID`): Zitadel organization identifier.
+  - `ZITADEL_PROJECT_ID`: Zitadel project identifier.
+  *Note:* All service tokens and Zitadel API credentials must be kept server-side in the Convex actions environment.
+
+### R2 Object Storage Setup
+
+Direct file uploads and object storage use Cloudflare R2 (S3-compatible). The required configuration variables are:
+
+- **Server Environment Variables (Convex actions / backend):**
+  - `R2_ACCOUNT_ID`: Cloudflare account ID.
+  - `R2_ACCESS_KEY_ID`: S3 API access key ID.
+  - `R2_SECRET_ACCESS_KEY`: S3 API secret access key.
+  - `R2_BUCKET_NAME`: R2 bucket name.
+  *Note:* All storage credentials must remain server-side in the Convex actions environment.
+
+- **Frontend Environment Variables:**
+  - `PUBLIC_BASE_URL_R2`: Base URL used for viewing uploaded objects (e.g. `https://pub-xxx.r2.dev`). Base URL joining normalizes slashes to prevent duplicate slashes even if a trailing slash is configured.
 
 ### Convex integration notes
 

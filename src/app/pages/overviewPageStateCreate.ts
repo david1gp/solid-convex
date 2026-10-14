@@ -2,6 +2,7 @@ import { mdiAccountGroup } from "@adaptive-ds/mdi/mdiAccountGroup.js"
 import { mdiAccountMultipleOutline } from "@adaptive-ds/mdi/mdiAccountMultipleOutline.js"
 import { mdiBriefcaseOutline } from "@adaptive-ds/mdi/mdiBriefcaseOutline.js"
 import { mdiFileDocument } from "@adaptive-ds/mdi/mdiFileDocument.js"
+import { mdiNoteTextOutline } from "@adaptive-ds/mdi/mdiNoteTextOutline.js"
 import { urlOrgList } from "#src/org/org_url/urlOrg.ts"
 import { urlResourceList } from "#src/resource/url/urlResource.ts"
 import { ttt } from "#ui/i18n/ttt.ts"
@@ -26,6 +27,12 @@ export function overviewPageStateCreate() {
         icon: mdiBriefcaseOutline,
         title: ttt("Projects"),
         description: ttt("Organize work and initiatives in projects."),
+      },
+      {
+        href: "/note",
+        icon: mdiNoteTextOutline,
+        title: ttt("Notes"),
+        description: ttt("Create and edit project markdown notes."),
       },
       {
         href: urlResourceList(),

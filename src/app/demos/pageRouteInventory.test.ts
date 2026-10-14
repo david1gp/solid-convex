@@ -3,6 +3,7 @@ import { pageDemoRouteIsMounted } from "#src/app/demos/pageDemoRouteIsMounted.ts
 import { pageRouteInventory } from "#src/app/demos/pageRouteInventory.ts"
 import { getRoutesApp } from "#src/app/getRoutesApp.tsx"
 import { getRoutesAuth } from "#src/auth/ui/getRoutesAuth.tsx"
+import { noteRoutesCreate } from "#src/note/url/noteRoutesCreate.ts"
 import { getRoutesOrgInvitation } from "#src/org/invitation_url/getRoutesOrgInvitation.ts"
 import { getRoutesOrgMember } from "#src/org/member_url/getRoutesOrgMember.ts"
 import { getRoutesOrg } from "#src/org/org_url/getRoutesOrg.ts"
@@ -19,6 +20,7 @@ const mountedNonDemoRoutes = [
   ...getRoutesResource(),
   ...teamRoutesCreate(),
   ...projectRoutesCreate(),
+  ...noteRoutesCreate(),
 ]
 
 describe("page demo route inventory", () => {
@@ -26,14 +28,14 @@ describe("page demo route inventory", () => {
     const mountedPaths = mountedNonDemoRoutes.map(({ path }) => path).sort()
     const inventoryPaths: string[] = pageRouteInventory.map(({ route }) => route).sort()
 
-    expect(mountedPaths).toHaveLength(57)
-    expect(inventoryPaths).toHaveLength(57)
+    expect(mountedPaths).toHaveLength(89)
+    expect(inventoryPaths).toHaveLength(89)
     expect(inventoryPaths).toEqual(mountedPaths)
   })
 
   test("assigns each route a distinct generator-compatible page demo entry and matching example params", () => {
     const demoEntries = pageRouteInventory.map(({ demoEntry }) => demoEntry)
-    expect(new Set(demoEntries).size).toBe(57)
+    expect(new Set(demoEntries).size).toBe(89)
 
     for (const { route, title, pageImport, params, demoEntry } of pageRouteInventory) {
       expect(title.length).toBeGreaterThan(0)
@@ -49,7 +51,7 @@ describe("page demo route inventory", () => {
     const guardedRoutes = pageRouteInventory.filter(({ route }) => !pageDemoRouteIsMounted(route))
     const mountedRoutes = pageRouteInventory.filter(({ route }) => pageDemoRouteIsMounted(route))
 
-    expect(guardedRoutes).toHaveLength(21)
+    expect(guardedRoutes).toHaveLength(53)
     expect(mountedRoutes).toHaveLength(36)
   })
 

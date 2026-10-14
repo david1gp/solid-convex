@@ -57,5 +57,6 @@ Logs: `journalctl --user -u <unit> -f`.
   containers carry `AutoUpdate=registry`. Container env comes from `./.env.docker`.
 - `get_admin_key.bash` — mint the admin key of the running backend (`podman exec`)
 - `env_update.bash` — push app env vars into the deployment env (skips
-  `CONVEX_SELF_HOSTED_*`)
+  `CONVEX_SELF_HOSTED_*`). This is separate from frontend deployment; for
+  configuration changes, run `bun run convex:env:upload:development` explicitly.
 - `export_zip.bash` / `import_zip.bash` — snapshot export/import

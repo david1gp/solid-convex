@@ -86,6 +86,7 @@
     "@typescript-eslint/parser": "^8.71.0",
     "autoprefixer": "^10.4.27",
     "convex-test": "^0.0.54",
+    "dotenv": "^18.0.7",
     "eslint": "^9.39.5",
     "glob": "^13.0.6",
     "postcss": "^8.5.8",

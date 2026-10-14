@@ -15,6 +15,13 @@ if [[ ! -f "$ENV_FILE" ]]; then
   exit 2
 fi
 
+# Bash read would silently discard NUL bytes before framing the selected values.
+if IFS= read -r -d '' nul_prefix <"$ENV_FILE"; then
+  echo "error: Environment file contains unsupported NUL bytes" >&2
+  exit 1
+fi
+unset nul_prefix
+
 trim() {
   local value="$1"
   value="${value#"${value%%[![:space:]]*}"}"
@@ -59,7 +66,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
   key="$(trim "${line%%=*}")"
   value="$(trim "${line#*=}")"
   [[ -z "$key" || ! "$key" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] && continue
-  [[ "$key" == CONVEX_SELF_HOSTED_* || "$key" == CONVEX_SITE_URL ]] && continue
+  [[ "$key" == CONVEX_DEPLOY_KEY || "$key" == CONVEX_DEPLOYMENT || "$key" == CONVEX_DEPLOYMENT_TOKEN || "$key" == CONVEX_SELF_HOSTED_* || "$key" == CONVEX_URL || "$key" == CONVEX_SITE_URL || "$key" == PUBLIC_CONVEX_URL || "$key" == PUBLIC_CONVEX_SITE_URL || "$key" == NEXT_PUBLIC_CONVEX_URL || "$key" == NEXT_PUBLIC_CONVEX_SITE_URL || "$key" == VITE_CONVEX_URL || "$key" == VITE_CONVEX_SITE_URL || "$key" == REACT_APP_CONVEX_URL || "$key" == REACT_APP_CONVEX_SITE_URL || "$key" == EXPO_PUBLIC_CONVEX_URL || "$key" == EXPO_PUBLIC_CONVEX_SITE_URL ]] && continue
 
   if [[ "$value" == \"* && "$value" == *\" ]]; then
     value="${value:1:${#value}-2}"
@@ -71,10 +78,26 @@ while IFS= read -r line || [[ -n "$line" ]]; do
   VALUES+=("$value")
 done <"$ENV_FILE"
 
-for index in "${!KEYS[@]}"; do
-  key="${KEYS[$index]}"
-  echo "Setting Convex env var: $key"
-  bun convex env set "$key" "${VALUES[$index]}" --env-file="$ENV_FILE" >/dev/null
-done
+if [[ "${#KEYS[@]}" -eq 0 ]]; then
+  echo "Convex env sync complete (0 variables)"
+  exit 0
+fi
 
-echo "Convex env sync complete (${#KEYS[@]} variables)"
+umask 077
+UPLOAD_FILE="$(mktemp "${TMPDIR:-/tmp}/convex-env.XXXXXX")"
+trap 'rm -f -- "$UPLOAD_FILE"' EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+# Keep the existing parser's strings; send values only over stdin, never argv.
+for index in "${!KEYS[@]}"; do
+  printf '%s\0%s\0' "${KEYS[$index]}" "${VALUES[$index]}"
+done | bun "$SCRIPT_DIR/envPayloadEncode.ts" >"$UPLOAD_FILE"
+
+if bun convex env set --force --from-file "$UPLOAD_FILE" --env-file="$ENV_FILE" >/dev/null 2>&1; then
+  echo "Convex env sync complete (${#KEYS[@]} assignments)"
+else
+  status=$?
+  echo "error: Convex env sync failed" >&2
+  exit "$status"
+fi

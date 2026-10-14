@@ -1,8 +1,9 @@
 import { describe, expect, test } from "bun:test"
 import { pageDemoRouteIsMounted } from "#src/app/demos/pageDemoRouteIsMounted.ts"
 import { pageRouteInventory } from "#src/app/demos/pageRouteInventory.ts"
-import { getRoutesApp } from "#src/app/getRoutesApp.tsx"
-import { getRoutesAuth } from "#src/auth/ui/getRoutesAuth.tsx"
+import { urlOverview } from "#src/app/pages/urlOverview.ts"
+import { urlTodo } from "#src/app/pages/urlTodo.ts"
+import { pageRouteAuth } from "#src/auth/url/pageRouteAuth.ts"
 import { noteRoutesCreate } from "#src/note/url/noteRoutesCreate.ts"
 import { getRoutesOrgInvitation } from "#src/org/invitation_url/getRoutesOrgInvitation.ts"
 import { getRoutesOrgMember } from "#src/org/member_url/getRoutesOrgMember.ts"
@@ -13,8 +14,8 @@ import { teamRoutesCreate } from "#src/team/url/teamRoutesCreate.ts"
 import { userManagementRoutesCreate } from "#src/user_management/url/userManagementRoutesCreate.ts"
 
 const mountedNonDemoRoutes = [
-  ...getRoutesAuth(),
-  ...getRoutesApp().filter(({ path }) => !path.startsWith("/demo/")),
+  ...Object.values(pageRouteAuth).map((path) => ({ path })),
+  ...["/", urlOverview(), urlTodo()].map((path) => ({ path })),
   ...getRoutesOrg(),
   ...getRoutesOrgMember(),
   ...getRoutesOrgInvitation(),

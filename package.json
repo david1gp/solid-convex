@@ -24,7 +24,7 @@
     "rsbuild:clean": "rm -rf node_modules/.cache",
     "format": "biome format --write convex functions src package.json tsconfig.json biome.json",
     "lint:convex": "eslint convex src",
-    "test": "bun test --isolate --env-file .env.development --path-ignore-patterns=convex-tests/**",
+    "test": "bun test --isolate --env-file .env.development --path-ignore-patterns='convex-tests/**' --path-ignore-patterns='e2e/**'",
     "test:w": "bun test --isolate --env-file .env.development --path-ignore-patterns=convex-tests/** --watch",
     "test:e2e": "bun e2e/e2eRun.ts production",
     "test:e2e:dev": "bun e2e/e2eRun.ts dev",

@@ -6,7 +6,7 @@ const oidcZitadelProjectRolesSchema = a.union([
   oidcZitadelProjectRolesRecordSchema,
 ])
 
-const oidcIdTokenClaimsSchema = a.object({
+const oidcIdTokenClaimsSchema = a.looseObject({
   iss: a.pipe(a.string(), a.minLength(1)),
   sub: a.pipe(a.string(), a.minLength(1)),
   aud: a.union([a.pipe(a.string(), a.minLength(1)), a.pipe(a.array(a.string()), a.minLength(1))]),

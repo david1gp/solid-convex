@@ -1,9 +1,66 @@
 import { expect, test } from "bun:test"
-import type { OidcIdTokenClaims } from "#src/auth/server/oidc/oidcIdTokenClaimsSchema.ts"
+import * as a from "valibot"
+import { type OidcIdTokenClaims, oidcIdTokenClaimsSchema } from "#src/auth/server/oidc/oidcIdTokenClaimsSchema.ts"
+import { oidcZitadelRawRolesExtract } from "#src/auth/server/oidc/oidcZitadelRawRolesExtract.ts"
 import { oidcZitadelRoleGet } from "#src/auth/server/oidc/oidcZitadelRoleGet.ts"
 import { oidcZitadelRolesGet } from "#src/auth/server/oidc/oidcZitadelRolesGet.ts"
 
 const organizationId = "380716752838852623"
+
+test("raw Zitadel roles extraction prefers the configured project over the generic claim", () => {
+  const genericRoles = { user: { [organizationId]: "contentoren.example" } }
+  const projectRoles = { admin: { [organizationId]: "contentoren.example" } }
+  const claims = {
+    "urn:zitadel:iam:org:project:roles": genericRoles,
+    "urn:zitadel:iam:org:project:configured-project:roles": projectRoles,
+  }
+  expect(oidcZitadelRawRolesExtract(claims, "configured-project")).toBe(projectRoles)
+  expect(oidcZitadelRawRolesExtract(claims)).toBe(genericRoles)
+  expect(oidcZitadelRawRolesExtract(claims, "missing-project")).toBe(genericRoles)
+})
+
+test("raw Zitadel roles extraction falls back to any project-specific roles claim", () => {
+  const projectRoles = { member: { [organizationId]: "contentoren.example" } }
+  const claims = {
+    "urn:zitadel:iam:org:project:roles": undefined,
+    "urn:zitadel:iam:org:project:missing-project:roles": undefined,
+    "urn:zitadel:iam:org:project:other-project:roles": projectRoles,
+  }
+  expect(oidcZitadelRawRolesExtract(claims)).toBe(projectRoles)
+  expect(oidcZitadelRawRolesExtract(claims, "missing-project")).toBe(projectRoles)
+  expect(oidcZitadelRawRolesExtract({})).toBeUndefined()
+  expect(
+    oidcZitadelRawRolesExtract({
+      "urn:zitadel:iam:org:other:roles": projectRoles,
+      "urn:zitadel:iam:org:project:other-project:permissions": projectRoles,
+    }),
+  ).toBeUndefined()
+})
+
+test("parsed ID token claims preserve project-specific Zitadel roles for extraction", () => {
+  const projectRoles = { admin: { [organizationId]: "contentoren.example" } }
+  const claims = a.parse(oidcIdTokenClaimsSchema, {
+    iss: "https://issuer.example",
+    sub: "user-id",
+    aud: "client-id",
+    exp: 2,
+    iat: 1,
+    nonce: "nonce",
+    "urn:zitadel:iam:org:project:configured-project:roles": projectRoles,
+  })
+  expect(oidcZitadelRawRolesExtract(claims, "configured-project")).toEqual(projectRoles)
+  expect(oidcZitadelRolesGet(oidcZitadelRawRolesExtract(claims), organizationId)).toEqual(["admin"])
+})
+
+test("Zitadel role extraction ignores malformed unknown claims without throwing", () => {
+  for (const claims of [null, true, 42, "admin", [null, false, 42, "admin", []], { admin: "invalid" }, { admin: [] }]) {
+    expect(oidcZitadelRolesGet(claims, organizationId)).toEqual([])
+    expect(oidcZitadelRoleGet(claims, organizationId)).toBe("user")
+  }
+  expect(oidcZitadelRolesGet([null, { admin: { [organizationId]: "contentoren.example" } }], organizationId)).toEqual([
+    "admin",
+  ])
+})
 
 test("Zitadel roles map trusted organization claims to canonical roles", () => {
   expect(

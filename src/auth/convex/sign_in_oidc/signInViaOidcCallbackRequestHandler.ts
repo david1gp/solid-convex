@@ -10,6 +10,7 @@ import { oidcTokenExchange } from "#src/auth/server/oidc/oidcTokenExchange.ts"
 import { oidcTransactionCookie } from "#src/auth/server/oidc/oidcTransactionCookie.ts"
 import { oidcTrustedProfileCreate } from "#src/auth/server/oidc/oidcTrustedProfileCreate.ts"
 import { oidcUserInfoGet } from "#src/auth/server/oidc/oidcUserInfoGet.ts"
+import { oidcZitadelRawRolesExtract } from "#src/auth/server/oidc/oidcZitadelRawRolesExtract.ts"
 import { oidcZitadelRoleGet } from "#src/auth/server/oidc/oidcZitadelRoleGet.ts"
 import { oidcZitadelRolesGet } from "#src/auth/server/oidc/oidcZitadelRolesGet.ts"
 
@@ -82,11 +83,15 @@ export async function signInViaOidcCallbackRequestHandler(ctx: ActionCtx, reques
     needsName: !idTokenName,
     needsPicture: !claimsResult.data.picture?.trim(),
   })
+  const rawRoles = oidcZitadelRawRolesExtract(
+    claimsResult.data as Record<string, unknown>,
+    process.env.ZITADEL_PROJECT_ID,
+  )
   const zitadelRoles = configResult.data.zitadelOrgId
-    ? oidcZitadelRolesGet(claimsResult.data["urn:zitadel:iam:org:project:roles"], configResult.data.zitadelOrgId)
+    ? oidcZitadelRolesGet(rawRoles, configResult.data.zitadelOrgId)
     : undefined
   const zitadelRole = configResult.data.zitadelOrgId
-    ? oidcZitadelRoleGet(claimsResult.data["urn:zitadel:iam:org:project:roles"], configResult.data.zitadelOrgId)
+    ? oidcZitadelRoleGet(rawRoles, configResult.data.zitadelOrgId)
     : undefined
   const providerInfo = oidcTrustedProfileCreate(
     claimsResult.data,

@@ -3,12 +3,16 @@ import { type Accessor, createRenderEffect, createSignal, onCleanup, useContext 
 import { createResultError, type ResultErr } from "#result"
 import { ConvexContext } from "./convexContext.js"
 
-type QueryArgs<Query extends FunctionReference<"query">> = FunctionArgs<Query> | Accessor<FunctionArgs<Query>>
+type QueryArgs<Query extends FunctionReference<"query">> =
+  | FunctionArgs<Query>
+  | "skip"
+  | undefined
+  | Accessor<FunctionArgs<Query> | "skip" | undefined>
 type QueryResult<Query extends FunctionReference<"query">> = FunctionReturnType<Query> | ResultErr | undefined
 
 export function queryCreate<Query extends FunctionReference<"query">>(
   query: Query,
-  args: QueryArgs<Query> = {},
+  ...argsRest: [args?: QueryArgs<Query>]
 ): () => QueryResult<Query> {
   const op = "queryCreate"
   const convex = useContext(ConvexContext)
@@ -17,19 +21,32 @@ export function queryCreate<Query extends FunctionReference<"query">>(
     return () => error
   }
 
-  const [result, setResult] = createSignal<FunctionReturnType<Query> | undefined>(undefined, { equals: false })
+  const rawArgs = argsRest.length > 0 ? argsRest[0] : ({} as FunctionArgs<Query>)
+  const [result, setResult] = createSignal<QueryResult<Query>>(undefined, { equals: false })
   let subscriptionId = 0
-  const getArgs: Accessor<FunctionArgs<Query>> =
-    typeof args === "function" ? (args as Accessor<FunctionArgs<Query>>) : () => args ?? {}
+  const getArgs: Accessor<FunctionArgs<Query> | "skip" | undefined> =
+    typeof rawArgs === "function" ? (rawArgs as Accessor<FunctionArgs<Query> | "skip" | undefined>) : () => rawArgs
 
   createRenderEffect(() => {
     const fullArgs = getArgs()
     const currentSubscriptionId = ++subscriptionId
     setResult(undefined)
-    const unsubscriber = convex.onUpdate(query, fullArgs, (nextResult) => {
-      if (currentSubscriptionId !== subscriptionId) return
-      setResult(nextResult)
-    })
+    if (fullArgs === undefined || fullArgs === "skip") {
+      return
+    }
+    const unsubscriber = convex.onUpdate(
+      query,
+      fullArgs,
+      (nextResult) => {
+        if (currentSubscriptionId !== subscriptionId) return
+        setResult(nextResult)
+      },
+      (error) => {
+        if (currentSubscriptionId !== subscriptionId) return
+        const message = error instanceof Error ? error.message : String(error)
+        setResult(createResultError(op, message))
+      },
+    )
     onCleanup(() => {
       if (currentSubscriptionId === subscriptionId) subscriptionId += 1
       unsubscriber()

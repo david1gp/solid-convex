@@ -10,6 +10,7 @@ import { orgTables } from "#src/org/org_convex/orgTables.ts"
 import { projectTables } from "#src/project/convex/projectTables.ts"
 import { resourceTables } from "#src/resource/convex/resourceTables.ts"
 import { teamTables } from "#src/team/convex/teamTables.ts"
+import { userManagementTables } from "#src/user_management/convex/userManagementTables.ts"
 
 const schema = defineSchema({
   ...authTables,
@@ -22,6 +23,7 @@ const schema = defineSchema({
   ...resourceTables,
   ...fileTables,
   ...kvTables,
+  ...userManagementTables,
   ...hierarchyDeleteTables,
 })
 

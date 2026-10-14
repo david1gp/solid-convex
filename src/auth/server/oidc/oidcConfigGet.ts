@@ -6,6 +6,7 @@ import type { OidcConfig } from "#src/auth/server/oidc/oidcConfig.ts"
 const oidcDefaultScopes = ["openid", "profile", "email"] as const
 const oidcZitadelRoleScopes = [
   "urn:zitadel:iam:org:project:role:user",
+  "urn:zitadel:iam:org:project:role:member",
   "urn:zitadel:iam:org:project:role:admin",
 ] as const
 const oidcScopeCharacterPattern = /^[\u0021\u0023-\u005B\u005D-\u007E]+$/u

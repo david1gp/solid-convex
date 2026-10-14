@@ -1,3 +1,4 @@
+import { mdiAccountCogOutline } from "@adaptive-ds/mdi/mdiAccountCogOutline.js"
 import { mdiAccountGroup } from "@adaptive-ds/mdi/mdiAccountGroup.js"
 import { mdiAccountMultipleOutline } from "@adaptive-ds/mdi/mdiAccountMultipleOutline.js"
 import { mdiBriefcaseOutline } from "@adaptive-ds/mdi/mdiBriefcaseOutline.js"
@@ -5,6 +6,7 @@ import { mdiFileDocument } from "@adaptive-ds/mdi/mdiFileDocument.js"
 import { mdiNoteTextOutline } from "@adaptive-ds/mdi/mdiNoteTextOutline.js"
 import { urlOrgList } from "#src/org/org_url/urlOrg.ts"
 import { urlResourceList } from "#src/resource/url/urlResource.ts"
+import { urlUserManagement } from "#src/user_management/url/urlUserManagement.ts"
 import { ttt } from "#ui/i18n/ttt.ts"
 
 export function overviewPageStateCreate() {
@@ -33,6 +35,12 @@ export function overviewPageStateCreate() {
         icon: mdiNoteTextOutline,
         title: ttt("Notes"),
         description: ttt("Create and edit project markdown notes."),
+      },
+      {
+        href: urlUserManagement(),
+        icon: mdiAccountCogOutline,
+        title: ttt("User Management"),
+        description: ttt("Manage user roles and team assignments."),
       },
       {
         href: urlResourceList(),

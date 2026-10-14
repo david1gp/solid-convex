@@ -10,6 +10,7 @@ import { getRoutesOrg } from "#src/org/org_url/getRoutesOrg.ts"
 import { projectRoutesCreate } from "#src/project/url/projectRoutesCreate.ts"
 import { getRoutesResource } from "#src/resource/url/getRoutesResource.ts"
 import { teamRoutesCreate } from "#src/team/url/teamRoutesCreate.ts"
+import { userManagementRoutesCreate } from "#src/user_management/url/userManagementRoutesCreate.ts"
 
 const mountedNonDemoRoutes = [
   ...getRoutesAuth(),
@@ -21,6 +22,7 @@ const mountedNonDemoRoutes = [
   ...teamRoutesCreate(),
   ...projectRoutesCreate(),
   ...noteRoutesCreate(),
+  ...userManagementRoutesCreate(),
 ]
 
 describe("page demo route inventory", () => {
@@ -28,14 +30,14 @@ describe("page demo route inventory", () => {
     const mountedPaths = mountedNonDemoRoutes.map(({ path }) => path).sort()
     const inventoryPaths: string[] = pageRouteInventory.map(({ route }) => route).sort()
 
-    expect(mountedPaths).toHaveLength(89)
-    expect(inventoryPaths).toHaveLength(89)
+    expect(mountedPaths).toHaveLength(91)
+    expect(inventoryPaths).toHaveLength(91)
     expect(inventoryPaths).toEqual(mountedPaths)
   })
 
   test("assigns each route a distinct generator-compatible page demo entry and matching example params", () => {
     const demoEntries = pageRouteInventory.map(({ demoEntry }) => demoEntry)
-    expect(new Set(demoEntries).size).toBe(89)
+    expect(new Set(demoEntries).size).toBe(91)
 
     for (const { route, title, pageImport, params, demoEntry } of pageRouteInventory) {
       expect(title.length).toBeGreaterThan(0)
@@ -51,7 +53,7 @@ describe("page demo route inventory", () => {
     const guardedRoutes = pageRouteInventory.filter(({ route }) => !pageDemoRouteIsMounted(route))
     const mountedRoutes = pageRouteInventory.filter(({ route }) => pageDemoRouteIsMounted(route))
 
-    expect(guardedRoutes).toHaveLength(53)
+    expect(guardedRoutes).toHaveLength(55)
     expect(mountedRoutes).toHaveLength(36)
   })
 

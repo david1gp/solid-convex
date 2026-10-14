@@ -490,6 +490,18 @@ const entries = [
     pageImport: "#src/note/ui/NotePage.tsx",
     params: { orgHandle: "sample-org", teamId: "team-1", projectId: "project-1" },
   },
+  {
+    route: "/user-management",
+    title: "User management",
+    pageImport: "#src/user_management/ui/UserManagementPage.tsx",
+    params: {},
+  },
+  {
+    route: "/user-management/:userId",
+    title: "User management details",
+    pageImport: "#src/user_management/ui/UserManagementPage.tsx",
+    params: { userId: "user-1" },
+  },
 ] as const
 
 export const pageRouteInventory = entries.map((entry) => ({

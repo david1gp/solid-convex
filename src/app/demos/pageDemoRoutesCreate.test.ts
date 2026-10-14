@@ -6,8 +6,8 @@ import { pageRouteInventory } from "#src/app/demos/pageRouteInventory.ts"
 describe("page demo routing", () => {
   test("registers a catalog and exactly one dedicated route per inventory entry", () => {
     const paths = pageDemoRoutePathsCreate()
-    expect(paths).toHaveLength(89)
-    expect(new Set(paths).size).toBe(89)
+    expect(paths).toHaveLength(91)
+    expect(new Set(paths).size).toBe(91)
     expect(paths).toEqual(pageRouteInventory.map(({ route }) => `/demos${route === "/" ? "/root" : route}`))
     expect(paths).toContain("/demos/root")
     expect(paths).not.toContain("/demos/pages")
@@ -65,7 +65,7 @@ describe("page demo routing", () => {
       Bun.file(new URL("../../auth/ui/profile_me/UserProfileMeApiKeysPage.tsx", import.meta.url)).text(),
       Bun.file(new URL("../../auth/ui/profile_me/userProfileMeApiKeysDemoStateCreate.ts", import.meta.url)).text(),
     ])
-    expect(pageRouteInventory.filter((entry) => entry.route !== "/profile/api-keys")).toHaveLength(88)
+    expect(pageRouteInventory.filter((entry) => entry.route !== "/profile/api-keys")).toHaveLength(90)
     expect(boundary).toContain('route === "/profile/api-keys"')
     expect(boundary).toContain("pageDemoRouteIsMounted(entry().route)")
     expect(boundary).toContain("Page view not mounted yet")

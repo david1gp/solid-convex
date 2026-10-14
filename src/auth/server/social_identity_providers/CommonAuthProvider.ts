@@ -28,12 +28,14 @@ const oidcAuthProviderSchema = a.object({
   issuer: a.pipe(a.string(), a.minLength(1)),
   ...commonAuthProviderDataSchema,
   role: a.optional(userRoleSchema),
+  roles: a.optional(a.array(userRoleSchema)),
 })
 
 const commonAuthProviderArgsFields = {
   provider: a.enum(loginProvider),
   issuer: a.optional(a.string()),
   role: a.optional(userRoleSchema),
+  roles: a.optional(a.array(userRoleSchema)),
   ...commonAuthProviderDataSchema,
 } as const
 

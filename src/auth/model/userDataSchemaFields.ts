@@ -14,4 +14,5 @@ export const userDataSchemaFields = {
   email: a.optional(emailSchema),
   emailVerifiedAt: a.optional(dateTimeSchema),
   role: userRoleSchema,
+  roles: a.optional(a.array(userRoleSchema)),
 } as const

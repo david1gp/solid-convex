@@ -67,6 +67,7 @@ test("oidcConfigGet reads server-only OIDC settings and defaults scopes", async 
           "profile",
           "email",
           "urn:zitadel:iam:org:project:role:user",
+          "urn:zitadel:iam:org:project:role:member",
           "urn:zitadel:iam:org:project:role:admin",
         ])
       }
@@ -92,6 +93,7 @@ test("oidcConfigGet reads server-only OIDC settings and defaults scopes", async 
           "profile",
           "custom-scope",
           "urn:zitadel:iam:org:project:role:user",
+          "urn:zitadel:iam:org:project:role:member",
           "urn:zitadel:iam:org:project:role:admin",
         ])
       }
@@ -107,6 +109,23 @@ test("oidcConfigGet reads server-only OIDC settings and defaults scopes", async 
     },
     async () => {
       expect(oidcConfigGet().success).toBe(false)
+    },
+  )
+
+  await withEnvironment(
+    {
+      OIDC_ISSUER: "https://issuer.example",
+      OIDC_CLIENT_ID: "client-id",
+      OIDC_ZITADEL_ORG_ID: "380716752838852623",
+    },
+    async () => {
+      const result = oidcConfigGet()
+      expect(result.success).toBe(true)
+      if (result.success) {
+        expect(result.data.scopes).toContain("urn:zitadel:iam:org:project:role:member")
+        expect(result.data.scopes).toContain("urn:zitadel:iam:org:project:role:user")
+        expect(result.data.scopes).toContain("urn:zitadel:iam:org:project:role:admin")
+      }
     },
   )
 })

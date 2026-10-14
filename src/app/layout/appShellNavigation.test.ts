@@ -10,8 +10,9 @@ describe("appShellNavigation", () => {
       "Teams",
       "Projects",
       "Notes",
+      "User Management",
     ])
-    expect(items.map((i) => i.href)).toEqual(["/overview", "/org", "/team", "/project", "/note"])
+    expect(items.map((i) => i.href)).toEqual(["/overview", "/org", "/team", "/project", "/note", "/user-management"])
   })
 
   it("removes Resources from the sidebar items", () => {

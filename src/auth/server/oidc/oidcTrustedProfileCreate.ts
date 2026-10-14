@@ -7,6 +7,7 @@ export function oidcTrustedProfileCreate(
   claims: OidcIdTokenClaims,
   role?: UserRole,
   userInfo?: { name?: string; picture?: string },
+  roles?: UserRole[],
 ): Extract<CommonAuthProvider, { provider: typeof loginProvider.oidc }> {
   const givenName = claims.given_name?.trim()
   const fullName = claims.name?.trim() || userInfo?.name?.trim()
@@ -20,6 +21,7 @@ export function oidcTrustedProfileCreate(
     image: tokenPicture ?? userInfo?.picture ?? "",
     username: claims.preferred_username ?? "",
     ...(claims.email_verified === true && claims.email ? { email: claims.email } : {}),
-    ...(role ? { role } : {}),
+    ...(role !== undefined ? { role } : {}),
+    ...(roles !== undefined ? { roles } : {}),
   }
 }

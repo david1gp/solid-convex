@@ -18,6 +18,7 @@ export interface UserProfile extends HasCreatedAtUpdatedDeletedAt {
   email?: string
   emailVerifiedAt?: string
   role: UserRole
+  roles?: UserRole[]
   orgHandle?: string
   orgRole?: OrgRole
 }

@@ -11,6 +11,7 @@ import { oidcTransactionCookie } from "#src/auth/server/oidc/oidcTransactionCook
 import { oidcTrustedProfileCreate } from "#src/auth/server/oidc/oidcTrustedProfileCreate.ts"
 import { oidcUserInfoGet } from "#src/auth/server/oidc/oidcUserInfoGet.ts"
 import { oidcZitadelRoleGet } from "#src/auth/server/oidc/oidcZitadelRoleGet.ts"
+import { oidcZitadelRolesGet } from "#src/auth/server/oidc/oidcZitadelRolesGet.ts"
 
 export async function signInViaOidcCallbackRequestHandler(ctx: ActionCtx, request: Request): Promise<Response> {
   const op = "signInViaOidcCallbackRequestHandler"
@@ -81,12 +82,17 @@ export async function signInViaOidcCallbackRequestHandler(ctx: ActionCtx, reques
     needsName: !idTokenName,
     needsPicture: !claimsResult.data.picture?.trim(),
   })
+  const zitadelRoles = configResult.data.zitadelOrgId
+    ? oidcZitadelRolesGet(claimsResult.data["urn:zitadel:iam:org:project:roles"], configResult.data.zitadelOrgId)
+    : undefined
+  const zitadelRole = configResult.data.zitadelOrgId
+    ? oidcZitadelRoleGet(claimsResult.data["urn:zitadel:iam:org:project:roles"], configResult.data.zitadelOrgId)
+    : undefined
   const providerInfo = oidcTrustedProfileCreate(
     claimsResult.data,
-    configResult.data.zitadelOrgId
-      ? oidcZitadelRoleGet(claimsResult.data["urn:zitadel:iam:org:project:roles"], configResult.data.zitadelOrgId)
-      : undefined,
+    zitadelRole,
     userInfoResult.success ? userInfoResult.data : undefined,
+    zitadelRoles,
   )
   let sessionResult: Awaited<ReturnType<ActionCtx["runMutation"]>>
   try {

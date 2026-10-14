@@ -15,6 +15,7 @@ import { getRoutesResource } from "#src/resource/url/getRoutesResource.ts"
 import { projectRoutesCreate } from "#src/project/url/projectRoutesCreate.ts"
 import { teamRoutesCreate } from "#src/team/url/teamRoutesCreate.ts"
 import { noteRoutesCreate } from "#src/note/url/noteRoutesCreate.ts"
+import { userManagementRoutesCreate } from "#src/user_management/url/userManagementRoutesCreate.ts"
 import { LayoutWrapperDemo } from "#ui/static/layout/LayoutWrapperDemo.tsx"
 import "./tailwind.css"
 
@@ -32,6 +33,7 @@ const routesApp = [
       ...teamRoutesCreate(),
       ...projectRoutesCreate(),
       ...noteRoutesCreate(),
+      ...userManagementRoutesCreate(),
     ],
   },
 ]

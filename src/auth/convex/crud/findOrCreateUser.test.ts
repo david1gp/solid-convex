@@ -153,6 +153,189 @@ test("OIDC role synchronization upgrades and downgrades an existing user on each
   if (downgrade.success) expect(downgrade.data.profile.role).toBe("user")
 })
 
+test("OIDC role synchronization revokes old persisted admin on verified empty roles grant", async () => {
+  const user = {
+    _id: "user-1",
+    _creationTime: Date.now(),
+    name: "Admin User",
+    image: "",
+    email: "admin@example.test",
+    role: "admin" as UserRole,
+    roles: ["admin" as UserRole],
+    createdAt: "2026-09-22T00:00:00.000Z",
+    updatedAt: "2026-09-22T00:00:00.000Z",
+  }
+  const account = {
+    _id: "account-1",
+    _creationTime: Date.now(),
+    userId: user._id,
+    provider: "oidc" as const,
+    issuer: "https://issuer.example",
+    providerAccountId: "subject-admin",
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  }
+  const rows = { users: [user], authAccounts: [account], orgMembers: [] as unknown[] }
+  const ctx = {
+    db: {
+      query(table: keyof typeof rows) {
+        const builder = {
+          withIndex(_name: string, callback: (query: { eq: (field: string, value: unknown) => unknown }) => unknown) {
+            const query = { eq: () => query }
+            callback(query)
+            return builder
+          },
+          unique: async () => (table === "authAccounts" ? rows.authAccounts[0] : null),
+          first: async () => null,
+        }
+        return builder
+      },
+      get: async (table: keyof typeof rows) => (table === "users" ? rows.users[0] : null),
+      patch: async (_table: "users", _id: string, value: Partial<typeof user>) => Object.assign(user, value),
+    },
+  } as never
+
+  const revokeResult = await findOrCreateUserFn(ctx, {
+    provider: "oidc",
+    issuer: account.issuer,
+    providerId: account.providerAccountId,
+    givenName: "Admin",
+    familyName: "User",
+    image: "",
+    username: "admin",
+    role: "user",
+    roles: [],
+  })
+  expect(revokeResult.success).toBe(true)
+  expect(user.role).toBe("user")
+  expect(user.roles).toEqual([])
+  if (revokeResult.success) {
+    expect(revokeResult.data.profile.role).toBe("user")
+    expect(revokeResult.data.profile.roles).toEqual([])
+  }
+})
+
+test("OIDC role synchronization preserves existing admin when role info is unconfigured or unavailable", async () => {
+  const user = {
+    _id: "user-1",
+    _creationTime: Date.now(),
+    name: "Admin User",
+    image: "",
+    email: "admin@example.test",
+    role: "admin" as UserRole,
+    roles: ["admin" as UserRole],
+    createdAt: "2026-09-22T00:00:00.000Z",
+    updatedAt: "2026-09-22T00:00:00.000Z",
+  }
+  const account = {
+    _id: "account-1",
+    _creationTime: Date.now(),
+    userId: user._id,
+    provider: "oidc" as const,
+    issuer: "https://issuer.example",
+    providerAccountId: "subject-admin",
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  }
+  const rows = { users: [user], authAccounts: [account], orgMembers: [] as unknown[] }
+  const ctx = {
+    db: {
+      query(table: keyof typeof rows) {
+        const builder = {
+          withIndex(_name: string, callback: (query: { eq: (field: string, value: unknown) => unknown }) => unknown) {
+            const query = { eq: () => query }
+            callback(query)
+            return builder
+          },
+          unique: async () => (table === "authAccounts" ? rows.authAccounts[0] : null),
+          first: async () => null,
+        }
+        return builder
+      },
+      get: async (table: keyof typeof rows) => (table === "users" ? rows.users[0] : null),
+      patch: async (_table: "users", _id: string, value: Partial<typeof user>) => Object.assign(user, value),
+    },
+  } as never
+
+  const unconfiguredResult = await findOrCreateUserFn(ctx, {
+    provider: "oidc",
+    issuer: account.issuer,
+    providerId: account.providerAccountId,
+    givenName: "Admin",
+    familyName: "User",
+    image: "",
+    username: "admin",
+  })
+  expect(unconfiguredResult.success).toBe(true)
+  expect(user.role).toBe("admin")
+  expect(user.roles).toEqual(["admin"])
+  if (unconfiguredResult.success) {
+    expect(unconfiguredResult.data.profile.role).toBe("admin")
+    expect(unconfiguredResult.data.profile.roles).toEqual(["admin"])
+  }
+})
+
+test("new-user creation derives effective scalar role from authoritative roles array to avoid mismatch", async () => {
+  const rows = { users: [] as Record<string, unknown>[], authAccounts: [] as Record<string, unknown>[] }
+  const ctx = {
+    db: {
+      query(_table: keyof typeof rows) {
+        const builder = {
+          withIndex(_name: string, callback: (query: { eq: (field: string, value: unknown) => unknown }) => unknown) {
+            const query = { eq: () => query }
+            callback(query)
+            return builder
+          },
+          unique: async () => null,
+        }
+        return builder
+      },
+      insert: async (table: keyof typeof rows, value: Record<string, unknown>) => {
+        const row = { ...value, _id: `${table}-${rows[table].length + 1}`, _creationTime: Date.now() }
+        rows[table].push(row)
+        return row._id
+      },
+    },
+  } as never
+
+  const resultAdmin = await createUserFromAuthProviderFn(ctx, {
+    provider: "oidc",
+    issuer: "https://issuer.example",
+    providerId: "subject-mismatch",
+    givenName: "Mismatch",
+    familyName: "User",
+    image: "",
+    username: "mismatch",
+    role: "user",
+    roles: ["admin"],
+  })
+  expect(resultAdmin.success).toBe(true)
+  expect(rows.users[0]?.role).toBe("admin")
+  expect(rows.users[0]?.roles).toEqual(["admin"])
+  if (resultAdmin.success) {
+    expect(resultAdmin.data.role).toBe("admin")
+    expect(resultAdmin.data.roles).toEqual(["admin"])
+  }
+
+  const resultEmpty = await createUserFromAuthProviderFn(ctx, {
+    provider: "oidc",
+    issuer: "https://issuer.example",
+    providerId: "subject-empty-roles",
+    givenName: "Empty",
+    familyName: "User",
+    image: "",
+    username: "empty",
+    roles: [],
+  })
+  expect(resultEmpty.success).toBe(true)
+  expect(rows.users[1]?.role).toBe("user")
+  expect(rows.users[1]?.roles).toEqual([])
+  if (resultEmpty.success) {
+    expect(resultEmpty.data.role).toBe("user")
+    expect(resultEmpty.data.roles).toEqual([])
+  }
+})
+
 test("OIDC role synchronization assigns a configured role to a new user", async () => {
   const rows = { users: [] as Record<string, unknown>[], authAccounts: [] as Record<string, unknown>[] }
   const ctx = {

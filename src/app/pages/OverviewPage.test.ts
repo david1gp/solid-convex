@@ -15,6 +15,7 @@ describe("overview page navigation", () => {
     expect(state).toContain('"/team"')
     expect(state).toContain('"/project"')
     expect(state).toContain('"/note"')
+    expect(state).toContain("urlUserManagement()")
     expect(state).toContain("urlResourceList()")
     expect(source).toContain("<AuthLinks")
   })

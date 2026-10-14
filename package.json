@@ -53,6 +53,7 @@
     "@adaptive-ds/mdi": "^0.1.2",
     "@adaptive-ds/result": "^0.5.0",
     "@adaptive-ds/utils": "^0.13.0",
+    "@adaptive-ds/zitadel-cli": "0.3.1",
     "@bradenmacdonald/s3-lite-client": "^0.9.6",
     "@corvu/dialog": "^0.2.4",
     "@corvu/popover": "^0.2.0",

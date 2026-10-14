@@ -4,6 +4,7 @@ export type UserRole = keyof typeof userRole
 
 export const userRole = {
   user: "user",
+  member: "member",
   admin: "admin",
 } as const
 

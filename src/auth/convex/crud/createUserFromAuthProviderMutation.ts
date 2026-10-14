@@ -7,6 +7,7 @@ import { docUserToUserProfile } from "#src/auth/convex/user/docUserToUserProfile
 import type { UserProfile } from "#src/auth/model/UserProfile.ts"
 import { loginProvider } from "#src/auth/model_field/socialLoginProvider.ts"
 import { userRole } from "#src/auth/model_field/userRole.ts"
+import { userRoleEffectiveGet } from "#src/auth/model_field/userRoleEffectiveGet.ts"
 import {
   type CommonAuthProvider,
   commonAuthProviderValidator,
@@ -41,11 +42,19 @@ export async function createUserFromAuthProviderFn(
 
   // Create user
   const userName = getUserNameFromCommonAuthProvider(authProvider, "New User")
+  const oidcRoles = authProvider.provider === loginProvider.oidc ? authProvider.roles : undefined
+  const effectiveRole =
+    authProvider.provider === loginProvider.oidc
+      ? oidcRoles !== undefined
+        ? userRoleEffectiveGet(oidcRoles)
+        : (authProvider.role ?? userRole.user)
+      : userRole.user
   const toCreate = {
     name: userName,
     image: authProvider.image,
     ...(authProvider.email && { email: authProvider.email }),
-    role: authProvider.provider === loginProvider.oidc ? (authProvider.role ?? userRole.user) : userRole.user,
+    role: effectiveRole,
+    ...(oidcRoles !== undefined ? { roles: oidcRoles } : {}),
     createdAt: iso,
     updatedAt: iso,
   } as const satisfies WithoutSystemFields<DocUser>

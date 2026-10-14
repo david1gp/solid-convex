@@ -208,6 +208,109 @@ test("OIDC accounts bind the same subject separately for different issuers", asy
   expect(db.accounts.map((account) => account.issuer)).toEqual(["https://one.example", "https://two.example"])
 })
 
+test("OIDC callback with configured Zitadel organization and absent roles claim revokes persisted admin", async () => {
+  await withEnvironment(async () => {
+    process.env.OIDC_ZITADEL_ORG_ID = "380716752838852623"
+    const { privateKey, publicJwk } = await signingKeysCreate()
+    const db = createDatabase()
+    const existingAdminUser = {
+      _id: "user-admin",
+      _creationTime: Date.now(),
+      name: "Admin User",
+      image: "",
+      email: "ada@example.test",
+      role: "admin",
+      roles: ["admin"],
+      createdAt: "2026-09-22T00:00:00.000Z",
+      updatedAt: "2026-09-22T00:00:00.000Z",
+    }
+    const existingAccount = {
+      _id: "account-admin",
+      _creationTime: Date.now(),
+      userId: existingAdminUser._id,
+      provider: "oidc",
+      issuer,
+      providerAccountId: "subject-123",
+      createdAt: existingAdminUser.createdAt,
+      updatedAt: existingAdminUser.updatedAt,
+    }
+    db.users.push(existingAdminUser)
+    db.accounts.push(existingAccount)
+
+    const mutationCtx = {
+      db: {
+        ...db,
+        get: async (_table: string, id: string) => db.users.find((u) => u._id === id) ?? null,
+        patch: async (_table: string, id: string, value: Record<string, unknown>) => {
+          const user = db.users.find((u) => u._id === id)
+          if (user) Object.assign(user, value)
+        },
+      },
+    } as unknown as MutationCtx
+
+    const mutationCalls: unknown[] = []
+    const ctx = {
+      runMutation: async (_reference: unknown, providerInfo: unknown) => {
+        mutationCalls.push(providerInfo)
+        const syncResult = await findOrCreateUserFn(mutationCtx, providerInfo as any)
+        expect(syncResult.success).toBe(true)
+        return { success: true, data: createUserSession() }
+      },
+      scheduler: {
+        runAfter: async () => {},
+      },
+    } as never
+
+    let idTokenNonce = ""
+
+    await withFetch(
+      async (input, init) => {
+        const request = new Request(input, init)
+        if (request.url === `${issuer}/.well-known/openid-configuration`) return Response.json(discovery)
+        if (request.url === discovery.token_endpoint)
+          return Response.json({ id_token: await idTokenCreate(privateKey, idTokenNonce) })
+        if (request.url === discovery.jwks_uri) return Response.json({ keys: [publicJwk] })
+        return new Response("not found", { status: 404 })
+      },
+      async () => {
+        const dispatcher = createHonoDispatcher()
+        addHttpRoutesAuth(dispatcher)
+        const startResponse = await dispatcher.fetch(new Request(urlSignInViaOidc("/")), ctx)
+        expect(startResponse.status).toBe(302)
+        const authorizationUrl = new URL(startResponse.headers.get("location") ?? "")
+        expect(authorizationUrl.searchParams.get("scope")).toContain("urn:zitadel:iam:org:project:role:member")
+        idTokenNonce = authorizationUrl.searchParams.get("nonce") ?? ""
+        const cookie = startResponse.headers.get("set-cookie")?.split(";", 1)[0] ?? ""
+        const state = authorizationUrl.searchParams.get("state") ?? ""
+        const callbackResponse = await dispatcher.fetch(
+          new Request(`${callbackUrl}?state=${encodeURIComponent(state)}&code=authorization-code`, {
+            headers: { Cookie: cookie },
+          }),
+          ctx,
+        )
+
+        expect(callbackResponse.status).toBe(302)
+        expect(mutationCalls).toEqual([
+          {
+            provider: "oidc",
+            issuer,
+            providerId: "subject-123",
+            givenName: "Ada",
+            familyName: "User",
+            image: "",
+            username: "ada",
+            email: "ada@example.test",
+            role: "user",
+            roles: [],
+          },
+        ])
+        expect(existingAdminUser.role).toBe("user")
+        expect(existingAdminUser.roles).toEqual([])
+      },
+    )
+  })
+})
+
 async function signingKeysCreate() {
   const { privateKey, publicKey } = await generateKeyPair("RS256")
   const publicJwk = await exportJWK(publicKey)

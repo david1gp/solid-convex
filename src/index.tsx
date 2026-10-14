@@ -12,6 +12,8 @@ import { getRoutesOrgInvitation } from "#src/org/invitation_url/getRoutesOrgInvi
 import { getRoutesOrgMember } from "#src/org/member_url/getRoutesOrgMember.ts"
 import { getRoutesOrg } from "#src/org/org_url/getRoutesOrg.ts"
 import { getRoutesResource } from "#src/resource/url/getRoutesResource.ts"
+import { projectRoutesCreate } from "#src/project/url/projectRoutesCreate.ts"
+import { teamRoutesCreate } from "#src/team/url/teamRoutesCreate.ts"
 import { LayoutWrapperDemo } from "#ui/static/layout/LayoutWrapperDemo.tsx"
 import "./tailwind.css"
 
@@ -26,6 +28,8 @@ const routesApp = [
       ...getRoutesOrgMember(),
       ...getRoutesOrgInvitation(),
       ...getRoutesResource(),
+      ...teamRoutesCreate(),
+      ...projectRoutesCreate(),
     ],
   },
 ]

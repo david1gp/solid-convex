@@ -21,14 +21,13 @@ test("an authenticated unaffiliated user can reach an organization invitation ac
   expect(appMembershipAccessIsBlocked(unaffiliatedSession, "/org/acme/invitations/invitation-code/accept")).toBe(false)
 })
 
-test("an authenticated unaffiliated user can reach a workspace invitation acceptance page", () => {
-  expect(appMembershipAccessIsBlocked(unaffiliatedSession, "/invite/invitation-code/accept")).toBe(false)
-})
-
 test("an unauthenticated user cannot bypass auth on an invitation acceptance page", () => {
-  expect(appMembershipAccessIsBlocked(null, "/invite/invitation-code/accept")).toBe(true)
+  expect(appMembershipAccessIsBlocked(null, "/org/acme/invitations/invitation-code/accept")).toBe(true)
 })
 
-test("an authenticated unaffiliated user is denied protected application routes", () => {
-  expect(appMembershipAccessIsBlocked(unaffiliatedSession, "/org/acme/invitations")).toBe(true)
+test("an authenticated user without organization membership is allowed application routes", () => {
+  expect(appMembershipAccessIsBlocked(unaffiliatedSession, "/org/acme/invitations")).toBe(false)
+  expect(appMembershipAccessIsBlocked(unaffiliatedSession, "/team")).toBe(false)
+  expect(appMembershipAccessIsBlocked(unaffiliatedSession, "/project")).toBe(false)
+  expect(appMembershipAccessIsBlocked(unaffiliatedSession, "/note")).toBe(false)
 })

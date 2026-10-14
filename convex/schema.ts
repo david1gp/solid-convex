@@ -5,11 +5,15 @@ import { kvTables } from "#src/file/kv/kvTables.ts"
 import { orgInvitationTables } from "#src/org/invitation_convex/orgInvitationTables.ts"
 import { orgMemberTables } from "#src/org/member_convex/orgMemberTables.ts"
 import { orgTables } from "#src/org/org_convex/orgTables.ts"
+import { projectTables } from "#src/project/convex/projectTables.ts"
 import { resourceTables } from "#src/resource/convex/resourceTables.ts"
+import { teamTables } from "#src/team/convex/teamTables.ts"
 
 const schema = defineSchema({
   ...authTables,
   ...orgTables,
+  ...teamTables,
+  ...projectTables,
   ...orgInvitationTables,
   ...orgMemberTables,
   ...resourceTables,

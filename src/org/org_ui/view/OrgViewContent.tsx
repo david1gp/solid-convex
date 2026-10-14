@@ -4,6 +4,8 @@ import type { OrgMemberProfile } from "#src/org/member_model/OrgMemberProfile.ts
 import { OrgMemberListSection } from "#src/org/member_ui/list/OrgMemberListSection.tsx"
 import type { OrgModel } from "#src/org/org_model/OrgModel.ts"
 import { OrgViewInformation } from "#src/org/org_ui/view/OrgViewInformation.tsx"
+import { Show } from "solid-js"
+import { TeamListSection } from "#src/team/ui/TeamListSection.tsx"
 
 export function OrgViewContent(p: {
   org: OrgModel
@@ -20,6 +22,9 @@ export function OrgViewContent(p: {
   return (
     <>
       <OrgViewInformation showEditButton={true} org={p.org} editHref={p.editHref} />
+      <Show when={!p.demo}>
+        <TeamListSection orgHandle={p.org.orgHandle} />
+      </Show>
       <OrgMemberListSection
         orgHandle={p.org.orgHandle}
         members={p.members}

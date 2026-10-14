@@ -1,19 +1,15 @@
-import { mdiAccountGroup } from "@adaptive-ds/mdi/mdiAccountGroup.js"
-import { mdiAccountOutline } from "@adaptive-ds/mdi/mdiAccountOutline.js"
 import { mdiChevronRight } from "@adaptive-ds/mdi/mdiChevronRight.js"
-import { mdiFileDocument } from "@adaptive-ds/mdi/mdiFileDocument.js"
 import { Link } from "@tanstack/solid-router"
 import { For } from "solid-js"
 import { ttt } from "#ui/i18n/ttt.ts"
 import { AuthLinks } from "#src/auth/ui/AuthLinks.tsx"
-import { urlUserProfileMe } from "#src/auth/url/pageRouteAuth.ts"
-import { urlOrgList } from "#src/org/org_url/urlOrg.ts"
-import { urlResourceList } from "#src/resource/url/urlResource.ts"
+import { overviewPageStateCreate } from "#src/app/pages/overviewPageStateCreate.ts"
 import { PageHeader } from "#src/ui/header/PageHeader.tsx"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { PageWrapper } from "#ui/static/page/PageWrapper.jsx"
 
 export function OverviewPage(p: { demo?: boolean } = {}) {
+  const state = overviewPageStateCreate()
   return (
     <PageWrapper>
       <PageHeader
@@ -22,7 +18,7 @@ export function OverviewPage(p: { demo?: boolean } = {}) {
         class="pb-8 pt-4"
       />
       <section aria-label={ttt("Shortcuts")} class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <For each={overviewCards()}>
+        <For each={state.cards()}>
           {(card) => (
             <Link
               to={card.href}
@@ -53,27 +49,4 @@ export function OverviewPage(p: { demo?: boolean } = {}) {
       </section>
     </PageWrapper>
   )
-}
-
-function overviewCards() {
-  return [
-    {
-      href: urlOrgList(),
-      icon: mdiAccountGroup,
-      title: ttt("Organizations"),
-      description: ttt("Manage organizations and their members."),
-    },
-    {
-      href: urlResourceList(),
-      icon: mdiFileDocument,
-      title: ttt("Resources"),
-      description: ttt("Create resources, files and share them."),
-    },
-    {
-      href: urlUserProfileMe(),
-      icon: mdiAccountOutline,
-      title: ttt("Account"),
-      description: ttt("View and update your profile and settings."),
-    },
-  ]
 }

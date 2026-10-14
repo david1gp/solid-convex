@@ -7,12 +7,14 @@ describe("overview page navigation", () => {
     expect(source).not.toMatch(/NavStatic|NavCenter|UserNavButton/)
   })
 
-  test("links to the main sections and the account page", async () => {
+  test("links to the hierarchy sections, user management, and resources", async () => {
     const source = await Bun.file(new URL("./OverviewPage.tsx", import.meta.url)).text()
+    const state = await Bun.file(new URL("./overviewPageStateCreate.ts", import.meta.url)).text()
 
-    expect(source).toContain("urlOrgList()")
-    expect(source).toContain("urlResourceList()")
-    expect(source).toContain("urlUserProfileMe()")
+    expect(state).toContain("urlOrgList()")
+    expect(state).toContain('"/team"')
+    expect(state).toContain('"/project"')
+    expect(state).toContain("urlResourceList()")
     expect(source).toContain("<AuthLinks")
   })
 })

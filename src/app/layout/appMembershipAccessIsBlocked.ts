@@ -3,7 +3,7 @@ import { invitationAcceptancePathMatches } from "#src/app/layout/invitationAccep
 import type { UserSession } from "#src/auth/model/UserSession.ts"
 
 export function appMembershipAccessIsBlocked(session: UserSession | undefined | null, pathname: string): boolean {
-  if (!session) return true
+  if (!session?.profile) return true
   if (invitationAcceptancePathMatches(pathname)) return false
   return accessBlocked(session)
 }

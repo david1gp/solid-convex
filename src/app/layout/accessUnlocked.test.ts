@@ -21,12 +21,17 @@ test("an admin session unlocks privileged access without organization membership
   expect(accessUnlocked({ ...sessionBase, profile: { ...sessionBase.profile, role: "admin" } })).toBe(true)
 })
 
-test("a user session still needs organization membership for privileged access", () => {
-  expect(accessUnlocked({ ...sessionBase, profile: { ...sessionBase.profile, role: "user" } })).toBe(false)
+test("an authenticated user session is unlocked without organization membership", () => {
+  expect(accessUnlocked({ ...sessionBase, profile: { ...sessionBase.profile, role: "user" } })).toBe(true)
   expect(
     accessUnlocked({
       ...sessionBase,
       profile: { ...sessionBase.profile, role: "user", orgHandle: "acme", orgRole: "member" },
     }),
   ).toBe(true)
+})
+
+test("an unauthenticated session is not unlocked", () => {
+  expect(accessUnlocked(null)).toBe(false)
+  expect(accessUnlocked(undefined)).toBe(false)
 })

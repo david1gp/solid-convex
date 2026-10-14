@@ -50,7 +50,7 @@ export async function zitadelUserRolesSave(
     }
   }
 
-  const roleKeys = zitadelUserRolesMerge(existingRoleKeys ?? [], options.roles)
+  const mergedRoleKeys = zitadelUserRolesMerge(existingRoleKeys ?? [], options.roles)
 
   const legacyConfig = {
     baseUrl: options.config.baseUrl,
@@ -60,11 +60,22 @@ export async function zitadelUserRolesSave(
   }
 
   if (grantId !== undefined) {
+    if (
+      existingRoleKeys !== undefined &&
+      mergedRoleKeys.length === existingRoleKeys.length &&
+      mergedRoleKeys.every((roleKey, index) => roleKey === existingRoleKeys[index])
+    ) {
+      return createResult({
+        grantId,
+        roleKeys: mergedRoleKeys,
+      })
+    }
+
     const updateResult = await userGrantServiceUpdateUserGrant({
       config: legacyConfig,
       grantId,
       userId: options.userId,
-      request: { roleKeys },
+      request: { roleKeys: mergedRoleKeys },
       fetch: options.fetch,
     })
 
@@ -74,11 +85,11 @@ export async function zitadelUserRolesSave(
 
     return createResult({
       grantId,
-      roleKeys,
+      roleKeys: mergedRoleKeys,
     })
   }
 
-  if (roleKeys.length === 0) {
+  if (mergedRoleKeys.length === 0) {
     return createResult({
       roleKeys: [],
     })
@@ -89,7 +100,7 @@ export async function zitadelUserRolesSave(
     userId: options.userId,
     request: {
       projectId: options.config.projectId,
-      roleKeys,
+      roleKeys: mergedRoleKeys,
     },
     fetch: options.fetch,
   })
@@ -99,6 +110,6 @@ export async function zitadelUserRolesSave(
   }
 
   return createResult({
-    roleKeys,
+    roleKeys: mergedRoleKeys,
   })
 }

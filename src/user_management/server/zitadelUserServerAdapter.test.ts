@@ -182,6 +182,33 @@ test("zitadelUserRolesSave updates existing grant preserving unknown roles like 
   expect(capturedBody).toEqual({ roleKeys: ["contributor", "member", "admin"] })
 })
 
+test("zitadelUserRolesSave skips updating an existing grant when roles are unchanged", async () => {
+  let fetchCalled = false
+  const mockFetch = async () => {
+    fetchCalled = true
+    return new Response(null, { status: 500 })
+  }
+
+  const result = await zitadelUserRolesSave({
+    config: testConfig,
+    userId: "user-1",
+    roles: [userRole.member],
+    existingGrant: {
+      id: "grant-existing",
+      roleKeys: ["contributor", "member"],
+    },
+    fetch: mockFetch,
+  })
+
+  expect(result.success).toBe(true)
+  if (!result.success) return
+  expect(result.data).toEqual({
+    grantId: "grant-existing",
+    roleKeys: ["contributor", "member"],
+  })
+  expect(fetchCalled).toBe(false)
+})
+
 test("zitadelUserTeamIdsSave sets solid-convex.teamIds metadata in Zitadel", async () => {
   const captured: { entry?: { key: string; value: Uint8Array } } = {}
 

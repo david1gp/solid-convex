@@ -2,8 +2,9 @@
 
 Same scheme as allgroups-chat and dcc-app (see allgroups-chat's
 `ops/README.md` + `docs/ops-restructure-plan.md` for the rationale).
-This project is **dev-only**: the demo UI deploys to Cloudflare Pages, there
-is no self-hosted prod Convex deployment.
+The production UI deploys to `adaptive-solid-convex.pages.dev` and uses the
+self-hosted production Convex deployment at `solid-convex-convex.contentoren.de`
+(HTTP actions: `solid-convex-api.contentoren.de`).
 
 ## Machine
 
@@ -19,6 +20,10 @@ is no self-hosted prod Convex deployment.
   **and** the Convex CLI credentials (`CONVEX_SELF_HOSTED_URL` +
   `CONVEX_SELF_HOSTED_ADMIN_KEY`) of this machine's deployment. Bun auto-loads
   it in dev.
+- **`.env.production`** (repo root) — production app configuration and the
+  production self-hosted Convex CLI credentials. Never commit this file.
+  Development and production currently share the `solid-convex` R2 bucket;
+  its enabled `r2.dev` URL makes uploaded objects publicly readable.
 - **`ops/convex/.env.docker`** — the backend container env of this machine's
   deployment (quadlets).
 - **`.env.local`** — NOT ours: the Convex CLI regenerates it with
@@ -59,4 +64,24 @@ Logs: `journalctl --user -u <unit> -f`.
 - `env_update.bash` — push app env vars into the deployment env (skips
   `CONVEX_SELF_HOSTED_*`). This is separate from frontend deployment; for
   configuration changes, run `bun run convex:env:upload:development` explicitly.
+- Production env sync: `bun run convex:env:upload:production` reads
+  `.env.production`. Production function deployment is a separate step:
+  `bun run convex:deploy:production` (typecheck disabled, Convex schema validation
+  still runs). Neither command deploys the frontend.
 - `export_zip.bash` / `import_zip.bash` — snapshot export/import
+
+## Self-hosted troubleshooting: Node actions & container networking
+
+- **Node action execution & callbacks:** Node SDK actions (`"use node"`) require both a working executor **and** container reachability to the configured public cloud origin (`CONVEX_CLOUD_ORIGIN`) for `runQuery` and `runMutation`. Node action callbacks dispatch HTTP fetches back to `CONVEX_CLOUD_ORIGIN`.
+- **Embedded executor vs `NODE_EXECUTOR_URL`:** An earlier read-only project ops agent speculated that the Node executor was missing, but actual live evidence demonstrates the backend's embedded Node executor is running. Do not assert that `NODE_EXECUTOR_URL` is always required since the current embedded executor works.
+- **Root cause of callback `fetch failed`:** The observed failure on initial `ctx.runMutation` was caused by the container's inability to reach the public `CONVEX_CLOUD_ORIGIN` from Podman's `pasta` network (`--no-map-gw`) when router hairpinning is absent or DNS loopback fails.
+- **Public origin loopback fix via Quadlet drop-in:** When container egress cannot resolve or reach its own public origin FQDN, map the domain name to the host gateway (`host-gateway` / `host.containers.internal`, resolving to `169.254.1.2`). This directs egress traffic to the host reverse proxy (e.g. Caddy), preserving public HTTPS/TLS with valid certificates while avoiding hairpin NAT failures. Use a systemd Quadlet drop-in snippet:
+  ```ini
+  # ~/.config/containers/systemd/solid-convex-convex-preview.container.d/30-public-origin-loopback.conf
+  [Container]
+  PodmanArgs=--add-host=solid-convex-convex.leonardomora.de:host-gateway
+  ```
+  *(Note: `PodmanArgs=--add-host=...` is verified in the live preview runtime; Quadlet's native `AddHost=solid-convex-convex.leonardomora.de:host-gateway` is an optional equivalent. Do not modify the repo base container `ops/convex/solid-convex-backend.container` to hardcode deployment-specific hostnames universally, as public origins differ by deployment and not all environments require a loopback override.)*
+- **Public client URL must stay public:** `CONVEX_CLOUD_ORIGIN` and public client URLs must remain publicly accessible for external clients and SSO callbacks; do not point public client endpoints to internal-only addresses to work around container egress.
+- **Diagnostics without secrets:** Test container loopback and egress using a minimal `curl` or secret-free Node `fetch` against the origin URL rather than testing through credential-bearing Zitadel or storage actions.
+- **Pre-flight setup test recommendation:** Run a lightweight setup/connectivity test before executing destructive hierarchy deletion cascades or Zitadel admin sync to verify that Node action mutation callbacks succeed end-to-end.

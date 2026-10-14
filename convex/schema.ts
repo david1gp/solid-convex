@@ -1,6 +1,7 @@
 import { defineSchema } from "convex/server"
 import { authTables } from "#src/auth/convex/authTables.ts"
 import { fileTables } from "#src/file/convex/fileTables.ts"
+import { hierarchyDeleteTables } from "#src/hierarchy_delete/convex/hierarchyDeleteTables.ts"
 import { kvTables } from "#src/file/kv/kvTables.ts"
 import { noteTables } from "#src/note/convex/noteTables.ts"
 import { orgInvitationTables } from "#src/org/invitation_convex/orgInvitationTables.ts"
@@ -21,6 +22,7 @@ const schema = defineSchema({
   ...resourceTables,
   ...fileTables,
   ...kvTables,
+  ...hierarchyDeleteTables,
 })
 
 export default schema

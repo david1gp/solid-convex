@@ -1,40 +1,35 @@
-import { useParams } from "@tanstack/solid-router"
 import { Match, Switch } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { NavLinkButton } from "#src/app/nav/links/NavLinkButton.tsx"
 import { NavOrg } from "#src/app/nav/NavOrg.tsx"
-import { OrgMutate } from "#src/org/org_ui/mutate/OrgMutate.tsx"
+import { HierarchyDeleteView } from "#src/hierarchy_delete/ui/HierarchyDeleteView.tsx"
+import { orgDeletePageStateCreate } from "#src/org/org_ui/mutate/orgDeletePageStateCreate.ts"
 import { urlOrgRemove } from "#src/org/org_url/urlOrg.ts"
 import { ErrorPage } from "#src/ui/pages/ErrorPage.tsx"
-import { formMode, getFormModeTitle } from "#ui/input/form/formMode.ts"
 import { PageWrapper } from "#ui/static/page/PageWrapper.jsx"
 
-const mode = formMode.remove
-
 export function OrgDeletePage() {
-  const params = useParams({ strict: false })
-  const getOrgHandleParam = () => params().orgHandle
+  const state = orgDeletePageStateCreate()
+
   return (
     <Switch>
-      <Match when={!getOrgHandleParam()}>
+      <Match when={!state.orgHandle()}>
         <ErrorPage title={ttc("Missing :orgHandle in path")} />
       </Match>
-      <Match when={getOrgHandleParam()}>
+      <Match when={state.orgHandle()}>
         {(getOrgHandle) => (
           <PageWrapper>
-            <NavOrg getOrgPageTitle={getPageTitle} orgHandle={getOrgHandle()}>
+            <NavOrg getOrgPageTitle={state.pageTitle} orgHandle={getOrgHandle()}>
               <NavLinkButton href={urlOrgRemove(getOrgHandle())} isActive={true}>
                 {ttc("Delete")}
               </NavLinkButton>
             </NavOrg>
-            <OrgMutate mode={mode} orgHandle={getOrgHandle()} />
+            <div class="px-2 sm:px-4 py-6">
+              <HierarchyDeleteView target={state.target} onCancel={state.onCancel} onSuccess={state.onSuccess} />
+            </div>
           </PageWrapper>
         )}
       </Match>
     </Switch>
   )
-}
-
-function getPageTitle(orgName?: string, workspaceName?: string) {
-  return getFormModeTitle(mode, workspaceName ?? ttc("Organization"))
 }

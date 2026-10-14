@@ -8,6 +8,8 @@ export type OrgDataModel = {
   description?: string
   url?: string
   image?: string
+  deleting?: boolean
+  deletionJobId?: string
 }
 
 export interface OrgModel extends OrgDataModel, HasCreatedAtUpdatedAt {}

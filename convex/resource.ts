@@ -6,6 +6,10 @@ import {
   resourceOrgResourcesDeleteInternalMutation,
 } from "#src/resource/convex/resourceDeleteMutation.ts"
 import {
+  resourceDeletePreviewInternalQuery,
+  resourceDeletePreviewQuery,
+} from "#src/resource/convex/resourceDeletePreviewQuery.ts"
+import {
   resourceEditInternalMutation,
   resourceEditMutation,
   resourceEditOrgResourceProjectionsInternalMutation,
@@ -29,6 +33,8 @@ export {
   resourceCreateMutation,
   resourceDeleteInternalMutation,
   resourceDeleteMutation,
+  resourceDeletePreviewInternalQuery,
+  resourceDeletePreviewQuery,
   resourceEditInternalMutation,
   resourceEditMutation,
   resourceEditOrgResourceProjectionsInternalMutation,

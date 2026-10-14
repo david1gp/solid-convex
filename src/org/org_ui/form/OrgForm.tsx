@@ -32,7 +32,7 @@ export function OrgForm(p: OrgContentProps) {
     <section class={classMerge("px-2 sm:px-4 pb-10", "text-gray-900 dark:text-gray-100", p.class)}>
       <div class="flex flex-wrap justify-between items-center mt-6 mb-2">
         <h1 class="text-2xl font-bold">{getOrgTitle(p.mode)}</h1>
-        <Show when={p.mode === formMode.edit && state.isAdmin()}>
+        <Show when={p.mode === formMode.edit}>
           <LinkButtonInternal
             icon={formModeIcon.remove}
             to={urlOrgRemove(p.sm.state.orgHandle.get())}

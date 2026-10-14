@@ -50,6 +50,9 @@ export async function orgInvitation20InitMutationFn(
   if (!org) {
     return createResultError(op, "Organization not found", args.orgHandle)
   }
+  if (org.deleting) {
+    return createResultError(op, "Organization is currently being deleted")
+  }
 
   // Check if invitation already exists and not accepted
   const existingInvitation = await ctx.db

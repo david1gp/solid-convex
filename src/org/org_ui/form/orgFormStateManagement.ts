@@ -320,8 +320,9 @@ function createActions(mode: FormMode, orgHandle: string | undefined): OrgFormAc
     actions.edit = async (data) => editAction(data, orgHandle, mode, editMutation)
   }
   if (mode === formMode.remove) {
-    const deleteMutation = mutationCreate(api.org.orgDeleteMutation)
-    actions.delete = async () => removeAction(orgHandle, mode, deleteMutation)
+    actions.delete = async () => {
+      console.warn("Direct orgForm delete is disabled. Use hierarchy delete confirmation.")
+    }
   }
   return actions
 }

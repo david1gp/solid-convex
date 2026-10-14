@@ -54,6 +54,9 @@ export async function orgMemberCreateFn(
   if (!org) {
     return createResultError(op, "Organization not found", args.orgHandle)
   }
+  if (org.deleting) {
+    return createResultError(op, "Organization is currently being deleted")
+  }
 
   const now = nowIso()
   const orgMemberId = await ctx.db.insert("orgMembers", {

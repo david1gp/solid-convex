@@ -2,9 +2,10 @@ import { v } from "convex/values"
 import * as a from "valibot"
 import { internal } from "#convex/_generated/api.js"
 import { internalMutation, type MutationCtx, mutation } from "#convex/_generated/server.js"
+import { createResultError } from "#result"
 import { orgGetByHandleFn } from "#src/org/org_convex/orgGetByHandleFn.ts"
 import { vIdOrg } from "#src/org/org_convex/vIdOrg.ts"
-import { authMutationWrapResult } from "#src/utils/convex_backend/authMutationWrapResult.ts"
+import { authMutationResult } from "#src/utils/convex_backend/authMutationResult.ts"
 import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
 import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { paginationDefaultOptions } from "#src/utils/convex_backend/paginationDefaultOptions.ts"
@@ -18,7 +19,14 @@ export const orgDeleteValidator = v.object(orgDeleteFields)
 
 export const orgDeleteMutation = mutation({
   args: createTokenValidator(orgDeleteFields),
-  handler: async (ctx, args) => authMutationWrapResult(ctx, args, orgDeleteMutationFn),
+  handler: async (ctx, args) =>
+    authMutationResult(ctx, args, async () => {
+      const op = "orgDeleteMutation"
+      return createResultError(
+        op,
+        "Direct organization deletion is disabled; confirmation via hierarchyDeleteConfirmMutation is required",
+      )
+    }),
 })
 
 const orgResourceProjectionsDeleteFields = {

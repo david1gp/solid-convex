@@ -63,6 +63,9 @@ export async function orgInvitation50AcceptFn(
   if (!org) {
     return createResultError(op, "Organization not found")
   }
+  if (org.deleting) {
+    return createResultError(op, "Organization is currently being deleted")
+  }
 
   // Find or create user
   const user = await ctx.db.get("users", userId)

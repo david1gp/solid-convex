@@ -6,6 +6,7 @@ import { api } from "#convex/_generated/api.js"
 import type { Result } from "#result"
 import { type Language, type LanguageOrNone, language, languageOrNone } from "#src/app/i18n/language.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
+import type { AssignmentTarget } from "#src/assignment/model/assignmentTargetSchema.ts"
 import { userTokenGet } from "#src/auth/ui/signals/userSessionSignal.ts"
 import type { FileModel } from "#src/file/model/FileModel.ts"
 import { type FileFormField, fileFormConfig, fileFormField } from "#src/file/ui/form/fileFormField.ts"
@@ -22,11 +23,13 @@ import { createSignalObject, type SignalObject } from "#ui/utils/createSignalObj
 export type FileFormData = {
   displayName: string
   language?: LanguageOrNone
+  assignment?: AssignmentTarget | undefined
 }
 
 export type FileFormState = {
   displayName: SignalObject<string>
   language: SignalObject<string>
+  assignment: SignalObject<AssignmentTarget | undefined>
 }
 
 export type FileFormErrorState = {
@@ -38,6 +41,7 @@ function fileCreateState(): FileFormState {
   return {
     displayName: createSignalObject(""),
     language: createSignalObject<string>(""),
+    assignment: createSignalObject<AssignmentTarget | undefined>(undefined),
   }
 }
 
@@ -108,6 +112,7 @@ function loadData(data: FileModel, serverState: SignalObject<FileModel>, state: 
   serverState.set(data)
   state.displayName.set(data.displayName ?? "")
   state.language.set(data.language ?? language.en)
+  state.assignment.set(data.assignment ?? undefined)
 }
 
 function hasErrors(errors: FileFormErrorState) {
@@ -118,7 +123,8 @@ function fillTestData(state: FileFormState, errors: FileFormErrorState) {
   state.displayName.set("test-file.pdf")
   state.language.set(language.en)
   for (const field of Object.values(fileFormField)) {
-    updateFieldError(field, state[field as keyof typeof state].get(), errors)
+    const val = field === fileFormField.displayName ? state.displayName.get() : state.language.get()
+    updateFieldError(field, val, errors)
   }
 }
 
@@ -209,6 +215,14 @@ async function handleSubmit(
       data.language = language === "" ? languageOrNone.none : (language as LanguageOrNone)
     }
 
+    const currentAssignment = state.assignment.get()
+    const origAssignment = ss.assignment
+    const currentJson = JSON.stringify(currentAssignment ?? null)
+    const origJson = JSON.stringify(origAssignment ?? null)
+    if (currentJson !== origJson) {
+      data.assignment = currentAssignment ?? (null as any)
+    }
+
     if (Object.keys(data).length === 0) {
       const icon = mdiPenOff
       const title = ttc("No changes")
@@ -248,6 +262,7 @@ interface FileEditMutationProps extends HasToken {
   fileId: string
   displayName?: string
   language?: Language
+  assignment?: AssignmentTarget | null
 }
 
 interface FileRemoveMutationProps extends HasToken {
@@ -272,6 +287,9 @@ async function editAction(
   }
   if (data.language) {
     editData.language = data.language as Language
+  }
+  if (data.assignment !== undefined) {
+    editData.assignment = data.assignment
   }
   const editResult = await editMutation(editData)
   if (!editResult.success) {

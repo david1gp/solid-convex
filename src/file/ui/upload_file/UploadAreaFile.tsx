@@ -1,4 +1,5 @@
 import { type Accessor, type JSX, Show } from "solid-js"
+import type { AssignmentTarget } from "#src/assignment/model/assignmentTargetSchema.ts"
 import type { FileModel } from "#src/file/model/FileModel.ts"
 import { type UploadStatus, uploadStatus } from "#src/file/model_field/uploadStatus.ts"
 import type { UploadAreaFileInfo } from "#src/file/ui/stats/UploadAreaFileInfo.ts"
@@ -19,6 +20,7 @@ export interface UploadAreaFileProps extends MayHaveResourceId, MayHaveClass, Ma
   handler?: JSX.ChangeEventHandlerUnion<HTMLInputElement, Event>
   accept?: string
   onUploadSuccess?: (file: FileModel) => void
+  assignment?: AssignmentTarget | null
 }
 
 export function UploadAreaFile(p: UploadAreaFileProps) {
@@ -60,6 +62,7 @@ function createFileChangeHandler(p: UploadAreaFileProps): JSX.ChangeEventHandler
       uploadInfo: p.info,
       uploadError: p.error,
       resourceId: p.resourceId,
+      assignment: p.assignment,
       onUploadSuccess: p.onUploadSuccess,
     })
   }

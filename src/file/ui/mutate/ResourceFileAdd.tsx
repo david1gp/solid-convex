@@ -2,6 +2,8 @@ import { mdiArrowLeft } from "@adaptive-ds/mdi/mdiArrowLeft.js"
 import { mdiEye } from "@adaptive-ds/mdi/mdiEye.js"
 import { Show } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
+import type { AssignmentTarget } from "#src/assignment/model/assignmentTargetSchema.ts"
+import { AssignmentTargetSelector } from "#src/assignment/ui/AssignmentTargetSelector.tsx"
 import type { UploadAreaFileInfo } from "#src/file/ui/stats/UploadAreaFileInfo.ts"
 import { UploadAreaFile } from "#src/file/ui/upload_file/UploadAreaFile.tsx"
 import type { HasResourceId } from "#src/resource/model/HasResourceId.ts"
@@ -19,6 +21,7 @@ export function ResourceFileAdd(p: ResourceFileAddProps) {
   const info = createSignalObject<UploadAreaFileInfo | null>(null)
   const uploaded = createSignalObject<string | null>(null)
   const error = createSignalObject<string | null>(null)
+  const assignment = createSignalObject<AssignmentTarget | undefined>(undefined)
 
   function getUploadedInfo() {
     return jsonStringifyPretty(uploaded.get())
@@ -30,14 +33,18 @@ export function ResourceFileAdd(p: ResourceFileAddProps) {
 
   return (
     <>
-      <UploadAreaFile
-        resourceId={p.resourceId}
-        hasUploaded={hasUploaded}
-        info={info}
-        error={error}
-        onUploadSuccess={(data) => uploaded.set(data.url)}
-        class={classArr(classesCard, "my-4")}
-      />
+      <div class="my-4 space-y-4">
+        <AssignmentTargetSelector valueSignal={assignment} />
+        <UploadAreaFile
+          resourceId={p.resourceId}
+          assignment={assignment.get()}
+          hasUploaded={hasUploaded}
+          info={info}
+          error={error}
+          onUploadSuccess={(data) => uploaded.set(data.url)}
+          class={classArr(classesCard, "my-4")}
+        />
+      </div>
       <Show when={hasUploaded()}>
         <div class="flex flex-wrap gap-2 justify-center">
           <LinkButtonInternal variant={buttonVariant.link} icon={mdiArrowLeft} to={urlResourceList()}>

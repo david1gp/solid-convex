@@ -1,4 +1,5 @@
 import { type Language, language } from "#src/app/i18n/language.ts"
+import type { AssignmentTarget } from "#src/assignment/model/assignmentTargetSchema.ts"
 import type { FileModel } from "#src/file/model/FileModel.ts"
 import { type ResourceType, resourceType } from "#src/resource/model_field/resourceType.ts"
 import { type Visibility, visibility } from "#src/resource/model_field/visibility.ts"
@@ -6,6 +7,8 @@ import { createSignalObject, type SignalObject } from "#ui/utils/createSignalObj
 
 export type ResourceFormState = {
   resourceId: SignalObject<string>
+  // Hierarchy assignment
+  assignment: SignalObject<AssignmentTarget | undefined>
   // General
   name: SignalObject<string>
   description: SignalObject<string>
@@ -21,6 +24,8 @@ export type ResourceFormState = {
 export function resourceFormStateCreate(): ResourceFormState {
   return {
     resourceId: createSignalObject(""),
+    // Hierarchy assignment
+    assignment: createSignalObject<AssignmentTarget | undefined>(undefined),
     // General
     name: createSignalObject(""),
     description: createSignalObject(""),

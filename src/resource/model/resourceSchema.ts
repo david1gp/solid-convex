@@ -1,5 +1,6 @@
 import * as a from "valibot"
 import { languageSchema } from "#src/app/i18n/language.ts"
+import { assignmentFields } from "#src/assignment/model/assignmentFields.ts"
 import type { DocResource } from "#src/resource/convex/IdResource.ts"
 import type { ResourceModel } from "#src/resource/model/ResourceModel.ts"
 import { resourceIdSchema } from "#src/resource/model/resourceIdSchema.ts"
@@ -10,6 +11,7 @@ import { stringSchemaDescription, stringSchemaName } from "#src/utils/valibot/st
 
 export const resourceDataSchemaFields = {
   resourceId: resourceIdSchema,
+  ...assignmentFields,
   // 1. General
   name: a.optional(stringSchemaName),
   description: a.optional(stringSchemaDescription),

@@ -2,6 +2,7 @@ import { Show } from "solid-js"
 import { language } from "#src/app/i18n/language.ts"
 import { languageGetText } from "#src/app/i18n/languageGetText.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
+import { AssignmentTargetSelector } from "#src/assignment/ui/AssignmentTargetSelector.tsx"
 import { addKeyboardListenerAlt } from "#src/auth/ui/sign_up/form/addKeyboardListenerAlt.ts"
 import { resourceMetaSectionGetText } from "#src/resource/model_field/resourceMetaSectionGetText.ts"
 import { resourceType } from "#src/resource/model_field/resourceType.ts"
@@ -78,6 +79,14 @@ export function ResourceForm(p: ResourceFormProps) {
           <div class="space-y-4">
             <VisibilityField sm={p.sm} />
             <LanguageField sm={p.sm} />
+          </div>
+        </section>
+
+        {/* Hierarchy Assignment */}
+        <section class="contents">
+          <h2 class="text-2xl font-semibold mb-4 text-muted-foreground">{ttc("Hierarchy Assignment")}</h2>
+          <div class="space-y-4">
+            <AssignmentTargetSelector valueSignal={p.sm.state.assignment} />
           </div>
         </section>
 

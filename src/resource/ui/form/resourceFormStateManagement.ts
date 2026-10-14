@@ -5,6 +5,7 @@ import * as a from "valibot"
 import { type Language, language } from "#src/app/i18n/language.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { imageUrlExample } from "#src/app/url/imageUrlExample.ts"
+import type { AssignmentTarget } from "#src/assignment/model/assignmentTargetSchema.ts"
 import type { FileModel } from "#src/file/model/FileModel.ts"
 import type { ResourceFilesModel } from "#src/resource/model/ResourceFilesModel.ts"
 import type { ResourceModel } from "#src/resource/model/ResourceModel.ts"
@@ -27,6 +28,7 @@ import { createSignalObject, type SignalObject } from "#ui/utils/createSignalObj
 
 export type ResourceFormData = {
   resourceId: string
+  assignment?: AssignmentTarget | undefined
   // General
   name: string
   description: string
@@ -113,6 +115,12 @@ export function resourceFormStateManagement(
 
   const debouncedSave = options ? () => {} : resourceFormLocalStorage.createDebounceSave(mode, state)
 
+  const originalAssignmentSet = state.assignment.set
+  state.assignment.set = (value) => {
+    originalAssignmentSet(value)
+    debouncedSave()
+  }
+
   return {
     mode,
     isSubmitting,
@@ -144,6 +152,7 @@ function loadData(
   }
   serverState.set(resourceFiles)
   state.resourceId.set(data.resourceId)
+  state.assignment.set(data.assignment ?? undefined)
   // General
   state.name.set(data.name ?? "")
   state.description.set(data.description ?? "")
@@ -330,6 +339,7 @@ async function handleSubmit(
     const fileIds = files.map((f) => f.fileId)
     const data: ResourceFormData = {
       resourceId,
+      assignment: state.assignment.get(),
       name,
       description,
       type,
@@ -347,6 +357,15 @@ async function handleSubmit(
     const data: Partial<ResourceFormData> = {}
     const ss = serverState.get()
     if (resourceId !== ss.resource.resourceId) data.resourceId = resourceId
+
+    const currentAssignment = state.assignment.get()
+    const origAssignment = ss.resource.assignment
+    const currentJson = JSON.stringify(currentAssignment ?? null)
+    const origJson = JSON.stringify(origAssignment ?? null)
+    if (currentJson !== origJson) {
+      data.assignment = currentAssignment ?? (null as any)
+    }
+
     if (name !== ss.resource.name) data.name = name
     if (description !== ss.resource.description) data.description = description
     if (type !== ss.resource.type) data.type = type

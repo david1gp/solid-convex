@@ -1,5 +1,6 @@
 import { defineTable } from "convex/server"
 import * as a from "valibot"
+import { assignmentTableFields } from "#src/assignment/convex/assignmentTableFields.ts"
 import { resourceDataSchemaFields } from "#src/resource/model/resourceSchema.ts"
 import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { fieldsSchemaCreatedAtUpdatedAtDeletedAt } from "#src/utils/data/fieldsSchemaCreatedAtUpdatedAtDeletedAt.ts"
@@ -15,6 +16,7 @@ const resourceFilesDataSchemaFields = {
 export const resourceTables = {
   resources: defineTable({
     ...valibotToConvex(resourceDataSchemaFields),
+    ...assignmentTableFields,
     ...valibotToConvex(fieldsSchemaCreatedAtUpdatedAtDeletedAt),
     ...valibotToConvex({ searchText: a.optional(a.string()) }),
   })
@@ -24,6 +26,10 @@ export const resourceTables = {
     .index("type", ["type"])
     .index("language", ["language"])
     .index("deletedAt", ["deletedAt"])
+    .index("orgId", ["orgId"])
+    .index("teamId", ["teamId"])
+    .index("projectId", ["projectId"])
+    .index("noteId", ["noteId"])
     .searchIndex("search", {
       searchField: "searchText",
       filterFields: ["type", "visibility", "language", "deletedAt"],
@@ -34,5 +40,6 @@ export const resourceTables = {
   })
     //
     .index("resourceId", ["resourceId"])
-    .index("resourceIdFileId", ["resourceId", "fileId"]),
+    .index("resourceIdFileId", ["resourceId", "fileId"])
+    .index("fileId", ["fileId"]),
 } as const

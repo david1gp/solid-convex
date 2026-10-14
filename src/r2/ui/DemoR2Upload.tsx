@@ -9,6 +9,7 @@ import { UploadAreaFile } from "#src/file/ui/upload_file/UploadAreaFile.tsx"
 import { apiR2FileCreate } from "#src/r2/api_client/apiR2FileCreate.ts"
 import { apiR2GetUploadUrl } from "#src/r2/api_client/apiR2GetUploadUrl.ts"
 import { apiR2UploadFileWithProgress } from "#src/r2/api_client/apiR2UploadFile.ts"
+import { baseUrlJoinPath } from "#src/utils/url/baseUrlJoinPath.ts"
 import { PageWrapper } from "#ui/static/page/PageWrapper.jsx"
 import { createSignalObject, type SignalObject } from "#ui/utils/createSignalObject.ts"
 import { jsonStringifyPretty } from "#utils/json/jsonStringifyPretty.js"
@@ -137,7 +138,7 @@ async function uploadHandler(
 
   const fileCreateResult = await apiR2FileCreate({
     fileId,
-    url: `${baseUrlR2}/${fileId}`,
+    url: baseUrlJoinPath(baseUrlR2, fileId),
     displayName: fileInfo.displayName,
     contentType: fileInfo.contentType,
     fileSize: fileInfo.fileSize,

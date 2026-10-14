@@ -2,11 +2,14 @@ import { posthog } from "posthog-js"
 import { createResult, createResultError, type PromiseResult } from "#result"
 import { envBaseUrlR2Result } from "#src/app/env/public/envBaseUrlR2Result.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
+import type { AssignmentTarget } from "#src/assignment/model/assignmentTargetSchema.ts"
 import { userSessionGet } from "#src/auth/ui/signals/userSessionSignal.ts"
-import type { FileDataModel, FileModel } from "#src/file/model/FileModel.ts"
+import { fileCreateClientMutation } from "#src/file/api_client/fileCreateClientMutation.ts"
+import type { FileModel } from "#src/file/model/FileModel.ts"
 import { fileIdGenerate } from "#src/file/model_field/fileIdGenerate.ts"
 import { fileInformationGet } from "#src/file/ui/stats/fileInformationGet.ts"
 import type { UploadAreaFileInfo } from "#src/file/ui/stats/UploadAreaFileInfo.ts"
+import { fileCreateDataBuild } from "#src/file/ui/upload_file/fileCreateDataBuild.ts"
 import { apiR2FileCreate } from "#src/r2/api_client/apiR2FileCreate.ts"
 import { apiR2GetUploadUrl } from "#src/r2/api_client/apiR2GetUploadUrl.ts"
 import { apiR2UploadFileWithProgress } from "#src/r2/api_client/apiR2UploadFile.ts"
@@ -20,6 +23,7 @@ export interface FileUploadHandlerProps extends MayHaveResourceId {
   uploadInfo: SignalObject<UploadAreaFileInfo | null>
   uploadError?: SignalObject<string | null>
   onUploadSuccess?: (file: FileModel) => void
+  assignment?: AssignmentTarget | null
 }
 
 export async function uploadHandlerFile(p: FileUploadHandlerProps): PromiseResult<FileModel> {
@@ -29,7 +33,7 @@ export async function uploadHandlerFile(p: FileUploadHandlerProps): PromiseResul
 
   const info = p.uploadInfo.get()
 
-  const uploadResult = await uploadHandlerFilePure(p.file, info, p.resourceId)
+  const uploadResult = await uploadHandlerFilePure(p.file, info, p.resourceId, p.assignment)
   posthog.capture(op, uploadResult)
   if (!uploadResult.success) {
     const errorMessage = ttc("Failed to upload file")
@@ -59,7 +63,8 @@ export async function uploadHandlerFile(p: FileUploadHandlerProps): PromiseResul
 export async function uploadHandlerFilePure(
   file: File,
   info: UploadAreaFileInfo | null,
-  _resourceId?: string,
+  resourceId?: string,
+  assignment?: AssignmentTarget | null,
 ): PromiseResult<FileModel> {
   const op = "uploadHandlerFilePure"
 
@@ -102,20 +107,25 @@ export async function uploadHandlerFilePure(
     return createResultError(op, uploadResult.errorMessage)
   }
 
-  const data: FileDataModel = {
+  const data = fileCreateDataBuild({
     fileId,
     displayName: info.displayName,
     contentType: info.contentType,
     fileSize: info.fileSize,
-    url: baseUrlR2 + "/" + fileId,
-  }
-  if (info.imageWidth) data.imageWidth = info.imageWidth
-  if (info.imageHeight) data.imageHeight = info.imageHeight
+    baseUrlR2,
+    imageWidth: info.imageWidth,
+    imageHeight: info.imageHeight,
+    resourceId,
+    assignment,
+  })
 
-  const fileCreateResult = await apiR2FileCreate(data)
-
-  if (!fileCreateResult.success) {
-    return createResultError(op, fileCreateResult.errorMessage)
+  // Prefer existing Convex mutation for signed-in metadata create; fallback to HTTP
+  const mutationResult = await fileCreateClientMutation(data)
+  if (!mutationResult.success) {
+    const fileCreateResult = await apiR2FileCreate(data)
+    if (!fileCreateResult.success) {
+      return createResultError(op, fileCreateResult.errorMessage)
+    }
   }
 
   const now = new Date().toISOString()

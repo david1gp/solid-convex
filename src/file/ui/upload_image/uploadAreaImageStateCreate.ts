@@ -29,6 +29,7 @@ export function uploadAreaImageStateCreate(
     }
     await upload({
       resourceId: p.resourceId,
+      assignment: p.assignment,
       file,
       uploadInfo: p.info,
       uploadError: p.error,

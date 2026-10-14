@@ -1,21 +1,17 @@
-import { mdiTrashCanOutline } from "@adaptive-ds/mdi/mdiTrashCanOutline.js"
 import { For, Show, splitProps } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import type { FileModel } from "#src/file/model/FileModel.ts"
 import { FileCardView, type FileCardViewProps } from "#src/file/ui/list/FileCardView.tsx"
-import type { UploadAreaFileInfo } from "#src/file/ui/stats/UploadAreaFileInfo.ts"
 import { UploadAreaFile } from "#src/file/ui/upload_file/UploadAreaFile.tsx"
-import { resourceFormField } from "#src/resource/ui/form/resourceFormField.ts"
+import { resourceFormFilesStateCreate } from "#src/resource/ui/form/resourceFormFilesStateCreate.ts"
 import type { ResourceFormStateManagement } from "#src/resource/ui/form/resourceFormStateManagement.ts"
 import { classesCard } from "#src/ui/card/classesCard.ts"
 import { formMode, getFormModeTitle } from "#ui/input/form/formMode.ts"
 import { formModeIcon } from "#ui/input/form/formModeIcon.ts"
 import { Label } from "#ui/input/label/Label.jsx"
-import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { ButtonIconOnly } from "#ui/interactive/button/ButtonIconOnly.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { classArr } from "#ui/utils/classArr.ts"
-import { createSignalObject } from "#ui/utils/createSignalObject.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 interface HasResourceFormStateManagement {
@@ -23,53 +19,31 @@ interface HasResourceFormStateManagement {
 }
 
 export function ResourceFormFiles(p: HasResourceFormStateManagement) {
-  const uploadInfo = createSignalObject<UploadAreaFileInfo | null>(null)
-  const uploadError = createSignalObject<string | null>(null)
-
-  function hasUploaded() {
-    return !!uploadInfo.get()
-  }
-
-  function getCurrentFiles() {
-    return p.sm.state.fileIds.get()
-  }
-
-  function handleRemoveFile(fileId: string) {
-    const currentFiles = getCurrentFiles()
-    const updatedFiles = currentFiles.filter((f) => f.fileId !== fileId)
-    p.sm.state.fileIds.set(updatedFiles)
-    p.sm.validateOnChange(resourceFormField.files)(updatedFiles.join(","))
-    p.sm.debouncedSave()
-  }
-
-  function handleUploadSuccess(file: FileModel) {
-    const currentFiles = getCurrentFiles()
-    p.sm.state.fileIds.set([...currentFiles, file])
-    p.sm.debouncedSave()
-  }
+  const state = resourceFormFilesStateCreate({ sm: () => p.sm })
 
   return (
     <div class="space-y-4">
       {/* Display existing uploaded files */}
-      <UploadedFilesList getCurrentFiles={getCurrentFiles} handleRemoveFile={handleRemoveFile} />
+      <UploadedFilesList getCurrentFiles={state.getCurrentFiles} handleRemoveFile={state.handleRemoveFile} />
 
       {/* Upload new files */}
       <div class="flex flex-col gap-2">
         <Label>{ttc("Upload file")}</Label>
         <UploadAreaFile
-          resourceId={p.sm.state.resourceId.get() || undefined}
-          hasUploaded={hasUploaded}
-          info={uploadInfo}
-          error={uploadError}
-          onUploadSuccess={handleUploadSuccess}
+          resourceId={state.persistedResourceId()}
+          assignment={state.assignment()}
+          hasUploaded={state.hasUploaded}
+          info={state.uploadInfo}
+          error={state.uploadError}
+          onUploadSuccess={state.fileUploadSuccess}
           accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.zip,.rar"
           class={classArr(classesCard)}
         />
       </div>
 
       {/* Show error if any */}
-      <Show when={p.sm.errors.fileIds.get()}>
-        <p class="text-destructive text-sm">{p.sm.errors.fileIds.get()}</p>
+      <Show when={state.errorMessage()}>
+        <p class="text-destructive text-sm">{state.errorMessage()}</p>
       </Show>
     </div>
   )
@@ -108,33 +82,5 @@ function FileCardEdit(p: FileCardProps) {
         onClick={() => s.handleRemoveFile(p.file.fileId)}
       />
     </FileCardView>
-  )
-}
-
-function UploadedFileIdList(p: UploadedFilesListProps) {
-  return (
-    <div class="space-y-2">
-      <Label>{ttc("Uploaded files")}</Label>
-      <div class="space-y-2">
-        <For each={p.getCurrentFiles()} fallback={<p class="text-muted-foreground">{ttc("No files uploaded yet")}</p>}>
-          {(file) => (
-            <div class="flex items-center justify-between p-3 border rounded-md bg-gray-50 dark:bg-gray-800">
-              <div class="flex-1 min-w-0">
-                <p class="text-sm font-medium truncate">{file.fileId}</p>
-                <p class="text-xs text-muted-foreground">{ttc("File ID")}</p>
-              </div>
-              <ButtonIcon
-                icon={mdiTrashCanOutline}
-                variant={buttonVariant.outline}
-                onClick={() => p.handleRemoveFile(file.fileId)}
-                class="ml-2"
-              >
-                {ttc("Remove")}
-              </ButtonIcon>
-            </div>
-          )}
-        </For>
-      </div>
-    </div>
   )
 }

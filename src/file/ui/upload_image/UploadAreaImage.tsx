@@ -1,4 +1,5 @@
 import { type Accessor, Show } from "solid-js"
+import type { AssignmentTarget } from "#src/assignment/model/assignmentTargetSchema.ts"
 import type { FileModel } from "#src/file/model/FileModel.ts"
 import { uploadImageTexts } from "#src/file/model_field/uploadStatus.ts"
 import type { UploadAreaFileInfo } from "#src/file/ui/stats/UploadAreaFileInfo.ts"
@@ -17,6 +18,7 @@ export interface UploadAreaImageProps extends MayHaveResourceId, MayHaveId, MayH
   info: SignalObject<UploadAreaFileInfo | null>
   error?: SignalObject<string | null>
   onUploadSuccess?: (file: FileModel) => void
+  assignment?: AssignmentTarget | null
   /** Inject local selection handling without entering the production upload transport. */
   onFileSelect?: (file: File) => void | Promise<void>
 }

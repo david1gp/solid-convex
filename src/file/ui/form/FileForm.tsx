@@ -2,6 +2,7 @@ import { Show } from "solid-js"
 import { language } from "#src/app/i18n/language.ts"
 import { languageGetText } from "#src/app/i18n/languageGetText.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
+import { AssignmentTargetSelector } from "#src/assignment/ui/AssignmentTargetSelector.tsx"
 import { addKeyboardListenerAlt } from "#src/auth/ui/sign_up/form/addKeyboardListenerAlt.ts"
 import type { HasFileId } from "#src/file/model_field/HasFileId.ts"
 import { fileFormConfig, fileFormField } from "#src/file/ui/form/fileFormField.ts"
@@ -49,6 +50,12 @@ export function FileForm(p: FileFormProps) {
       <form class="space-y-4" onSubmit={p.sm.handleSubmit}>
         <FileNameField sm={p.sm} />
         <LanguageField sm={p.sm} />
+        <div class="space-y-2">
+          <AssignmentTargetSelector
+            valueSignal={p.sm.state.assignment}
+            disabled={() => p.sm.mode === formMode.remove}
+          />
+        </div>
         <ButtonIcon
           type="submit"
           isLoading={p.sm.isSubmitting.get()}

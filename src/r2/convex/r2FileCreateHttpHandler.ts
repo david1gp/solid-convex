@@ -2,13 +2,26 @@ import * as a from "valibot"
 import { internal } from "#convex/_generated/api.js"
 import type { ActionCtx } from "#convex/_generated/server.js"
 import { createResultError } from "#result"
+import { assignmentTargetSchema } from "#src/assignment/model/assignmentTargetSchema.ts"
 import { authorizationHeaderGetToken } from "#src/auth/server/authorizationHeaderGetToken.ts"
 import type { FileDataModelWithUserMetadata } from "#src/file/model/FileModel.ts"
-import { fileDataSchema } from "#src/file/model/fileSchema.ts"
+import { fileSchemaFields } from "#src/file/model/fileSchema.ts"
+import { resourceIdSchema } from "#src/resource/model/resourceIdSchema.ts"
 import { authActionCredentialResolve } from "#src/utils/convex_backend/authActionCredentialResolve.ts"
+import { stringSchemaId } from "#src/utils/valibot/stringSchema.ts"
 import { jsonStringifyPretty } from "#utils/json/jsonStringifyPretty.js"
 
 export const apiPathR2FileCreate = "/fileCreate"
+
+const httpFileCreateSchema = a.object({
+  ...fileSchemaFields,
+  assignment: a.optional(a.nullable(assignmentTargetSchema)),
+  orgId: a.optional(a.nullable(stringSchemaId)),
+  teamId: a.optional(a.nullable(stringSchemaId)),
+  projectId: a.optional(a.nullable(stringSchemaId)),
+  noteId: a.optional(a.nullable(stringSchemaId)),
+  resourceId: a.optional(a.nullable(resourceIdSchema)),
+})
 
 export async function r2FileCreateHttpHandler(ctx: ActionCtx, request: Request): Promise<Response> {
   const op = "r2FileCreateHttpHandler"
@@ -38,7 +51,7 @@ export async function r2FileCreateHttpHandler(ctx: ActionCtx, request: Request):
   }
 
   const body = await request.json()
-  const parseResult = a.safeParse(fileDataSchema, body)
+  const parseResult = a.safeParse(httpFileCreateSchema, body)
   if (!parseResult.success) {
     const errorMessage = a.summarize(parseResult.issues)
     console.warn(op, errorMessage)
@@ -46,15 +59,14 @@ export async function r2FileCreateHttpHandler(ctx: ActionCtx, request: Request):
     return new Response(jsonStringifyPretty(err), { status: 400 })
   }
 
-  const data: FileDataModelWithUserMetadata = { ...parseResult.output, userId }
-  if (user.username) data.username = user.username
+  const data = { ...parseResult.output, userId, username: user.username }
 
   console.log(op, "insertingFile:", data)
 
   const result = await ctx.runMutation(internal.file.fileCreateInternalMutation, data)
   if (!result.success) {
     console.warn(op, result)
-    return new Response(jsonStringifyPretty(result), { status: 500 })
+    return new Response(jsonStringifyPretty(result), { status: 400 })
   }
 
   return new Response(jsonStringifyPretty(result))

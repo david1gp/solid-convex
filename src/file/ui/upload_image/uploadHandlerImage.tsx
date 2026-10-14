@@ -1,6 +1,7 @@
 import { posthog } from "posthog-js"
 import { createResultError, type PromiseResult } from "#result"
 import { ttc } from "#src/app/i18n/ttc.ts"
+import type { AssignmentTarget } from "#src/assignment/model/assignmentTargetSchema.ts"
 import type { FileModel } from "#src/file/model/FileModel.ts"
 import { fileInformationGet } from "#src/file/ui/stats/fileInformationGet.ts"
 import type { UploadAreaFileInfo } from "#src/file/ui/stats/UploadAreaFileInfo.ts"
@@ -15,6 +16,7 @@ export interface ImageUploadHandlerProps extends MayHaveResourceId {
   uploadInfo: SignalObject<UploadAreaFileInfo | null>
   uploadError?: SignalObject<string | null>
   onUploadSuccess?: (file: FileModel) => void
+  assignment?: AssignmentTarget | null
 }
 
 export async function uploadHandlerImage(p: ImageUploadHandlerProps): PromiseResult<FileModel> {
@@ -24,7 +26,7 @@ export async function uploadHandlerImage(p: ImageUploadHandlerProps): PromiseRes
 
   const info = p.uploadInfo.get()
 
-  const uploadResult = await uploadHandlerImagePure(p.file, info, p.resourceId)
+  const uploadResult = await uploadHandlerImagePure(p.file, info, p.resourceId, p.assignment)
   posthog.capture(op, uploadResult)
   if (!uploadResult.success) {
     const errorMessage = ttc("Failed to upload image")
@@ -54,7 +56,8 @@ export async function uploadHandlerImage(p: ImageUploadHandlerProps): PromiseRes
 export async function uploadHandlerImagePure(
   file: File,
   info: UploadAreaFileInfo | null,
-  _resourceId?: string,
+  resourceId?: string,
+  assignment?: AssignmentTarget | null,
 ): PromiseResult<FileModel> {
   const op = "uploadHandlerImagePure"
 
@@ -68,5 +71,5 @@ export async function uploadHandlerImagePure(
     return createResultError(op, errorMessage)
   }
 
-  return uploadHandlerFilePure(file, info, _resourceId)
+  return uploadHandlerFilePure(file, info, resourceId, assignment)
 }

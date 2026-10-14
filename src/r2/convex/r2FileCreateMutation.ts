@@ -1,21 +1,26 @@
 import { v } from "convex/values"
-import * as a from "valibot"
 import { internalMutation, type MutationCtx, mutation } from "#convex/_generated/server.js"
 import { createResult, type PromiseResult } from "#result"
-import { type FileCreateValidatorType, fileCreateFields } from "#src/file/convex/fileCreateMutation.ts"
-import { fileDataSchema } from "#src/file/model/fileSchema.ts"
-import { authMutationResult } from "#src/utils/convex_backend/authMutationResult.ts"
-import { createErrorAndLogError } from "#src/utils/convex_backend/createErrorAndLogError.ts"
+import {
+  fileCreateFields,
+  fileCreateFn,
+  fileCreateValidator,
+  type FileCreateValidatorType,
+} from "#src/file/convex/fileCreateMutation.ts"
+import { authMutationTokenToUserId } from "#src/utils/convex_backend/authMutationTokenToUserId.ts"
 import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
-import { nowIso } from "#utils/date/nowIso.js"
 
 export const r2FileCreateFields = fileCreateFields
-export const r2FileCreateValidator = v.object(r2FileCreateFields)
+export const r2FileCreateValidator = fileCreateValidator
 export type R2FileCreateValidatorType = typeof r2FileCreateValidator.type
 
 export const r2FileCreateMutation = mutation({
   args: createTokenValidator(r2FileCreateFields),
-  handler: async (ctx, args) => authMutationResult(ctx, args, r2FileCreateFn),
+  handler: async (ctx, args) =>
+    authMutationTokenToUserId(ctx, args, async (ctx, authedArgs) => {
+      const { token: _token, ...rest } = authedArgs as any
+      return r2FileCreateFn(ctx, rest)
+    }),
 })
 
 export const r2FileCreateInternalMutation = internalMutation({
@@ -25,17 +30,7 @@ export const r2FileCreateInternalMutation = internalMutation({
 
 export async function r2FileCreateFn(ctx: MutationCtx, args: FileCreateValidatorType): PromiseResult<null> {
   const op = "r2FileCreateFn"
-
-  const parse = a.safeParse(fileDataSchema, args)
-  if (!parse.success) {
-    return createErrorAndLogError(op, a.summarize(parse.issues))
-  }
-
-  const now = nowIso()
-  const id = await ctx.db.insert("files", {
-    ...args,
-    createdAt: now,
-    updatedAt: now,
-  })
+  const result = await fileCreateFn(ctx, args)
+  if (!result.success) return result
   return createResult(null)
 }

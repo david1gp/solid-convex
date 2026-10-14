@@ -57,6 +57,12 @@ test("oidcZitadelRolesGet extracts only verified canonical roles for target orga
   expect(oidcZitadelRolesGet(claims, undefined)).toBeUndefined()
 })
 
+test("oidcZitadelRolesGet accepts native object role claims for the target organization", () => {
+  const projectRoles = { admin: { [organizationId]: "contentoren.example" } }
+  expect(oidcZitadelRolesGet(projectRoles, organizationId)).toEqual(["admin"])
+  expect(oidcZitadelRolesGet(projectRoles, "other-organization")).toEqual([])
+})
+
 test("oidcZitadelRolesGet treats missing claims for configured organization as empty roles mapping to effective user", () => {
   const claimsWithOtherOrg: NonNullable<OidcIdTokenClaims["urn:zitadel:iam:org:project:roles"]> = [
     { admin: { other: "other.example" } },

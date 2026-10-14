@@ -9,9 +9,10 @@ export function oidcZitadelRolesGet(
 ): UserRole[] | undefined {
   if (!organizationId) return undefined
   if (!projectRoles) return []
+  const roleGrantsList = Array.isArray(projectRoles) ? projectRoles : [projectRoles]
   const verifiedRoles: UserRole[] = []
   for (const role of canonicalRoles) {
-    const hasGrant = projectRoles.some((roleGrant) => {
+    const hasGrant = roleGrantsList.some((roleGrant) => {
       const orgGrants = roleGrant[role]
       return Boolean(orgGrants && Object.hasOwn(orgGrants, organizationId))
     })

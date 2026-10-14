@@ -33,6 +33,7 @@ test("oidcConfigGet reads server-only OIDC settings and defaults scopes", async 
       OIDC_CLIENT_SECRET: undefined,
       OIDC_SCOPES: undefined,
       OIDC_ZITADEL_ORG_ID: undefined,
+      ZITADEL_PROJECT_ID: undefined,
     },
     async () => {
       const result = oidcConfigGet()
@@ -56,6 +57,7 @@ test("oidcConfigGet reads server-only OIDC settings and defaults scopes", async 
       OIDC_CLIENT_SECRET: undefined,
       OIDC_SCOPES: "openid profile email",
       OIDC_ZITADEL_ORG_ID: "380716752838852623",
+      ZITADEL_PROJECT_ID: undefined,
     },
     async () => {
       const result = oidcConfigGet()
@@ -66,6 +68,7 @@ test("oidcConfigGet reads server-only OIDC settings and defaults scopes", async 
           "openid",
           "profile",
           "email",
+          "urn:zitadel:iam:org:project:roles",
           "urn:zitadel:iam:org:project:role:user",
           "urn:zitadel:iam:org:project:role:member",
           "urn:zitadel:iam:org:project:role:admin",
@@ -81,6 +84,7 @@ test("oidcConfigGet reads server-only OIDC settings and defaults scopes", async 
       OIDC_CLIENT_SECRET: undefined,
       OIDC_SCOPES: "openid profile custom-scope urn:zitadel:iam:org:project:role:user openid",
       OIDC_ZITADEL_ORG_ID: "380716752838852623",
+      ZITADEL_PROJECT_ID: "394198525392453636",
     },
     async () => {
       const result = oidcConfigGet()
@@ -93,8 +97,10 @@ test("oidcConfigGet reads server-only OIDC settings and defaults scopes", async 
           "profile",
           "custom-scope",
           "urn:zitadel:iam:org:project:role:user",
+          "urn:zitadel:iam:org:project:roles",
           "urn:zitadel:iam:org:project:role:member",
           "urn:zitadel:iam:org:project:role:admin",
+          "urn:zitadel:iam:org:project:id:394198525392453636:roles",
         ])
       }
     },

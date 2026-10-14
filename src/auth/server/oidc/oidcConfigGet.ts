@@ -5,6 +5,7 @@ import type { OidcConfig } from "#src/auth/server/oidc/oidcConfig.ts"
 
 const oidcDefaultScopes = ["openid", "profile", "email"] as const
 const oidcZitadelRoleScopes = [
+  "urn:zitadel:iam:org:project:roles",
   "urn:zitadel:iam:org:project:role:user",
   "urn:zitadel:iam:org:project:role:member",
   "urn:zitadel:iam:org:project:role:admin",
@@ -34,6 +35,8 @@ export function oidcConfigGet(): Result<OidcConfig> {
   const zitadelOrgId = process.env[privateEnvVariableName.OIDC_ZITADEL_ORG_ID]?.trim() || undefined
   if (zitadelOrgId && !/^\d+$/u.test(zitadelOrgId)) return createResultError(op, "invalid OIDC_ZITADEL_ORG_ID")
   const configuredScopes = zitadelOrgId ? [...scopes, ...oidcZitadelRoleScopes] : scopes
+  const zitadelProjectId = process.env.ZITADEL_PROJECT_ID?.trim()
+  if (zitadelProjectId) configuredScopes.push(`urn:zitadel:iam:org:project:id:${zitadelProjectId}:roles`)
   return createResult({
     issuer,
     clientId,

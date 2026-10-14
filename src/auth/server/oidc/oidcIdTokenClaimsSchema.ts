@@ -1,6 +1,10 @@
 import * as a from "valibot"
 
-const oidcZitadelProjectRolesSchema = a.array(a.record(a.string(), a.record(a.string(), a.string())))
+const oidcZitadelProjectRolesRecordSchema = a.record(a.string(), a.record(a.string(), a.string()))
+const oidcZitadelProjectRolesSchema = a.union([
+  a.array(oidcZitadelProjectRolesRecordSchema),
+  oidcZitadelProjectRolesRecordSchema,
+])
 
 const oidcIdTokenClaimsSchema = a.object({
   iss: a.pipe(a.string(), a.minLength(1)),

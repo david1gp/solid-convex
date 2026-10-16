@@ -81,6 +81,7 @@ interface Option2Props extends MayHaveClass {
 
 function Option(p: Option2Props) {
   return (
+    // biome-ignore lint/a11y/useSemanticElements: styled segmented control inside a radiogroup
     <button
       type="button"
       role="radio"

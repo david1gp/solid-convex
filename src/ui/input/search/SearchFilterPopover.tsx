@@ -1,6 +1,6 @@
 import { mdiClose } from "@adaptive-ds/mdi/mdiClose.js"
 import { mdiFilterVariant } from "@adaptive-ds/mdi/mdiFilterVariant.js"
-import { For, Show } from "solid-js"
+import { createUniqueId, For, Show } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import type { FilterFieldConfig } from "#src/ui/input/search/FilterFieldConfig.ts"
 import { InputS } from "#ui/input/input/InputS.jsx"
@@ -66,6 +66,7 @@ function FilterField(
     return DateFilterField(fieldKey, fieldConfig, currentValue, onSelect, onClear)
   }
 
+  const inputId = createUniqueId()
   const valueSignal: SignalObject<string> = {
     get: currentValue,
     set: (value: string) => onSelect(fieldKey, value),
@@ -81,7 +82,9 @@ function FilterField(
   return (
     <>
       <div class="flex items-center justify-between">
-        <label class="text-lg font-medium">{fieldConfig.label()}</label>
+        <label for={inputId} class="text-lg font-medium">
+          {fieldConfig.label()}
+        </label>
         <Show when={currentValue()}>
           <ButtonIconOnly
             variant={buttonVariant.ghost}
@@ -95,6 +98,7 @@ function FilterField(
         </Show>
       </div>
       <SelectSingleNative
+        id={inputId}
         valueSignal={valueSignal}
         getOptions={getOptions}
         valueText={valueText}
@@ -111,6 +115,7 @@ function DateFilterField(
   onSelect: (fieldKey: string, value: string) => void,
   onClear: (fieldKey: string) => void,
 ) {
+  const inputId = createUniqueId()
   const valueSignal: SignalObject<string> = {
     get: currentValue,
     set: (value: string) => onSelect(fieldKey, value),
@@ -119,7 +124,9 @@ function DateFilterField(
   return (
     <>
       <div class="flex items-center justify-between">
-        <label class="text-lg font-medium">{fieldConfig.label()}</label>
+        <label for={inputId} class="text-lg font-medium">
+          {fieldConfig.label()}
+        </label>
         <Show when={currentValue()}>
           <ButtonIconOnly
             variant={buttonVariant.ghost}
@@ -132,7 +139,7 @@ function DateFilterField(
           />
         </Show>
       </div>
-      <InputS valueSignal={valueSignal} type="date" />
+      <InputS id={inputId} valueSignal={valueSignal} type="date" />
     </>
   )
 }

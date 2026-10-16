@@ -6,5 +6,6 @@ import { classMerge } from "#ui/utils/classMerge.js"
 /** Styled native label element for form fields. */
 export const Label: Component<ComponentProps<"label">> = (p) => {
   const [s, rest] = splitProps(p, ["class"])
+  // biome-ignore lint/a11y/noLabelWithoutControl: generic wrapper; callers pass `for` via props
   return <label class={classMerge(classesLabel, s.class)} {...rest} />
 }

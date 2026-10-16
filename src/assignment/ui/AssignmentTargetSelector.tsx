@@ -1,6 +1,6 @@
-import { For, Show } from "solid-js"
-import { assignmentTargetLabelFormat } from "#src/assignment/ui/assignmentTargetLabelFormat.ts"
+import { createUniqueId, For, Show } from "solid-js"
 import type { AssignmentTargetSelectorProps } from "#src/assignment/ui/AssignmentTargetSelectorProps.ts"
+import { assignmentTargetLabelFormat } from "#src/assignment/ui/assignmentTargetLabelFormat.ts"
 import { assignmentTargetSelectorStateCreate } from "#src/assignment/ui/assignmentTargetSelectorStateCreate.ts"
 import type { SelectorKindChoice } from "#src/assignment/ui/SelectorKindChoice.ts"
 import { Button } from "#ui/interactive/button/Button.jsx"
@@ -20,11 +20,12 @@ const kindOptions: { kind: SelectorKindChoice; label: string }[] = [
 
 export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps) {
   const state = assignmentTargetSelectorStateCreate(props)
+  const idBase = createUniqueId()
 
   return (
     <div class={classMerge("space-y-4 rounded-lg border border-border p-4 bg-card", props.class)}>
       <div>
-        <label class="block text-sm font-medium mb-2 text-foreground">Hierarchy Assignment</label>
+        <p class="block text-sm font-medium mb-2 text-foreground">Hierarchy Assignment</p>
         <div class="flex flex-wrap gap-2">
           <For each={kindOptions}>
             {(opt) => (
@@ -45,11 +46,12 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
       {/* Organization Level */}
       <Show when={state.selectedKind() === "organization"}>
         <div class="space-y-2">
-          <label class="block text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+          <label for={`${idBase}-1`} class="block text-xs font-semibold text-muted-foreground uppercase tracking-wide">
             Select Organization
           </label>
           <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
             <select
+              id={`${idBase}-1`}
               class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
               value={state.selectedOrgId()}
               disabled={state.disabled()}
@@ -81,9 +83,12 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
       <Show when={state.selectedKind() === "team"}>
         <div class="space-y-3">
           <div>
-            <label class="block text-xs text-muted-foreground mb-1">Filter by Organization (optional)</label>
+            <label for={`${idBase}-2`} class="block text-xs text-muted-foreground mb-1">
+              Filter by Organization (optional)
+            </label>
             <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
               <select
+                id={`${idBase}-2`}
                 class="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm"
                 value={state.selectedOrgId()}
                 disabled={state.disabled()}
@@ -111,11 +116,15 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+            <label
+              for={`${idBase}-3`}
+              class="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1"
+            >
               Select Team
             </label>
             <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
               <select
+                id={`${idBase}-3`}
                 class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 value={state.selectedTeamId()}
                 disabled={state.disabled()}
@@ -145,8 +154,11 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
         <div class="space-y-3">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
-              <label class="block text-xs text-muted-foreground mb-1">Filter Org (optional)</label>
+              <label for={`${idBase}-4`} class="block text-xs text-muted-foreground mb-1">
+                Filter Org (optional)
+              </label>
               <select
+                id={`${idBase}-4`}
                 class="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm"
                 value={state.selectedOrgId()}
                 disabled={state.disabled()}
@@ -162,8 +174,11 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
             </div>
 
             <div>
-              <label class="block text-xs text-muted-foreground mb-1">Filter Team (optional)</label>
+              <label for={`${idBase}-5`} class="block text-xs text-muted-foreground mb-1">
+                Filter Team (optional)
+              </label>
               <select
+                id={`${idBase}-5`}
                 class="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm"
                 value={state.selectedTeamId()}
                 disabled={state.disabled()}
@@ -176,11 +191,15 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+            <label
+              for={`${idBase}-6`}
+              class="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1"
+            >
               Select Project
             </label>
             <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
               <select
+                id={`${idBase}-6`}
                 class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 value={state.selectedProjectId()}
                 disabled={state.disabled()}
@@ -212,8 +231,11 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
         <div class="space-y-3">
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <div>
-              <label class="block text-xs text-muted-foreground mb-1">Filter Org</label>
+              <label for={`${idBase}-7`} class="block text-xs text-muted-foreground mb-1">
+                Filter Org
+              </label>
               <select
+                id={`${idBase}-7`}
                 class="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm"
                 value={state.selectedOrgId()}
                 disabled={state.disabled()}
@@ -229,8 +251,11 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
             </div>
 
             <div>
-              <label class="block text-xs text-muted-foreground mb-1">Filter Team</label>
+              <label for={`${idBase}-8`} class="block text-xs text-muted-foreground mb-1">
+                Filter Team
+              </label>
               <select
+                id={`${idBase}-8`}
                 class="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm"
                 value={state.selectedTeamId()}
                 disabled={state.disabled()}
@@ -242,8 +267,11 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
             </div>
 
             <div>
-              <label class="block text-xs text-muted-foreground mb-1">Filter Project</label>
+              <label for={`${idBase}-9`} class="block text-xs text-muted-foreground mb-1">
+                Filter Project
+              </label>
               <select
+                id={`${idBase}-9`}
                 class="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm"
                 value={state.selectedProjectId()}
                 disabled={state.disabled()}
@@ -258,11 +286,15 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+            <label
+              for={`${idBase}-10`}
+              class="block text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1"
+            >
               Select Note
             </label>
             <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
               <select
+                id={`${idBase}-10`}
                 class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 value={state.selectedNoteId()}
                 disabled={state.disabled()}

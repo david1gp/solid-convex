@@ -13,12 +13,12 @@ import { otpPurpose } from "#src/auth/model_field/otpPurpose.ts"
 import { passwordSchema } from "#src/auth/model_field/passwordSchema.ts"
 import { createTokenResult } from "#src/auth/server/jwt_token/createTokenResult.ts"
 import { orgMemberGetHandleAndRoleFn } from "#src/org/member_convex/orgMemberGetHandleAndRoleInternalQuery.ts"
+import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authMutationTokenToUserId } from "#src/utils/convex_backend/authMutationTokenToUserId.ts"
 import { createErrorAndLogError } from "#src/utils/convex_backend/createErrorAndLogError.ts"
 import { createErrorAndLogWarn } from "#src/utils/convex_backend/createErrorAndLogWarn.ts"
 import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
 import { createUserIdValidator } from "#src/utils/convex_backend/createUserIdValidator.ts"
-import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { nowIso } from "#utils/date/nowIso.js"
 
 const userPasswordChange2ConfirmFieldsBase = valibotToConvex({

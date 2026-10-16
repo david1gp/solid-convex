@@ -100,7 +100,7 @@ export default defineConfig({
       strategy: "split-by-experience",
       forceSplitting: {
         "@adaptive-ds/mdi": /node_modules[\\/]@adaptive-ds[\\/]mdi/,
-        "cn": /node_modules[\\/]cn/,
+        cn: /node_modules[\\/]cn/,
         "posthog-js": /node_modules[\\/]posthog-js/,
       },
     },

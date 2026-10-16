@@ -1,7 +1,7 @@
 import { createEffect, untrack } from "solid-js"
 import * as a from "valibot"
-import type { Id } from "#convex/_generated/dataModel.js"
 import { api } from "#convex/_generated/api.js"
+import type { Id } from "#convex/_generated/dataModel.js"
 import { userSessionSignal, userTokenGet } from "#src/auth/ui/signals/userSessionSignal.ts"
 import { projectDataSchema } from "#src/project/model/projectDataSchema.ts"
 import type { Project } from "#src/project/model/projectSchema.ts"

@@ -3,9 +3,9 @@ import * as a from "valibot"
 import { internalQuery, type QueryCtx, query } from "#convex/_generated/server.js"
 import { createResult, createResultError, type PromiseResult } from "#result"
 import { resourceGetDocFn } from "#src/resource/convex/resourceGetQuery.ts"
+import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authQueryResult } from "#src/utils/convex_backend/authQueryResult.ts"
 import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
-import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 
 const resourceDeletePreviewSchemaFields = {
   resourceId: a.string(),

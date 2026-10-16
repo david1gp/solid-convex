@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
-import { convexTest } from "convex-test"
 import type { FunctionReturnType } from "convex/server"
+import { convexTest } from "convex-test"
 import { expect, test, vi } from "vitest"
 import { internal } from "../convex/_generated/api.js"
 import type { Id } from "../convex/_generated/dataModel.js"
@@ -136,89 +136,92 @@ const hardDeleteCases = [
   { label: "files", table: "files", remove: userDeleteHardFiles, insert: hardDeleteFileInsert },
 ] as const
 
-test.each(hardDeleteCases.flatMap((entry) => [0, 1].map((ownerIndex) => ({ ...entry, ownerIndex }))))(
-  "hard deletion via $label removes only userId at position $ownerIndex, including consumed/deleted rows",
-  async ({ table, remove, insert, ownerIndex }) => {
-    const t = convexTest(schema, modules)
-    const fixture = await t.run(async (ctx) => {
-      const users = [await userInsert(ctx, "First owner"), await userInsert(ctx, "Second owner")] as const
+test.each(
+  hardDeleteCases.flatMap((entry) => [0, 1].map((ownerIndex) => ({ ...entry, ownerIndex }))),
+)("hard deletion via $label removes only userId at position $ownerIndex, including consumed/deleted rows", async ({
+  table,
+  remove,
+  insert,
+  ownerIndex,
+}) => {
+  const t = convexTest(schema, modules)
+  const fixture = await t.run(async (ctx) => {
+    const users = [await userInsert(ctx, "First owner"), await userInsert(ctx, "Second owner")] as const
+    for (const userId of users) {
+      await insert(ctx, userId, false)
+      await insert(ctx, userId, true)
+    }
+    const target = users[ownerIndex]!
+    return { target, before: await ctx.db.query(table).take(20) }
+  })
+
+  await t.run((ctx) => remove(ctx, fixture.target))
+
+  const remaining = await t.run((ctx) => ctx.db.query(table).take(20))
+  expect(remaining).toEqual(fixture.before.filter((row) => row.userId !== fixture.target))
+  expect(remaining).toHaveLength(2)
+  expect(await t.run((ctx) => ctx.db.get("users", fixture.target))).not.toBeNull()
+})
+
+test.each([
+  0, 1,
+])("membership hard deletion isolates both userId and invitedBy for user at position %i", async (ownerIndex) => {
+  const t = convexTest(schema, modules)
+  const fixture = await t.run(async (ctx) => {
+    const users = [await userInsert(ctx, "First inviter"), await userInsert(ctx, "Second inviter")] as const
+    for (const orgHandle of ["first-org", "second-org"]) {
+      const orgId = await ctx.db.insert("orgs", { orgHandle, ...timestamps })
       for (const userId of users) {
-        await insert(ctx, userId, false)
-        await insert(ctx, userId, true)
+        await ctx.db.insert("orgMembers", {
+          orgId,
+          orgHandle,
+          userId,
+          invitedBy: users[1 - users.indexOf(userId)]!,
+          role: "member",
+          ...timestamps,
+        })
+        await ctx.db.insert("orgInvitations", {
+          orgHandle,
+          invitationCode: `${orgHandle}-${userId}`,
+          invitedName: "Invitee",
+          invitedEmail: otpFields.email,
+          invitedBy: userId,
+          role: "guest",
+          l: "en",
+          emailSendAmount: 0,
+          ...timestamps,
+        })
       }
-      const target = users[ownerIndex]!
-      return { target, before: await ctx.db.query(table).take(20) }
+    }
+    await ctx.db.insert("orgInvitations", {
+      orgHandle: "first-org",
+      invitationCode: "already-cleared",
+      invitedName: "Invitee",
+      invitedEmail: otpFields.email,
+      invitedBy: "",
+      role: "guest",
+      l: "en",
+      emailSendAmount: 0,
+      ...timestamps,
     })
+    return {
+      target: users[ownerIndex]!,
+      members: await ctx.db.query("orgMembers").take(20),
+      invitations: await ctx.db.query("orgInvitations").take(20),
+      orgs: await ctx.db.query("orgs").take(20),
+    }
+  })
 
-    await t.run((ctx) => remove(ctx, fixture.target))
+  await t.run((ctx) => userDeleteHardOrgMemberships(ctx, fixture.target))
 
-    const remaining = await t.run((ctx) => ctx.db.query(table).take(20))
-    expect(remaining).toEqual(fixture.before.filter((row) => row.userId !== fixture.target))
-    expect(remaining).toHaveLength(2)
-    expect(await t.run((ctx) => ctx.db.get("users", fixture.target))).not.toBeNull()
-  },
-)
-
-test.each([0, 1])(
-  "membership hard deletion isolates both userId and invitedBy for user at position %i",
-  async (ownerIndex) => {
-    const t = convexTest(schema, modules)
-    const fixture = await t.run(async (ctx) => {
-      const users = [await userInsert(ctx, "First inviter"), await userInsert(ctx, "Second inviter")] as const
-      for (const orgHandle of ["first-org", "second-org"]) {
-        const orgId = await ctx.db.insert("orgs", { orgHandle, ...timestamps })
-        for (const userId of users) {
-          await ctx.db.insert("orgMembers", {
-            orgId,
-            orgHandle,
-            userId,
-            invitedBy: users[1 - users.indexOf(userId)]!,
-            role: "member",
-            ...timestamps,
-          })
-          await ctx.db.insert("orgInvitations", {
-            orgHandle,
-            invitationCode: `${orgHandle}-${userId}`,
-            invitedName: "Invitee",
-            invitedEmail: otpFields.email,
-            invitedBy: userId,
-            role: "guest",
-            l: "en",
-            emailSendAmount: 0,
-            ...timestamps,
-          })
-        }
-      }
-      await ctx.db.insert("orgInvitations", {
-        orgHandle: "first-org",
-        invitationCode: "already-cleared",
-        invitedName: "Invitee",
-        invitedEmail: otpFields.email,
-        invitedBy: "",
-        role: "guest",
-        l: "en",
-        emailSendAmount: 0,
-        ...timestamps,
-      })
-      return {
-        target: users[ownerIndex]!,
-        members: await ctx.db.query("orgMembers").take(20),
-        invitations: await ctx.db.query("orgInvitations").take(20),
-        orgs: await ctx.db.query("orgs").take(20),
-      }
-    })
-
-    await t.run((ctx) => userDeleteHardOrgMemberships(ctx, fixture.target))
-
-    expect(await t.run((ctx) => ctx.db.query("orgMembers").take(20))).toEqual(
-      fixture.members.filter((row) => row.userId !== fixture.target),
-    )
-    expect(await t.run((ctx) => ctx.db.query("orgInvitations").take(20))).toEqual(
-      fixture.invitations.map((row) => (row.invitedBy === fixture.target ? { ...row, invitedBy: "" } : row)),
-    )
-    expect(await t.run((ctx) => ctx.db.query("orgs").take(20))).toEqual(fixture.orgs)
-  },
-)
+  expect(await t.run((ctx) => ctx.db.query("orgMembers").take(20))).toEqual(
+    fixture.members.filter((row) => row.userId !== fixture.target),
+  )
+  expect(await t.run((ctx) => ctx.db.query("orgInvitations").take(20))).toEqual(
+    fixture.invitations.map((row) => (row.invitedBy === fixture.target ? { ...row, invitedBy: "" } : row)),
+  )
+  expect(await t.run((ctx) => ctx.db.query("orgs").take(20))).toEqual(fixture.orgs)
+})
 
 test.each([
   {
@@ -231,59 +234,59 @@ test.each([
     table: "authUserEmailRegistrations",
     mutation: internal.auth.signUpConfirmEmail3CleanupOldCodesInternalMutation,
   },
-] as const)(
-  "$label cleanup uses a strict seven-day lt boundary regardless of insertion order or consumed state",
-  async ({ table, mutation }) => {
-    vi.useFakeTimers()
-    vi.setSystemTime(new Date("2026-10-01T12:00:00.000Z"))
+] as const)("$label cleanup uses a strict seven-day lt boundary regardless of insertion order or consumed state", async ({
+  table,
+  mutation,
+}) => {
+  vi.useFakeTimers()
+  vi.setSystemTime(new Date("2026-10-01T12:00:00.000Z"))
 
-    try {
-      const t = convexTest(schema, modules)
-      const cutoff = Date.now() - week1timeMs
-      const fixture = await t.run(async (ctx) => {
-        const userId = await userInsert(ctx, "Cleanup owner")
-        const offsets = [1, -1, 0, -2]
-        for (const offset of offsets) {
-          const fields = {
-            email: otpFields.email,
-            code: otpFields.code,
-            createdAt: new Date(cutoff + offset).toISOString(),
-            ...(offset === -2 ? { consumedAt: createdAt } : {}),
-          }
-          if (table === "authEmailLoginCodes") {
-            await ctx.db.insert(table, { ...fields, userId })
-          } else {
-            await ctx.db.insert(table, { ...fields, name: "Cleanup registration" })
-          }
+  try {
+    const t = convexTest(schema, modules)
+    const cutoff = Date.now() - week1timeMs
+    const fixture = await t.run(async (ctx) => {
+      const userId = await userInsert(ctx, "Cleanup owner")
+      const offsets = [1, -1, 0, -2]
+      for (const offset of offsets) {
+        const fields = {
+          email: otpFields.email,
+          code: otpFields.code,
+          createdAt: new Date(cutoff + offset).toISOString(),
+          ...(offset === -2 ? { consumedAt: createdAt } : {}),
         }
-        // Login cleanup also invokes the bounded OTP cleanup helper.
-        for (const offset of [1, -1, 0]) {
-          await ctx.db.insert("authOtps", {
-            ...otpFields,
-            userId,
-            createdAt: new Date(cutoff + offset).toISOString(),
-          })
+        if (table === "authEmailLoginCodes") {
+          await ctx.db.insert(table, { ...fields, userId })
+        } else {
+          await ctx.db.insert(table, { ...fields, name: "Cleanup registration" })
         }
-        return {
-          codes: await ctx.db.query(table).take(20),
-          otps: await ctx.db.query("authOtps").take(20),
-        }
-      })
+      }
+      // Login cleanup also invokes the bounded OTP cleanup helper.
+      for (const offset of [1, -1, 0]) {
+        await ctx.db.insert("authOtps", {
+          ...otpFields,
+          userId,
+          createdAt: new Date(cutoff + offset).toISOString(),
+        })
+      }
+      return {
+        codes: await ctx.db.query(table).take(20),
+        otps: await ctx.db.query("authOtps").take(20),
+      }
+    })
 
-      expect(await t.mutation(mutation, {})).toEqual({ deleted: table === "authEmailLoginCodes" ? 3 : 2 })
+    expect(await t.mutation(mutation, {})).toEqual({ deleted: table === "authEmailLoginCodes" ? 3 : 2 })
 
-      const cutoffIso = new Date(cutoff).toISOString()
-      expect(await t.run((ctx) => ctx.db.query(table).take(20))).toEqual(
-        fixture.codes.filter((row) => row.createdAt >= cutoffIso),
-      )
-      expect(await t.run((ctx) => ctx.db.query("authOtps").take(20))).toEqual(
-        table === "authEmailLoginCodes" ? fixture.otps.filter((row) => row.createdAt >= cutoffIso) : fixture.otps,
-      )
-    } finally {
-      vi.useRealTimers()
-    }
-  },
-)
+    const cutoffIso = new Date(cutoff).toISOString()
+    expect(await t.run((ctx) => ctx.db.query(table).take(20))).toEqual(
+      fixture.codes.filter((row) => row.createdAt >= cutoffIso),
+    )
+    expect(await t.run((ctx) => ctx.db.query("authOtps").take(20))).toEqual(
+      table === "authEmailLoginCodes" ? fixture.otps.filter((row) => row.createdAt >= cutoffIso) : fixture.otps,
+    )
+  } finally {
+    vi.useRealTimers()
+  }
+})
 
 test("resource/file removal deletes all duplicate exact pairs and leaves both one-field near-misses untouched", async () => {
   const t = convexTest(schema, modules)
@@ -312,43 +315,43 @@ test("resource/file removal deletes all duplicate exact pairs and leaves both on
   )
 })
 
-test.each([false, true])(
-  "organization/resource removal deletes all duplicate exact pairs (supplied orgId: %s)",
-  async (supplyOrgId) => {
-    const t = convexTest(schema, modules)
-    const fixture = await t.run(async (ctx) => {
-      const orgId = await ctx.db.insert("orgs", { orgHandle: "target-org", ...timestamps })
-      const otherOrgId = await ctx.db.insert("orgs", { orgHandle: "other-org", ...timestamps })
-      for (const [orgHandle, resourceId] of [
-        ["target-org", "target-resource"],
-        ["target-org", "other-resource"],
-        ["other-org", "target-resource"],
-        ["target-org", "target-resource"],
-        ["other-org", "other-resource"],
-        ["target-org", "target-resource"],
-      ]) {
-        await ctx.db.insert("orgResources", {
-          orgId: orgHandle === "target-org" ? orgId : otherOrgId,
-          orgHandle: orgHandle!,
-          resourceId: resourceId!,
-          createdAt,
-        })
-      }
-      return { orgId, before: await ctx.db.query("orgResources").take(20) }
-    })
+test.each([
+  false,
+  true,
+])("organization/resource removal deletes all duplicate exact pairs (supplied orgId: %s)", async (supplyOrgId) => {
+  const t = convexTest(schema, modules)
+  const fixture = await t.run(async (ctx) => {
+    const orgId = await ctx.db.insert("orgs", { orgHandle: "target-org", ...timestamps })
+    const otherOrgId = await ctx.db.insert("orgs", { orgHandle: "other-org", ...timestamps })
+    for (const [orgHandle, resourceId] of [
+      ["target-org", "target-resource"],
+      ["target-org", "other-resource"],
+      ["other-org", "target-resource"],
+      ["target-org", "target-resource"],
+      ["other-org", "other-resource"],
+      ["target-org", "target-resource"],
+    ]) {
+      await ctx.db.insert("orgResources", {
+        orgId: orgHandle === "target-org" ? orgId : otherOrgId,
+        orgHandle: orgHandle!,
+        resourceId: resourceId!,
+        createdAt,
+      })
+    }
+    return { orgId, before: await ctx.db.query("orgResources").take(20) }
+  })
 
-    expect(
-      await t.mutation(internal.org.orgResourceRemoveInternalMutation, {
-        orgHandle: "target-org",
-        resourceId: "target-resource",
-        ...(supplyOrgId ? { orgId: fixture.orgId } : {}),
-      }),
-    ).toEqual({ success: true, data: null })
-    expect(await t.run((ctx) => ctx.db.query("orgResources").take(20))).toEqual(
-      fixture.before.filter((row) => row.orgHandle !== "target-org" || row.resourceId !== "target-resource"),
-    )
-  },
-)
+  expect(
+    await t.mutation(internal.org.orgResourceRemoveInternalMutation, {
+      orgHandle: "target-org",
+      resourceId: "target-resource",
+      ...(supplyOrgId ? { orgId: fixture.orgId } : {}),
+    }),
+  ).toEqual({ success: true, data: null })
+  expect(await t.run((ctx) => ctx.db.query("orgResources").take(20))).toEqual(
+    fixture.before.filter((row) => row.orgHandle !== "target-org" || row.resourceId !== "target-resource"),
+  )
+})
 
 test("unfiltered resource listing paginates the live deletedAt index in creation order, not resourceId or createdAt order", async () => {
   const t = convexTest(schema, modules)
@@ -417,43 +420,40 @@ async function resourceSearchFixtureInsert(ctx: MutationCtx) {
   for (const row of rows) await ctx.db.insert("resources", row)
 }
 
-test.each(resourceFilterCases)(
-  "resource search excludes tombstones and applies $label inside the search index",
-  async ({ filters, expected }) => {
-    const t = convexTest(schema, modules)
-    await t.run(resourceSearchFixtureInsert)
+test.each(
+  resourceFilterCases,
+)("resource search excludes tombstones and applies $label inside the search index", async ({ filters, expected }) => {
+  const t = convexTest(schema, modules)
+  await t.run(resourceSearchFixtureInsert)
 
-    const result = await t.query(internal.resource.resourcesListInternalQuery, {
-      ...filters,
-      searchText: "  needle  ",
-      paginationOpts: { numItems: 20, cursor: null },
-    })
+  const result = await t.query(internal.resource.resourcesListInternalQuery, {
+    ...filters,
+    searchText: "  needle  ",
+    paginationOpts: { numItems: 20, cursor: null },
+  })
 
-    expect(result.isDone).toBe(true)
-    // Search relevance order is not part of the contract.
-    expect(result.page.map((row) => row.resourceId).sort()).toEqual([...expected].sort())
-    expect(result.page.every((row) => row.deletedAt === undefined)).toBe(true)
-    expect(result.page.every((row) => !("searchText" in row) && !("_id" in row) && !("_creationTime" in row))).toBe(
-      true,
-    )
-  },
-)
+  expect(result.isDone).toBe(true)
+  // Search relevance order is not part of the contract.
+  expect(result.page.map((row) => row.resourceId).sort()).toEqual([...expected].sort())
+  expect(result.page.every((row) => row.deletedAt === undefined)).toBe(true)
+  expect(result.page.every((row) => !("searchText" in row) && !("_id" in row) && !("_creationTime" in row))).toBe(true)
+})
 
-test.each(resourceFilterCases.slice(1))(
-  "ordinary resource listing preserves tombstone exclusion with $label",
-  async ({ filters, expected }) => {
-    const t = convexTest(schema, modules)
-    await t.run(resourceSearchFixtureInsert)
+test.each(resourceFilterCases.slice(1))("ordinary resource listing preserves tombstone exclusion with $label", async ({
+  filters,
+  expected,
+}) => {
+  const t = convexTest(schema, modules)
+  await t.run(resourceSearchFixtureInsert)
 
-    const result = await t.query(internal.resource.resourcesListInternalQuery, {
-      ...filters,
-      paginationOpts: { numItems: 20, cursor: null },
-    })
+  const result = await t.query(internal.resource.resourcesListInternalQuery, {
+    ...filters,
+    paginationOpts: { numItems: 20, cursor: null },
+  })
 
-    expect(result.isDone).toBe(true)
-    expect(result.page.map((row) => row.resourceId)).toEqual([...expected, "wrong-search"])
-  },
-)
+  expect(result.isDone).toBe(true)
+  expect(result.page.map((row) => row.resourceId)).toEqual([...expected, "wrong-search"])
+})
 
 test("organization leave uses the exact userId/orgId pair, preserves near-misses and removes only the first duplicate", async () => {
   const t = convexTest(schema, modules)

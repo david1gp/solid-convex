@@ -262,8 +262,7 @@ test("note detail returns structured Result error for malformed note ID rather t
 })
 
 test("indexed note queries support project, team, organization, and global queries with bounded cursor pagination", async () => {
-  const { t, token, projectId, otherProjectId, teamId, otherTeamId, orgId, otherOrgId } =
-    await noteFixtureCreate()
+  const { t, token, projectId, otherProjectId, teamId, otherTeamId, orgId, otherOrgId } = await noteFixtureCreate()
 
   const expected = await t.run(async (ctx) => {
     const ids = []
@@ -303,9 +302,7 @@ test("indexed note queries support project, team, organization, and global queri
     if (!result.success) throw new Error("Note pagination failed")
     expect(result.data.page.length).toBeLessThanOrEqual(20)
     expect(
-      result.data.page.every(
-        (note) => note.projectId === projectId && note.teamId === teamId && note.orgId === orgId,
-      ),
+      result.data.page.every((note) => note.projectId === projectId && note.teamId === teamId && note.orgId === orgId),
     ).toBe(true)
     actual.push(...result.data.page.map((note) => note.noteId))
     cursor = result.data.continueCursor
@@ -344,9 +341,9 @@ test("indexed note queries support project, team, organization, and global queri
 
   // Pagination bounds checking
   for (const numItems of [0, -1, 1.5, 101]) {
-    expect(
-      await t.query(api.note.noteListQuery, { token, paginationOpts: { numItems, cursor: null } }),
-    ).toMatchObject({ success: false })
+    expect(await t.query(api.note.noteListQuery, { token, paginationOpts: { numItems, cursor: null } })).toMatchObject({
+      success: false,
+    })
   }
   expect(
     await t.query(api.note.noteListQuery, { token, paginationOpts: { numItems: 10, cursor: "invalid-cursor" } }),

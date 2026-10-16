@@ -5,8 +5,8 @@ import { describe, expect, it } from "vitest"
 import { api } from "../convex/_generated/api.js"
 import schema from "../convex/schema.js"
 import { apiKeyCredentialHash } from "../src/auth/model/apiKeyCredentialHash.ts"
-import { hierarchyDeleteFingerprintCreate } from "../src/hierarchy_delete/model/hierarchyDeleteFingerprintCreate.ts"
 import { hierarchyDeleteRootResolveFn } from "../src/hierarchy_delete/convex/hierarchyDeleteRootResolveFn.ts"
+import { hierarchyDeleteFingerprintCreate } from "../src/hierarchy_delete/model/hierarchyDeleteFingerprintCreate.ts"
 
 const modules = import.meta.glob("../convex/**/*.ts")
 const timestamps = { createdAt: "2026-10-13T00:00:00.000Z", updatedAt: "2026-10-13T00:00:00.000Z" }
@@ -183,8 +183,24 @@ async function hierarchyDeleteFixtureCreate() {
 
 describe("hierarchyDeletePreviewQuery", () => {
   it("previews organization cascade with exact deduplicated entity and file counts", async () => {
-    const { t, token, orgId, team1Id, team2Id, proj1Id, proj2Id, proj3Id, note1Id, note2Id, note3Id, note4Id, res1Id, res2Id, file1Id, file2Id } =
-      await hierarchyDeleteFixtureCreate()
+    const {
+      t,
+      token,
+      orgId,
+      team1Id,
+      team2Id,
+      proj1Id,
+      proj2Id,
+      proj3Id,
+      note1Id,
+      note2Id,
+      note3Id,
+      note4Id,
+      res1Id,
+      res2Id,
+      file1Id,
+      file2Id,
+    } = await hierarchyDeleteFixtureCreate()
 
     const result = await t.query(api.hierarchyDelete.hierarchyDeletePreviewQuery, {
       token,

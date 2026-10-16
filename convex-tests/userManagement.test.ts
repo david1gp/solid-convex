@@ -95,18 +95,16 @@ test("team validation internal query validates team existence", async () => {
   const { t, teamId } = await userManagementFixtureCreate()
 
   // Valid team ID passes
-  const validResult = await t.query(
-    internal.userManagement.userManagementTeamsValidateInternalQuery,
-    { teamIds: [teamId] },
-  )
+  const validResult = await t.query(internal.userManagement.userManagementTeamsValidateInternalQuery, {
+    teamIds: [teamId],
+  })
   expect(validResult.success).toBe(true)
 
   // Non-existent team ID fails
   const missingId = "jd700000000000000000000000000000"
-  const invalidResult = await t.query(
-    internal.userManagement.userManagementTeamsValidateInternalQuery,
-    { teamIds: [missingId] },
-  )
+  const invalidResult = await t.query(internal.userManagement.userManagementTeamsValidateInternalQuery, {
+    teamIds: [missingId],
+  })
   expect(invalidResult.success).toBe(false)
 })
 
@@ -114,31 +112,25 @@ test("user projection upsert and reactive bounded query filter by organization",
   const { t, adminKey } = await userManagementFixtureCreate()
 
   // Upsert user projection 1 in org-a
-  const upsert1 = await t.mutation(
-    internal.userManagement.userProjectionUpsertInternalMutation,
-    {
-      userId: "zitadel-user-1",
-      organizationId: "org-a",
-      displayName: "Alice",
-      roles: ["admin"],
-      teamIds: [],
-      syncedAt: "2026-10-14T00:00:00.000Z",
-    },
-  )
+  const upsert1 = await t.mutation(internal.userManagement.userProjectionUpsertInternalMutation, {
+    userId: "zitadel-user-1",
+    organizationId: "org-a",
+    displayName: "Alice",
+    roles: ["admin"],
+    teamIds: [],
+    syncedAt: "2026-10-14T00:00:00.000Z",
+  })
   expect(upsert1.success).toBe(true)
 
   // Upsert user projection 2 in org-b
-  const upsert2 = await t.mutation(
-    internal.userManagement.userProjectionUpsertInternalMutation,
-    {
-      userId: "zitadel-user-2",
-      organizationId: "org-b",
-      displayName: "Bob",
-      roles: ["member"],
-      teamIds: [],
-      syncedAt: "2026-10-14T00:00:00.000Z",
-    },
-  )
+  const upsert2 = await t.mutation(internal.userManagement.userProjectionUpsertInternalMutation, {
+    userId: "zitadel-user-2",
+    organizationId: "org-b",
+    displayName: "Bob",
+    roles: ["member"],
+    teamIds: [],
+    syncedAt: "2026-10-14T00:00:00.000Z",
+  })
   expect(upsert2.success).toBe(true)
 
   // Filter query by org-a returns only Alice
@@ -170,50 +162,44 @@ test("complete sync cleans up stale records while partial sync preserves them", 
   const { t } = await userManagementFixtureCreate()
 
   // Initial sync with two users in org-x
-  await t.mutation(
-    internal.userManagement.userProjectionSyncRecordsInternalMutation,
-    {
-      organizationId: "org-x",
-      records: [
-        {
-          userId: "u1",
-          organizationId: "org-x",
-          displayName: "User One",
-          roles: ["user"],
-          teamIds: [],
-          syncedAt: "2026-10-14T00:00:00.000Z",
-        },
-        {
-          userId: "u2",
-          organizationId: "org-x",
-          displayName: "User Two",
-          roles: ["user"],
-          teamIds: [],
-          syncedAt: "2026-10-14T00:00:00.000Z",
-        },
-      ],
-      isCompleteSync: false,
-    },
-  )
+  await t.mutation(internal.userManagement.userProjectionSyncRecordsInternalMutation, {
+    organizationId: "org-x",
+    records: [
+      {
+        userId: "u1",
+        organizationId: "org-x",
+        displayName: "User One",
+        roles: ["user"],
+        teamIds: [],
+        syncedAt: "2026-10-14T00:00:00.000Z",
+      },
+      {
+        userId: "u2",
+        organizationId: "org-x",
+        displayName: "User Two",
+        roles: ["user"],
+        teamIds: [],
+        syncedAt: "2026-10-14T00:00:00.000Z",
+      },
+    ],
+    isCompleteSync: false,
+  })
 
   // Partial sync containing only u1 (isCompleteSync: false) must NOT delete u2
-  const partialSync = await t.mutation(
-    internal.userManagement.userProjectionSyncRecordsInternalMutation,
-    {
-      organizationId: "org-x",
-      records: [
-        {
-          userId: "u1",
-          organizationId: "org-x",
-          displayName: "User One Updated",
-          roles: ["user"],
-          teamIds: [],
-          syncedAt: "2026-10-14T01:00:00.000Z",
-        },
-      ],
-      isCompleteSync: false,
-    },
-  )
+  const partialSync = await t.mutation(internal.userManagement.userProjectionSyncRecordsInternalMutation, {
+    organizationId: "org-x",
+    records: [
+      {
+        userId: "u1",
+        organizationId: "org-x",
+        displayName: "User One Updated",
+        roles: ["user"],
+        teamIds: [],
+        syncedAt: "2026-10-14T01:00:00.000Z",
+      },
+    ],
+    isCompleteSync: false,
+  })
   expect(partialSync.success).toBe(true)
   if (partialSync.success) {
     expect(partialSync.data.deletedStaleCount).toBe(0)
@@ -229,23 +215,20 @@ test("complete sync cleans up stale records while partial sync preserves them", 
   expect(countAfterPartial.length).toBe(2)
 
   // Complete sync containing only u1 (isCompleteSync: true) deletes stale u2
-  const completeSync = await t.mutation(
-    internal.userManagement.userProjectionSyncRecordsInternalMutation,
-    {
-      organizationId: "org-x",
-      records: [
-        {
-          userId: "u1",
-          organizationId: "org-x",
-          displayName: "User One Final",
-          roles: ["user"],
-          teamIds: [],
-          syncedAt: "2026-10-14T02:00:00.000Z",
-        },
-      ],
-      isCompleteSync: true,
-    },
-  )
+  const completeSync = await t.mutation(internal.userManagement.userProjectionSyncRecordsInternalMutation, {
+    organizationId: "org-x",
+    records: [
+      {
+        userId: "u1",
+        organizationId: "org-x",
+        displayName: "User One Final",
+        roles: ["user"],
+        teamIds: [],
+        syncedAt: "2026-10-14T02:00:00.000Z",
+      },
+    ],
+    isCompleteSync: true,
+  })
   expect(completeSync.success).toBe(true)
   if (completeSync.success) {
     expect(completeSync.data.deletedStaleCount).toBe(1)
@@ -281,13 +264,10 @@ test("canonical role revocation immediately updates local auth user without wait
   expect(userBefore?.roles).toEqual(["admin"])
 
   // Revoke admin in Zitadel, updating canonical roles to member only
-  const syncResult = await t.mutation(
-    internal.userManagement.userManagementAuthUserRolesSyncInternalMutation,
-    {
-      providerSubject: "zitadel-admin-sub",
-      roles: ["member"],
-    },
-  )
+  const syncResult = await t.mutation(internal.userManagement.userManagementAuthUserRolesSyncInternalMutation, {
+    providerSubject: "zitadel-admin-sub",
+    roles: ["member"],
+  })
   expect(syncResult.success).toBe(true)
 
   // Verify user's local auth record immediately revoked admin to member
@@ -300,31 +280,25 @@ test("composite org+user projection identity isolates same userId across differe
   const { t, adminKey } = await userManagementFixtureCreate()
 
   // Upsert shared-user in org-alpha
-  const upsertAlpha = await t.mutation(
-    internal.userManagement.userProjectionUpsertInternalMutation,
-    {
-      userId: "shared-user",
-      organizationId: "org-alpha",
-      displayName: "Alpha User",
-      roles: ["admin"],
-      teamIds: [],
-      syncedAt: "2026-10-14T00:00:00.000Z",
-    },
-  )
+  const upsertAlpha = await t.mutation(internal.userManagement.userProjectionUpsertInternalMutation, {
+    userId: "shared-user",
+    organizationId: "org-alpha",
+    displayName: "Alpha User",
+    roles: ["admin"],
+    teamIds: [],
+    syncedAt: "2026-10-14T00:00:00.000Z",
+  })
   expect(upsertAlpha.success).toBe(true)
 
   // Upsert same shared-user in org-beta
-  const upsertBeta = await t.mutation(
-    internal.userManagement.userProjectionUpsertInternalMutation,
-    {
-      userId: "shared-user",
-      organizationId: "org-beta",
-      displayName: "Beta User",
-      roles: ["member"],
-      teamIds: [],
-      syncedAt: "2026-10-14T00:00:00.000Z",
-    },
-  )
+  const upsertBeta = await t.mutation(internal.userManagement.userProjectionUpsertInternalMutation, {
+    userId: "shared-user",
+    organizationId: "org-beta",
+    displayName: "Beta User",
+    roles: ["member"],
+    teamIds: [],
+    syncedAt: "2026-10-14T00:00:00.000Z",
+  })
   expect(upsertBeta.success).toBe(true)
 
   // Query org-alpha projection
@@ -354,17 +328,14 @@ test("composite org+user projection identity isolates same userId across differe
   }
 
   // Verify updating org-alpha does NOT mutate org-beta
-  await t.mutation(
-    internal.userManagement.userProjectionUpsertInternalMutation,
-    {
-      userId: "shared-user",
-      organizationId: "org-alpha",
-      displayName: "Alpha User Updated",
-      roles: ["user"],
-      teamIds: [],
-      syncedAt: "2026-10-14T01:00:00.000Z",
-    },
-  )
+  await t.mutation(internal.userManagement.userProjectionUpsertInternalMutation, {
+    userId: "shared-user",
+    organizationId: "org-alpha",
+    displayName: "Alpha User Updated",
+    roles: ["user"],
+    teamIds: [],
+    syncedAt: "2026-10-14T01:00:00.000Z",
+  })
 
   const reGetBeta = await t.query(api.userManagement.userProjectionGetQuery, {
     token: adminKey,
@@ -407,14 +378,11 @@ test("stale cleanup continuation mutation deletes non-active records in paged ba
       .paginate({ cursor: null, numItems: 1 }),
   )
 
-  const cleanupResult = await t.mutation(
-    internal.userManagement.userProjectionStaleCleanupInternalMutation,
-    {
-      organizationId: "org-target",
-      syncedUserIds: ["active-u1"],
-      cursor: firstPage.continueCursor,
-    },
-  )
+  const cleanupResult = await t.mutation(internal.userManagement.userProjectionStaleCleanupInternalMutation, {
+    organizationId: "org-target",
+    syncedUserIds: ["active-u1"],
+    cursor: firstPage.continueCursor,
+  })
 
   expect(cleanupResult.success).toBe(true)
 

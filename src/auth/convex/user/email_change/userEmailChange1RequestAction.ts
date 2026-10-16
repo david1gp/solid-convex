@@ -11,11 +11,11 @@ import { verifyHashedPassword2 } from "#src/auth/convex/pw/verifyHashedPassword.
 import { vIdUser } from "#src/auth/convex/vIdUser.ts"
 import { otpPurpose } from "#src/auth/model_field/otpPurpose.ts"
 import { pageRouteAuth } from "#src/auth/url/pageRouteAuth.ts"
+import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authActionTokenToUserId } from "#src/utils/convex_backend/authActionTokenToUserId.ts"
 import { createErrorAndLogError } from "#src/utils/convex_backend/createErrorAndLogError.ts"
 import { createErrorAndLogWarn } from "#src/utils/convex_backend/createErrorAndLogWarn.ts"
 import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
-import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { emailSchema } from "#src/utils/valibot/emailSchema.ts"
 
 const userEmailChangeSchemaFields = {

@@ -18,7 +18,7 @@ export function toastAdd(addToast: AddToastProps, log: boolean = false): string 
   const toastId = addToast.id ?? generateToastId()
 
   // add icon if variant
-  if (addToast.variant && addToast.icon == undefined) {
+  if (addToast.variant && addToast.icon === undefined) {
     const variantIcon = toastVariantIcon[addToast.variant]
     if (variantIcon) addToast.icon = variantIcon
   }

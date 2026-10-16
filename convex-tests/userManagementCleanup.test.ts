@@ -23,14 +23,11 @@ test("userProjectionTeamsPatchInternalMutation updates team assignments while pr
   })
 
   // Run patch mutation removing team-to-delete
-  const patchResult = await t.mutation(
-    internal.userManagement.userProjectionTeamsPatchInternalMutation,
-    {
-      userId: "u-patch-test",
-      teamIds: ["team-stay"],
-      syncedAt: "2026-10-14T01:00:00.000Z",
-    },
-  )
+  const patchResult = await t.mutation(internal.userManagement.userProjectionTeamsPatchInternalMutation, {
+    userId: "u-patch-test",
+    teamIds: ["team-stay"],
+    syncedAt: "2026-10-14T01:00:00.000Z",
+  })
 
   expect(patchResult.success).toBe(true)
   if (!patchResult.success) return
@@ -55,13 +52,10 @@ test("userProjectionTeamsPatchInternalMutation updates team assignments while pr
 test("userProjectionTeamsPatchInternalMutation returns patched false when user projection does not exist", async () => {
   const t = convexTest(schema, modules)
 
-  const patchResult = await t.mutation(
-    internal.userManagement.userProjectionTeamsPatchInternalMutation,
-    {
-      userId: "non-existent-user",
-      teamIds: ["team-stay"],
-    },
-  )
+  const patchResult = await t.mutation(internal.userManagement.userProjectionTeamsPatchInternalMutation, {
+    userId: "non-existent-user",
+    teamIds: ["team-stay"],
+  })
 
   expect(patchResult.success).toBe(true)
   if (!patchResult.success) return

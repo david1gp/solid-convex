@@ -264,16 +264,14 @@ export type HandleSignUpData = {
 }
 
 function validateFieldResult(field: SignUpFormField, value: string | boolean) {
-  let schema
-  if (field === signUpFormField.name) {
-    schema = stringSchemaName
-  } else if (field === signUpFormField.email) {
-    schema = emailSchema
-  } else if (field === signUpFormField.pw) {
-    schema = passwordSchema
-  } else if (field === signUpFormField.terms) {
-    schema = signUpTermsSchema
-    return a.safeParse(schema, value as boolean)
+  if (field === signUpFormField.terms) {
+    return a.safeParse(signUpTermsSchema, value as boolean)
   }
-  return a.safeParse(schema!, value as string)
+  if (field === signUpFormField.name) {
+    return a.safeParse(stringSchemaName, value as string)
+  }
+  if (field === signUpFormField.email) {
+    return a.safeParse(emailSchema, value as string)
+  }
+  return a.safeParse(passwordSchema, value as string)
 }

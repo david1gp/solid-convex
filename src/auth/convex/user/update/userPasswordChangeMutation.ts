@@ -7,11 +7,11 @@ import { hashPassword2 } from "#src/auth/convex/pw/hashPassword.ts"
 import { verifyHashedPassword2 } from "#src/auth/convex/pw/verifyHashedPassword.ts"
 import { vIdUser } from "#src/auth/convex/vIdUser.ts"
 import { passwordSchema } from "#src/auth/model_field/passwordSchema.ts"
+import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authMutationTokenToUserId } from "#src/utils/convex_backend/authMutationTokenToUserId.ts"
 import { createErrorAndLogError } from "#src/utils/convex_backend/createErrorAndLogError.ts"
 import { createErrorAndLogWarn } from "#src/utils/convex_backend/createErrorAndLogWarn.ts"
 import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
-import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 
 const userPasswordChangeSchemaFields = {
   currentPassword: a.optional(a.string()),

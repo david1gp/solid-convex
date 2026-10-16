@@ -5,9 +5,9 @@ import { createResult, createResultError, type PromiseResult } from "#result"
 import { docOrgMemberToModel } from "#src/org/member_convex/docOrgMemberToModel.ts"
 import type { IdOrgMember } from "#src/org/member_convex/IdOrgMember.ts"
 import type { OrgMemberModel } from "#src/org/member_model/OrgMemberModel.ts"
+import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authQueryResult } from "#src/utils/convex_backend/authQueryResult.ts"
 import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
-import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 
 export const orgMemberGetFields = valibotToConvex({
   orgHandle: a.string(),

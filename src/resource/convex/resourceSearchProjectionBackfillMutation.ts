@@ -4,9 +4,9 @@ import { internalMutation, type MutationCtx } from "#convex/_generated/server.js
 import { createResult, type PromiseResult } from "#result"
 import { resourceGetDocFn } from "#src/resource/convex/resourceGetQuery.ts"
 import { resourceSearchProjection } from "#src/resource/convex/resourceSearchProjection.ts"
+import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { paginationDefaultOptions } from "#src/utils/convex_backend/paginationDefaultOptions.ts"
 import { paginationOptsValidator } from "#src/utils/convex_backend/paginationOptsValidator.ts"
-import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 
 const resourceSearchProjectionBackfillFields = {
   ...valibotToConvex({ target: a.union([a.literal("resources"), a.literal("orgResources")]) }),

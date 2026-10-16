@@ -1,6 +1,6 @@
 import type { MutationCtx, QueryCtx } from "#convex/_generated/server.js"
-import { createResult, createResultError } from "#result"
 import type { PromiseResult } from "#result"
+import { createResult, createResultError } from "#result"
 import type { DocUser } from "#src/auth/convex/IdUser.ts"
 import { userRoleEffectiveGet } from "#src/auth/model_field/userRoleEffectiveGet.ts"
 import { authCredentialResolve } from "#src/utils/convex_backend/authCredentialResolve.ts"

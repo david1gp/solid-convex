@@ -1,6 +1,6 @@
-import type { DemoListType } from "#ui/generate_demo_list/DemoListType.ts"
 import { pageDemoHref } from "#src/app/demos/pageDemoHref.ts"
 import { pageRouteInventory } from "#src/app/demos/pageRouteInventory.ts"
+import type { DemoListType } from "#ui/generate_demo_list/DemoListType.ts"
 
 export function demoCatalogDataCreate(demoList: DemoListType) {
   return {

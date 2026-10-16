@@ -42,7 +42,7 @@ export const noteListQuery = query({
             ? ctx.db.query("notes").withIndex("orgId", (q) => q.eq("orgId", org.data._id))
             : ctx.db.query("notes").withIndex("by_creation_time")
 
-      let result
+      let result: Awaited<ReturnType<typeof notes.paginate>>
       try {
         result = await notes.paginate({ ...pagination, maximumRowsRead: 100 })
       } catch (error) {

@@ -54,7 +54,7 @@ export function FormFieldInput(p: FormFieldInputProps) {
         onBlur={(e: FocusEvent) => p.onBlur((e.currentTarget as HTMLInputElement | HTMLTextAreaElement).value)}
         class={classMerge(
           "w-full",
-          p.config.type == "date" && "w-[18ch]",
+          p.config.type === "date" && "w-[18ch]",
           isTextarea && (isTextareaLong ? "min-h-[10lh]" : "min-h-[3lh]"),
           p.error && "border-destructive focus-visible:ring-destructive",
           p.config.class,

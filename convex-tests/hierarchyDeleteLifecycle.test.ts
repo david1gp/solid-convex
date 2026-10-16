@@ -5,8 +5,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { api } from "../convex/_generated/api.js"
 import schema from "../convex/schema.js"
 import { apiKeyCredentialHash } from "../src/auth/model/apiKeyCredentialHash.ts"
-import { r2ObjectDelete } from "../src/r2/api_r2/r2ObjectDelete.ts"
 import { hierarchyDeleteWorkerDurableStepFn } from "../src/hierarchy_delete/convex/hierarchyDeleteWorkerDurableStepFn.ts"
+import { r2ObjectDelete } from "../src/r2/api_r2/r2ObjectDelete.ts"
 import { userManagementCleanupActionFn } from "../src/user_management/convex/userManagementCleanupActionFn.ts"
 
 vi.mock("../src/r2/api_r2/r2ObjectDelete.ts", () => ({
@@ -160,9 +160,7 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     await t.finishAllScheduledFunctions(() => vi.runAllTimers())
 
     // 5. Verify job is durably marked failed in database with retryable state and exact error
-    const failedJobDoc = await t.run(async (ctx) =>
-      ctx.db.get("hierarchyDeleteJobs", jobId as any),
-    )
+    const failedJobDoc = await t.run(async (ctx) => ctx.db.get("hierarchyDeleteJobs", jobId as any))
     expect(failedJobDoc).not.toBeNull()
     expect(failedJobDoc?.status).toBe("failed")
     expect(failedJobDoc?.phase).toBe("delete_r2_objects")
@@ -176,7 +174,14 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     expect(lockedOrg?.deletionJobId).toBe(jobId)
 
     // Database items are intact (no partial deletion of file records or notes)
-    expect(await t.run(async (ctx) => ctx.db.query("files").withIndex("fileId", (q) => q.eq("fileId", fileId)).first())).not.toBeNull()
+    expect(
+      await t.run(async (ctx) =>
+        ctx.db
+          .query("files")
+          .withIndex("fileId", (q) => q.eq("fileId", fileId))
+          .first(),
+      ),
+    ).not.toBeNull()
     expect(await t.run(async (ctx) => ctx.db.get("notes", noteIds[0] as any))).not.toBeNull()
     expect(await t.run(async (ctx) => ctx.db.get("notes", noteIds[29] as any))).not.toBeNull()
 
@@ -212,17 +217,29 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     await t.finishAllScheduledFunctions(() => vi.runAllTimers())
 
     // 9. Verify durable job record in database is completed
-    const completedJobDoc = await t.run(async (ctx) =>
-      ctx.db.get("hierarchyDeleteJobs", jobId as any),
-    )
+    const completedJobDoc = await t.run(async (ctx) => ctx.db.get("hierarchyDeleteJobs", jobId as any))
     expect(completedJobDoc).not.toBeNull()
     expect(completedJobDoc?.status).toBe("completed")
     expect(completedJobDoc?.phase).toBe("completed")
     expect(completedJobDoc?.error).toBeUndefined()
 
     // 10. Verify all entities in the hierarchy are deleted
-    expect(await t.run(async (ctx) => ctx.db.query("files").withIndex("fileId", (q) => q.eq("fileId", fileId)).first())).toBeNull()
-    expect(await t.run(async (ctx) => ctx.db.query("resources").withIndex("resourceId", (q) => q.eq("resourceId", resId)).first())).toBeNull()
+    expect(
+      await t.run(async (ctx) =>
+        ctx.db
+          .query("files")
+          .withIndex("fileId", (q) => q.eq("fileId", fileId))
+          .first(),
+      ),
+    ).toBeNull()
+    expect(
+      await t.run(async (ctx) =>
+        ctx.db
+          .query("resources")
+          .withIndex("resourceId", (q) => q.eq("resourceId", resId))
+          .first(),
+      ),
+    ).toBeNull()
     for (const noteId of noteIds) {
       expect(await t.run(async (ctx) => ctx.db.get("notes", noteId as any))).toBeNull()
     }
@@ -312,9 +329,7 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
       expect.objectContaining({ cursor: "25" }),
     )
 
-    const completedJob = await t.run(async (ctx) =>
-      ctx.db.get("hierarchyDeleteJobs", confirmResult.data.jobId as any),
-    )
+    const completedJob = await t.run(async (ctx) => ctx.db.get("hierarchyDeleteJobs", confirmResult.data.jobId as any))
     expect(completedJob?.status).toBe("completed")
   })
 
@@ -391,9 +406,7 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
       data: { fileId, deleted: true },
     })
     // userManagementCleanupActionFn throws unexpected error
-    vi.mocked(userManagementCleanupActionFn).mockRejectedValueOnce(
-      new Error("Zitadel RPC network timeout"),
-    )
+    vi.mocked(userManagementCleanupActionFn).mockRejectedValueOnce(new Error("Zitadel RPC network timeout"))
 
     const previewResult = await t.query(api.hierarchyDelete.hierarchyDeletePreviewQuery, {
       token,
@@ -594,8 +607,22 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
 
     // Target note is deleted
     expect(await t.run(async (ctx) => ctx.db.get("notes", targetNoteId as any))).toBeNull()
-    expect(await t.run(async (ctx) => ctx.db.query("files").withIndex("fileId", (q) => q.eq("fileId", noteFileId)).first())).toBeNull()
-    expect(await t.run(async (ctx) => ctx.db.query("resources").withIndex("resourceId", (q) => q.eq("resourceId", noteResId)).first())).toBeNull()
+    expect(
+      await t.run(async (ctx) =>
+        ctx.db
+          .query("files")
+          .withIndex("fileId", (q) => q.eq("fileId", noteFileId))
+          .first(),
+      ),
+    ).toBeNull()
+    expect(
+      await t.run(async (ctx) =>
+        ctx.db
+          .query("resources")
+          .withIndex("resourceId", (q) => q.eq("resourceId", noteResId))
+          .first(),
+      ),
+    ).toBeNull()
 
     // Sibling note and parent project, team, org remain intact
     expect(await t.run(async (ctx) => ctx.db.get("notes", survivingNoteId as any))).not.toBeNull()
@@ -638,8 +665,22 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     for (const noteId of noteIds) {
       expect(await t.run(async (ctx) => ctx.db.get("notes", noteId as any))).toBeNull()
     }
-    expect(await t.run(async (ctx) => ctx.db.query("files").withIndex("fileId", (q) => q.eq("fileId", fileId)).first())).toBeNull()
-    expect(await t.run(async (ctx) => ctx.db.query("resources").withIndex("resourceId", (q) => q.eq("resourceId", resId)).first())).toBeNull()
+    expect(
+      await t.run(async (ctx) =>
+        ctx.db
+          .query("files")
+          .withIndex("fileId", (q) => q.eq("fileId", fileId))
+          .first(),
+      ),
+    ).toBeNull()
+    expect(
+      await t.run(async (ctx) =>
+        ctx.db
+          .query("resources")
+          .withIndex("resourceId", (q) => q.eq("resourceId", resId))
+          .first(),
+      ),
+    ).toBeNull()
 
     // Parent team and org remain intact
     expect(await t.run(async (ctx) => ctx.db.get("teams", teamId))).not.toBeNull()
@@ -702,8 +743,22 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     for (const noteId of noteIds) {
       expect(await t.run(async (ctx) => ctx.db.get("notes", noteId as any))).toBeNull()
     }
-    expect(await t.run(async (ctx) => ctx.db.query("files").withIndex("fileId", (q) => q.eq("fileId", fileId)).first())).toBeNull()
-    expect(await t.run(async (ctx) => ctx.db.query("resources").withIndex("resourceId", (q) => q.eq("resourceId", resId)).first())).toBeNull()
+    expect(
+      await t.run(async (ctx) =>
+        ctx.db
+          .query("files")
+          .withIndex("fileId", (q) => q.eq("fileId", fileId))
+          .first(),
+      ),
+    ).toBeNull()
+    expect(
+      await t.run(async (ctx) =>
+        ctx.db
+          .query("resources")
+          .withIndex("resourceId", (q) => q.eq("resourceId", resId))
+          .first(),
+      ),
+    ).toBeNull()
 
     // Parent org remains intact
     expect(await t.run(async (ctx) => ctx.db.get("orgs", orgId))).not.toBeNull()
@@ -827,9 +882,7 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     expect(confirmResult.success).toBe(true)
     if (!confirmResult.success) throw new Error("Confirm failed")
 
-    const scheduled = await t.run(async (ctx) =>
-      ctx.db.system.query("_scheduled_functions").collect(),
-    )
+    const scheduled = await t.run(async (ctx) => ctx.db.system.query("_scheduled_functions").collect())
     expect(scheduled.length).toBeGreaterThan(0)
     expect(scheduled[0]?.name).toBe("hierarchyDeleteActions:hierarchyDeleteWorkerStepInternalAction")
     expect(scheduled[0]?.args).toEqual([

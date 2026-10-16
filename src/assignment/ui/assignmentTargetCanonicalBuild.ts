@@ -1,7 +1,7 @@
 import * as a from "valibot"
 import { createResult, createResultError, type Result } from "#result"
 import type { AssignmentTargetKind } from "#src/assignment/model/assignmentTargetKindSchema.ts"
-import { assignmentTargetSchema, type AssignmentTarget } from "#src/assignment/model/assignmentTargetSchema.ts"
+import { type AssignmentTarget, assignmentTargetSchema } from "#src/assignment/model/assignmentTargetSchema.ts"
 
 export function assignmentTargetCanonicalBuild(
   kind: AssignmentTargetKind | "unassigned" | undefined | null,

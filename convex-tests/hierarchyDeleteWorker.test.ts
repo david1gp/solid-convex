@@ -29,7 +29,6 @@ if (!process.env.AUTH_SECRET) {
   process.env.AUTH_SECRET = "b7dc996d90e6155ef59d268e3f169ab6feb34d98f18cba0155e5d075e47ef6b1"
 }
 
-
 async function setupWorkerFixture() {
   const t = convexTest(schema, modules)
   const token = "a".repeat(64)
@@ -231,21 +230,41 @@ describe("hierarchyDelete worker", () => {
 
     // Crucial requirement: File metadata in files table is NOT removed
     const fileDoc = await t.run((ctx) =>
-      ctx.db.query("files").withIndex("fileId", (q) => q.eq("fileId", fileAId)).first(),
+      ctx.db
+        .query("files")
+        .withIndex("fileId", (q) => q.eq("fileId", fileAId))
+        .first(),
     )
     expect(fileDoc).not.toBeNull()
     expect(fileDoc?.fileId).toBe(fileAId)
 
     // resourceFiles links also still exist
     const rfDoc = await t.run((ctx) =>
-      ctx.db.query("resourceFiles").withIndex("resourceIdFileId", (q) => q.eq("resourceId", "res-target-1").eq("fileId", fileAId)).first(),
+      ctx.db
+        .query("resourceFiles")
+        .withIndex("resourceIdFileId", (q) => q.eq("resourceId", "res-target-1").eq("fileId", fileAId))
+        .first(),
     )
     expect(rfDoc).not.toBeNull()
   })
 
   it("retries idempotently after R2 failure and completely removes target while preserving foreign subtree", async () => {
-    const { t, token, orgAId, teamAId, projAId, noteAId, resAId, fileAId, orgBId, teamBId, projBId, noteBId, resBId, fileBId } =
-      await setupWorkerFixture()
+    const {
+      t,
+      token,
+      orgAId,
+      teamAId,
+      projAId,
+      noteAId,
+      resAId,
+      fileAId,
+      orgBId,
+      teamBId,
+      projBId,
+      noteBId,
+      resBId,
+      fileBId,
+    } = await setupWorkerFixture()
 
     const previewResult = await t.query(api.hierarchyDelete.hierarchyDeletePreviewQuery, {
       token,
@@ -303,8 +322,22 @@ describe("hierarchyDelete worker", () => {
     expect(retryResult.data.status).toBe("completed")
 
     // Target Subtree is completely deleted:
-    expect(await t.run((ctx) => ctx.db.query("files").withIndex("fileId", (q) => q.eq("fileId", fileAId)).first())).toBeNull()
-    expect(await t.run((ctx) => ctx.db.query("resources").withIndex("resourceId", (q) => q.eq("resourceId", resAId)).first())).toBeNull()
+    expect(
+      await t.run((ctx) =>
+        ctx.db
+          .query("files")
+          .withIndex("fileId", (q) => q.eq("fileId", fileAId))
+          .first(),
+      ),
+    ).toBeNull()
+    expect(
+      await t.run((ctx) =>
+        ctx.db
+          .query("resources")
+          .withIndex("resourceId", (q) => q.eq("resourceId", resAId))
+          .first(),
+      ),
+    ).toBeNull()
     expect(await t.run((ctx) => ctx.db.get(noteAId))).toBeNull()
     expect(await t.run((ctx) => ctx.db.get(projAId))).toBeNull()
     expect(await t.run((ctx) => ctx.db.get(teamAId))).toBeNull()
@@ -315,11 +348,26 @@ describe("hierarchyDelete worker", () => {
     expect(await t.run((ctx) => ctx.db.get(teamBId))).not.toBeNull()
     expect(await t.run((ctx) => ctx.db.get(projBId))).not.toBeNull()
     expect(await t.run((ctx) => ctx.db.get(noteBId))).not.toBeNull()
-    const foreignRes = await t.run((ctx) => ctx.db.query("resources").withIndex("resourceId", (q) => q.eq("resourceId", resBId)).first())
+    const foreignRes = await t.run((ctx) =>
+      ctx.db
+        .query("resources")
+        .withIndex("resourceId", (q) => q.eq("resourceId", resBId))
+        .first(),
+    )
     expect(foreignRes).not.toBeNull()
-    const foreignFile = await t.run((ctx) => ctx.db.query("files").withIndex("fileId", (q) => q.eq("fileId", fileBId)).first())
+    const foreignFile = await t.run((ctx) =>
+      ctx.db
+        .query("files")
+        .withIndex("fileId", (q) => q.eq("fileId", fileBId))
+        .first(),
+    )
     expect(foreignFile).not.toBeNull()
-    const foreignOrgRes = await t.run((ctx) => ctx.db.query("orgResources").withIndex("resourceId", (q) => q.eq("resourceId", resBId)).first())
+    const foreignOrgRes = await t.run((ctx) =>
+      ctx.db
+        .query("orgResources")
+        .withIndex("resourceId", (q) => q.eq("resourceId", resBId))
+        .first(),
+    )
     expect(foreignOrgRes).not.toBeNull()
   })
 

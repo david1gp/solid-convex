@@ -11,8 +11,6 @@ export function LinkLikeNavText(p: LinkLikeTextProps) {
     <span
       class={classMerge("p-3 font-medium", p.isActive && classesActiveLink, p.class)}
       aria-current={p.isActive ? "page" : undefined}
-      aria-selected={p.isActive ? "true" : undefined}
-      role="tab"
     >
       {p.children}
     </span>

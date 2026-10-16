@@ -103,18 +103,18 @@ import { onCleanup, onMount } from "solid-js"
 
 export function orgNameRecordSignalRegisterHandler(signal = orgNameRecordSignal) {
   function handleStorageEvent(event: StorageEvent) {
-    if (event.key != orgNameLocalStorageKey) return
+    if (event.key !== orgNameLocalStorageKey) return
     if (event.newValue == null) return
     const parsingResult = orgNameLoadFromLocalStorage(event.newValue)
     if (!parsingResult.success) return
     signal.set(parsingResult.data)
   }
   onMount(() => {
-    if (typeof window == "undefined") return
+    if (typeof window === "undefined") return
     window.addEventListener("storage", handleStorageEvent)
   })
   onCleanup(() => {
-    if (typeof window == "undefined") return
+    if (typeof window === "undefined") return
     window.removeEventListener("storage", handleStorageEvent)
   })
 }

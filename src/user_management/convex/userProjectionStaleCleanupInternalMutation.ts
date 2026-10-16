@@ -1,8 +1,8 @@
 import { v } from "convex/values"
 import { internal } from "#convex/_generated/api.js"
 import { internalMutation } from "#convex/_generated/server.js"
-import { createResult } from "#result"
 import type { PromiseResult } from "#result"
+import { createResult } from "#result"
 
 export const userProjectionStaleCleanupInternalMutation = internalMutation({
   args: {

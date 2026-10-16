@@ -1,10 +1,10 @@
 import { mdiChevronRight } from "@adaptive-ds/mdi/mdiChevronRight.js"
 import { Link } from "@tanstack/solid-router"
 import { For } from "solid-js"
-import { ttt } from "#ui/i18n/ttt.ts"
-import { AuthLinks } from "#src/auth/ui/AuthLinks.tsx"
 import { overviewPageStateCreate } from "#src/app/pages/overviewPageStateCreate.ts"
+import { AuthLinks } from "#src/auth/ui/AuthLinks.tsx"
 import { PageHeader } from "#src/ui/header/PageHeader.tsx"
+import { ttt } from "#ui/i18n/ttt.ts"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { PageWrapper } from "#ui/static/page/PageWrapper.jsx"
 

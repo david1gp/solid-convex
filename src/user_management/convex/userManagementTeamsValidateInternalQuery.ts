@@ -1,7 +1,7 @@
 import { v } from "convex/values"
 import { internalQuery, type QueryCtx } from "#convex/_generated/server.js"
-import { createResult, createResultError } from "#result"
 import type { PromiseResult } from "#result"
+import { createResult, createResultError } from "#result"
 
 export const userManagementTeamsValidateInternalQuery = internalQuery({
   args: { teamIds: v.array(v.string()) },

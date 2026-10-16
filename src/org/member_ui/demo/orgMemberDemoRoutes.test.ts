@@ -1,7 +1,7 @@
 import { afterEach, expect, mock, test } from "bun:test"
 import { createRoot } from "solid-js"
-import { pageDemoHref } from "#src/app/demos/pageDemoHref.ts"
 import { pageDemoFixtureStoreGet } from "#src/app/demos/pageDemoFixtureStoreGet.ts"
+import { pageDemoHref } from "#src/app/demos/pageDemoHref.ts"
 import { formMode } from "#ui/input/form/formMode.ts"
 
 const visited: string[] = []

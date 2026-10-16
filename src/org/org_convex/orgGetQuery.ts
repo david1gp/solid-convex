@@ -6,9 +6,9 @@ import { docOrgToModel } from "#src/org/org_convex/docOrgInvitationToModel.ts"
 import type { DocOrg } from "#src/org/org_convex/IdOrg.ts"
 import { orgGetByHandleFn } from "#src/org/org_convex/orgGetByHandleFn.ts"
 import type { OrgModel } from "#src/org/org_model/OrgModel.ts"
+import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authQueryResult } from "#src/utils/convex_backend/authQueryResult.ts"
 import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
-import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 
 const orgGetSchemaFields = {
   orgHandle: a.string(),

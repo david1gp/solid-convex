@@ -3,6 +3,7 @@ import { createEffect, createMemo } from "solid-js"
 import { api } from "#convex/_generated/api.js"
 import type { Id } from "#convex/_generated/dataModel.js"
 import { userSessionSignal, userTokenGet } from "#src/auth/ui/signals/userSessionSignal.ts"
+import type { HierarchyDeleteTarget } from "#src/hierarchy_delete/model/hierarchyDeleteTargetSchema.ts"
 import { noteSchema } from "#src/note/model/noteSchema.ts"
 import { noteHrefGet } from "#src/note/ui/noteHrefGet.ts"
 import { noteStorageRead } from "#src/note/ui/noteStorageRead.ts"
@@ -14,7 +15,6 @@ import { mutationCreate } from "#src/utils/convex_client/mutationCreate.ts"
 import { queryCreate } from "#src/utils/convex_client/queryCreate.ts"
 import { navigateTo } from "#src/utils/router/navigateTo.ts"
 import { createSignalObject } from "#ui/utils/createSignalObject.ts"
-import type { HierarchyDeleteTarget } from "#src/hierarchy_delete/model/hierarchyDeleteTargetSchema.ts"
 
 export function notePageStateCreate() {
   const rawParams = useParams({ strict: false })

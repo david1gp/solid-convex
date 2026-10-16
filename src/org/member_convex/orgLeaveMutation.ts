@@ -8,10 +8,10 @@ import { docUserToUserProfile } from "#src/auth/convex/user/docUserToUserProfile
 import type { UserSession } from "#src/auth/model/UserSession.ts"
 import { loginMethod } from "#src/auth/model_field/loginMethod.ts"
 import { createTokenResult } from "#src/auth/server/jwt_token/createTokenResult.ts"
+import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authMutationTokenToUserId } from "#src/utils/convex_backend/authMutationTokenToUserId.ts"
 import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
 import { createUserIdValidator } from "#src/utils/convex_backend/createUserIdValidator.ts"
-import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { nowIso } from "#utils/date/nowIso.js"
 
 export const orgLeaveFields = valibotToConvex({ orgHandle: a.string() })

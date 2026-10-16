@@ -5,10 +5,10 @@ import { createResult, type PromiseResult } from "#result"
 import { fileDocToModel } from "#src/file/convex/fileDocToModel.ts"
 import { fileGetByIdFn } from "#src/file/convex/fileGetByIdFn.ts"
 import type { FileModel } from "#src/file/model/FileModel.ts"
+import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authQueryResult } from "#src/utils/convex_backend/authQueryResult.ts"
 import { createErrorAndLogWarn } from "#src/utils/convex_backend/createErrorAndLogWarn.ts"
 import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
-import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 
 const fileGetSchemaFields = {
   fileId: a.string(),

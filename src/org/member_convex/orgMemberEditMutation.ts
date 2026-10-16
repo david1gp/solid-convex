@@ -4,9 +4,9 @@ import { type MutationCtx, mutation } from "#convex/_generated/server.js"
 import { createResult, createResultError, type PromiseResult } from "#result"
 import type { DocOrgMember, IdOrgMember } from "#src/org/member_convex/IdOrgMember.ts"
 import { orgMemberDataSchemaFields } from "#src/org/member_model/OrgMemberSchema.ts"
+import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authMutationResult } from "#src/utils/convex_backend/authMutationResult.ts"
 import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
-import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { nowIso } from "#utils/date/nowIso.js"
 
 export type OrgMemberEditValidatorType = typeof orgMemberEditValidator.type

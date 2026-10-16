@@ -1,7 +1,7 @@
 import { v } from "convex/values"
 import { internalMutation } from "#convex/_generated/server.js"
-import { createResult, createResultError } from "#result"
 import type { PromiseResult } from "#result"
+import { createResult, createResultError } from "#result"
 import type { UserRole } from "#src/auth/model_field/userRole.ts"
 import { userRoleEffectiveGet } from "#src/auth/model_field/userRoleEffectiveGet.ts"
 

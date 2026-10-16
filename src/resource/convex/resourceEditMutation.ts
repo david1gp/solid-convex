@@ -106,7 +106,7 @@ export async function resourceEditFn(ctx: MutationCtx, args: ResourceEditValidat
 
   let assignmentPatch: Partial<DocResource> = {}
   let orgSyncNeeded = false
-  let syncOrgId: Id<"orgs"> | undefined = undefined
+  let syncOrgId: Id<"orgs"> | undefined
 
   if (hasExplicitAssignment) {
     orgSyncNeeded = true

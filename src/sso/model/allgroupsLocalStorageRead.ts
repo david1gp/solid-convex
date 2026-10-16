@@ -1,5 +1,5 @@
-import { createResult, createResultError, type Result } from "#result"
 import * as a from "valibot"
+import { createResult, createResultError, type Result } from "#result"
 
 /** Reads and validates a JSON value from browser storage. */
 export const allgroupsLocalStorageRead = <T>(

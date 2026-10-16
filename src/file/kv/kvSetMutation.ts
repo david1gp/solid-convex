@@ -3,9 +3,9 @@ import * as a from "valibot"
 import { internalMutation, type MutationCtx, mutation } from "#convex/_generated/server.js"
 import type { DocKv } from "#src/file/kv/IdKv.ts"
 import { kvGetQueryFn2 } from "#src/file/kv/kvGetQuery.ts"
+import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authMutationWrapResult } from "#src/utils/convex_backend/authMutationWrapResult.ts"
 import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
-import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 
 export type KvSetType = typeof kvSetValidator.type
 
@@ -53,13 +53,12 @@ export async function kvSetMutationFn2(
       updatedAt: new Date().toISOString(),
     })
     return true
-  } else {
-    // Insert new document
-    await ctx.db.insert("kv", {
-      key,
-      data,
-      updatedAt: new Date().toISOString(),
-    })
-    return false
   }
+  // Insert new document
+  await ctx.db.insert("kv", {
+    key,
+    data,
+    updatedAt: new Date().toISOString(),
+  })
+  return false
 }

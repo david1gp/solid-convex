@@ -1,5 +1,5 @@
-import Popover from "@corvu/popover"
 import { mdiCheck } from "@adaptive-ds/mdi/mdiCheck.js"
+import Popover from "@corvu/popover"
 import { For, type JSX, Show } from "solid-js"
 import type { SelectSingleEntry, SelectSingleGroupEntry } from "#ui/input/select/SelectSingleEntry.js"
 import type { SelectSingleTexts } from "#ui/input/select/SelectSingleTexts.js"

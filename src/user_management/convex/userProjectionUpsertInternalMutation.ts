@@ -1,7 +1,7 @@
 import { v } from "convex/values"
 import { internalMutation } from "#convex/_generated/server.js"
-import { createResult } from "#result"
 import type { PromiseResult } from "#result"
+import { createResult } from "#result"
 
 export const userProjectionUpsertInternalMutation = internalMutation({
   args: {

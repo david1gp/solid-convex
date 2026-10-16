@@ -10,8 +10,8 @@ import {
   sendEmailOrgInvitation,
 } from "#src/auth/convex/email/sendEmailOrgInvitation.ts"
 import type { OrgInvitationDataModel } from "#src/org/invitation_model/OrgInvitationModel.ts"
-import { urlOrgInvitationAccept } from "#src/org/invitation_url/urlOrgInvitation.ts"
 import { orgInvitationDataSchemaFields } from "#src/org/invitation_model/orgInvitationSchema.ts"
+import { urlOrgInvitationAccept } from "#src/org/invitation_url/urlOrgInvitation.ts"
 import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { nowIso } from "#utils/date/nowIso.js"
 

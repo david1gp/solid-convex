@@ -3,9 +3,9 @@ import * as a from "valibot"
 import { userDataSchemaFields } from "#src/auth/model/userDataSchemaFields.ts"
 import type { UserRole } from "#src/auth/model_field/userRole.ts"
 import { type OrgRole, orgRoleSchema } from "#src/org/org_model_field/orgRole.ts"
+import { valibotObjectToConvexFields } from "#src/utils/convex/valibotToConvex.ts"
 import { fieldsSchemaCreatedAtUpdatedAtDeletedAt } from "#src/utils/data/fieldsSchemaCreatedAtUpdatedAtDeletedAt.ts"
 import type { HasCreatedAtUpdatedDeletedAt } from "#src/utils/data/HasCreatedAtUpdatedDeletedAt.ts"
-import { valibotObjectToConvexFields } from "#src/utils/convex/valibotToConvex.ts"
 import { stringSchemaId } from "#src/utils/valibot/stringSchema.ts"
 
 export interface UserProfile extends HasCreatedAtUpdatedDeletedAt {

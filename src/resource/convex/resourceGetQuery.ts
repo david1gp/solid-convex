@@ -5,9 +5,9 @@ import { createResult, createResultError, type PromiseResult } from "#result"
 import type { DocResource } from "#src/resource/convex/IdResource.ts"
 import { resourceDocToModel } from "#src/resource/convex/resourceDocToModel.ts"
 import type { ResourceModel } from "#src/resource/model/ResourceModel.ts"
+import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authQueryResult } from "#src/utils/convex_backend/authQueryResult.ts"
 import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
-import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 
 const resourceGetSchemaFields = {
   resourceId: a.string(),

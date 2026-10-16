@@ -186,7 +186,9 @@ test("API key rename rejects blank and oversized names", async () => {
   const token = await createToken(userId, secret)
 
   expect((await t.mutation(api.auth.apiKeyRenameMutation, { token, id: keyId, name: "   " })).success).toBe(false)
-  expect((await t.mutation(api.auth.apiKeyRenameMutation, { token, id: keyId, name: "x".repeat(81) })).success).toBe(false)
+  expect((await t.mutation(api.auth.apiKeyRenameMutation, { token, id: keyId, name: "x".repeat(81) })).success).toBe(
+    false,
+  )
   expect(await t.run((ctx) => ctx.db.get("authApiKeys", keyId))).toMatchObject({ name: "original" })
 })
 

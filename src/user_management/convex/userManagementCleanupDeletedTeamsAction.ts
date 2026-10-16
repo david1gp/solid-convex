@@ -1,8 +1,8 @@
 import { v } from "convex/values"
 import { internal } from "#convex/_generated/api.js"
 import { internalAction } from "#convex/_generated/server.js"
-import { createResult, createResultError } from "#result"
 import type { PromiseResult } from "#result"
+import { createResult, createResultError } from "#result"
 import { zitadelServerConfigFromEnv } from "#src/user_management/server/zitadelServerConfigFromEnv.ts"
 import {
   type ZitadelUserCleanupError,

@@ -1,8 +1,8 @@
 import { v } from "convex/values"
 import * as a from "valibot"
 import { vIdUser } from "#src/auth/convex/vIdUser.ts"
-import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
 import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
+import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
 
 export const userDeleteFields = valibotToConvex({
   email: a.optional(a.string()),

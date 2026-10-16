@@ -7,11 +7,11 @@ import { otpConsumeFn } from "#src/auth/convex/otp/otpConsumeFn.ts"
 import { otpFindFn } from "#src/auth/convex/otp/otpFindFn.ts"
 import { vIdUser } from "#src/auth/convex/vIdUser.ts"
 import { otpPurpose } from "#src/auth/model_field/otpPurpose.ts"
+import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authMutationTokenToUserId } from "#src/utils/convex_backend/authMutationTokenToUserId.ts"
 import { createErrorAndLogError } from "#src/utils/convex_backend/createErrorAndLogError.ts"
 import { createErrorAndLogWarn } from "#src/utils/convex_backend/createErrorAndLogWarn.ts"
 import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
-import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { nowIso } from "#utils/date/nowIso.js"
 
 const userEmailChangeConfirmFieldsBase = valibotToConvex({

@@ -1,5 +1,5 @@
-import type { DatabaseReader } from "#convex/_generated/server.js"
 import type { Id } from "#convex/_generated/dataModel.js"
+import type { DatabaseReader } from "#convex/_generated/server.js"
 import type { HierarchyDeleteWorkerPhase } from "#src/hierarchy_delete/model/hierarchyDeleteWorkerPhaseSchema.ts"
 
 export async function hierarchyDeleteRootLockCheckFn(

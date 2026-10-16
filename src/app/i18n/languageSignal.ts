@@ -57,7 +57,7 @@ import { onCleanup, onMount } from "solid-js"
 
 export function languageSignalRegisterHandler(signal = languageSignal) {
   function handleStorageEvent(event: StorageEvent) {
-    if (event.key != languageLocalStorageKey) return
+    if (event.key !== languageLocalStorageKey) return
     if (event.newValue == null) return
     const parsing = a.safeParse(languageSchema, event.newValue)
     if (parsing.success) {
@@ -65,11 +65,11 @@ export function languageSignalRegisterHandler(signal = languageSignal) {
     }
   }
   onMount(() => {
-    if (typeof window == "undefined") return
+    if (typeof window === "undefined") return
     window.addEventListener("storage", handleStorageEvent)
   })
   onCleanup(() => {
-    if (typeof window == "undefined") return
+    if (typeof window === "undefined") return
     window.removeEventListener("storage", handleStorageEvent)
   })
 }

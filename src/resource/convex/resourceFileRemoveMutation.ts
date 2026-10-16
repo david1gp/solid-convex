@@ -1,9 +1,9 @@
 import { v } from "convex/values"
 import * as a from "valibot"
 import { internalMutation, type MutationCtx, mutation } from "#convex/_generated/server.js"
+import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authMutationWrapResult } from "#src/utils/convex_backend/authMutationWrapResult.ts"
 import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
-import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 
 export type MeetingOrgRemoveMutationValidatorType = typeof resourceFileRemoveValidator.type
 

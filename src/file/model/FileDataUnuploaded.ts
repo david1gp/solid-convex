@@ -1,5 +1,5 @@
-import * as a from "valibot"
 import { v } from "convex/values"
+import * as a from "valibot"
 import { type LanguageOrNone, languageOrNoneSchema } from "#src/app/i18n/language.ts"
 import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { stringSchemaUrl } from "#src/utils/valibot/stringSchema.ts"

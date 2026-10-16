@@ -31,7 +31,7 @@ export const projectListQuery = query({
         : org
           ? ctx.db.query("projects").withIndex("orgId", (q) => q.eq("orgId", org.data._id))
           : ctx.db.query("projects").withIndex("by_creation_time")
-      let result
+      let result: Awaited<ReturnType<typeof projects.paginate>>
       try {
         result = await projects.paginate({ ...pagination, maximumRowsRead: 100 })
       } catch (error) {

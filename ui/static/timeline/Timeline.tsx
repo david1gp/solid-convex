@@ -106,7 +106,7 @@ const TimelineItemBullet: Component<TimelineItemBulletProps> = (p) => {
   return (
     <div
       class={classMerge(
-        `absolute top-0 flex items-center justify-center rounded-full border`,
+        "absolute top-0 flex items-center justify-center rounded-full border",
         p.isActive && "border-primary",
       )}
       style={{

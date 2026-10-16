@@ -3,10 +3,10 @@ import { createResult, type PromiseResult } from "#result"
 import type { DocUser, IdUser } from "#src/auth/convex/IdUser.ts"
 import { docUserToUserProfile } from "#src/auth/convex/user/docUserToUserProfile.ts"
 import { userProfileUpdateFields } from "#src/auth/convex/user/profile_update/userProfileUpdate.ts"
-import { createUserIdValidator } from "#src/utils/convex_backend/createUserIdValidator.ts"
 import type { UserProfile } from "#src/auth/model/UserProfile.ts"
 import { orgMemberGetHandleAndRoleFn } from "#src/org/member_convex/orgMemberGetHandleAndRoleInternalQuery.ts"
 import { createErrorAndLogError } from "#src/utils/convex_backend/createErrorAndLogError.ts"
+import { createUserIdValidator } from "#src/utils/convex_backend/createUserIdValidator.ts"
 import { nowIso } from "#utils/date/nowIso.js"
 
 export const userProfileFieldsBase = userProfileUpdateFields

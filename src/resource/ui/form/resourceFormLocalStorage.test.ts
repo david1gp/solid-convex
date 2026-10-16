@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test"
+import * as a from "valibot"
 import type { AssignmentTarget } from "#src/assignment/model/assignmentTargetSchema.ts"
 import type { ResourceFilesModel } from "#src/resource/model/ResourceFilesModel.ts"
 import { resourceFormDraftCacheSchema } from "#src/resource/ui/form/resourceFormDraftCacheSchema.ts"
 import { resourceFormLocalStorage } from "#src/resource/ui/form/resourceFormLocalStorage.ts"
-import * as a from "valibot"
 
 describe("resourceFormLocalStorage", () => {
   let mockStorage: Record<string, string> = {}

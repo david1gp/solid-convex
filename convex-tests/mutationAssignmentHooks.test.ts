@@ -226,7 +226,9 @@ describe("Mutation assignment hooks", () => {
     const link1 = await t.run(async (ctx) =>
       ctx.db
         .query("resourceFiles")
-        .withIndex("resourceIdFileId", (q) => q.eq("resourceId", "2026-10-14_res-parent-proj").eq("fileId", "2026-10-14_file-inherited-1"))
+        .withIndex("resourceIdFileId", (q) =>
+          q.eq("resourceId", "2026-10-14_res-parent-proj").eq("fileId", "2026-10-14_file-inherited-1"),
+        )
         .first(),
     )
     expect(link1).not.toBeNull()
@@ -257,7 +259,9 @@ describe("Mutation assignment hooks", () => {
     const link2 = await t.run(async (ctx) =>
       ctx.db
         .query("resourceFiles")
-        .withIndex("resourceIdFileId", (q) => q.eq("resourceId", "2026-10-14_res-parent-proj").eq("fileId", "2026-10-14_file-explicit-1"))
+        .withIndex("resourceIdFileId", (q) =>
+          q.eq("resourceId", "2026-10-14_res-parent-proj").eq("fileId", "2026-10-14_file-explicit-1"),
+        )
         .first(),
     )
     expect(link2).not.toBeNull()
@@ -333,7 +337,9 @@ describe("Mutation assignment hooks", () => {
     const oldLink = await t.run(async (ctx) =>
       ctx.db
         .query("resourceFiles")
-        .withIndex("resourceIdFileId", (q) => q.eq("resourceId", "2026-10-14_res-for-file-edit").eq("fileId", "2026-10-14_file-edit-test-1"))
+        .withIndex("resourceIdFileId", (q) =>
+          q.eq("resourceId", "2026-10-14_res-for-file-edit").eq("fileId", "2026-10-14_file-edit-test-1"),
+        )
         .first(),
     )
     expect(oldLink).toBeNull()

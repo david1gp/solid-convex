@@ -125,24 +125,26 @@ export function UserManagementPage() {
                 </ul>
               </Show>
 
-              <div class="flex justify-between items-center pt-2 border-t border-border">
-                <Button
-                  variant={buttonVariant.outline}
-                  size="sm"
-                  onClick={state.pagination.previous}
-                  disabled={!state.pagination.canPrevious()}
-                >
-                  Previous
-                </Button>
-                <Button
-                  variant={buttonVariant.outline}
-                  size="sm"
-                  onClick={state.pagination.next}
-                  disabled={!state.pagination.canNext()}
-                >
-                  Next
-                </Button>
-              </div>
+              <Show when={state.pagination.canPrevious() || state.pagination.canNext()}>
+                <div class="flex justify-between items-center pt-2 border-t border-border">
+                  <Button
+                    variant={buttonVariant.outline}
+                    size="sm"
+                    onClick={state.pagination.previous}
+                    disabled={!state.pagination.canPrevious()}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    variant={buttonVariant.outline}
+                    size="sm"
+                    onClick={state.pagination.next}
+                    disabled={!state.pagination.canNext()}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </Show>
             </section>
 
             <section class="lg:col-span-7 border border-border rounded-lg p-6 bg-card space-y-6">

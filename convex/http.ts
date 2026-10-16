@@ -4,6 +4,7 @@ import { createHonoDispatcher } from "#src/auth/convex/headers/createHonoDispatc
 import { createHonoHttpAction } from "#src/auth/convex/headers/createHonoHttpAction.ts"
 import { addHttpRoutesR2 } from "#src/r2/convex/addHttpRoutesR2.ts"
 import { addHttpRoutesResource } from "#src/resource/convex/addHttpRoutesResource.ts"
+import { addHttpRoutesMcp } from "#src/mcp/addHttpRoutesMcp.ts"
 
 const http = httpRouter()
 const dispatcher = createHonoDispatcher()
@@ -11,6 +12,7 @@ const dispatcher = createHonoDispatcher()
 addHttpRoutesAuth(dispatcher)
 addHttpRoutesResource(dispatcher)
 addHttpRoutesR2(dispatcher)
+addHttpRoutesMcp(dispatcher)
 
 const dispatcherAction = createHonoHttpAction(dispatcher)
 for (const method of ["GET", "POST", "OPTIONS"] as const) {

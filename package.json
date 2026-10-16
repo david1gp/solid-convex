@@ -60,6 +60,7 @@
     "@corvu/dialog": "^0.2.4",
     "@corvu/popover": "^0.2.0",
     "@floating-ui/dom": "^1.7.6",
+    "@modelcontextprotocol/sdk": "^1.32.1",
     "@solid-primitives/keyed": "^1.5.3",
     "@solid-primitives/scheduled": "^1.5.3",
     "@tanstack/solid-router": "^1.170.15",

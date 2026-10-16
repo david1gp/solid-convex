@@ -1,4 +1,6 @@
+import { mdiKeyOutline } from "@adaptive-ds/mdi/mdiKeyOutline.js"
 import { mdiLocationExit } from "@adaptive-ds/mdi/mdiLocationExit.js"
+import { mdiLockReset } from "@adaptive-ds/mdi/mdiLockReset.js"
 import { mdiSquareEditOutline } from "@adaptive-ds/mdi/mdiSquareEditOutline.js"
 import { Link } from "@tanstack/solid-router"
 import { Show } from "solid-js"
@@ -16,7 +18,7 @@ import {
   userProfileFormStateManagement,
 } from "#src/auth/ui/profile/userProfileFormState.ts"
 import { userSessionGet } from "#src/auth/ui/signals/userSessionSignal.ts"
-import { urlUserProfileMe } from "#src/auth/url/pageRouteAuth.ts"
+import { urlUserProfileMe, urlUserProfileMeApiKeys, urlUserProfileMeEdit } from "#src/auth/url/pageRouteAuth.ts"
 import { orgNameGet } from "#src/org/org_ui/orgNameRecordSignal.ts"
 import { urlOrgLeave, urlOrgView } from "#src/org/org_url/urlOrg.ts"
 import { formMode } from "#ui/input/form/formMode.ts"
@@ -35,16 +37,37 @@ export function UserProfileMePage() {
   return (
     <LayoutWrapperAuth>
       <PageWrapper>
-        <NavUserProfile
-          childrenLeft={
-            <>
-              <NavBreadcrumbSeparator />
-              <NavLinkButton href={urlUserProfileMe()} isActive={true}>
-                {ttc("My Profile")}
-              </NavLinkButton>
-            </>
-          }
-        />
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <NavUserProfile
+            class="mb-0"
+            childrenLeft={
+              <>
+                <NavBreadcrumbSeparator />
+                <NavLinkButton href={urlUserProfileMe()} isActive={true}>
+                  {ttc("My Profile")}
+                </NavLinkButton>
+              </>
+            }
+          />
+          <div class="flex items-center gap-2">
+            <LinkButtonInternal
+              to={urlUserProfileMeApiKeys()}
+              icon={mdiKeyOutline}
+              variant={buttonVariant.outline}
+              class="min-h-9 gap-2 text-sm"
+            >
+              {ttc("API Keys")}
+            </LinkButtonInternal>
+            <LinkButtonInternal
+              to={urlUserProfileMeEdit()}
+              icon={mdiSquareEditOutline}
+              variant={buttonVariant.outline}
+              class="min-h-9 gap-2 text-sm"
+            >
+              {ttc("Edit Profile")}
+            </LinkButtonInternal>
+          </div>
+        </div>
         <UserProfileMeView profile={userSessionGet().profile} />
         {/* <PageContent /> */}
       </PageWrapper>
@@ -211,15 +234,25 @@ function ProfileSectionActions(p: { passwordHref: string; apiKeysHref: string })
   return (
     <section
       id="actions"
-      class="rounded-card border border-border-subtle bg-surface shadow-sm shadow-slate-900/5 dark:shadow-black/20 p-6"
+      class="rounded-card border border-border-subtle bg-surface shadow-sm shadow-slate-900/5 dark:shadow-black/20 p-6 space-y-4"
     >
       <h3 class="text-sm text-muted-foreground font-medium">{ttc("Account Actions")}</h3>
-      <div class={classArr("grid grid-cols-1 md:grid-cols-3 gap-4")}>
-        <LinkButtonInternal to={p.passwordHref} variant={buttonVariant.link} class="justify-start pl-0">
-          {ttc("Change Password")}
-        </LinkButtonInternal>
-        <LinkButtonInternal to={p.apiKeysHref} variant={buttonVariant.link} class="justify-start pl-0">
+      <div class={classArr("flex flex-wrap gap-3")}>
+        <LinkButtonInternal
+          to={p.apiKeysHref}
+          icon={mdiKeyOutline}
+          variant={buttonVariant.outline}
+          class="min-h-10 justify-start gap-2"
+        >
           {ttc("API Keys")}
+        </LinkButtonInternal>
+        <LinkButtonInternal
+          to={p.passwordHref}
+          icon={mdiLockReset}
+          variant={buttonVariant.outline}
+          class="min-h-10 justify-start gap-2"
+        >
+          {ttc("Change Password")}
         </LinkButtonInternal>
       </div>
     </section>

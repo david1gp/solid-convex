@@ -1,12 +1,12 @@
 import { Show } from "solid-js"
+import { appIcons } from "#src/app/icon/appIcons.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { addKeyboardListenerAlt } from "#src/auth/ui/sign_up/form/addKeyboardListenerAlt.ts"
 import { orgMemberFormField } from "#src/org/member_ui/form/orgMemberFormField.ts"
 import type { OrgMemberFormStateManagement } from "#src/org/member_ui/form/orgMemberFormStateManagement.ts"
 import { orgRole } from "#src/org/org_model_field/orgRole.ts"
 import { isDevEnv } from "#src/utils/env/isDevEnv.ts"
-import { type FormMode, getFormModeTitle } from "#ui/input/form/formMode.ts"
-import { formModeIcon } from "#ui/input/form/formModeIcon.ts"
+import { type FormMode, formMode, getFormModeTitle } from "#ui/input/form/formMode.ts"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { classMerge } from "#ui/utils/classMerge.ts"
@@ -31,7 +31,7 @@ export function OrgMemberForm(p: OrgMemberContentProps) {
         <RoleField sm={p.sm} />
         <ButtonIcon
           type="submit"
-          icon={formModeIcon[p.mode]}
+          icon={p.mode === formMode.add ? appIcons.create : appIcons.save}
           variant={p.sm.hasErrors() ? buttonVariant.filledRed : buttonVariant.filledIndigo}
           isLoading={p.sm.isSubmitting.get()}
           class="w-full"

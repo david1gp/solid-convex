@@ -1,6 +1,6 @@
-import { mdiPlus } from "@adaptive-ds/mdi/mdiPlus.js"
 import type { JSX } from "solid-js"
 import { For, Match, Switch } from "solid-js"
+import { appIcons } from "#src/app/icon/appIcons.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import type { OrgModel } from "#src/org/org_model/OrgModel.ts"
 import { urlOrgAdd, urlOrgView } from "#src/org/org_url/urlOrg.ts"
@@ -21,7 +21,7 @@ export function OrgListView(p: {
   return (
     <>
       <PageHeader title={ttc("Organizations")} class="mb-4">
-        <LinkButtonInternal icon={mdiPlus} to={p.createHref ?? urlOrgAdd()} variant={buttonVariant.filledGreen}>
+        <LinkButtonInternal icon={appIcons.create} to={p.createHref ?? urlOrgAdd()} variant={buttonVariant.filledGreen}>
           {ttc("Create Organization")}
         </LinkButtonInternal>
       </PageHeader>

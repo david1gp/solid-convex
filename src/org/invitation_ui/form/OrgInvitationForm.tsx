@@ -1,5 +1,5 @@
-import { mdiEmailFast } from "@adaptive-ds/mdi/mdiEmailFast.js"
 import { Show } from "solid-js"
+import { appIcons } from "#src/app/icon/appIcons.ts"
 import { language } from "#src/app/i18n/language.ts"
 import { languageGetText } from "#src/app/i18n/languageGetText.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
@@ -11,7 +11,6 @@ import { FormFieldInput } from "#src/ui/form/FormFieldInput.tsx"
 import { isDevEnv } from "#src/utils/env/isDevEnv.ts"
 import { CheckSingle } from "#ui/input/check/CheckSingle.jsx"
 import { type FormMode, formMode, getFormModeTitle } from "#ui/input/form/formMode.ts"
-import { formModeIcon } from "#ui/input/form/formModeIcon.ts"
 import { LabelPseudo } from "#ui/input/label/LabelPseudo.jsx"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
@@ -132,7 +131,7 @@ function getOrgInvitationTitle(mode: FormMode): string {
 
 function getOrgInvitationIcon(mode: FormMode): string {
   if (mode === formMode.add) {
-    return mdiEmailFast
+    return appIcons.resend
   }
-  return formModeIcon[mode]
+  return appIcons.save
 }

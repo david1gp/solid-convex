@@ -1,9 +1,10 @@
+import { appIcons } from "#src/app/icon/appIcons.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import type { OrgInvitationModel } from "#src/org/invitation_model/OrgInvitationModel.ts"
 import type { OrgModel } from "#src/org/org_model/OrgModel.ts"
 import { orgRoleGetText } from "#src/org/org_model_field/orgRoleGetText.ts"
 import { OrgViewInformation } from "#src/org/org_ui/view/OrgViewInformation.tsx"
-import { Button } from "#ui/interactive/button/Button.jsx"
+import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { classesCardWrapperP8 } from "#ui/static/card/classesCardWrapper.ts"
 import { classArr } from "#ui/utils/classArr.ts"
@@ -24,9 +25,14 @@ export function OrgInvitationAcceptView(p: OrgInvitationAcceptViewProps) {
         <p class="text-muted-foreground mb-4">
           {ttc("You have been invited to join as")} {orgRoleGetText(p.invitation.role)}.
         </p>
-        <Button variant={buttonVariant.filledIndigo} onClick={p.onAccept} disabled={p.accepted}>
+        <ButtonIcon
+          icon={appIcons.accept}
+          variant={buttonVariant.filledIndigo}
+          onClick={p.onAccept}
+          disabled={p.accepted}
+        >
           {p.accepted ? ttc("Invitation accepted") : ttc("Accept Invitation")}
-        </Button>
+        </ButtonIcon>
       </section>
     </div>
   )

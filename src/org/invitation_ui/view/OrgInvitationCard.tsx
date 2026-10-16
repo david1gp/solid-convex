@@ -1,8 +1,6 @@
-import { mdiClose } from "@adaptive-ds/mdi/mdiClose.js"
-import { mdiEmailAlert } from "@adaptive-ds/mdi/mdiEmailAlert.js"
-import { mdiEmailFast } from "@adaptive-ds/mdi/mdiEmailFast.js"
 import { Show } from "solid-js"
 import { api } from "#convex/_generated/api.js"
+import { appIcons } from "#src/app/icon/appIcons.ts"
 import { ttc, ttc1 } from "#src/app/i18n/ttc.ts"
 import { userTokenGet } from "#src/auth/ui/signals/userSessionSignal.ts"
 import { allowEmailResendingInSeconds } from "#src/org/invitation_model/allowEmailResendingInSeconds.ts"
@@ -93,7 +91,7 @@ function OrgInvitationActions(p: OrgInvitationCardProps) {
     )
     if (allowResendingIn > 0) {
       const title = ttc1("Allow resending in [X] seconds", allowResendingIn.toString())
-      toastAdd({ title, icon: mdiEmailAlert, variant: toastVariant.error })
+      toastAdd({ title, icon: appIcons.resend, variant: toastVariant.error })
       return
     }
 
@@ -102,7 +100,7 @@ function OrgInvitationActions(p: OrgInvitationCardProps) {
       invitationCode: p.invitation.invitationCode,
     })
     if (!gotResult.success) {
-      const icon = mdiEmailAlert
+      const icon = appIcons.resend
       const title = gotResult.errorMessage
       toastAdd({ icon, title, variant: toastVariant.error })
     }
@@ -113,19 +111,19 @@ function OrgInvitationActions(p: OrgInvitationCardProps) {
       invitationCode: p.invitation.invitationCode,
     })
     if (!gotResult.success) {
-      const icon = mdiEmailAlert
+      const icon = appIcons.delete
       const title = gotResult.errorMessage
       toastAdd({ icon, title, variant: toastVariant.error })
     }
   }
   return (
     <div class="flex flex-wrap gap-2">
-      <ButtonIcon variant={buttonVariant.outline} icon={mdiEmailFast} onClick={resendClick} class="flex-1">
+      <ButtonIcon variant={buttonVariant.outline} icon={appIcons.resend} onClick={resendClick} class="flex-1">
         {ttc("Resend")}
       </ButtonIcon>
       <ButtonIcon
         variant={buttonVariant.outline}
-        icon={mdiClose}
+        icon={appIcons.delete}
         iconClass="fill-red-800 text-red-800 dark:fill-red-800 dark:text-red-800"
         onClick={dismissClick}
         class="flex-1"

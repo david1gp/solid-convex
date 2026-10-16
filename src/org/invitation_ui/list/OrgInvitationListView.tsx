@@ -1,5 +1,5 @@
-import { mdiPlus } from "@adaptive-ds/mdi/mdiPlus.js"
 import { For, Show } from "solid-js"
+import { appIcons } from "#src/app/icon/appIcons.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import type { OrgInvitationModel } from "#src/org/invitation_model/OrgInvitationModel.ts"
 import type { OrgInvitationListPagination } from "#src/org/invitation_ui/list/OrgInvitationListSection.tsx"
@@ -29,7 +29,7 @@ export function OrgInvitationListView(p: OrgInvitationListViewProps) {
         class="mb-4"
       >
         <LinkButtonInternal
-          icon={mdiPlus}
+          icon={appIcons.create}
           to={p.addHref ?? urlOrgInvitationAdd(p.orgHandle)}
           variant={buttonVariant.filledGreen}
         >

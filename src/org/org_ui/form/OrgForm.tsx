@@ -1,4 +1,5 @@
 import { Show } from "solid-js"
+import { appIcons } from "#src/app/icon/appIcons.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { OrgFormImage } from "#src/org/org_ui/form/OrgFormImage.tsx"
 import { orgFormConfig, orgFormField } from "#src/org/org_ui/form/orgFormField.ts"
@@ -7,7 +8,6 @@ import { orgFormViewStateCreate } from "#src/org/org_ui/form/orgFormViewStateCre
 import { urlOrgRemove } from "#src/org/org_url/urlOrg.ts"
 import { FormFieldInput } from "#src/ui/form/FormFieldInput.tsx"
 import { type FormMode, formMode, getFormModeTitle } from "#ui/input/form/formMode.ts"
-import { formModeIcon } from "#ui/input/form/formModeIcon.ts"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
@@ -34,7 +34,7 @@ export function OrgForm(p: OrgContentProps) {
         <h1 class="text-2xl font-bold">{getOrgTitle(p.mode)}</h1>
         <Show when={p.mode === formMode.edit}>
           <LinkButtonInternal
-            icon={formModeIcon.remove}
+            icon={appIcons.delete}
             to={urlOrgRemove(p.sm.state.orgHandle.get())}
             variant={buttonVariant.link}
             class="text-red-600 dark:text-red-400"
@@ -51,7 +51,7 @@ export function OrgForm(p: OrgContentProps) {
         <OrgFormImage sm={p.sm} demo={p.demo} />
         <ButtonIcon
           type="submit"
-          icon={formModeIcon[p.mode]}
+          icon={p.mode === formMode.add ? appIcons.create : appIcons.save}
           variant={p.sm.hasErrors() ? buttonVariant.filledRed : buttonVariant.filledIndigo}
           isLoading={p.sm.isSubmitting.get()}
           class="w-full"

@@ -1,11 +1,11 @@
 import { mdiHandWave } from "@adaptive-ds/mdi/mdiHandWave.js"
 import { Show } from "solid-js"
+import { appIcons } from "#src/app/icon/appIcons.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import type { OrgModel } from "#src/org/org_model/OrgModel.ts"
 import { orgPageSection } from "#src/org/org_ui/view/orgPageSection.tsx"
 import { urlOrgEdit } from "#src/org/org_url/urlOrg.ts"
 import { Ps } from "#src/ui/text/Ps.tsx"
-import { formModeIcon } from "#ui/input/form/formModeIcon.ts"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { Icon } from "#ui/static/icon/Icon.jsx"
@@ -30,7 +30,7 @@ export function OrgViewInformation(p: OrgViewProps) {
         <LinkButtonInternal
           to={p.editHref ?? urlOrgEdit(p.org.orgHandle)}
           variant={buttonVariant.ghost}
-          icon={formModeIcon.edit}
+          icon={appIcons.edit}
           class="flex mt-4"
         >
           {ttc("Edit")}

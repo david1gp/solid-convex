@@ -1,45 +1,52 @@
-import type { OrgInvitationModel } from "#src/org/invitation_model/OrgInvitationModel.ts"
+import { Match, Switch } from "solid-js"
 import { OrgInvitationListSection } from "#src/org/invitation_ui/list/OrgInvitationListSection.tsx"
-import type { OrgMemberProfile } from "#src/org/member_model/OrgMemberProfile.ts"
 import { OrgMemberListSection } from "#src/org/member_ui/list/OrgMemberListSection.tsx"
-import type { OrgModel } from "#src/org/org_model/OrgModel.ts"
+import type { OrgViewContentProps } from "#src/org/org_ui/view/OrgViewContentProps.ts"
 import { OrgViewInformation } from "#src/org/org_ui/view/OrgViewInformation.tsx"
-import { Show } from "solid-js"
+import { orgViewContentStateCreate } from "#src/org/org_ui/view/orgViewContentStateCreate.ts"
 import { TeamListSection } from "#src/team/ui/TeamListSection.tsx"
+import { TabsTop } from "#ui/interactive/tabs/TabsTop.tsx"
 
-export function OrgViewContent(p: {
-  org: OrgModel
-  members: OrgMemberProfile[]
-  invitations: OrgInvitationModel[]
-  membersPagination?: Parameters<typeof OrgMemberListSection>[0]["pagination"]
-  invitationsPagination?: Parameters<typeof OrgInvitationListSection>[0]["pagination"]
-  membersLoading?: boolean
-  invitationsLoading?: boolean
-  editHref?: string
-  invitationAddHref?: string
-  demo?: boolean
-}) {
+export function OrgViewContent(p: OrgViewContentProps) {
+  const state = orgViewContentStateCreate(() => p)
+
   return (
-    <>
-      <OrgViewInformation showEditButton={true} org={p.org} editHref={p.editHref} />
-      <Show when={!p.demo}>
-        <TeamListSection orgHandle={p.org.orgHandle} />
-      </Show>
-      <OrgMemberListSection
-        orgHandle={p.org.orgHandle}
-        members={p.members}
-        demo={p.demo}
-        pagination={p.membersPagination}
-        loading={p.membersLoading}
-      />
-      <OrgInvitationListSection
-        orgHandle={p.org.orgHandle}
-        invitations={p.invitations}
-        pagination={p.invitationsPagination}
-        loading={p.invitationsLoading}
-        addHref={p.invitationAddHref}
-        demo={p.demo}
-      />
-    </>
+    <TabsTop
+      valueSignal={state.selectedTab}
+      getOptions={state.tabOptions}
+      valueText={state.tabText}
+      valueIcon={state.tabIcon}
+      valueAmount={state.tabAmount}
+      class="mb-6 rounded-md p-1"
+      valueChildren={(tab) => (
+        <Switch>
+          <Match when={tab === "overview"}>
+            <OrgViewInformation showEditButton={true} org={p.org} editHref={p.editHref} />
+          </Match>
+          <Match when={tab === "teams" && !p.demo}>
+            <TeamListSection orgHandle={p.org.orgHandle} />
+          </Match>
+          <Match when={tab === "members"}>
+            <OrgMemberListSection
+              orgHandle={p.org.orgHandle}
+              members={p.members}
+              demo={p.demo}
+              pagination={p.membersPagination}
+              loading={p.membersLoading}
+            />
+          </Match>
+          <Match when={tab === "invitations"}>
+            <OrgInvitationListSection
+              orgHandle={p.org.orgHandle}
+              invitations={p.invitations}
+              pagination={p.invitationsPagination}
+              loading={p.invitationsLoading}
+              addHref={p.invitationAddHref}
+              demo={p.demo}
+            />
+          </Match>
+        </Switch>
+      )}
+    />
   )
 }

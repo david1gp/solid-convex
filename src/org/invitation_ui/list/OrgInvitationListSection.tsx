@@ -1,5 +1,6 @@
 import { mdiEmail } from "@adaptive-ds/mdi/mdiEmail.js"
 import { type Accessor, For, Show, splitProps } from "solid-js"
+import { appIcons } from "#src/app/icon/appIcons.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import type { OrgInvitationModel } from "#src/org/invitation_model/OrgInvitationModel.ts"
 import { OrgInvitationCard } from "#src/org/invitation_ui/view/OrgInvitationCard.tsx"
@@ -8,7 +9,6 @@ import type { HasOrgHandle } from "#src/org/org_model_field/HasOrgHandle.ts"
 import { orgPageSection } from "#src/org/org_ui/view/orgPageSection.tsx"
 import { SectionHeader } from "#src/ui/header/SectionHeader.tsx"
 import { PaginationControls } from "#src/ui/pagination/PaginationControls.tsx"
-import { formModeIcon } from "#ui/input/form/formModeIcon.ts"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { classMerge } from "#ui/utils/classMerge.ts"
@@ -71,7 +71,7 @@ function Header(p: OrgInvitationsProps) {
       <LinkButtonInternal
         to={p.addHref ?? urlOrgInvitationAdd(p.orgHandle)}
         variant={buttonVariant.subtle}
-        icon={formModeIcon.add}
+        icon={appIcons.create}
         class="hover:bg-gray-200"
       >
         {ttc("Invite Member")}

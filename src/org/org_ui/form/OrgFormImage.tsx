@@ -1,5 +1,5 @@
-import { mdiTrashCanOutline } from "@adaptive-ds/mdi/mdiTrashCanOutline.js"
 import { Show } from "solid-js"
+import { appIcons } from "#src/app/icon/appIcons.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { UploadAreaImage } from "#src/file/ui/upload_image/UploadAreaImage.tsx"
 import { orgFormConfig, orgFormField } from "#src/org/org_ui/form/orgFormField.ts"
@@ -24,7 +24,7 @@ export function OrgFormImage(p: HasOrgFormStateManagement) {
       <Show when={state.hasImageUrl()}>
         <div class="flex flex-col gap-2 max-w-sm">
           <img src={p.sm.state.image.get()} alt="Organization logo preview" class="w-full" />
-          <ButtonIcon icon={mdiTrashCanOutline} variant={buttonVariant.outline} class="" onClick={state.imageRemove}>
+          <ButtonIcon icon={appIcons.delete} variant={buttonVariant.outline} class="" onClick={state.imageRemove}>
             {ttc("Remove image")}
           </ButtonIcon>
         </div>

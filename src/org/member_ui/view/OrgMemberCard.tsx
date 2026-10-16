@@ -1,7 +1,5 @@
-import { mdiClose } from "@adaptive-ds/mdi/mdiClose.js"
-import { mdiEmailOutline } from "@adaptive-ds/mdi/mdiEmailOutline.js"
-import { mdiPencil } from "@adaptive-ds/mdi/mdiPencil.js"
 import { api } from "#convex/_generated/api.js"
+import { appIcons } from "#src/app/icon/appIcons.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { userTokenGet } from "#src/auth/ui/signals/userSessionSignal.ts"
 import { orgInvitationShowRole } from "#src/org/invitation_model/orgInvitationShowRole.ts"
@@ -44,7 +42,7 @@ export function OrgMemberCard(p: OrgMemberCardProps) {
           ) : (
             <LinkButtonExternal
               variant={buttonVariant.subtle}
-              icon={mdiEmailOutline}
+              icon={appIcons.email}
               href={`mailto:${p.member.profile.email}`}
               class="flex-1 flex"
             >
@@ -100,7 +98,7 @@ function OrgMemberActions(p: OrgMemberCardProps) {
       role: newRole,
     })
     if (!gotResult.success) {
-      const icon = mdiPencil
+      const icon = appIcons.edit
       const title = gotResult.errorMessage
       toastAdd({ icon, title, variant: toastVariant.error })
     }
@@ -113,7 +111,7 @@ function OrgMemberActions(p: OrgMemberCardProps) {
       memberId: p.member.memberId,
     })
     if (!gotResult.success) {
-      const icon = mdiClose
+      const icon = appIcons.delete
       const title = gotResult.errorMessage
       toastAdd({ icon, title, variant: toastVariant.error })
     }
@@ -121,12 +119,12 @@ function OrgMemberActions(p: OrgMemberCardProps) {
 
   return (
     <div class="flex flex-wrap gap-2">
-      <ButtonIcon variant={buttonVariant.outline} icon={mdiPencil} onClick={editClick} class="flex-1">
+      <ButtonIcon variant={buttonVariant.outline} icon={appIcons.edit} onClick={editClick} class="flex-1">
         {ttc("Edit")}
       </ButtonIcon>
       <ButtonIcon
         variant={buttonVariant.outline}
-        icon={mdiClose}
+        icon={appIcons.delete}
         iconClass="fill-red-800 text-red-800 dark:fill-red-800 dark:text-red-800"
         onClick={deleteClick}
         class="flex-1"

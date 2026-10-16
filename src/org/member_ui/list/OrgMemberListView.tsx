@@ -1,6 +1,5 @@
-import { mdiAccountMultiple } from "@adaptive-ds/mdi/mdiAccountMultiple.js"
-import { mdiPlus } from "@adaptive-ds/mdi/mdiPlus.js"
 import { For, Show } from "solid-js"
+import { appIcons } from "#src/app/icon/appIcons.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import type { OrgMemberProfile } from "#src/org/member_model/OrgMemberProfile.ts"
 import { PageHeader } from "#src/ui/header/PageHeader.tsx"
@@ -27,12 +26,12 @@ export function OrgMemberListView(p: {
   return (
     <>
       <PageHeader
-        icon={mdiAccountMultiple}
+        icon={appIcons.member}
         title={ttc("Organization Members")}
         subtitle={ttc("Manage members of this organization")}
         class="mb-4"
       >
-        <LinkButtonInternal icon={mdiPlus} to={p.addHref} variant={buttonVariant.filledGreen}>
+        <LinkButtonInternal icon={appIcons.create} to={p.addHref} variant={buttonVariant.filledGreen}>
           {ttc("Add Member")}
         </LinkButtonInternal>
       </PageHeader>

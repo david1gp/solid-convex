@@ -115,6 +115,17 @@ Quick link
    bun run dev
    ```
 
+## MCP
+
+The MCP endpoint is `POST /mcp`, using stateless Streamable HTTP (no sessions or
+SSE). Authenticate with `Authorization: Bearer <API-key-or-JWT>`. Read tools:
+`org-list/get`, `team-list/get`, `project-list/get`, `note-list/get`,
+`resource-list/get`, and `file-get`. Write tools: `project-create/update`,
+`note-create/update`, `resource-create/update/delete`, `resource-file-add/remove`,
+`r2-upload-url-get`, and `file-create`; `ping` and `server-info` are also
+available. MCP calls inherit the credential owner's existing permissions; no
+separate MCP scopes are added.
+
 ## End-to-end tests
 
 `bun run test:e2e` runs the E2E suites against the **production logical target** by default; `bun run test:e2e:dev` selects the development target. This repository does not yet have a production deployment, so both targets temporarily fall back to `http://localhost:3012` (the registered UI service; Rsbuild's fallback outside that service is `3016`). Configure targets independently with `E2E_PRODUCTION_BASE_URL` and `E2E_DEV_BASE_URL`. A target-specific value takes precedence; `E2E_BASE_URL` remains a shared fallback for either target, followed by localhost. URLs must be absolute HTTP(S) URLs.

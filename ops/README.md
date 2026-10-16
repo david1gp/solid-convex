@@ -70,6 +70,17 @@ Logs: `journalctl --user -u <unit> -f`.
   still runs). Neither command deploys the frontend.
 - `export_zip.bash` / `import_zip.bash` — snapshot export/import
 
+## MCP access
+
+The Convex HTTP API exposes `POST /mcp` over stateless Streamable HTTP (no
+sessions or SSE). Clients authenticate with `Authorization: Bearer <API-key-or-JWT>`.
+Read tools are `org-list/get`, `team-list/get`, `project-list/get`,
+`note-list/get`, `resource-list/get`, and `file-get`. Write tools are
+`project-create/update`, `note-create/update`, `resource-create/update/delete`,
+`resource-file-add/remove`, `r2-upload-url-get`, and `file-create`; `ping` and
+`server-info` are also available. Tools inherit the credential owner's existing
+permissions.
+
 ## Self-hosted troubleshooting: Node actions & container networking
 
 - **Node action execution & callbacks:** Node SDK actions (`"use node"`) require both a working executor **and** container reachability to the configured public cloud origin (`CONVEX_CLOUD_ORIGIN`) for `runQuery` and `runMutation`. Node action callbacks dispatch HTTP fetches back to `CONVEX_CLOUD_ORIGIN`.

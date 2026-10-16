@@ -14,7 +14,7 @@ function clientGet(): ConvexClient | undefined {
   const envResult = envBaseUrlConvexResult()
   if (!envResult.success) return undefined
   try {
-    convexClientSingleton = new ConvexClient(envResult.data)
+    convexClientSingleton = new ConvexClient(envResult.data, { unsavedChangesWarning: false })
     return convexClientSingleton
   } catch {
     return undefined

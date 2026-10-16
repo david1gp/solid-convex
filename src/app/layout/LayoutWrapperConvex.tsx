@@ -15,7 +15,7 @@ export function LayoutWrapperConvex(p: LayoutWrapperConvexProps) {
     console.error("!envBaseUrlConvex")
     return null
   }
-  const convex = new ConvexClient(baseUrlResult.data)
+  const convex = new ConvexClient(baseUrlResult.data, { unsavedChangesWarning: false })
   createEffect(() => {
     if (!p.title) return
     document.title = p.title

@@ -2,7 +2,6 @@ import { For, type JSX } from "solid-js"
 import { Dynamic } from "solid-js/web"
 import type { DemoNavDataProps } from "#ui/demo_pages/DemoNavDataProps.js"
 import { LinkBlock } from "#ui/demo_pages/LinkBlock.jsx"
-import { pathDemos } from "#ui/demo_pages/pathDemos.js"
 import type { RouteObject } from "#ui/demo_pages/RouteConfig.js"
 import type { DemoListType } from "#ui/generate_demo_list/DemoListType.js"
 import { LinkButtonExternal } from "#ui/interactive/link/LinkButton.jsx"
@@ -16,7 +15,7 @@ const log = false
 
 export function generateDemoRoutes(
   demoList: DemoListType,
-  prefix = pathDemos,
+  prefix: string,
   Nav: (p: DemoNavDataProps) => JSX.Element,
 ): RouteObject[] {
   const all = [
@@ -33,11 +32,7 @@ export function generateDemoRoutes(
   return all
 }
 
-function getDemosL2(
-  demoList: DemoListType,
-  prefix = pathDemos,
-  Nav: (p: DemoNavDataProps) => JSX.Element,
-): RouteObject[] {
+function getDemosL2(demoList: DemoListType, prefix: string, Nav: (p: DemoNavDataProps) => JSX.Element): RouteObject[] {
   const op = "getDemosL2"
   return objectEntries(demoList).flatMap(([category, tree]) => {
     return Object.entries(tree).map(([compName, Comp]) => {
@@ -57,11 +52,7 @@ function getDemosL2(
   })
 }
 
-function getDemosL1(
-  demoList: DemoListType,
-  prefix = pathDemos,
-  Nav: (p: DemoNavDataProps) => JSX.Element,
-): RouteObject[] {
+function getDemosL1(demoList: DemoListType, prefix: string, Nav: (p: DemoNavDataProps) => JSX.Element): RouteObject[] {
   const op = "getDemosL1"
   return objectEntries(demoList).map(([category, nameComp]) => {
     const path = `${prefix}/${category}`
@@ -95,7 +86,7 @@ function getDemosL1(
 
 function getDemosL0(
   demoList: DemoListType,
-  prefix: string = pathDemos,
+  prefix: string,
   Nav: (p: DemoNavDataProps) => JSX.Element,
   overridePath?: string,
 ): RouteObject[] {
@@ -141,11 +132,7 @@ function getDemosL0(
   ]
 }
 
-function getDemos404(
-  demoList: DemoListType,
-  prefix = pathDemos,
-  Nav: (p: DemoNavDataProps) => JSX.Element,
-): RouteObject[] {
+function getDemos404(demoList: DemoListType, prefix: string, Nav: (p: DemoNavDataProps) => JSX.Element): RouteObject[] {
   return [
     {
       path: `${prefix}/*`,

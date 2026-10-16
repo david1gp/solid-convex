@@ -265,13 +265,13 @@ function combinedClasses(variant: ButtonVariant, size: ButtonSize) {
 }
 
 export function buttonCvaIconOnly(
-  variant: ButtonVariant = buttonVariant.ghost,
+  variant: ButtonVariant | undefined,
   isLoading: boolean | undefined,
   isDisabled: boolean | undefined,
   ...customClasses: (string | boolean | undefined | null | 0)[]
 ) {
   const classes = buttonCva2(
-    variant,
+    variant ?? buttonVariant.ghost,
     buttonSize.none,
     classesButtonClickAnimation,
     "rounded-full p-2.5",

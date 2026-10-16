@@ -1,4 +1,5 @@
 import { For, Show } from "solid-js"
+import { appIcons } from "#src/app/icon/appIcons.ts"
 import { projectListSectionStateCreate } from "#src/project/ui/projectListSectionStateCreate.ts"
 import { PaginationControls } from "#src/ui/pagination/PaginationControls.tsx"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
@@ -14,9 +15,15 @@ export function ProjectListSection(p: { orgHandle?: string; teamId?: string }) {
         <h2 class="text-2xl font-bold">Projects</h2>
         <Show
           when={state.contextual()}
-          fallback={<LinkButtonInternal to={state.teamListHref()}>Choose team to create a project</LinkButtonInternal>}
+          fallback={
+            <LinkButtonInternal to={state.teamListHref()} icon={appIcons.team}>
+              Choose team to create a project
+            </LinkButtonInternal>
+          }
         >
-          <LinkButtonInternal to={state.createHref()}>Create project</LinkButtonInternal>
+          <LinkButtonInternal to={state.createHref()} icon={appIcons.create}>
+            Create project
+          </LinkButtonInternal>
         </Show>
       </div>
       <Show when={state.error()}>
@@ -44,7 +51,9 @@ export function ProjectListSection(p: { orgHandle?: string; teamId?: string }) {
                   <p class="text-muted-foreground whitespace-pre-wrap break-words">{project.description}</p>
                 </Show>
               </div>
-              <LinkButtonInternal to={state.editHref(project.projectId)}>Edit</LinkButtonInternal>
+              <LinkButtonInternal to={state.editHref(project.projectId)} icon={appIcons.edit}>
+                Edit
+              </LinkButtonInternal>
             </article>
           )}
         </For>

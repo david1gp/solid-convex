@@ -1,4 +1,5 @@
 import { Show } from "solid-js"
+import { appIcons } from "#src/app/icon/appIcons.ts"
 import type { Project } from "#src/project/model/projectSchema.ts"
 import { projectFormStateCreate } from "#src/project/ui/projectFormStateCreate.ts"
 import { FormFieldInput } from "#src/ui/form/FormFieldInput.tsx"
@@ -40,10 +41,12 @@ export function ProjectForm(p: { teamId?: string; orgHandle?: string; project?: 
           </p>
         </Show>
         <div class="flex gap-3">
-          <ButtonIcon type="submit" isLoading={state.busy()} disabled={state.busy()}>
+          <ButtonIcon type="submit" icon={appIcons.save} isLoading={state.busy()} disabled={state.busy()}>
             {state.busy() ? "Saving…" : state.title()}
           </ButtonIcon>
-          <LinkButtonInternal to={state.cancelHref()}>Cancel</LinkButtonInternal>
+          <LinkButtonInternal to={state.cancelHref()} icon={appIcons.cancel}>
+            Cancel
+          </LinkButtonInternal>
         </div>
       </form>
     </section>

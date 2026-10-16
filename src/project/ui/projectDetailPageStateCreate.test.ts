@@ -204,4 +204,29 @@ describe("projectDetailPageStateCreate deleteTarget persistence", () => {
       dispose()
     })
   })
+
+  test("initializes tab state with details, exposes tab options, text, and icons", () => {
+    const client = new MockConvexClient()
+    createRoot((dispose) => {
+      const owner = getOwner()!
+      owner.context = { [ConvexContext.id]: client }
+
+      setParamsSignal({ projectId: "proj-456", teamId: "team-123", orgHandle: "test-org" })
+      const state = projectDetailPageStateCreate()
+
+      expect(state.tabOptions()).toEqual(["details", "notes"])
+      expect(state.selectedTab.get()).toBe("details")
+      expect(state.tabText("details")).toBe("Details")
+      expect(state.tabText("notes")).toBe("Notes")
+      expect(typeof state.tabIcon("details")).toBe("string")
+      expect(typeof state.tabIcon("notes")).toBe("string")
+      expect(state.tabIcon("details").length).toBeGreaterThan(0)
+      expect(state.tabIcon("notes").length).toBeGreaterThan(0)
+
+      state.selectedTab.set("notes")
+      expect(state.selectedTab.get()).toBe("notes")
+
+      dispose()
+    })
+  })
 })

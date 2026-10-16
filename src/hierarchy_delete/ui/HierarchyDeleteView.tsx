@@ -1,10 +1,11 @@
 import { Show } from "solid-js"
+import { appIcons } from "#src/app/icon/appIcons.ts"
 import type { HierarchyDeleteTarget } from "#src/hierarchy_delete/model/hierarchyDeleteTargetSchema.ts"
-import type { HierarchyDeleteConfirmAction } from "#src/hierarchy_delete/ui/hierarchyDeleteConfirmAction.ts"
 import { HierarchyDeletePreviewCounts } from "#src/hierarchy_delete/ui/HierarchyDeletePreviewCounts.tsx"
-import { hierarchyDeleteViewStateCreate } from "#src/hierarchy_delete/ui/hierarchyDeleteViewStateCreate.ts"
 import { HierarchyDeleteWarning } from "#src/hierarchy_delete/ui/HierarchyDeleteWarning.tsx"
-import { Button } from "#ui/interactive/button/Button.jsx"
+import type { HierarchyDeleteConfirmAction } from "#src/hierarchy_delete/ui/hierarchyDeleteConfirmAction.ts"
+import { hierarchyDeleteViewStateCreate } from "#src/hierarchy_delete/ui/hierarchyDeleteViewStateCreate.ts"
+import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 
 export interface HierarchyDeleteViewProps {
@@ -110,22 +111,24 @@ export function HierarchyDeleteView(props: HierarchyDeleteViewProps) {
       </Show>
 
       <div class="flex items-center justify-end gap-3 pt-3 border-t border-border-subtle">
-        <Button
+        <ButtonIcon
           type="button"
+          icon={appIcons.cancel}
           variant={buttonVariant.outline}
           onClick={state.onCancel}
           disabled={state.jobStatus.get() === "submitting" || state.jobStatus.get() === "in_progress"}
         >
           Cancel
-        </Button>
+        </ButtonIcon>
         <Show when={state.canRetry()}>
-          <Button type="button" variant={buttonVariant.filled} onClick={state.onRetryClick}>
+          <ButtonIcon type="button" icon={appIcons.retry} variant={buttonVariant.filled} onClick={state.onRetryClick}>
             Retry Deletion
-          </Button>
+          </ButtonIcon>
         </Show>
         <Show when={!state.canRetry()}>
-          <Button
+          <ButtonIcon
             type="button"
+            icon={appIcons.dangerDelete}
             variant={buttonVariant.filledRed}
             onClick={state.onConfirmClick}
             disabled={!state.canConfirm()}
@@ -133,7 +136,7 @@ export function HierarchyDeleteView(props: HierarchyDeleteViewProps) {
             {state.jobStatus.get() === "submitting" || state.jobStatus.get() === "in_progress"
               ? "Deleting…"
               : "Permanently Delete"}
-          </Button>
+          </ButtonIcon>
         </Show>
       </div>
     </div>

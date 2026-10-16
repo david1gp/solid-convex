@@ -1,3 +1,4 @@
+import { appIcons } from "#src/app/icon/appIcons.ts"
 import { classesActiveLink } from "#src/app/nav/links/classesActiveLink.ts"
 import { urlOrgList } from "#src/org/org_url/urlOrg.ts"
 import { ttt } from "#ui/i18n/ttt.ts"
@@ -13,6 +14,7 @@ export interface OrganizationListLinkButtonProps extends MayHaveClass {
 export function OrganizationListNavButton(p: OrganizationListLinkButtonProps) {
   return (
     <LinkButtonInternal
+      icon={appIcons.organization}
       variant={buttonVariant.link}
       size={buttonSize.minimal}
       to={urlOrgList()}

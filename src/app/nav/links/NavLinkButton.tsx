@@ -8,12 +8,14 @@ import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 export interface NavLinkButtonProps extends HasChildren, MayHaveClass {
   href: string
   isActive: boolean
+  icon?: string
 }
 
 /** Small breadcrumb link for the slim crumb bar under the sidebar layout. */
 export function NavLinkButton(p: NavLinkButtonProps) {
   return (
     <LinkButtonInternal
+      icon={p.icon}
       variant={buttonVariant.link}
       size={buttonSize.minimal}
       to={p.href}

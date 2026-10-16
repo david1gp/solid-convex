@@ -1,8 +1,8 @@
 import { Key } from "@solid-primitives/keyed"
-import type { JSXElement } from "solid-js"
-import { createUniqueId } from "solid-js"
+import { type JSXElement, Show, createUniqueId } from "solid-js"
 import type { TabsTopText } from "#ui/interactive/tabs/TabsTopText.js"
 import { tabsTopTextDefault } from "#ui/interactive/tabs/TabsTopText.js"
+import { Icon } from "#ui/static/icon/Icon.jsx"
 import { classArr } from "#ui/utils/classArr.js"
 import type { SignalObject } from "#ui/utils/createSignalObject.js"
 import type { HasGetOptions } from "#ui/utils/HasGetOptions.js"
@@ -17,7 +17,7 @@ export interface TabsTopProps
     MayHaveValueText,
     MayHaveChildren,
     MayHaveClass {
-  valueIcon?: (value: string) => string
+  valueIcon?: (value: string) => string | undefined
   valueAmount?: (value: string) => number | undefined
   valueChildren: (value: string) => JSXElement
   id?: string
@@ -53,6 +53,7 @@ export function TabsTop(p: TabsTopProps) {
               value={value()}
               valueSignal={p.valueSignal}
               disabled={p.disabled}
+              valueIcon={p.valueIcon}
               valueAmount={p.valueAmount}
               valueText={p.valueText}
               valueChildren={p.valueChildren}
@@ -89,6 +90,7 @@ interface TabOptionProps extends MayHaveClass {
   value: string
   valueSignal: SignalObject<string>
   disabled?: boolean
+  valueIcon?: (value: string) => string | undefined
   valueAmount?: (value: string) => number | undefined
   valueText?: (value: string) => string
   valueChildren: (value: string) => JSXElement
@@ -112,11 +114,12 @@ function TabOption(p: TabOptionProps): JSXElement {
         "rounded-sm",
         "px-3 py-2 text-center",
         isSelected(p) ? "bg-blue-500 text-white" : "hover:bg-slate-50 dark:hover:bg-slate-900", // bg hover
-        "flex gap-2",
+        "flex items-center gap-2",
         p.class,
       )}
       onClick={(e) => setActiveTab(p)}
     >
+      <Show when={p.valueIcon?.(p.value)}>{(icon) => <Icon path={icon()} class="size-4 shrink-0" />}</Show>
       {getText(p)}
     </button>
   )
@@ -130,6 +133,7 @@ function TabContent(p: TabOptionProps): JSXElement {
       data-state={isSelected(p) ? "active" : "inactive"}
       aria-labelledby={makeTriggerId(p.baseId, p.value)}
       hidden={!isSelected(p)}
+      // biome-ignore lint/a11y/noNoninteractiveTabindex: WAI-ARIA tabs pattern makes the tabpanel focusable
       tabIndex={0}
       class={classArr("")}
     >

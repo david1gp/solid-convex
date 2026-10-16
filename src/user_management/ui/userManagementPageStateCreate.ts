@@ -1,4 +1,4 @@
-import { useParams } from "@tanstack/solid-router"
+import { useNavigate, useParams } from "@tanstack/solid-router"
 import { createEffect, createMemo, onMount } from "solid-js"
 import { api } from "#convex/_generated/api.js"
 import type { UserRole } from "#src/auth/model_field/userRole.ts"
@@ -13,10 +13,10 @@ import { userManagementParamsParse } from "#src/user_management/url/userManageme
 import { createAction } from "#src/utils/convex_client/createAction.ts"
 import { cursorPaginationCreate } from "#src/utils/convex_client/cursorPaginationCreate.ts"
 import { queryCreate } from "#src/utils/convex_client/queryCreate.ts"
-import { navigateTo } from "#src/utils/router/navigateTo.ts"
 import { createSignalObject } from "#ui/utils/createSignalObject.ts"
 
 export function userManagementPageStateCreate() {
+  const navigate = useNavigate()
   const rawParams = useParams({ strict: false })
   const parsedParams = createMemo(() => {
     const res = userManagementParamsParse(rawParams())
@@ -255,11 +255,11 @@ export function userManagementPageStateCreate() {
   }
 
   function selectUser(userId: string) {
-    navigateTo(urlUserManagement(userId))
+    void navigate({ to: urlUserManagement(userId) })
   }
 
   function deselectUser() {
-    navigateTo(urlUserManagement())
+    void navigate({ to: urlUserManagement() })
   }
 
   return {

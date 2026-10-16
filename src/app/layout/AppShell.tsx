@@ -21,7 +21,10 @@ export function AppShell(p: { children: JSX.Element }) {
         titleClass="sr-only"
         desktopChildren={
           <aside class="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col overflow-y-auto bg-surface-muted/50 p-4 md:flex dark:bg-slate-900/50">
-            <AppSidebarContent state={state} />
+            <AppSidebarContent
+              state={state}
+              headerAction={<SidebarToggle {...state.sidebarState} variant={buttonVariant.ghost} class="shrink-0" />}
+            />
           </aside>
         }
         mobileChildren={<AppSidebarContent state={state} />}
@@ -33,11 +36,12 @@ export function AppShell(p: { children: JSX.Element }) {
           <SidebarToggle {...state.sidebarState} variant={buttonVariant.ghost} />
         </div>
         <div class="min-w-0 flex-1">{p.children}</div>
-        <Show when={!state.sidebarState.isMobile.get()}>
+        {/* Desktop, sidebar collapsed: reopen toggle at top-left where the sidebar header was. */}
+        <Show when={!state.sidebarState.isMobile.get() && !state.sidebarState.openDesktop.get()}>
           <SidebarToggle
             {...state.sidebarState}
-            variant="outline"
-            class="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] right-4 z-20 min-h-12 min-w-12 rounded-xl border-0 bg-white/80 text-content shadow-sm shadow-slate-900/10 backdrop-blur-xl hover:bg-white/90 max-md:hidden dark:bg-slate-900/80 dark:shadow-black/20 dark:hover:bg-slate-800/90"
+            variant={buttonVariant.ghost}
+            class="fixed left-4 top-4 z-20 max-md:hidden"
           />
         </Show>
       </div>

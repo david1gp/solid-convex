@@ -2,13 +2,13 @@ import { mdiAccountOutline } from "@adaptive-ds/mdi/mdiAccountOutline.js"
 import { mdiCogOutline } from "@adaptive-ds/mdi/mdiCogOutline.js"
 import { mdiLogout } from "@adaptive-ds/mdi/mdiLogout.js"
 import { Link } from "@tanstack/solid-router"
-import { For, Show } from "solid-js"
-import { ttt } from "#ui/i18n/ttt.ts"
+import { For, type JSX, Show } from "solid-js"
 import { urlOverview } from "#src/app/pages/urlOverview.ts"
 import { appNameClient } from "#src/app/text/appName.ts"
 import { urlUserProfileMe, urlUserProfileMeEdit } from "#src/auth/url/pageRouteAuth.ts"
-import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { ttt } from "#ui/i18n/ttt.ts"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
+import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { CorvuPopover } from "#ui/interactive/popover/CorvuPopover.jsx"
 import { ThemeButton } from "#ui/interactive/theme/ThemeButton.jsx"
@@ -16,15 +16,18 @@ import { Icon } from "#ui/static/icon/Icon.jsx"
 import { LogoImageText } from "#ui/static/logo/LogoImageText.jsx"
 import type { AppShellState } from "./appShellStateCreate.ts"
 
-export function AppSidebarContent(p: { state: AppShellState }) {
+export function AppSidebarContent(p: { state: AppShellState; headerAction?: JSX.Element }) {
   return (
     <div class="flex min-h-full flex-1 flex-col gap-6">
-      <LogoImageText
-        to={urlOverview()}
-        logoText={appNameClient()}
-        logoTextClass="text-lg font-semibold"
-        class="focus-ring px-2"
-      />
+      <div class="flex items-center justify-between gap-2">
+        <LogoImageText
+          to={urlOverview()}
+          logoText={appNameClient()}
+          logoTextClass="text-lg font-semibold"
+          class="focus-ring min-w-0 px-2"
+        />
+        {p.headerAction}
+      </div>
 
       <nav aria-label={ttt("Main navigation")} class="pt-5">
         <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-content-muted">{ttt("Navigation")}</p>

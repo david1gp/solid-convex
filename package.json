@@ -45,6 +45,7 @@
     "ui:push": "rsync -avh --delete ./ui/  ../../adaptive/solid-ui/ui/",
     "generateDemoList": "bun run ./src/app/demos/generateDemoList.cli.ts",
     "generateTranslations": "bun run ./src/app/i18n/generateTranslations.ts",
+    "cli": "bun run src/cli/cli.ts",
     "update": "bun x npm-check-updates -u && bun i",
     "update:commit": "bun x npm-check-updates -u && bun i && git add package.json && bun check && git commit -m \"chore(deps): update dependencies\" && git push",
     "clean": "rm -rf ./dist",

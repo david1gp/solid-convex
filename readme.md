@@ -126,6 +126,32 @@ SSE). Authenticate with `Authorization: Bearer <API-key-or-JWT>`. Read tools:
 available. MCP calls inherit the credential owner's existing permissions; no
 separate MCP scopes are added.
 
+## HTTP API and CLI
+
+The HTTP API is served by the Convex HTTP actions origin (for local development,
+`http://127.0.0.1:3241`; use your deployment's HTTP API URL elsewhere). Every
+request uses `Authorization: Bearer <API-key-or-JWT>`. Credentials are resolved
+server-side and requests are stateless: there are no sessions or SSE streams.
+
+| Batch | Routes |
+| --- | --- |
+| Organizations, members, invites, teams | `GET /api/orgs`, `/api/orgs/get`, `/api/orgs/page`, `/api/orgs/handle-available`, `/api/orgs/members`, `/api/orgs/members/get`, `/api/orgs/invites`, `/api/orgs/invites/get`, `/api/teams`, `/api/teams/get`; `POST /api/orgs/create`, `/api/orgs/update`, `/api/orgs/members/create`, `/api/orgs/members/update`, `/api/orgs/members/delete`, `/api/orgs/leave`, `/api/orgs/invites/initiate`, `/api/orgs/invites/resend`, `/api/orgs/invites/accept`, `/api/orgs/invites/dismiss`, `/api/teams/create`, `/api/teams/update` |
+| Projects, notes, resources, files, R2 | `GET /api/projects`, `/api/projects/get`, `/api/notes`, `/api/notes/get`, `/api/resources/list`, `/api/resources/get`, `/api/resources/delete-preview`, `/api/resources/files`, `/api/files/list`, `/api/files/get`, `/api/r2/uploadUrl`; `POST /api/projects/create`, `/api/projects/update`, `/api/notes/create`, `/api/notes/update`, `/api/resources/create`, `/api/resources/update`, `/api/resources/delete`, `/api/resources/file-add`, `/api/resources/file-remove`, `/api/files/create`, `/api/files/edit`, `/api/files/delete` |
+| API keys and account | `GET /api/keys`; `POST /api/keys/create`, `/api/keys/rename`, `/api/keys/revoke`, `/api/keys/rotate`, `/api/profile/update`, `/api/password/change-request`, `/api/password/change-confirm`, `/api/email/change-request`, `/api/email/change-confirm` |
+
+Use the Bun CLI to call these routes. Commands accept either a JSON object or
+`--field value` arguments; GET fields become query parameters and POST fields
+become a JSON body:
+
+```sh
+bun run cli -- --baseUrl http://127.0.0.1:3241 --key "$API_KEY" orgs.list --orgHandle acme
+bun run cli -- --baseUrl https://api.example.com --key "$API_KEY" projects.create '{"teamId":"…","name":"Launch"}'
+```
+
+`keys.create` and `keys.rotate` return the new plaintext credential only once.
+Capture and store it securely when creating or rotating a key; it cannot be
+retrieved later.
+
 ## End-to-end tests
 
 `bun run test:e2e` runs the E2E suites against the **production logical target** by default; `bun run test:e2e:dev` selects the development target. This repository does not yet have a production deployment, so both targets temporarily fall back to `http://localhost:3012` (the registered UI service; Rsbuild's fallback outside that service is `3016`). Configure targets independently with `E2E_PRODUCTION_BASE_URL` and `E2E_DEV_BASE_URL`. A target-specific value takes precedence; `E2E_BASE_URL` remains a shared fallback for either target, followed by localhost. URLs must be absolute HTTP(S) URLs.

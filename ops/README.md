@@ -81,6 +81,32 @@ Read tools are `org-list/get`, `team-list/get`, `project-list/get`,
 `server-info` are also available. Tools inherit the credential owner's existing
 permissions.
 
+## HTTP API and CLI
+
+Use the Convex HTTP actions origin as the API base URL: local development uses
+`http://127.0.0.1:3241`; production uses the configured HTTP API domain (currently
+`https://solid-convex-api.contentoren.de`). Send
+`Authorization: Bearer <API-key-or-JWT>` on every request. The API is stateless
+(no sessions or SSE); the server validates the Bearer credential and applies
+the existing permission checks.
+
+| Batch | Routes |
+| --- | --- |
+| Organizations, members, invites, teams | `GET /api/orgs`, `/api/orgs/get`, `/api/orgs/page`, `/api/orgs/handle-available`, `/api/orgs/members`, `/api/orgs/members/get`, `/api/orgs/invites`, `/api/orgs/invites/get`, `/api/teams`, `/api/teams/get`; `POST /api/orgs/create`, `/api/orgs/update`, `/api/orgs/members/create`, `/api/orgs/members/update`, `/api/orgs/members/delete`, `/api/orgs/leave`, `/api/orgs/invites/initiate`, `/api/orgs/invites/resend`, `/api/orgs/invites/accept`, `/api/orgs/invites/dismiss`, `/api/teams/create`, `/api/teams/update` |
+| Projects, notes, resources, files, R2 | `GET /api/projects`, `/api/projects/get`, `/api/notes`, `/api/notes/get`, `/api/resources/list`, `/api/resources/get`, `/api/resources/delete-preview`, `/api/resources/files`, `/api/files/list`, `/api/files/get`, `/api/r2/uploadUrl`; `POST /api/projects/create`, `/api/projects/update`, `/api/notes/create`, `/api/notes/update`, `/api/resources/create`, `/api/resources/update`, `/api/resources/delete`, `/api/resources/file-add`, `/api/resources/file-remove`, `/api/files/create`, `/api/files/edit`, `/api/files/delete` |
+| API keys and account | `GET /api/keys`; `POST /api/keys/create`, `/api/keys/rename`, `/api/keys/revoke`, `/api/keys/rotate`, `/api/profile/update`, `/api/password/change-request`, `/api/password/change-confirm`, `/api/email/change-request`, `/api/email/change-confirm` |
+
+Run the HTTP CLI with Bun; supply a JSON object or `--field value` arguments
+after the command:
+
+```sh
+bun run cli -- --baseUrl http://127.0.0.1:3241 --key "$API_KEY" orgs.list --orgHandle acme
+bun run cli -- --baseUrl https://solid-convex-api.contentoren.de --key "$API_KEY" keys.list
+```
+
+Key creation and rotation return a plaintext credential once only. Store the
+returned value securely immediately; it cannot be retrieved later.
+
 ## Self-hosted troubleshooting: Node actions & container networking
 
 - **Node action execution & callbacks:** Node SDK actions (`"use node"`) require both a working executor **and** container reachability to the configured public cloud origin (`CONVEX_CLOUD_ORIGIN`) for `runQuery` and `runMutation`. Node action callbacks dispatch HTTP fetches back to `CONVEX_CLOUD_ORIGIN`.

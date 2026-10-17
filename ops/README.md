@@ -3,7 +3,7 @@
 Same scheme as allgroups-chat and dcc-app (see allgroups-chat's
 `ops/README.md` + `docs/ops-restructure-plan.md` for the rationale).
 The production UI deploys to `adaptive-solid-convex.pages.dev` and uses the
-self-hosted production Convex deployment at `solid-convex-convex.contentoren.de`
+self-hosted production Convex deployment at `solid-convex-backend.contentoren.de`
 (HTTP actions: `solid-convex-api.contentoren.de`).
 
 ## Machine

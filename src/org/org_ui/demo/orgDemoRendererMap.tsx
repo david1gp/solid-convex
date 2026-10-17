@@ -1,3 +1,4 @@
+import { mdiChevronDown } from "@adaptive-ds/mdi/mdiChevronDown.js"
 import { Show } from "solid-js"
 import { pageDemoHref } from "#src/app/demos/pageDemoHref.ts"
 import { OrgInvitationAcceptView } from "#src/org/invitation_ui/accept/OrgInvitationAcceptView.tsx"
@@ -14,6 +15,7 @@ import { OrgLeaveView } from "#src/org/org_ui/mutate/OrgLeaveView.tsx"
 import { OrgViewContent } from "#src/org/org_ui/view/OrgViewContent.tsx"
 import { formMode } from "#ui/input/form/formMode.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.tsx"
+import { Icon } from "#ui/static/icon/Icon.jsx"
 import { PageWrapper } from "#ui/static/page/PageWrapper.jsx"
 
 function OrgDemoList() {
@@ -157,14 +159,21 @@ function OrgDemoMemberAdd() {
       <label class="block mt-6" for="org-demo-user">
         Demo user to add
       </label>
-      <select
-        id="org-demo-user"
-        value={state.selectedUser()}
-        onChange={(event) => state.chooseUser(event.currentTarget.value)}
-      >
-        <option value="new-user">New User</option>
-        <option value="another-user">Another User</option>
-      </select>
+      <div class="relative w-full min-w-0">
+        <select
+          id="org-demo-user"
+          class="block w-full appearance-none rounded border border-input bg-background py-1.5 pl-2.5 pr-10 text-sm"
+          value={state.selectedUser()}
+          onChange={(event) => state.chooseUser(event.currentTarget.value)}
+        >
+          <option value="new-user">New User</option>
+          <option value="another-user">Another User</option>
+        </select>
+        <Icon
+          path={mdiChevronDown}
+          class="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-foreground"
+        />
+      </div>
       <Show when={state.userError()}>{(error) => <p role="alert">{error()}</p>}</Show>
       <OrgMemberForm mode={formMode.add} sm={state.form} />
     </PageWrapper>

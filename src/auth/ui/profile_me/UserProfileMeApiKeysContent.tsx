@@ -1,4 +1,5 @@
 import { mdiCheckboxMarkedOutline } from "@adaptive-ds/mdi/mdiCheckboxMarkedOutline.js"
+import { mdiChevronDown } from "@adaptive-ds/mdi/mdiChevronDown.js"
 import { mdiClose } from "@adaptive-ds/mdi/mdiClose.js"
 import { mdiContentCopy } from "@adaptive-ds/mdi/mdiContentCopy.js"
 import { mdiPencil } from "@adaptive-ds/mdi/mdiPencil.js"
@@ -12,6 +13,7 @@ import { DateView } from "#src/ui/date/DateView.tsx"
 import { PaginationControls } from "#src/ui/pagination/PaginationControls.tsx"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { Icon } from "#ui/static/icon/Icon.jsx"
 
 export function UserProfileMeApiKeysContent(p: { stateFactory: typeof userProfileMeApiKeysPageStateCreate }) {
   const state = p.stateFactory()
@@ -60,19 +62,25 @@ export function UserProfileMeApiKeysContent(p: { stateFactory: typeof userProfil
             </label>
             <label class="block space-y-1">
               <span>{ttc("Expiry")}</span>
-              <select
-                class="block w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 p-2"
-                value={state.expiryPreset()}
-                onChange={(e) => state.expiryChange(e.currentTarget.value)}
-              >
-                <option value="never">{ttc("No expiry")}</option>
-                <option value="1-day">{ttc("1 day")}</option>
-                <option value="1-week">{ttc("1 week")}</option>
-                <option value="1-month">{ttc("1 month")}</option>
-                <option value="1-year">{ttc("1 year")}</option>
-                <option value="2-years">{ttc("2 years")}</option>
-                <option value="3-years">{ttc("3 years")}</option>
-              </select>
+              <div class="relative w-full min-w-0">
+                <select
+                  class="block w-full appearance-none rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 py-2 pl-2.5 pr-10"
+                  value={state.expiryPreset()}
+                  onChange={(e) => state.expiryChange(e.currentTarget.value)}
+                >
+                  <option value="never">{ttc("No expiry")}</option>
+                  <option value="1-day">{ttc("1 day")}</option>
+                  <option value="1-week">{ttc("1 week")}</option>
+                  <option value="1-month">{ttc("1 month")}</option>
+                  <option value="1-year">{ttc("1 year")}</option>
+                  <option value="2-years">{ttc("2 years")}</option>
+                  <option value="3-years">{ttc("3 years")}</option>
+                </select>
+                <Icon
+                  path={mdiChevronDown}
+                  class="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-gray-900 dark:text-white"
+                />
+              </div>
             </label>
             <ButtonIcon icon={mdiPlus} type="submit" variant={buttonVariant.filledIndigo} disabled={state.busy()}>
               {ttc("Create key")}

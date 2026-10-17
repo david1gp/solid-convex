@@ -1,3 +1,4 @@
+import { mdiChevronDown } from "@adaptive-ds/mdi/mdiChevronDown.js"
 import { For, Show } from "solid-js"
 import { HierarchyDeleteDialog } from "#src/hierarchy_delete/ui/HierarchyDeleteDialog.tsx"
 import { NoteEditor } from "#src/note/ui/NoteEditor.tsx"
@@ -6,6 +7,7 @@ import { PaginationControls } from "#src/ui/pagination/PaginationControls.tsx"
 import { Button } from "#ui/interactive/button/Button.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
+import { Icon } from "#ui/static/icon/Icon.jsx"
 
 export function NotePage() {
   const state = notePageStateCreate()
@@ -41,16 +43,22 @@ export function NotePage() {
               <label for="new-note-project-select" class="text-xs text-muted-foreground">
                 Create note under project:
               </label>
-              <select
-                id="new-note-project-select"
-                class="w-full text-sm border rounded px-2 py-1.5 bg-background text-foreground border-input"
-                onChange={state.onSelectProjectForNewNote}
-              >
-                <option value="">Choose project…</option>
-                <For each={state.availableProjects()}>
-                  {(project) => <option value={project.projectId}>{project.name}</option>}
-                </For>
-              </select>
+              <div class="relative w-full min-w-0">
+                <select
+                  id="new-note-project-select"
+                  class="w-full appearance-none text-sm border rounded pl-2 pr-10 py-1.5 bg-background text-foreground border-input"
+                  onChange={state.onSelectProjectForNewNote}
+                >
+                  <option value="">Choose project…</option>
+                  <For each={state.availableProjects()}>
+                    {(project) => <option value={project.projectId}>{project.name}</option>}
+                  </For>
+                </select>
+                <Icon
+                  path={mdiChevronDown}
+                  class="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-foreground"
+                />
+              </div>
             </div>
           </Show>
         </header>

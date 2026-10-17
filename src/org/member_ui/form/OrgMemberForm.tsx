@@ -1,3 +1,4 @@
+import { mdiChevronDown } from "@adaptive-ds/mdi/mdiChevronDown.js"
 import { Show } from "solid-js"
 import { appIcons } from "#src/app/icon/appIcons.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
@@ -9,6 +10,7 @@ import { isDevEnv } from "#src/utils/env/isDevEnv.ts"
 import { type FormMode, formMode, getFormModeTitle } from "#ui/input/form/formMode.ts"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { Icon } from "#ui/static/icon/Icon.jsx"
 import { classMerge } from "#ui/utils/classMerge.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
@@ -49,21 +51,27 @@ function RoleField(p: HasOrgMemberFormStateManagement) {
       <label for={orgMemberFormField.role} class="text-sm font-medium">
         {ttc("Role")}
       </label>
-      <select
-        id={orgMemberFormField.role}
-        value={p.sm.state.role.get()}
-        onChange={(e) => {
-          p.sm.state.role.set(e.currentTarget.value)
-          p.sm.validateOnChange(orgMemberFormField.role)(e.currentTarget.value)
-        }}
-        class={classMerge(
-          "w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
-          p.sm.errors.role.get() && "border-destructive focus-visible:ring-destructive",
-        )}
-      >
-        <option value={orgRole.member}>{ttc("Member")}</option>
-        <option value={orgRole.guest}>{ttc("Guest")}</option>
-      </select>
+      <div class="relative w-full min-w-0">
+        <select
+          id={orgMemberFormField.role}
+          value={p.sm.state.role.get()}
+          onChange={(e) => {
+            p.sm.state.role.set(e.currentTarget.value)
+            p.sm.validateOnChange(orgMemberFormField.role)(e.currentTarget.value)
+          }}
+          class={classMerge(
+            "w-full appearance-none pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+            p.sm.errors.role.get() && "border-destructive focus-visible:ring-destructive",
+          )}
+        >
+          <option value={orgRole.member}>{ttc("Member")}</option>
+          <option value={orgRole.guest}>{ttc("Guest")}</option>
+        </select>
+        <Icon
+          path={mdiChevronDown}
+          class="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-gray-900 dark:text-white"
+        />
+      </div>
       <Show when={p.sm.errors.role.get()}>
         <p class="text-destructive">{p.sm.errors.role.get()}</p>
       </Show>

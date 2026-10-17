@@ -1,14 +1,31 @@
-import { createUniqueId, For, Show } from "solid-js"
+import { mdiChevronDown } from "@adaptive-ds/mdi/mdiChevronDown.js"
+import { createUniqueId, For, Show, splitProps } from "solid-js"
+import type { JSX } from "solid-js"
 import type { AssignmentTargetSelectorProps } from "#src/assignment/ui/AssignmentTargetSelectorProps.ts"
 import { assignmentTargetLabelFormat } from "#src/assignment/ui/assignmentTargetLabelFormat.ts"
 import { assignmentTargetSelectorStateCreate } from "#src/assignment/ui/assignmentTargetSelectorStateCreate.ts"
 import type { SelectorKindChoice } from "#src/assignment/ui/SelectorKindChoice.ts"
 import { Button } from "#ui/interactive/button/Button.jsx"
 import { buttonSize, buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { Icon } from "#ui/static/icon/Icon.jsx"
 import { classMerge } from "#ui/utils/classMerge.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 interface AssignmentSelectorComponentProps extends AssignmentTargetSelectorProps, MayHaveClass {}
+
+function StyledSelect(props: JSX.SelectHTMLAttributes<HTMLSelectElement>) {
+  const [local, rest] = splitProps(props, ["class"])
+
+  return (
+    <div class="relative w-full min-w-0">
+      <select {...rest} class={classMerge(local.class, "appearance-none pl-3 pr-10")} />
+      <Icon
+        path={mdiChevronDown}
+        class="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-foreground"
+      />
+    </div>
+  )
+}
 
 const kindOptions: { kind: SelectorKindChoice; label: string }[] = [
   { kind: "unassigned", label: "Unassigned" },
@@ -50,9 +67,9 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
             Select Organization
           </label>
           <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
-            <select
+            <StyledSelect
               id={`${idBase}-1`}
-              class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              class="w-full rounded-md border border-input bg-background py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
               value={state.selectedOrgId()}
               disabled={state.disabled()}
               onChange={(e) => state.selectOrg(e.currentTarget.value)}
@@ -63,7 +80,7 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
                   <option value={org._id}>{org.name ? `${org.name} (${org.orgHandle})` : org.orgHandle}</option>
                 )}
               </For>
-            </select>
+            </StyledSelect>
             <Show when={state.hasMoreOrgs()}>
               <Button
                 type="button"
@@ -87,9 +104,9 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
               Filter by Organization (optional)
             </label>
             <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
-              <select
+              <StyledSelect
                 id={`${idBase}-2`}
-                class="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm"
+                class="w-full rounded-md border border-input bg-background py-1.5 text-sm"
                 value={state.selectedOrgId()}
                 disabled={state.disabled()}
                 onChange={(e) => state.selectOrg(e.currentTarget.value)}
@@ -100,7 +117,7 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
                     <option value={org._id}>{org.name ? `${org.name} (${org.orgHandle})` : org.orgHandle}</option>
                   )}
                 </For>
-              </select>
+              </StyledSelect>
               <Show when={state.hasMoreOrgs()}>
                 <Button
                   type="button"
@@ -123,16 +140,16 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
               Select Team
             </label>
             <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
-              <select
+              <StyledSelect
                 id={`${idBase}-3`}
-                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                class="w-full rounded-md border border-input bg-background py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 value={state.selectedTeamId()}
                 disabled={state.disabled()}
                 onChange={(e) => state.selectTeam(e.currentTarget.value)}
               >
                 <option value="">-- Choose a Team --</option>
                 <For each={state.teams()}>{(team) => <option value={team.teamId}>{team.name}</option>}</For>
-              </select>
+              </StyledSelect>
               <Show when={state.hasMoreTeams()}>
                 <Button
                   type="button"
@@ -157,9 +174,9 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
               <label for={`${idBase}-4`} class="block text-xs text-muted-foreground mb-1">
                 Filter Org (optional)
               </label>
-              <select
+              <StyledSelect
                 id={`${idBase}-4`}
-                class="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm"
+                class="w-full rounded-md border border-input bg-background py-1.5 text-sm"
                 value={state.selectedOrgId()}
                 disabled={state.disabled()}
                 onChange={(e) => state.selectOrg(e.currentTarget.value)}
@@ -170,23 +187,23 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
                     <option value={org._id}>{org.name ? `${org.name} (${org.orgHandle})` : org.orgHandle}</option>
                   )}
                 </For>
-              </select>
+              </StyledSelect>
             </div>
 
             <div>
               <label for={`${idBase}-5`} class="block text-xs text-muted-foreground mb-1">
                 Filter Team (optional)
               </label>
-              <select
+              <StyledSelect
                 id={`${idBase}-5`}
-                class="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm"
+                class="w-full rounded-md border border-input bg-background py-1.5 text-sm"
                 value={state.selectedTeamId()}
                 disabled={state.disabled()}
                 onChange={(e) => state.selectTeam(e.currentTarget.value)}
               >
                 <option value="">-- All Teams --</option>
                 <For each={state.teams()}>{(team) => <option value={team.teamId}>{team.name}</option>}</For>
-              </select>
+              </StyledSelect>
             </div>
           </div>
 
@@ -198,9 +215,9 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
               Select Project
             </label>
             <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
-              <select
+              <StyledSelect
                 id={`${idBase}-6`}
-                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                class="w-full rounded-md border border-input bg-background py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 value={state.selectedProjectId()}
                 disabled={state.disabled()}
                 onChange={(e) => state.selectProject(e.currentTarget.value)}
@@ -209,7 +226,7 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
                 <For each={state.projects()}>
                   {(project) => <option value={project.projectId}>{project.name}</option>}
                 </For>
-              </select>
+              </StyledSelect>
               <Show when={state.hasMoreProjects()}>
                 <Button
                   type="button"
@@ -234,9 +251,9 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
               <label for={`${idBase}-7`} class="block text-xs text-muted-foreground mb-1">
                 Filter Org
               </label>
-              <select
+              <StyledSelect
                 id={`${idBase}-7`}
-                class="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm"
+                class="w-full rounded-md border border-input bg-background py-1.5 text-sm"
                 value={state.selectedOrgId()}
                 disabled={state.disabled()}
                 onChange={(e) => state.selectOrg(e.currentTarget.value)}
@@ -247,32 +264,32 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
                     <option value={org._id}>{org.name ? `${org.name} (${org.orgHandle})` : org.orgHandle}</option>
                   )}
                 </For>
-              </select>
+              </StyledSelect>
             </div>
 
             <div>
               <label for={`${idBase}-8`} class="block text-xs text-muted-foreground mb-1">
                 Filter Team
               </label>
-              <select
+              <StyledSelect
                 id={`${idBase}-8`}
-                class="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm"
+                class="w-full rounded-md border border-input bg-background py-1.5 text-sm"
                 value={state.selectedTeamId()}
                 disabled={state.disabled()}
                 onChange={(e) => state.selectTeam(e.currentTarget.value)}
               >
                 <option value="">-- All Teams --</option>
                 <For each={state.teams()}>{(team) => <option value={team.teamId}>{team.name}</option>}</For>
-              </select>
+              </StyledSelect>
             </div>
 
             <div>
               <label for={`${idBase}-9`} class="block text-xs text-muted-foreground mb-1">
                 Filter Project
               </label>
-              <select
+              <StyledSelect
                 id={`${idBase}-9`}
-                class="w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm"
+                class="w-full rounded-md border border-input bg-background py-1.5 text-sm"
                 value={state.selectedProjectId()}
                 disabled={state.disabled()}
                 onChange={(e) => state.selectProject(e.currentTarget.value)}
@@ -281,7 +298,7 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
                 <For each={state.projects()}>
                   {(project) => <option value={project.projectId}>{project.name}</option>}
                 </For>
-              </select>
+              </StyledSelect>
             </div>
           </div>
 
@@ -293,16 +310,16 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
               Select Note
             </label>
             <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
-              <select
+              <StyledSelect
                 id={`${idBase}-10`}
-                class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                class="w-full rounded-md border border-input bg-background py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 value={state.selectedNoteId()}
                 disabled={state.disabled()}
                 onChange={(e) => state.selectNote(e.currentTarget.value)}
               >
                 <option value="">-- Choose a Note --</option>
                 <For each={state.notes()}>{(note) => <option value={note.noteId}>{note.title}</option>}</For>
-              </select>
+              </StyledSelect>
               <Show when={state.hasMoreNotes()}>
                 <Button
                   type="button"

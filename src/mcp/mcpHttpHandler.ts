@@ -1,30 +1,54 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
+import * as a from "valibot"
+import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js"
+import { Server } from "@modelcontextprotocol/sdk/server/index.js"
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js"
 import type { ActionCtx } from "#convex/_generated/server.js"
 import { authorizationHeaderGetToken } from "#src/auth/server/authorizationHeaderGetToken.ts"
-import { mcpReadToolsRegister } from "#src/mcp/mcpReadToolsRegister.ts"
-import { mcpWriteToolsRegister } from "#src/mcp/mcpWriteToolsRegister.ts"
+import { mcpReadToolDefinitions } from "#src/mcp/mcpReadToolsRegister.ts"
+import { mcpWriteToolDefinitions } from "#src/mcp/mcpWriteToolsRegister.ts"
+import type { McpToolDefinition } from "#src/mcp/mcpToolRegistry.ts"
+import { mcpToolCall, mcpToolDefinitionsRegister } from "#src/mcp/mcpToolRegistry.ts"
 import { authActionCredentialResolve } from "#src/utils/convex_backend/authActionCredentialResolve.ts"
 
-function createMcpServer(ctx: ActionCtx, userId: string, token: string): McpServer {
-  const context = { userId }
-  const server = new McpServer({ name: "solid-convex", version: "1.0.0" })
+function createMcpServer(ctx: ActionCtx, userId: string, token: string): Server {
+  const definitions: McpToolDefinition[] = [
+    {
+      name: "ping",
+      description: "Check that the MCP server is reachable.",
+      inputSchema: a.object({}),
+      run: async () => ({ content: [{ type: "text", text: "pong" }] }),
+    },
+    {
+      name: "server-info",
+      description: "Get MCP server information.",
+      inputSchema: a.object({}),
+      run: async () => ({
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({ name: "solid-convex", version: "1.0.0", authenticated: Boolean(userId) }),
+          },
+        ],
+      }),
+    },
+    ...mcpReadToolDefinitions(ctx, token),
+    ...mcpWriteToolDefinitions(ctx, token),
+  ]
+  const registered = mcpToolDefinitionsRegister(definitions)
 
-  server.registerTool("ping", { description: "Check that the MCP server is reachable." }, async () => ({
-    content: [{ type: "text", text: "pong" }],
+  const server = new Server({ name: "solid-convex", version: "1.0.0" }, { capabilities: { tools: {} } })
+  server.setRequestHandler(ListToolsRequestSchema, () => ({
+    tools: registered.map((tool) => ({
+      name: tool.name,
+      description: tool.description,
+      inputSchema: { type: "object" as const, ...tool.inputJsonSchema },
+      execution: { taskSupport: "forbidden" as const },
+    })),
   }))
-
-  server.registerTool("server-info", { description: "Get MCP server information." }, async () => ({
-    content: [
-      {
-        type: "text",
-        text: JSON.stringify({ name: "solid-convex", version: "1.0.0", authenticated: Boolean(context.userId) }),
-      },
-    ],
-  }))
-
-  mcpReadToolsRegister(server, ctx, token)
-  mcpWriteToolsRegister(server, ctx, token)
+  server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    const params = (request as { params: { name: string; arguments?: unknown } }).params
+    return mcpToolCall(definitions, params.name, params.arguments)
+  })
 
   return server
 }

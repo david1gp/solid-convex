@@ -1,5 +1,5 @@
 {
-  "name": "@adaptive-ds/solid-convex",
+  "name": "solid-convex",
   "version": "0.1.0",
   "scripts": {
     "cc": "clear && bun --env-file=.env.development run convex codegen",

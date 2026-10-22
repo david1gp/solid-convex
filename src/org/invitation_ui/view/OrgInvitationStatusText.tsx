@@ -1,5 +1,5 @@
 import { Show } from "solid-js"
-import type { OrgInvitationModel } from "#src/org/invitation_model/OrgInvitationModel.ts"
+import type { OrgInvitationModel } from "#src/org/invitation_model/orgInvitationSchema.ts"
 import { invitationModelToStatus, orgInvitationStatusText } from "#src/org/invitation_ui/view/orgInvitationStatus.ts"
 import { DateView } from "#src/ui/date/DateView.tsx"
 import { ttt } from "#ui/i18n/ttt.ts"

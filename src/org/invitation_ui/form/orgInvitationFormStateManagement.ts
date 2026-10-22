@@ -7,7 +7,7 @@ import { type Language, language } from "#src/app/i18n/language.ts"
 import { languageSignalGet } from "#src/app/i18n/languageSignal.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { userTokenGet } from "#src/auth/ui/signals/userSessionSignal.ts"
-import type { OrgInvitationModel } from "#src/org/invitation_model/OrgInvitationModel.ts"
+import type { OrgInvitationModel } from "#src/org/invitation_model/orgInvitationSchema.ts"
 import {
   type OrgInvitationFormField,
   orgInvitationFormConfig,

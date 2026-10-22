@@ -1,6 +1,7 @@
 import { afterEach, expect, mock, test } from "bun:test"
 import { createRoot } from "solid-js"
 import { pageDemoFixtureStoreGet } from "#src/app/demos/pageDemoFixtureStoreGet.ts"
+import { pageDemoRouteIsMounted } from "#src/app/demos/pageDemoRouteIsMounted.ts"
 
 mock.module("@tanstack/solid-router", () => ({
   useNavigate: () => async () => {},
@@ -38,9 +39,6 @@ test("org view demo state starts from shared member and invitation fixtures", as
   }
 })
 
-test("org member card limits mailto links to the non-demo branch", async () => {
-  const source = await Bun.file(new URL("../../member_ui/view/OrgMemberCard.tsx", import.meta.url)).text()
-  expect(source).toContain("{p.demo ? (")
-  expect(source).toContain('<span class="flex-1">{p.member.profile.email}</span>')
-  expect(source).toMatch(/href=\{`mailto:\$\{p\.member\.profile\.email\}`\}/)
+test("org member detail route stays mounted for the demo branch", () => {
+  expect(pageDemoRouteIsMounted("/org/:orgHandle/members/:memberId/view")).toBe(true)
 })

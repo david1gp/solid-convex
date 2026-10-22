@@ -17,6 +17,8 @@ export const fileSchemaFields = {
 
 export const fileDataSchema = a.object(fileSchemaFields)
 
+export type FileDataModel = a.InferOutput<typeof fileDataSchema>
+
 export const fileSchema = a.object({
   ...fileSchemaFields,
   ...fieldsSchemaCreatedAtUpdatedAtDeletedAt,

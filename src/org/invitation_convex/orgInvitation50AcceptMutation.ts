@@ -7,7 +7,7 @@ import type { DocUser, IdUser } from "#src/auth/convex/IdUser.ts"
 import { docUserToUserProfile } from "#src/auth/convex/user/docUserToUserProfile.ts"
 import type { UserSession } from "#src/auth/model/UserSession.ts"
 import { loginMethod } from "#src/auth/model_field/loginMethod.ts"
-import { createTokenResult } from "#src/auth/server/jwt_token/createTokenResult.ts"
+import { tokenCreateResult } from "#src/auth/server/jwt_token/tokenCreateResult.ts"
 import { orgGetQueryInternalFn } from "#src/org/org_convex/orgGetQuery.ts"
 import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authCredentialResolve } from "#src/utils/convex_backend/authCredentialResolve.ts"
@@ -93,7 +93,7 @@ export async function orgInvitation50AcceptFn(
   await ctx.db.patch("users", userId, data)
 
   // Create session
-  const tokenResult = await createTokenResult(userId, org.orgHandle, invitation.role)
+  const tokenResult = await tokenCreateResult(userId, org.orgHandle, invitation.role)
   if (!tokenResult.success) {
     return tokenResult
   }

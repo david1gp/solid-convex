@@ -1,4 +1,4 @@
-import type { OrgInvitationModel } from "#src/org/invitation_model/OrgInvitationModel.ts"
+import type { OrgInvitationModel } from "#src/org/invitation_model/orgInvitationSchema.ts"
 
 /** Pure demo update: no email dispatch or backend mutation. */
 export function orgInvitationDemoAdd(

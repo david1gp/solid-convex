@@ -7,7 +7,7 @@ import { saveTokenIntoSessionReturnExpiresAtFn } from "#src/auth/convex/crud/sav
 import { docUserToUserProfile } from "#src/auth/convex/user/docUserToUserProfile.ts"
 import type { UserSession } from "#src/auth/model/UserSession.ts"
 import { loginMethod } from "#src/auth/model_field/loginMethod.ts"
-import { createTokenResult } from "#src/auth/server/jwt_token/createTokenResult.ts"
+import { tokenCreateResult } from "#src/auth/server/jwt_token/tokenCreateResult.ts"
 import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authMutationTokenToUserId } from "#src/utils/convex_backend/authMutationTokenToUserId.ts"
 import { createTokenValidator } from "#src/utils/convex_backend/createTokenValidator.ts"
@@ -56,7 +56,7 @@ export async function orgLeaveFn(ctx: MutationCtx, args: OrgLeaveValidatorType):
     return createResultError(op, "User not found", args.userId)
   }
 
-  const tokenResult = await createTokenResult(args.userId, undefined, undefined)
+  const tokenResult = await tokenCreateResult(args.userId, undefined, undefined)
   if (!tokenResult.success) {
     return tokenResult
   }

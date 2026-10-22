@@ -5,10 +5,10 @@ import { emailSchema } from "#src/utils/valibot/emailSchema.ts"
 
 export const findUserByEmailInternalQuery = internalQuery({
   args: valibotToConvex({ email: emailSchema }),
-  handler: async (ctx: QueryCtx, args) => findUserByEmailFn(ctx, args.email),
+  handler: async (ctx: QueryCtx, args) => userEmailFindFn(ctx, args.email),
 })
 
-export async function findUserByEmailFn(ctx: QueryCtx, email: string): Promise<DocUser | null> {
+export async function userEmailFindFn(ctx: QueryCtx, email: string): Promise<DocUser | null> {
   return await ctx.db
     .query("users")
     .withIndex("email", (q) => q.eq("email", email))

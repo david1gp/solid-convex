@@ -1,7 +1,7 @@
 import { expect, test } from "vitest"
 import { apiKeyCredentialGenerate } from "#src/auth/model/apiKeyCredentialGenerate.ts"
 import { apiKeyCredentialHash } from "#src/auth/model/apiKeyCredentialHash.ts"
-import { createToken } from "#src/auth/server/jwt_token/createToken.ts"
+import { tokenCreate } from "#src/auth/server/jwt_token/tokenCreate.ts"
 import { mcpHttpHandler } from "#src/mcp/mcpHttpHandler.ts"
 import { authCredentialResolve } from "#src/utils/convex_backend/authCredentialResolve.ts"
 
@@ -16,7 +16,7 @@ async function setup() {
   const userId = "mcp-test-user"
   const apiKey = apiKeyCredentialGenerate().credential
   const apiKeyDigest = await apiKeyCredentialHash(apiKey)
-  const jwt = await createToken(userId, authSecret)
+  const jwt = await tokenCreate(userId, authSecret)
   const calls: string[] = []
   const ctx = {
     runQuery: async (_reference: unknown, args: Record<string, unknown>) => {

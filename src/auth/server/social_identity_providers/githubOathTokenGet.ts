@@ -7,10 +7,6 @@ import { queryString } from "#utils/url/queryString.js"
 import { searchParamsToObject } from "#utils/url/searchParamsToObject.js"
 import { authErrorMessages } from "./authErrorMessages.js"
 
-export type GitHubOauthToken = {
-  access_token: string
-}
-
 export const githubOauthTokenRootUrl = "https://github.com/login/oauth/access_token"
 
 /**
@@ -18,8 +14,8 @@ export const githubOauthTokenRootUrl = "https://github.com/login/oauth/access_to
  * https://github.com/nextauthjs/next-auth/blob/main/packages/core/src/providers/github.ts
  * https://github.com/pilcrowOnPaper/arctic/blob/main/src/providers/github.ts
  */
-export async function getGithubOathToken(code: string): PromiseResult<GitHubOauthToken> {
-  const op = "getGithubOathToken"
+export async function githubOathTokenGet(code: string): PromiseResult<GitHubOauthToken> {
+  const op = "githubOathTokenGet"
   const provider = socialLoginProvider.github
 
   const clientSecretResult = envGithubClientSecretResult()
@@ -59,6 +55,4 @@ const githubSchema = a.object({
   access_token: a.string(),
 })
 
-function types1(d: a.InferOutput<typeof githubSchema>): GitHubOauthToken {
-  return { ...d }
-}
+export type GitHubOauthToken = a.InferOutput<typeof githubSchema>

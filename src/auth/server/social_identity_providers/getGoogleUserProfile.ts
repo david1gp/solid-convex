@@ -6,17 +6,6 @@ import { authErrorMessages } from "#src/auth/server/social_identity_providers/au
 /**
  * https://github.com/nextauthjs/next-auth/blob/main/packages/core/src/providers/google.ts
  */
-export interface GoogleUserProfile {
-  id: string
-  email: string
-  verified_email: boolean
-  name: string
-  given_name: string
-  family_name?: string
-  picture: string
-  // locale: string
-}
-
 export const googleOauthUserProfileRootUrl = "https://www.googleapis.com/oauth2/v1/userinfo"
 
 /**
@@ -59,6 +48,4 @@ const googleUserProfileSchema = a.object({
   // locale: v.optional(v.string()),
 })
 
-function types1(d: a.InferOutput<typeof googleUserProfileSchema>): GoogleUserProfile {
-  return { ...d }
-}
+export type GoogleUserProfile = a.InferOutput<typeof googleUserProfileSchema>

@@ -5,7 +5,7 @@ import { expect, test } from "vitest"
 import { api, internal } from "../convex/_generated/api.js"
 import schema from "../convex/schema.js"
 import { apiKeyCredentialHash } from "../src/auth/model/apiKeyCredentialHash.ts"
-import { createToken } from "../src/auth/server/jwt_token/createToken.ts"
+import { tokenCreate } from "../src/auth/server/jwt_token/tokenCreate.ts"
 
 const modules = import.meta.glob("../convex/**/*.ts")
 
@@ -38,7 +38,7 @@ test("shared auth wrappers accept live opaque keys and preserve JWT claims", asy
   const resolvedKey = await t.query(internal.auth.apiKeyCredentialResolveQuery, { credential })
   expect(resolvedKey).toEqual({ success: true, data: { kind: "apiKey", userId } })
 
-  const jwt = await createToken(userId, secret)
+  const jwt = await tokenCreate(userId, secret)
   const resolvedJwt = await t.query(internal.auth.apiKeyCredentialResolveQuery, { credential: jwt })
   expect(resolvedJwt.success).toBe(true)
   if (resolvedJwt.success) {

@@ -14,10 +14,10 @@ import { envMode } from "#ui/env/envMode.ts"
 import type { ResendAddressInfo } from "#utils/email/resend/sendEmailsViaResendApi.js"
 import { sendSingleEmailViaResend } from "#utils/email/resend/sendEmailViaResend.js"
 
-export async function sendEmailSignIn(email: string, code: string, url: string, l: Language): PromiseResult<null> {
+export async function emailSignInSend(email: string, code: string, url: string, l: Language): PromiseResult<null> {
   const data = { code, url, email }
 
-  const generatedResult = await generateEmailSignIn(code, url, l)
+  const generatedResult = await emailSignInGenerate(code, url, l)
   if (!generatedResult.success) return generatedResult
   const { subject, html, text } = generatedResult.data
 
@@ -41,8 +41,8 @@ export async function sendEmailSignIn(email: string, code: string, url: string, 
   return createResult(null)
 }
 
-export async function generateEmailSignIn(code: string, url: string, l: Language): PromiseResult<GeneratedEmailType> {
-  const op = "generateEmailSignIn"
+export async function emailSignInGenerate(code: string, url: string, l: Language): PromiseResult<GeneratedEmailType> {
+  const op = "emailSignInGenerate"
   const props: SignInV1Type = {
     // l: "en",
     ...generateSharedEmailProps(l),

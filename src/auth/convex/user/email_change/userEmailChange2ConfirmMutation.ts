@@ -9,7 +9,7 @@ import { docUserToUserProfile } from "#src/auth/convex/user/docUserToUserProfile
 import type { UserSession } from "#src/auth/model/UserSession.ts"
 import { loginMethod } from "#src/auth/model_field/loginMethod.ts"
 import { otpPurpose } from "#src/auth/model_field/otpPurpose.ts"
-import { createTokenResult } from "#src/auth/server/jwt_token/createTokenResult.ts"
+import { tokenCreateResult } from "#src/auth/server/jwt_token/tokenCreateResult.ts"
 import { orgMemberGetHandleAndRoleFn } from "#src/org/member_convex/orgMemberGetHandleAndRoleInternalQuery.ts"
 import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authMutationTokenToUserId } from "#src/utils/convex_backend/authMutationTokenToUserId.ts"
@@ -72,7 +72,7 @@ async function userEmailChange2ConfirmFn(
 
   const { orgHandle, orgRole } = await orgMemberGetHandleAndRoleFn(ctx, userId)
   const userProfile = docUserToUserProfile(user as DocUser, orgHandle, orgRole)
-  const tokenResult = await createTokenResult(userId, orgHandle, orgRole)
+  const tokenResult = await tokenCreateResult(userId, orgHandle, orgRole)
   if (!tokenResult.success) return createError(op, tokenResult.errorMessage)
   const token = tokenResult.data
   const expiresAt = await saveTokenIntoSessionReturnExpiresAtFn(ctx, loginMethod.email, userId, token)

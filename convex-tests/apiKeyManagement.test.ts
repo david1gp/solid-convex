@@ -6,7 +6,7 @@ import { api, internal } from "../convex/_generated/api.js"
 import schema from "../convex/schema.js"
 import { apiKeyCredentialGenerate } from "../src/auth/model/apiKeyCredentialGenerate.ts"
 import { apiKeyCredentialHash } from "../src/auth/model/apiKeyCredentialHash.ts"
-import { createToken } from "../src/auth/server/jwt_token/createToken.ts"
+import { tokenCreate } from "../src/auth/server/jwt_token/tokenCreate.ts"
 
 const modules = import.meta.glob("../convex/**/*.ts")
 
@@ -20,8 +20,8 @@ test("API key management issues one-time secrets, enforces ownership, rotates at
     const second = await ctx.db.insert("users", { name: "Second", role: "user", createdAt, updatedAt: createdAt })
     return [first, second] as const
   })
-  const firstToken = await createToken(userIds[0], secret)
-  const otherToken = await createToken(userIds[1], secret)
+  const firstToken = await tokenCreate(userIds[0], secret)
+  const otherToken = await tokenCreate(userIds[1], secret)
 
   const created = await t.mutation(api.auth.apiKeyCreateMutation, { token: firstToken, name: "  deploy  " })
   expect(created.success).toBe(true)
@@ -87,7 +87,7 @@ test("API key creation rejects blank, oversized, and unsupported expiry input", 
     const createdAt = new Date().toISOString()
     return ctx.db.insert("users", { name: "Test", role: "user", createdAt, updatedAt: createdAt })
   })
-  const token = await createToken(userId, secret)
+  const token = await tokenCreate(userId, secret)
 
   expect((await t.mutation(api.auth.apiKeyCreateMutation, { token, name: "   " })).success).toBe(false)
   expect((await t.mutation(api.auth.apiKeyCreateMutation, { token, name: "x".repeat(81) })).success).toBe(false)
@@ -115,7 +115,7 @@ test("API key rename trims the name and preserves credential metadata on expired
     })
   })
   const userId = await t.run(async (ctx) => (await ctx.db.get("authApiKeys", keyId))!.userId)
-  const token = await createToken(userId, secret)
+  const token = await tokenCreate(userId, secret)
   const before = await t.run((ctx) => ctx.db.get("authApiKeys", keyId))
 
   const renamed = await t.mutation(api.auth.apiKeyRenameMutation, { token, id: keyId, name: "  production deploy  " })
@@ -152,7 +152,7 @@ test("API key rename denies foreign and missing IDs with the same not-found resp
     await ctx.db.delete("authApiKeys", missingId)
     return { otherId, keyId, missingId }
   })
-  const token = await createToken(users.otherId, secret)
+  const token = await tokenCreate(users.otherId, secret)
 
   const foreign = await t.mutation(api.auth.apiKeyRenameMutation, { token, id: users.keyId, name: "changed" })
   const missing = await t.mutation(api.auth.apiKeyRenameMutation, {
@@ -183,7 +183,7 @@ test("API key rename rejects blank and oversized names", async () => {
     })
     return { userId, keyId }
   })
-  const token = await createToken(userId, secret)
+  const token = await tokenCreate(userId, secret)
 
   expect((await t.mutation(api.auth.apiKeyRenameMutation, { token, id: keyId, name: "   " })).success).toBe(false)
   expect((await t.mutation(api.auth.apiKeyRenameMutation, { token, id: keyId, name: "x".repeat(81) })).success).toBe(
@@ -200,7 +200,7 @@ test("API key listing marks expired keys and supports keys without expiry", asyn
     const createdAt = new Date().toISOString()
     return ctx.db.insert("users", { name: "Test", role: "user", createdAt, updatedAt: createdAt })
   })
-  const token = await createToken(userId, secret)
+  const token = await tokenCreate(userId, secret)
   const finite = await t.mutation(api.auth.apiKeyCreateMutation, { token, name: "finite" })
   const never = await t.mutation(api.auth.apiKeyCreateMutation, { token, name: "never", expiryPreset: "never" })
   expect(finite.success).toBe(true)
@@ -288,7 +288,7 @@ test("API key rotation rejects an expired key without modifying or inserting key
       expiresAt: "2000-01-01T00:00:00.000Z",
     })
   })
-  const token = await createToken((await t.run((ctx) => ctx.db.get("authApiKeys", userId)))!.userId, secret)
+  const token = await tokenCreate((await t.run((ctx) => ctx.db.get("authApiKeys", userId)))!.userId, secret)
   const before = await t.run((ctx) => ctx.db.query("authApiKeys").collect())
   const rotated = await t.mutation(api.auth.apiKeyRotateMutation, { token, id: userId })
   const after = await t.run((ctx) => ctx.db.query("authApiKeys").collect())

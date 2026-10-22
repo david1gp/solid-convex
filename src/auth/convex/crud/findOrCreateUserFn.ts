@@ -2,7 +2,7 @@ import type { MutationCtx } from "#convex/_generated/server.js"
 import { createResult, createResultError, type PromiseResult } from "#result"
 import { createUserFromAuthProviderFn } from "#src/auth/convex/crud/createUserFromAuthProviderMutation.ts"
 import { findUserByAuthAccountFn } from "#src/auth/convex/crud/findUserByAuthAccountFn.ts"
-import { findUserByEmailFn } from "#src/auth/convex/crud/findUserByEmailQuery.ts"
+import { userEmailFindFn } from "#src/auth/convex/crud/findUserByEmailQuery.ts"
 import { linkAuthToExistingUserFn } from "#src/auth/convex/crud/linkAuthToExistingUserFn.ts"
 import { updateUserFromAuthProviderFn } from "#src/auth/convex/crud/updateUserFromAuthProviderFn.ts"
 import { userRoleSyncFromAuthProviderFn } from "#src/auth/convex/crud/userRoleSyncFromAuthProviderFn.ts"
@@ -48,7 +48,7 @@ export async function findOrCreateUserFn(
 
   // Check for existing user by email
   if (authData.provider !== loginProvider.oidc && authData.email) {
-    const existingUser = await findUserByEmailFn(ctx, authData.email)
+    const existingUser = await userEmailFindFn(ctx, authData.email)
     if (existingUser) {
       if (existingUser.deletedAt) return createResultError(op, "User account has been deleted")
       await linkAuthToExistingUserFn(ctx, existingUser._id, authData.provider, authData.providerId)

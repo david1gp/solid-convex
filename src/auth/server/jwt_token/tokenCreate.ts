@@ -1,13 +1,13 @@
 import { SignJWT } from "jose"
 import { tokenValidDurationInDays } from "./tokenValidDurationInDays.js"
 
-export async function createToken(
+export async function tokenCreate(
   userId: string,
   secretSalt: string,
   payload?: Record<string, string>,
   expiresInDays = tokenValidDurationInDays,
 ): Promise<string> {
-  const op = "createToken"
+  const op = "tokenCreate"
   if (!secretSalt) return ""
   const encodedSecret = new TextEncoder().encode(secretSalt)
   const alg = "HS256"

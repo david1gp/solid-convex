@@ -3,8 +3,8 @@ import * as a from "valibot"
 import { createResult, createResultError, type PromiseResult } from "#result"
 import { type DecodedToken, decodedTokenSchema } from "#src/auth/model/DecodedToken.ts"
 
-export async function verifyToken(token: string, secret: string | undefined): PromiseResult<DecodedToken> {
-  const op = "verifyToken"
+export async function tokenVerify(token: string, secret: string | undefined): PromiseResult<DecodedToken> {
+  const op = "tokenVerify"
   if (!secret) return createResultError(op, "missing secret")
   try {
     const encodedSecret = new TextEncoder().encode(secret)

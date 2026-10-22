@@ -10,7 +10,7 @@ import {
 import type { UserProfile } from "#src/auth/model/UserProfile.ts"
 import type { UserSession } from "#src/auth/model/UserSession.ts"
 import { loginMethod } from "#src/auth/model_field/loginMethod.ts"
-import { createTokenResult } from "#src/auth/server/jwt_token/createTokenResult.ts"
+import { tokenCreateResult } from "#src/auth/server/jwt_token/tokenCreateResult.ts"
 import { orgMemberGetHandleAndRoleFn } from "#src/org/member_convex/orgMemberGetHandleAndRoleInternalQuery.ts"
 import type { OrgRole } from "#src/org/org_model_field/orgRole.ts"
 import { authMutationTokenToUserId } from "#src/utils/convex_backend/authMutationTokenToUserId.ts"
@@ -71,7 +71,7 @@ async function createUserSessionResult(
 ): PromiseResult<UserSession> {
   const op = "createUserSessionResult"
 
-  const tokenResult = await createTokenResult(userId, orgHandle, orgRole)
+  const tokenResult = await tokenCreateResult(userId, orgHandle, orgRole)
   if (!tokenResult.success) {
     return tokenResult
   }

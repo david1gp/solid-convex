@@ -1,4 +1,8 @@
-import { userGrantServiceAddUserGrant, userGrantServiceUpdateUserGrant } from "@adaptive-ds/zitadel-cli/legacy_v1"
+import {
+  userGrantServiceAddUserGrant,
+  userGrantServiceReactivateUserGrant,
+  userGrantServiceUpdateUserGrant,
+} from "@adaptive-ds/zitadel-cli/legacy_v1"
 import type { PromiseResult } from "#result"
 import { createResult, createResultError } from "#result"
 import type { UserRole } from "#src/auth/model_field/userRole.ts"
@@ -13,6 +17,7 @@ export interface ZitadelUserRolesSaveOptions {
   readonly existingGrant?: {
     readonly id: string
     readonly roleKeys: readonly string[]
+    readonly state?: number
   }
   readonly fetch?: (input: string | URL | Request, init?: RequestInit) => Promise<Response>
 }
@@ -28,6 +33,7 @@ export async function zitadelUserRolesSave(
   const op = "zitadelUserRolesSave"
   let grantId = options.existingGrant?.id
   let existingRoleKeys = options.existingGrant?.roleKeys
+  let existingGrantState = options.existingGrant?.state
 
   if (options.existingGrant === undefined) {
     const listResult = await zitadelUserGrantList({
@@ -47,6 +53,7 @@ export async function zitadelUserRolesSave(
     if (currentGrant !== undefined) {
       grantId = currentGrant.id
       existingRoleKeys = currentGrant.roleKeys
+      existingGrantState = currentGrant.state
     }
   }
 
@@ -60,15 +67,28 @@ export async function zitadelUserRolesSave(
   }
 
   if (grantId !== undefined) {
-    if (
-      existingRoleKeys !== undefined &&
-      mergedRoleKeys.length === existingRoleKeys.length &&
-      mergedRoleKeys.every((roleKey, index) => roleKey === existingRoleKeys[index])
-    ) {
-      return createResult({
+    if (existingGrantState === undefined || existingGrantState === 1 || existingGrantState === 0) {
+      if (
+        existingRoleKeys !== undefined &&
+        mergedRoleKeys.length === existingRoleKeys.length &&
+        mergedRoleKeys.every((roleKey, index) => roleKey === existingRoleKeys[index])
+      ) {
+        return createResult({
+          grantId,
+          roleKeys: mergedRoleKeys,
+        })
+      }
+    } else {
+      const reactivateResult = await userGrantServiceReactivateUserGrant({
+        config: legacyConfig,
         grantId,
-        roleKeys: mergedRoleKeys,
+        userId: options.userId,
+        fetch: options.fetch,
       })
+
+      if (!reactivateResult.success) {
+        return createResultError(op, `Failed to reactivate user grant: ${reactivateResult.errorMessage}`)
+      }
     }
 
     const updateResult = await userGrantServiceUpdateUserGrant({

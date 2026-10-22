@@ -1,13 +1,34 @@
-import { For, Show } from "solid-js"
+import { createMemo, For, Show } from "solid-js"
+import { api } from "#convex/_generated/api.js"
+import { appIcons } from "#src/app/icon/appIcons.ts"
+import { userTokenGet } from "#src/auth/ui/signals/userSessionSignal.ts"
+import { UserManagementRolesDialog } from "#src/user_management/ui/UserManagementRolesDialog.tsx"
+import { userManagementRolesDialogStateCreate } from "#src/user_management/ui/userManagementRolesDialogStateCreate.ts"
 import { UserRoleCheckMultipleField } from "#src/user_management/ui/UserRoleCheckMultipleField.tsx"
 import { UserTeamCheckMultipleField } from "#src/user_management/ui/UserTeamCheckMultipleField.tsx"
 import { userManagementPageStateCreate } from "#src/user_management/ui/userManagementPageStateCreate.ts"
+import { userManagementMembersFilter, userRoleFilterOptionsGet } from "#src/user_management/ui/userAvailableRoles.ts"
+import { createAction } from "#src/utils/convex_client/createAction.ts"
+import { CheckSingle } from "#ui/input/check/CheckSingle.tsx"
 import { Button } from "#ui/interactive/button/Button.tsx"
+import { ButtonIconOnly } from "#ui/interactive/button/ButtonIconOnly.tsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { PageWrapper } from "#ui/static/page/PageWrapper.tsx"
+import { createSignalObject } from "#ui/utils/createSignalObject.ts"
 
 export function UserManagementPage() {
   const state = userManagementPageStateCreate()
+  const rolesSaveAction = createAction(api.userManagementActions.userManagementSaveAction)
+  const rolesDialog = userManagementRolesDialogStateCreate({
+    setRoles: async ({ roles, userId }) => {
+      const res = await rolesSaveAction({ token: userTokenGet(), userId, roles: [...roles] })
+      if (res.success) return { success: true, errorMessage: "" }
+      return { success: false, errorMessage: res.errorMessage }
+    },
+  })
+  const roleFilter = createSignalObject<string>("all")
+  const roleFilterOptions = createMemo(() => userRoleFilterOptionsGet(state.users()))
+  const visibleUsers = createMemo(() => userManagementMembersFilter(state.users(), roleFilter.get()))
 
   return (
     <PageWrapper>
@@ -72,8 +93,16 @@ export function UserManagementPage() {
                 </p>
               </Show>
 
+              <CheckSingle
+                id="user-management-role-filter"
+                valueSignal={roleFilter}
+                getOptions={() => [...roleFilterOptions()]}
+                valueText={(role) => (role === "all" ? "All" : role)}
+                disallowDeselection
+              />
+
               <Show
-                when={state.users().length > 0}
+                when={visibleUsers().length > 0}
                 fallback={
                   <Show when={!state.pagination.loading()}>
                     <p class="text-sm text-muted-foreground py-4 text-center">
@@ -83,15 +112,15 @@ export function UserManagementPage() {
                 }
               >
                 <ul class="divide-y divide-border -mx-4">
-                  <For each={state.users()}>
+                  <For each={visibleUsers()}>
                     {(user) => {
                       const isSelected = () => state.selectedUserId() === user.userId
                       return (
-                        <li>
+                        <li class="flex items-stretch gap-1 px-1">
                           <button
                             type="button"
                             onClick={() => state.selectUser(user.userId)}
-                            class={`w-full text-left px-4 py-3 transition-colors hover:bg-muted/50 flex flex-col gap-1 ${
+                            class={`flex-1 min-w-0 text-left px-4 py-3 transition-colors hover:bg-muted/50 flex flex-col gap-1 ${
                               isSelected() ? "bg-muted font-medium border-l-4 border-primary pl-3" : ""
                             }`}
                           >
@@ -118,12 +147,23 @@ export function UserManagementPage() {
                               </div>
                             </div>
                           </button>
+                          <div class="flex items-center shrink-0">
+                            <ButtonIconOnly
+                              title={`Edit roles for ${user.displayName || user.username || user.email || user.userId}`}
+                              icon={appIcons.edit}
+                              variant={buttonVariant.ghost}
+                              onClick={() => rolesDialog.openEdit(user)}
+                              disabled={rolesDialog.isUpdating(user.userId)}
+                              aria-label={`Edit roles for ${user.displayName || user.username || user.email || user.userId}`}
+                            />
+                          </div>
                         </li>
                       )
                     }}
                   </For>
                 </ul>
               </Show>
+              <UserManagementRolesDialog dialog={rolesDialog} members={state.users} />
 
               <Show when={state.pagination.canPrevious() || state.pagination.canNext()}>
                 <div class="flex justify-between items-center pt-2 border-t border-border">

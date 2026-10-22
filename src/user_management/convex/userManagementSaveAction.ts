@@ -6,6 +6,7 @@ import { createResult, createResultError } from "#result"
 import type { UserRole } from "#src/auth/model_field/userRole.ts"
 import type { ZitadelUserAssignmentPartialFailure } from "#src/user_management/server/ZitadelUserAssignmentPartialFailure.ts"
 import type { ZitadelUserAssignmentSaveResult } from "#src/user_management/server/ZitadelUserAssignmentSaveResult.ts"
+import { userManagementLastAdminGuard } from "#src/user_management/server/userManagementLastAdminGuard.ts"
 import { zitadelServerConfigFromEnv } from "#src/user_management/server/zitadelServerConfigFromEnv.ts"
 import { zitadelUserAssignmentSave } from "#src/user_management/server/zitadelUserAssignmentSave.ts"
 import { zitadelUserGet } from "#src/user_management/server/zitadelUserGet.ts"
@@ -29,6 +30,12 @@ export const userManagementSaveAction = action({
     })
     if (!adminCheck.success) {
       return adminCheck
+    }
+
+    // 1b. Reject empty role sets before any external call
+    const desiredRoles = args.roles !== undefined ? [...new Set(args.roles)] : undefined
+    if (desiredRoles !== undefined && desiredRoles.length === 0) {
+      return createResultError(op, "At least one role is required")
     }
 
     // 2. Validate team IDs exist
@@ -60,11 +67,31 @@ export const userManagementSaveAction = action({
     }
     const userSummary = verifyResult.data
 
+    // 4b. Fail-closed last-admin guard: refuse to remove the final project admin
+    if (desiredRoles !== undefined && !desiredRoles.includes("admin")) {
+      const allGrantsResult = await zitadelUserGrantList({
+        config,
+        projectId: config.projectId,
+      })
+      if (!allGrantsResult.success) {
+        return createResultError(op, `Failed to verify remaining project admins: ${allGrantsResult.errorMessage}`)
+      }
+      const guardResult = userManagementLastAdminGuard({
+        grants: allGrantsResult.data,
+        targetUserId: args.userId,
+        projectId: config.projectId,
+        desiredRoles,
+      })
+      if (!guardResult.success) {
+        return guardResult
+      }
+    }
+
     // 5. Save to Zitadel
     const saveResult = await zitadelUserAssignmentSave({
       config,
       userId: args.userId,
-      roles: args.roles as readonly UserRole[] | undefined,
+      roles: desiredRoles as readonly UserRole[] | undefined,
       teamIds: args.teamIds,
     })
 

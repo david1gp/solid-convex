@@ -396,3 +396,26 @@ test("stale cleanup continuation mutation deletes non-active records in paged ba
   expect(remaining.length).toBe(1)
   expect(remaining[0]?.userId).toBe("active-u1")
 })
+
+test("user management save action rejects an empty role set before any external call", async () => {
+  const { t, adminKey, regularKey } = await userManagementFixtureCreate()
+
+  // Non-admin callers are rejected on authorization first
+  const nonAdminResult = await t.action(api.userManagementActions.userManagementSaveAction, {
+    token: regularKey,
+    userId: "user-1",
+    roles: [],
+  })
+  expect(nonAdminResult.success).toBe(false)
+
+  // Admin callers get the empty-roles rejection without needing Zitadel configuration
+  const emptyResult = await t.action(api.userManagementActions.userManagementSaveAction, {
+    token: adminKey,
+    userId: "user-1",
+    roles: [],
+  })
+  expect(emptyResult.success).toBe(false)
+  if (!emptyResult.success) {
+    expect(emptyResult.errorMessage).toBe("At least one role is required")
+  }
+})

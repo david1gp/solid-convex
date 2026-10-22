@@ -95,3 +95,6 @@ AGENTS.md
 /ui
 /commits.md
 bun.lock
+
+# Local provisioning state (mode 600/700, never commit)
+state/

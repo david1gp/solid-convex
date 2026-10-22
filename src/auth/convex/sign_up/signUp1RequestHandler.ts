@@ -2,10 +2,11 @@ import * as a from "valibot"
 import { internal } from "#convex/_generated/api.js"
 import type { ActionCtx } from "#convex/_generated/server.js"
 import { createError } from "#result"
+import { apiError } from "#src/api/apiError.ts"
 import { envBaseUrlAppResult } from "#src/app/env/public/envBaseUrlAppResult.ts"
 import { emailSignUpSend } from "#src/auth/convex/email/emailSignUpSend.ts"
-import { generateOtpCode } from "#src/auth/convex/pw/generateOtpCode.ts"
-import { hashPassword2 } from "#src/auth/convex/pw/hashPassword.ts"
+import { otpCodeGenerate } from "#src/auth/convex/pw/otpCodeGenerate.ts"
+import { passwordHash2 } from "#src/auth/convex/pw/passwordHash2.ts"
 import { signUpErrorMessages } from "#src/auth/convex/sign_up/signUpErrorMessages.ts"
 import { signUpSchema } from "#src/auth/model/signUpSchema.ts"
 import { pageRouteAuth } from "#src/auth/url/pageRouteAuth.ts"
@@ -16,9 +17,7 @@ export async function signUp1RequestHandler(ctx: ActionCtx, request: Request): P
   const op = "signUp1RequestHandler"
 
   if (request.method !== "POST") {
-    return new Response(commonApiErrorMessages.methodNotAllowed, {
-      status: 405,
-    })
+    return apiError.response("auth", op, commonApiErrorMessages.methodNotAllowed, 400)
   }
 
   const textBody = await request.text()
@@ -26,7 +25,7 @@ export async function signUp1RequestHandler(ctx: ActionCtx, request: Request): P
     const errorMessage = commonApiErrorMessages.emptyBody
     const errorResult = createError(op, errorMessage, textBody)
     console.error(errorResult)
-    return new Response(JSON.stringify(errorResult), { status: 400 })
+    return apiError.fromResultError("auth", errorResult, 400)
   }
   const schema = a.pipe(a.string(), a.parseJson(), signUpSchema)
   const validation = a.safeParse(schema, textBody)
@@ -34,7 +33,7 @@ export async function signUp1RequestHandler(ctx: ActionCtx, request: Request): P
     const errorMessage = commonApiErrorMessages.schemaValidationFailed + ": " + a.summarize(validation.issues)
     const errorResult = createError(op, errorMessage, textBody)
     console.error(errorResult)
-    return new Response(JSON.stringify(errorResult), { status: 400 })
+    return apiError.fromResultError("auth", errorResult, 400)
   }
   const { name, email, pw, l } = validation.output
 
@@ -44,24 +43,22 @@ export async function signUp1RequestHandler(ctx: ActionCtx, request: Request): P
       const errorMessage = "An account with this email was deleted. Please contact support."
       const errorResult = createError(op, errorMessage, email)
       console.warn(errorResult)
-      return new Response(JSON.stringify(errorResult), { status: 409 })
+      return apiError.fromResultError("auth", errorResult, 409)
     }
     const errorMessage = signUpErrorMessages.userAlreadyExists
     const errorResult = createError(op, errorMessage, email)
     console.warn(errorResult)
-    return new Response(JSON.stringify(errorResult), { status: 409 })
+    return apiError.fromResultError("auth", errorResult, 409)
   }
 
-  const hashedPasswordResult = await hashPassword2(pw)
+  const hashedPasswordResult = await passwordHash2(pw)
   if (!hashedPasswordResult.success) {
     console.warn(hashedPasswordResult)
-    return new Response(jsonStringifyPretty(hashedPasswordResult), {
-      status: 500,
-    })
+    return apiError.fromResultError("auth", hashedPasswordResult, 500)
   }
   const hashedPassword = hashedPasswordResult.data
 
-  const code = generateOtpCode()
+  const code = otpCodeGenerate()
 
   // Run mutation to save code
   await ctx.runMutation(internal.auth.signUp2InternalMutation, {
@@ -75,9 +72,7 @@ export async function signUp1RequestHandler(ctx: ActionCtx, request: Request): P
   const hostnameAppResult = envBaseUrlAppResult()
   if (!hostnameAppResult.success) {
     console.error(hostnameAppResult)
-    return new Response(jsonStringifyPretty(hostnameAppResult), {
-      status: 500,
-    })
+    return apiError.fromResultError("auth", hostnameAppResult, 500)
   }
   const hostnameApp = hostnameAppResult.data
   const confirmUrl = new URL(pageRouteAuth.signUpConfirmEmail, hostnameApp)

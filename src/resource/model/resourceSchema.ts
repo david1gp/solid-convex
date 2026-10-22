@@ -24,6 +24,8 @@ export const resourceDataSchemaFields = {
 
 export const resourceDataSchema = a.object(resourceDataSchemaFields)
 
+export type ResourceDataModel = a.InferOutput<typeof resourceDataSchema>
+
 export const resourceSchema = a.object({
   ...resourceDataSchemaFields,
   ...fieldsSchemaCreatedAtUpdatedAtDeletedAt,

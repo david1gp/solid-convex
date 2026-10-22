@@ -2,6 +2,8 @@ import { apiAuthBasePath } from "#src/auth/api_client/apiAuthBasePath.ts"
 import { addRouteWithCors } from "#src/auth/convex/headers/cors/addRouteWithCors.ts"
 import type { HonoDispatcher } from "#src/auth/convex/headers/honoDispatcher.ts"
 import { httpMethod } from "#src/auth/convex/headers/httpMethod.ts"
+import { signInViaAuthworksCallbackRequestHandler } from "#src/auth/convex/sign_in_authworks/signInViaAuthworksCallbackRequestHandler.ts"
+import { signInViaAuthworksStartRequestHandler } from "#src/auth/convex/sign_in_authworks/signInViaAuthworksStartRequestHandler.ts"
 import { signInViaEmail1RequestHandler } from "#src/auth/convex/sign_in_email/signInViaEmail1RequestHandler.ts"
 import { signInViaEmailEnterOtp1RequestHandler } from "#src/auth/convex/sign_in_email/signInViaEmailEnterOtp1RequestHandler.ts"
 import { signInViaOidcCallbackRequestHandler } from "#src/auth/convex/sign_in_oidc/signInViaOidcCallbackRequestHandler.ts"
@@ -40,6 +42,19 @@ export function addHttpRoutesAuth(dispatcher: HonoDispatcher) {
     apiAuthBasePath + apiPathAuth.signInViaOidcCallback,
     httpMethod.GET,
     signInViaOidcCallbackRequestHandler,
+  )
+  // Authworks (parallel OIDC provider; Zitadel remains primary until the switch)
+  addRouteWithCors(
+    dispatcher,
+    apiAuthBasePath + apiPathAuth.signInViaAuthworks,
+    httpMethod.GET,
+    signInViaAuthworksStartRequestHandler,
+  )
+  addRouteWithCors(
+    dispatcher,
+    apiAuthBasePath + apiPathAuth.signInViaAuthworksCallback,
+    httpMethod.GET,
+    signInViaAuthworksCallbackRequestHandler,
   )
   // Oauth / Admin
   addRouteWithCors(dispatcher, apiAuthBasePath + apiPathAuth.signInViaAdmin, httpMethod.GET, async (ctx, request) => {

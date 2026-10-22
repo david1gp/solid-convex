@@ -6,6 +6,7 @@ import { loginProvider } from "#src/auth/model_field/socialLoginProvider.ts"
 import { AuthSectionCard } from "#src/auth/ui/shared/AuthSectionCard.tsx"
 import { AuthSectionHeroIcon } from "#src/auth/ui/shared/AuthSectionHeroIcon.tsx"
 import { AdminLoginSection } from "#src/auth/ui/sign_in/admin/AdminLoginSection.tsx"
+import { AuthworksSignInSection } from "#src/auth/ui/sign_in/authworks/AuthworksSignInSection.tsx"
 import { SignInWithAnExistingSession } from "#src/auth/ui/sign_in/existing/SignInWithAnExistingSession.tsx"
 import { AuthLegalAgree } from "#src/auth/ui/sign_in/legal/AuthLegalAgree.tsx"
 import { authLegalAgreeVariant } from "#src/auth/ui/sign_in/legal/authLegalAgreeVariant.tsx"
@@ -60,6 +61,9 @@ export function SignInPageContent(p: MayHaveClass & { demo?: boolean }) {
 
       <Show when={!p.demo}>
         <OidcSignInSection />
+      </Show>
+      <Show when={!p.demo}>
+        <AuthworksSignInSection />
       </Show>
       <Show when={!p.demo}>
         <AuthSectionSocials />

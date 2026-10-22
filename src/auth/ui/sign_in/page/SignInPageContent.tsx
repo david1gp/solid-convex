@@ -19,7 +19,7 @@ import { SignInViaPasswordForm } from "#src/auth/ui/sign_in/via_pw/SignInViaPass
 import { signInViaPasswordDemoStateCreate } from "#src/auth/ui/sign_in/via_pw/signInViaPasswordDemoStateCreate.ts"
 import { buttonSize, buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { classesCardWrapperP4 } from "#ui/static/card/classesCardWrapper.ts"
-import { classesGridCols3lg } from "#ui/static/grid/classesGridCols.ts"
+import { classesGridCols3lg } from "#ui/static/grid/classesGridCols3lg.ts"
 import { iconGithub } from "#ui/static/icons/iconGithub.ts"
 import { iconGoogle } from "#ui/static/icons/iconGoogle.ts"
 import { classArr } from "#ui/utils/classArr.ts"

@@ -21,7 +21,7 @@ import type { PaginationResultType } from "#src/utils/convex_backend/paginationR
 import { resultHasErrorMessage } from "#src/utils/result/resultHasErrorMessage.ts"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
-import { classesGridCols2xl } from "#ui/static/grid/classesGridCols.ts"
+import { classesGridCols2xl } from "#ui/static/grid/classesGridCols2xl.ts"
 import { PageWrapper } from "#ui/static/page/PageWrapper.jsx"
 import { classArr } from "#ui/utils/classArr.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"

@@ -28,7 +28,7 @@ export function addHttpRoutesAuth(dispatcher: HonoDispatcher) {
   addRouteWithCors(dispatcher, apiAuthBasePath + apiPathAuth.signInViaGoogle, httpMethod.GET, async (ctx, request) => {
     return signInUsingSocialAuth1RequestHandler(socialLoginProvider.google, ctx, request)
   })
-  // Generic OpenID Connect
+  // Generic OpenID Connect (Zitadel)
   addRouteWithCors(
     dispatcher,
     apiAuthBasePath + apiPathAuth.signInViaOidc,
@@ -40,6 +40,19 @@ export function addHttpRoutesAuth(dispatcher: HonoDispatcher) {
     apiAuthBasePath + apiPathAuth.signInViaOidcCallback,
     httpMethod.GET,
     signInViaOidcCallbackRequestHandler,
+  )
+  // Generic OpenID Connect (Authworks second provider slot)
+  addRouteWithCors(
+    dispatcher,
+    apiAuthBasePath + apiPathAuth.signInViaOidcAuthworks,
+    httpMethod.GET,
+    async (ctx, request) => signInViaOidcStartRequestHandler(ctx, request, "authworks"),
+  )
+  addRouteWithCors(
+    dispatcher,
+    apiAuthBasePath + apiPathAuth.signInViaOidcAuthworksCallback,
+    httpMethod.GET,
+    async (ctx, request) => signInViaOidcCallbackRequestHandler(ctx, request, "authworks"),
   )
   // Oauth / Admin
   addRouteWithCors(dispatcher, apiAuthBasePath + apiPathAuth.signInViaAdmin, httpMethod.GET, async (ctx, request) => {

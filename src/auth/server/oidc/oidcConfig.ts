@@ -4,4 +4,7 @@ export type OidcConfig = {
   clientSecret?: string
   scopes: readonly string[]
   zitadelOrgId?: string
+  authworksOrgId?: string
 }
+
+export type OidcProviderKey = "zitadel" | "authworks"

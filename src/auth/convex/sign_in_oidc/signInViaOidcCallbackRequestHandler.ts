@@ -2,7 +2,10 @@ import { internal } from "#convex/_generated/api.js"
 import type { ActionCtx } from "#convex/_generated/server.js"
 import { oidcRequestErrorResponseCreate } from "#src/auth/convex/sign_in_shared/oidcRequestErrorResponseCreate.ts"
 import { signInCallbackCompletionResponseCreate } from "#src/auth/convex/sign_in_shared/signInCallbackCompletionResponseCreate.ts"
+import { oidcAuthworksAdmissionCheck } from "#src/auth/server/oidc/oidcAuthworksAdmissionCheck.ts"
+import { oidcAuthworksConfigGet } from "#src/auth/server/oidc/oidcAuthworksConfigGet.ts"
 import { oidcCallbackUrlGet } from "#src/auth/server/oidc/oidcCallbackUrlGet.ts"
+import type { OidcProviderKey } from "#src/auth/server/oidc/oidcConfig.ts"
 import { oidcConfigGet } from "#src/auth/server/oidc/oidcConfigGet.ts"
 import { oidcDiscoveryGet } from "#src/auth/server/oidc/oidcDiscoveryGet.ts"
 import { oidcIdTokenVerify } from "#src/auth/server/oidc/oidcIdTokenVerify.ts"
@@ -12,7 +15,11 @@ import { oidcTrustedProfileCreate } from "#src/auth/server/oidc/oidcTrustedProfi
 import { oidcUserInfoGet } from "#src/auth/server/oidc/oidcUserInfoGet.ts"
 import { oidcZitadelRoleGet } from "#src/auth/server/oidc/oidcZitadelRoleGet.ts"
 
-export async function signInViaOidcCallbackRequestHandler(ctx: ActionCtx, request: Request): Promise<Response> {
+export async function signInViaOidcCallbackRequestHandler(
+  ctx: ActionCtx,
+  request: Request,
+  provider: OidcProviderKey = "zitadel",
+): Promise<Response> {
   const op = "signInViaOidcCallbackRequestHandler"
   const url = new URL(request.url)
   const state = url.searchParams.get("state")
@@ -32,13 +39,13 @@ export async function signInViaOidcCallbackRequestHandler(ctx: ActionCtx, reques
   const code = url.searchParams.get("code")
   if (!code) return oidcRequestErrorResponseCreate(op, "missing code", 400, clearCookieHeaders)
 
-  const configResult = oidcConfigGet()
+  const configResult = provider === "authworks" ? oidcAuthworksConfigGet() : oidcConfigGet()
   if (!configResult.success) {
     console.error(configResult)
     return oidcRequestErrorResponseCreate(op, "OIDC sign-in is not configured", 500, clearCookieHeaders)
   }
 
-  const callbackUrlResult = oidcCallbackUrlGet()
+  const callbackUrlResult = oidcCallbackUrlGet(provider)
   if (!callbackUrlResult.success) {
     console.error(callbackUrlResult)
     return oidcRequestErrorResponseCreate(op, "OIDC sign-in callback is not configured", 500, clearCookieHeaders)
@@ -73,6 +80,14 @@ export async function signInViaOidcCallbackRequestHandler(ctx: ActionCtx, reques
     return oidcRequestErrorResponseCreate(op, "could not verify OIDC ID token", 400, clearCookieHeaders)
   }
 
+  if (provider === "authworks") {
+    const admissionResult = oidcAuthworksAdmissionCheck(claimsResult.data, configResult.data.authworksOrgId)
+    if (!admissionResult.success) {
+      console.warn(admissionResult)
+      return oidcRequestErrorResponseCreate(op, "could not verify OIDC ID token", 400, clearCookieHeaders)
+    }
+  }
+
   const idTokenName = claimsResult.data.given_name?.trim() || claimsResult.data.name?.trim()
   const userInfoResult = await oidcUserInfoGet({
     discovery: discoveryResult.data,
@@ -81,6 +96,9 @@ export async function signInViaOidcCallbackRequestHandler(ctx: ActionCtx, reques
     needsName: !idTokenName,
     needsPicture: !claimsResult.data.picture?.trim(),
   })
+  // Authworks issues no role claims: an Authworks sign-in never grants,
+  // removes, or syncs admin rights — new users get the default user role and
+  // existing users keep theirs (see userRoleSyncFromAuthProviderFn).
   const providerInfo = oidcTrustedProfileCreate(
     claimsResult.data,
     configResult.data.zitadelOrgId

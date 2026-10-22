@@ -35,6 +35,7 @@ const oidcIdTokenClaimsSchema = a.object({
   s_hash: a.optional(a.string()),
   jti: a.optional(a.string()),
   "urn:zitadel:iam:org:project:roles": a.optional(oidcZitadelProjectRolesSchema),
+  "urn:zitadel:iam:user:resourceowner:id": a.optional(a.string()),
 })
 
 export type OidcIdTokenClaims = a.InferOutput<typeof oidcIdTokenClaimsSchema>

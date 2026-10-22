@@ -1,20 +1,26 @@
 import type { ActionCtx } from "#convex/_generated/server.js"
 import { oidcRequestErrorResponseCreate } from "#src/auth/convex/sign_in_shared/oidcRequestErrorResponseCreate.ts"
 import { oidcAuthorizationUrlCreate } from "#src/auth/server/oidc/oidcAuthorizationUrlCreate.ts"
+import { oidcAuthworksConfigGet } from "#src/auth/server/oidc/oidcAuthworksConfigGet.ts"
 import { oidcCallbackUrlGet } from "#src/auth/server/oidc/oidcCallbackUrlGet.ts"
+import type { OidcProviderKey } from "#src/auth/server/oidc/oidcConfig.ts"
 import { oidcConfigGet } from "#src/auth/server/oidc/oidcConfigGet.ts"
 import { oidcDiscoveryGet } from "#src/auth/server/oidc/oidcDiscoveryGet.ts"
 import { oidcTransactionCookie } from "#src/auth/server/oidc/oidcTransactionCookie.ts"
 
-export async function signInViaOidcStartRequestHandler(_ctx: ActionCtx, request: Request): Promise<Response> {
+export async function signInViaOidcStartRequestHandler(
+  _ctx: ActionCtx,
+  request: Request,
+  provider: OidcProviderKey = "zitadel",
+): Promise<Response> {
   const op = "signInViaOidcStartRequestHandler"
-  const configResult = oidcConfigGet()
+  const configResult = provider === "authworks" ? oidcAuthworksConfigGet() : oidcConfigGet()
   if (!configResult.success) {
     console.error(configResult)
     return oidcRequestErrorResponseCreate(op, "OIDC sign-in is not configured", 500)
   }
 
-  const callbackUrlResult = oidcCallbackUrlGet()
+  const callbackUrlResult = oidcCallbackUrlGet(provider)
   if (!callbackUrlResult.success) {
     console.error(callbackUrlResult)
     return oidcRequestErrorResponseCreate(op, "OIDC sign-in callback is not configured", 500)

@@ -5,6 +5,7 @@ import { addHttpRoutesAuth } from "#src/auth/convex/addHttpRoutesAuth.ts"
 import { findOrCreateUserFn } from "#src/auth/convex/crud/findOrCreateUserFn.ts"
 import { createHonoDispatcher } from "#src/auth/convex/headers/createHonoDispatcher.ts"
 import type { UserSession } from "#src/auth/model/UserSession.ts"
+import { urlSignInViaAuthworksOidc } from "#src/auth/url/urlSignInViaAuthworksOidc.ts"
 import { urlSignInViaOidc } from "#src/auth/url/urlSignInViaOidc.ts"
 import { base64urlDecodeObject } from "#utils/url/base64url.js"
 
@@ -362,4 +363,161 @@ async function withEnvironment<T>(callback: () => Promise<T>): Promise<T> {
       else process.env[name] = value
     }
   }
+}
+
+const authworksIssuer = "https://authworks.example.test"
+const authworksClientId = "authworks-client-id"
+const authworksCallbackUrl = `${apiBaseUrl}/api/auth/oidc/authworks/callback`
+const authworksDiscovery = {
+  issuer: authworksIssuer,
+  authorization_endpoint: `${authworksIssuer}/authorize`,
+  token_endpoint: `${authworksIssuer}/token`,
+  jwks_uri: `${authworksIssuer}/jwks`,
+  response_types_supported: ["code"],
+  id_token_signing_alg_values_supported: ["RS256"],
+  token_endpoint_auth_methods_supported: ["none"],
+}
+
+test("Authworks OIDC routes complete a verified session without role grants", async () => {
+  await withEnvironment(async () => {
+    withAuthworksEnvironment()
+    const { privateKey, publicJwk } = await signingKeysCreate()
+    const mutationCalls: unknown[] = []
+    const ctx = actionContextCreate(mutationCalls, [], createUserSession())
+    let idTokenNonce = ""
+
+    await withFetch(
+      async (input, init) => {
+        const request = new Request(input, init)
+        if (request.url === `${authworksIssuer}/.well-known/openid-configuration`)
+          return Response.json(authworksDiscovery)
+        if (request.url === authworksDiscovery.token_endpoint)
+          return Response.json({ id_token: await authworksIdTokenCreate(privateKey, idTokenNonce) })
+        if (request.url === authworksDiscovery.jwks_uri) return Response.json({ keys: [publicJwk] })
+        return new Response("not found", { status: 404 })
+      },
+      async () => {
+        const dispatcher = createHonoDispatcher()
+        addHttpRoutesAuth(dispatcher)
+        const startResponse = await dispatcher.fetch(
+          new Request(urlSignInViaAuthworksOidc("/groups?from=authworks#top")),
+          ctx,
+        )
+        expect(startResponse.status).toBe(302)
+
+        const authorizationUrl = new URL(startResponse.headers.get("location") ?? "")
+        expect(authorizationUrl.origin + authorizationUrl.pathname).toBe(`${authworksIssuer}/authorize`)
+        expect(authorizationUrl.searchParams.get("redirect_uri")).toBe(authworksCallbackUrl)
+        idTokenNonce = authorizationUrl.searchParams.get("nonce") ?? ""
+        const cookie = startResponse.headers.get("set-cookie")?.split(";", 1)[0] ?? ""
+        const state = authorizationUrl.searchParams.get("state") ?? ""
+        const callbackResponse = await dispatcher.fetch(
+          new Request(`${authworksCallbackUrl}?state=${encodeURIComponent(state)}&code=authorization-code`, {
+            headers: { Cookie: cookie },
+          }),
+          ctx,
+        )
+
+        expect(callbackResponse.status).toBe(302)
+        const location = new URL(callbackResponse.headers.get("location") ?? "")
+        expect(location.origin).toBe(appBaseUrl)
+        expect(location.pathname).toBe("/groups")
+        // Authworks issues no role claims: the trusted profile carries no role grant.
+        expect(mutationCalls).toEqual([
+          {
+            provider: "oidc",
+            issuer: authworksIssuer,
+            providerId: "authworks-subject-123",
+            givenName: "Ada",
+            familyName: "User",
+            image: "",
+            username: "ada",
+            email: "ada@example.test",
+          },
+        ])
+      },
+    )
+  })
+})
+
+test("Authworks OIDC callback denies unadmitted organization members when configured", async () => {
+  await withEnvironment(async () => {
+    withAuthworksEnvironment("0199c2a1-7b3e-7f01-9a2b-3c4d5e6f7081")
+    const { privateKey, publicJwk } = await signingKeysCreate()
+    const mutationCalls: unknown[] = []
+    const ctx = actionContextCreate(mutationCalls, [], createUserSession())
+    let idTokenNonce = ""
+
+    await withFetch(
+      async (input, init) => {
+        const request = new Request(input, init)
+        if (request.url === `${authworksIssuer}/.well-known/openid-configuration`)
+          return Response.json(authworksDiscovery)
+        if (request.url === authworksDiscovery.token_endpoint)
+          return Response.json({ id_token: await authworksIdTokenCreate(privateKey, idTokenNonce) })
+        if (request.url === authworksDiscovery.jwks_uri) return Response.json({ keys: [publicJwk] })
+        return new Response("not found", { status: 404 })
+      },
+      async () => {
+        const dispatcher = createHonoDispatcher()
+        addHttpRoutesAuth(dispatcher)
+        const start = await dispatcher.fetch(new Request(urlSignInViaAuthworksOidc("/")), ctx)
+        const authorization = new URL(start.headers.get("location") ?? "")
+        idTokenNonce = authorization.searchParams.get("nonce") ?? ""
+        const cookie = start.headers.get("set-cookie")?.split(";", 1)[0] ?? ""
+        const state = authorization.searchParams.get("state") ?? ""
+        const response = await dispatcher.fetch(
+          new Request(`${authworksCallbackUrl}?state=${encodeURIComponent(state)}&code=authorization-code`, {
+            headers: { Cookie: cookie },
+          }),
+          ctx,
+        )
+
+        expect(response.status).toBe(400)
+        expect(mutationCalls).toHaveLength(0)
+      },
+    )
+  })
+})
+
+test("Authworks OIDC start is not configured without an Authworks client ID", async () => {
+  await withEnvironment(async () => {
+    withAuthworksEnvironment()
+    delete process.env.AUTHWORKS_CLIENT_ID
+    const dispatcher = createHonoDispatcher()
+    addHttpRoutesAuth(dispatcher)
+    const response = await dispatcher.fetch(
+      new Request(urlSignInViaAuthworksOidc("/")),
+      actionContextCreate([], [], createUserSession()),
+    )
+    expect(response.status).toBe(500)
+  })
+})
+
+function withAuthworksEnvironment(organizationId?: string) {
+  process.env.AUTHWORKS_ISSUER = authworksIssuer
+  process.env.AUTHWORKS_CLIENT_ID = authworksClientId
+  delete process.env.AUTHWORKS_CLIENT_SECRET
+  delete process.env.AUTHWORKS_SCOPES
+  if (organizationId === undefined) delete process.env.AUTHWORKS_ORGANIZATION_ID
+  else process.env.AUTHWORKS_ORGANIZATION_ID = organizationId
+}
+
+async function authworksIdTokenCreate(privateKey: CryptoKey, nonce: string): Promise<string> {
+  const now = Math.floor(Date.now() / 1000)
+  return new SignJWT({
+    nonce,
+    email: "ada@example.test",
+    email_verified: true,
+    given_name: "Ada",
+    family_name: "User",
+    preferred_username: "ada",
+  })
+    .setProtectedHeader({ alg: "RS256", kid: "oidc-test-key" })
+    .setIssuer(authworksIssuer)
+    .setAudience(authworksClientId)
+    .setSubject("authworks-subject-123")
+    .setIssuedAt(now)
+    .setExpirationTime(now + 300)
+    .sign(privateKey)
 }

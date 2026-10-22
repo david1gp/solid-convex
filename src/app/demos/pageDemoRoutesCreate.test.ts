@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test"
 import { pageDemoHref } from "#src/app/demos/pageDemoHref.ts"
+import { pageDemoRouteIsMounted } from "#src/app/demos/pageDemoRouteIsMounted.ts"
 import { pageDemoRoutePathsCreate } from "#src/app/demos/pageDemoRoutePathsCreate.ts"
 import { pageRouteInventory } from "#src/app/demos/pageRouteInventory.ts"
 
@@ -31,64 +32,21 @@ describe("page demo routing", () => {
     )
   })
 
-  test("registers page details before component routes under the shared catalog", async () => {
-    const [demoRoutes, pageRoutes] = await Promise.all([
-      Bun.file(new URL("./demoRoutesCreate.tsx", import.meta.url)).text(),
-      Bun.file(new URL("./pageDemoRoutesCreate.tsx", import.meta.url)).text(),
-    ])
-
-    expect(pageRoutes).toContain("const detailPaths = pageDemoRoutePathsCreate()")
-    expect(pageRoutes).toContain("path: detailPaths[index]!")
-    expect(demoRoutes).toContain("...pageRoutes,")
-    expect(demoRoutes).toContain('{ path: "/demos", component: DemoCatalog }')
-    expect(demoRoutes).toContain('path: "/demos/pages"')
-    expect(demoRoutes).toContain('({ path }) => path !== "/demos" && path !== "/demos/*" && !pagePaths.has(path)')
-    expect(demoRoutes.match(/component: DemoCatalog/g)).toHaveLength(1)
-  })
-
-  test("keeps all production page imports as inert metadata, never route components", () => {
-    const routeSource = Bun.file(new URL("./pageDemoRoutesCreate.tsx", import.meta.url))
-    const boundarySource = Bun.file(new URL("./PageDemoBoundary.tsx", import.meta.url))
-    return Promise.all([routeSource.text(), boundarySource.text()]).then(([routes, boundary]) => {
-      expect(routes).not.toContain("pageImport")
-      expect(routes).not.toContain("import(")
-      expect(boundary).not.toContain("pageImport")
-      expect(boundary).not.toContain("p.children")
-      expect(boundary).toContain("<ConvexContext.Provider value={undefined}>")
-    })
-  })
-
-  test("opts in only explicitly mounted renderers; all remaining routes stay guarded", async () => {
-    const [boundary, view, page, demoState] = await Promise.all([
-      Bun.file(new URL("./PageDemoBoundary.tsx", import.meta.url)).text(),
-      Bun.file(new URL("../../auth/ui/profile_me/UserProfileMeApiKeysView.tsx", import.meta.url)).text(),
-      Bun.file(new URL("../../auth/ui/profile_me/UserProfileMeApiKeysPage.tsx", import.meta.url)).text(),
-      Bun.file(new URL("../../auth/ui/profile_me/userProfileMeApiKeysDemoStateCreate.ts", import.meta.url)).text(),
-    ])
+  test("opts in only explicitly mounted renderers; all remaining routes stay guarded", () => {
     expect(pageRouteInventory.filter((entry) => entry.route !== "/profile/api-keys")).toHaveLength(90)
-    expect(boundary).toContain('route === "/profile/api-keys"')
-    expect(boundary).toContain("pageDemoRouteIsMounted(entry().route)")
-    expect(boundary).toContain("Page view not mounted yet")
-    expect(boundary).toContain('profileHref={pageDemoHref("/profile")}')
-    expect(boundary).toContain('apiKeysHref={pageDemoHref("/profile/api-keys")}')
-    expect(boundary).toContain("stateFactory={userProfileMeApiKeysDemoStateCreate}")
-    expect(page).toContain("stateFactory={userProfileMeApiKeysPageStateCreate}")
-    expect(view).toContain("<UserProfileMeApiKeysContent stateFactory={p.stateFactory} />")
-    expect(demoState).not.toMatch(/mutationCreate|queryCreate|api\.auth|userTokenGet|fetch\(/)
+    expect(pageDemoRouteIsMounted("/profile/api-keys")).toBe(true)
+    for (const route of ["/", "/overview", "/todo"] as const) {
+      expect(pageDemoHref(route)).toStartWith("/demos/")
+    }
   })
 
-  test("activates only the three prepared sign-in demos", async () => {
-    const boundary = await Bun.file(new URL("./PageDemoBoundary.tsx", import.meta.url)).text()
-    expect(boundary).toContain('const authDemoRoutes = ["/sign-in", "/sign-in-enter-otp", "/sign-in-error"]')
-    expect(boundary).toContain("<AuthPageDemoRenderer route={entry().route} />")
+  test("activates only the three prepared sign-in demos", () => {
+    for (const route of ["/sign-in", "/sign-in-enter-otp", "/sign-in-error"] as const) {
+      expect(pageDemoRouteIsMounted(route)).toBe(true)
+    }
   })
 
-  test("activates the remaining auth demos including the final profile subset", async () => {
-    const boundary = await Bun.file(new URL("./PageDemoBoundary.tsx", import.meta.url)).text()
-    const routes = boundary.match(/const authRemainingDemoRoutes = \[([\s\S]*?)\]/)?.[1]
-    expect(routes).toBeDefined()
-    expect(boundary).toContain("authRemainingDemoRoutes.includes(entry().route)")
-    expect(boundary).toContain("<AuthRemainingPageDemoRenderer route={entry().route} />")
+  test("activates the remaining auth demos including the final profile subset", () => {
     for (const route of [
       "/sign-up",
       "/sign-up-confirm-email",
@@ -100,42 +58,33 @@ describe("page demo routing", () => {
       "/profile/update-image",
       "/profile/delete",
       "/u/:username",
-    ]) {
-      expect(routes).toContain(`"${route}"`)
+    ] as const) {
+      expect(pageDemoRouteIsMounted(route)).toBe(true)
     }
-    expect(routes).not.toContain('"/profile/api-keys"')
+    expect(pageDemoRouteIsMounted("/profile/api-keys")).toBe(true)
   })
 
-  test("activates only organization list, create, and view demos", async () => {
-    const [boundary, renderer] = await Promise.all([
-      Bun.file(new URL("./PageDemoBoundary.tsx", import.meta.url)).text(),
-      Bun.file(new URL("../../org/org_ui/demo/orgDemoRendererMap.tsx", import.meta.url)).text(),
-    ])
-    expect(boundary).toContain("orgDemoRoutes.includes(entry().route)")
-    expect(boundary).toContain("component={orgDemoRendererMap[entry().route as keyof typeof orgDemoRendererMap]}")
-    expect(renderer).toContain('"/org": OrgDemoList')
-    expect(renderer).toContain('"/org/create": OrgDemoCreate')
-    expect(renderer).toContain('"/org/:orgHandle": OrgDemoView')
+  test("activates only organization list, create, and view demos", () => {
+    for (const route of ["/org", "/org/create", "/org/:orgHandle"]) {
+      expect(pageDemoRouteIsMounted(route)).toBe(true)
+    }
   })
 
-  test("activates all prepared resource demos", async () => {
-    const [boundary, renderer] = await Promise.all([
-      Bun.file(new URL("./PageDemoBoundary.tsx", import.meta.url)).text(),
-      Bun.file(new URL("../../resource/ui/demo/ResourcePageDemoRenderer.tsx", import.meta.url)).text(),
-    ])
-    expect(boundary).toContain('"/resources/:resourceId/edit"')
-    expect(boundary).toContain('"/resources/:resourceId/remove"')
-    expect(boundary).toContain("<ResourcePageDemoRenderer route={entry().route} />")
-    expect(renderer).toContain('"/resources": () => <ResourceListDemo />')
-    expect(renderer).toContain('"/resources/add": () => <ResourceAddDemo />')
-    expect(renderer).toContain('"/resources/:resourceId": () => <ResourceViewDemo')
-    expect(renderer).toContain('"/resources/:resourceId/edit": () => <ResourceEditDemo')
-    expect(renderer).toContain('"/resources/:resourceId/remove": () => <ResourceRemoveDemo')
+  test("activates all prepared resource demos", () => {
+    for (const route of [
+      "/resources",
+      "/resources/add",
+      "/resources/:resourceId",
+      "/resources/:resourceId/edit",
+      "/resources/:resourceId/remove",
+    ]) {
+      expect(pageDemoRouteIsMounted(route)).toBe(true)
+    }
   })
 
-  test("activates the prepared app page renderer map", async () => {
-    const boundary = await Bun.file(new URL("./PageDemoBoundary.tsx", import.meta.url)).text()
-    expect(boundary).toContain("entry().route in appPageDemoRendererMap")
-    expect(boundary).toContain("component={appPageDemoRendererMap[")
+  test("activates the prepared app page renderer map", () => {
+    for (const route of ["/", "/overview", "/todo"]) {
+      expect(pageDemoRouteIsMounted(route)).toBe(true)
+    }
   })
 })

@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import * as a from "valibot"
 import { fileIdSchema } from "./fileIdSchema.js"
 
-test("fileIdSchemaValid", () => {
+test("accepts well-formed file IDs with a date prefix and normalized ending", () => {
   const validFileIds = [
     "2024-01-15_document-name",
     "2024-01-15_file-name_with-underscore",
@@ -17,7 +17,7 @@ test("fileIdSchemaValid", () => {
   })
 })
 
-test("fileIdSchemaInvalid", () => {
+test("rejects malformed file IDs", () => {
   const invalidFileIds = [
     "too-short", // less than 15 characters
     "2024-1-1_file", // incorrect date format (should be yyyy-mm-dd_)

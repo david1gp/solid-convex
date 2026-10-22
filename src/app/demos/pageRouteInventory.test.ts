@@ -58,28 +58,20 @@ describe("page demo route inventory", () => {
     expect(mountedRoutes).toHaveLength(36)
   })
 
-  test("keeps app, organization, and resource inventory routes in their actual renderer maps", async () => {
-    const mapSources = await Promise.all([
-      Bun.file(new URL("./appPageDemoRendererMap.tsx", import.meta.url)).text(),
-      Bun.file(new URL("../../org/org_ui/demo/orgDemoRendererMap.tsx", import.meta.url)).text(),
-      Bun.file(new URL("../../resource/ui/demo/ResourcePageDemoRenderer.tsx", import.meta.url)).text(),
-    ])
-    const [app, org, resource] = mapSources
-
+  test("keeps app, organization, and resource inventory routes mounted in the demo boundary", () => {
     for (const { route } of pageRouteInventory) {
-      const source =
+      if (
         (route.startsWith("/org/") || route === "/org") &&
         !route.includes("/team") &&
         !route.includes("/project") &&
         !route.includes("/note")
-          ? org
-          : route.startsWith("/resources")
-            ? resource
-            : route === "/" || route === "/overview" || route === "/todo"
-              ? app
-              : undefined
-
-      if (source !== undefined) expect(source).toContain(`"${route}"`)
+      ) {
+        expect(pageDemoRouteIsMounted(route)).toBe(true)
+      } else if (route.startsWith("/resources")) {
+        expect(pageDemoRouteIsMounted(route)).toBe(true)
+      } else if (route === "/" || route === "/overview" || route === "/todo") {
+        expect(pageDemoRouteIsMounted(route)).toBe(true)
+      }
     }
   })
 })

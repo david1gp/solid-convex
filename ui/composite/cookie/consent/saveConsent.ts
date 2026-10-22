@@ -1,7 +1,8 @@
 import { buildPreferences } from "./buildPreferences.js"
 import { clearGoogleCookies } from "./clearGoogleCookies.js"
 import { type ConsentConfig, defaultConsentConfig } from "./consentConfig.js"
-import type { ConsentChoices, ConsentPreferences } from "./consentTypes.js"
+import type { ConsentChoices } from "./consentChoices.js"
+import type { ConsentPreferences } from "./consentPreferences.js"
 import { initConsentMode } from "./initConsentMode.js"
 import { updateConsentMode } from "./updateConsentMode.js"
 

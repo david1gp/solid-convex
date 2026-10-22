@@ -4,12 +4,10 @@ export {
   defaultConsentConfig,
   resolveConsentConfig,
 } from "./consentConfig.js"
-export type {
-  ConsentCategory,
-  ConsentChoices,
-  ConsentPreferences,
-  GoogleTrackingConfig,
-} from "./consentTypes.js"
+export type { ConsentCategory } from "./consentCategory.js"
+export type { ConsentChoices } from "./consentChoices.js"
+export type { ConsentPreferences } from "./consentPreferences.js"
+export type { GoogleTrackingConfig } from "./googleTrackingConfig.js"
 export { enableGoogleTracking } from "./enableGoogleTracking.js"
 export { ensureGtag } from "./ensureGtag.js"
 export { getStoredConsent } from "./getStoredConsent.js"

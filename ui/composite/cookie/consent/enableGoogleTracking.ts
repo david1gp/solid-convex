@@ -1,5 +1,5 @@
 import { type ConsentConfig, defaultConsentConfig } from "./consentConfig.js"
-import type { GoogleTrackingConfig } from "./consentTypes.js"
+import type { GoogleTrackingConfig } from "./googleTrackingConfig.js"
 import { getStoredConsent } from "./getStoredConsent.js"
 import { loadGoogleTag } from "./loadGoogleTag.js"
 import { updateConsentMode } from "./updateConsentMode.js"

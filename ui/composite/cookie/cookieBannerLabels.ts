@@ -1,4 +1,4 @@
-import type { ConsentCategory } from "./consent/consentTypes.js"
+import type { ConsentCategory } from "./consent/consentCategory.js"
 
 /** Texts describing a single consent category card. */
 export type CookieCategoryLabels = {

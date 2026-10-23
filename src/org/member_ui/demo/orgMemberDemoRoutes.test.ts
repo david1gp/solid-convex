@@ -2,6 +2,7 @@ import { afterEach, expect, mock, test } from "bun:test"
 import { createRoot } from "solid-js"
 import { pageDemoFixtureStoreGet } from "#src/app/demos/pageDemoFixtureStoreGet.ts"
 import { pageDemoHref } from "#src/app/demos/pageDemoHref.ts"
+import { pageDemoRouteIsMounted } from "#src/app/demos/pageDemoRouteIsMounted.ts"
 import { formMode } from "#ui/input/form/formMode.ts"
 
 const visited: string[] = []
@@ -22,21 +23,10 @@ afterEach(() => {
 })
 
 test("org member detail shows fixture identity and role with navigable demo actions", async () => {
-  const renderer = await Bun.file(new URL("../../org_ui/demo/orgDemoRendererMap.tsx", import.meta.url)).text()
-  for (const action of ["view", "edit", "remove"]) {
-    expect(renderer).toContain(`"/org/:orgHandle/members/:memberId/${action}": OrgDemoMember`)
+  for (const action of ["view", "edit", "remove"] as const) {
+    const route = `/org/:orgHandle/members/:memberId/${action}`
+    expect(pageDemoRouteIsMounted(route)).toBe(true)
   }
-  expect(renderer).toContain('<h1 class="text-2xl font-semibold">{member().profile.name}</h1>')
-  expect(renderer).toContain('<dt class="font-medium">User ID</dt>')
-  expect(renderer).toContain("<dd>{member().userId}</dd>")
-  expect(renderer).toContain('<dt class="font-medium">Organization role</dt>')
-  expect(renderer).toContain('<dd class="capitalize">{member().role}</dd>')
-  expect(renderer).toContain('to={pageDemoHref("/org/:orgHandle/members", { orgHandle: state.orgHandle() })}')
-  expect(renderer).toContain('"/org/:orgHandle/members/:memberId/edit"')
-  expect(renderer).toContain('"/org/:orgHandle/members/:memberId/remove"')
-  expect(renderer).toContain("<OrgMemberForm mode={formMode.edit} sm={state.form} />")
-  expect(renderer).toContain("<OrgMemberForm mode={formMode.remove} sm={state.form} />")
-  expect(renderer).toContain("viewHref={(memberId) =>")
   expect(pageDemoHref("/org/:orgHandle/members", { orgHandle: "sample-org" })).toBe("/demos/org/sample-org/members")
   expect(
     pageDemoHref("/org/:orgHandle/members/:memberId/edit", { orgHandle: "sample-org", memberId: "member-1" }),

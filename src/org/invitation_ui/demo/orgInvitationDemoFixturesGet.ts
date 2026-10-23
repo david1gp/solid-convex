@@ -1,6 +1,6 @@
 import { pageDemoFixtureStoreGet } from "#src/app/demos/pageDemoFixtureStoreGet.ts"
 import { language } from "#src/app/i18n/language.ts"
-import type { OrgInvitationModel } from "#src/org/invitation_model/OrgInvitationModel.ts"
+import type { OrgInvitationModel } from "#src/org/invitation_model/orgInvitationSchema.ts"
 
 export function orgInvitationDemoFixturesGet(orgHandle: string): OrgInvitationModel[] {
   const store = pageDemoFixtureStoreGet()

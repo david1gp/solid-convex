@@ -1,6 +1,6 @@
 import { appIcons } from "#src/app/icon/appIcons.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
-import type { OrgInvitationModel } from "#src/org/invitation_model/OrgInvitationModel.ts"
+import type { OrgInvitationModel } from "#src/org/invitation_model/orgInvitationSchema.ts"
 import type { OrgModel } from "#src/org/org_model/OrgModel.ts"
 import { orgRoleGetText } from "#src/org/org_model_field/orgRoleGetText.ts"
 import { OrgViewInformation } from "#src/org/org_ui/view/OrgViewInformation.tsx"

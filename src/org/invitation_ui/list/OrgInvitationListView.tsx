@@ -1,7 +1,7 @@
 import { For, Show } from "solid-js"
 import { appIcons } from "#src/app/icon/appIcons.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
-import type { OrgInvitationModel } from "#src/org/invitation_model/OrgInvitationModel.ts"
+import type { OrgInvitationModel } from "#src/org/invitation_model/orgInvitationSchema.ts"
 import type { OrgInvitationListPagination } from "#src/org/invitation_ui/list/OrgInvitationListSection.tsx"
 import { OrgInvitationCard } from "#src/org/invitation_ui/view/OrgInvitationCard.tsx"
 import { urlOrgInvitationAdd } from "#src/org/invitation_url/urlOrgInvitation.ts"

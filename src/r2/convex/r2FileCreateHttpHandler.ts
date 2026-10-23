@@ -2,6 +2,7 @@ import * as a from "valibot"
 import { internal } from "#convex/_generated/api.js"
 import type { ActionCtx } from "#convex/_generated/server.js"
 import { createResultError } from "#result"
+import { apiError } from "#src/api/apiError.ts"
 import { assignmentTargetSchema } from "#src/assignment/model/assignmentTargetSchema.ts"
 import { authorizationHeaderGetToken } from "#src/auth/server/authorizationHeaderGetToken.ts"
 import type { FileDataModelWithUserMetadata } from "#src/file/model/FileModel.ts"
@@ -30,13 +31,12 @@ export async function r2FileCreateHttpHandler(ctx: ActionCtx, request: Request):
   if (!token) {
     const errorMessage = "Missing authorization header"
     console.warn(op, errorMessage)
-    const err = createResultError(op, errorMessage)
-    return new Response(jsonStringifyPretty(err), { status: 400 })
+    return apiError.fromResultError("r2", createResultError(op, errorMessage), 401)
   }
 
   const credentialResult = await authActionCredentialResolve(ctx, token)
   if (!credentialResult.success) {
-    return new Response(jsonStringifyPretty(credentialResult), { status: 400 })
+    return apiError.fromResultError("r2", credentialResult, 401)
   }
   const userId = credentialResult.data.userId
 
@@ -46,8 +46,7 @@ export async function r2FileCreateHttpHandler(ctx: ActionCtx, request: Request):
   if (!user) {
     const errorMessage = "User not found"
     console.error(op, errorMessage)
-    const err = createResultError(op, errorMessage)
-    return new Response(jsonStringifyPretty(err), { status: 400 })
+    return apiError.fromResultError("r2", createResultError(op, errorMessage), 404)
   }
 
   const body = await request.json()
@@ -55,8 +54,7 @@ export async function r2FileCreateHttpHandler(ctx: ActionCtx, request: Request):
   if (!parseResult.success) {
     const errorMessage = a.summarize(parseResult.issues)
     console.warn(op, errorMessage)
-    const err = createResultError(op, errorMessage)
-    return new Response(jsonStringifyPretty(err), { status: 400 })
+    return apiError.fromResultError("r2", createResultError(op, errorMessage), 400)
   }
 
   const data = { ...parseResult.output, userId, username: user.username }
@@ -66,7 +64,7 @@ export async function r2FileCreateHttpHandler(ctx: ActionCtx, request: Request):
   const result = await ctx.runMutation(internal.file.fileCreateInternalMutation, data)
   if (!result.success) {
     console.warn(op, result)
-    return new Response(jsonStringifyPretty(result), { status: 400 })
+    return apiError.fromResultError("r2", result, 400)
   }
 
   return new Response(jsonStringifyPretty(result))

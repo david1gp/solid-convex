@@ -14,9 +14,9 @@ import { ResourcePageDemoRenderer } from "#src/resource/ui/demo/ResourcePageDemo
 import { ConvexContext } from "#src/utils/convex_client/convexContext.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.tsx"
 
-const orgDemoRoutes = Object.keys(orgDemoRendererMap)
-const authDemoRoutes = ["/sign-in", "/sign-in-enter-otp", "/sign-in-error"]
-const authRemainingDemoRoutes = [
+export const orgDemoRoutes = Object.keys(orgDemoRendererMap)
+export const authDemoRoutes = ["/sign-in", "/sign-in-enter-otp", "/sign-in-error"]
+export const authRemainingDemoRoutes = [
   "/sign-up",
   "/sign-up-confirm-email",
   "/sso",
@@ -28,7 +28,7 @@ const authRemainingDemoRoutes = [
   "/profile/delete",
   "/u/:username",
 ]
-const resourceDemoRoutes = [
+export const resourceDemoRoutes = [
   "/resources",
   "/resources/add",
   "/resources/:resourceId",

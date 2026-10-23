@@ -10,7 +10,7 @@ import { MetaSectionTechnical } from "#src/ui/section/MetaSectionTechnical.tsx"
 import { formModeIcon } from "#ui/input/form/formModeIcon.ts"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonIconOnlyInternal } from "#ui/interactive/link/LinkButtonIconOnly.jsx"
-import { classesGridCols3xl } from "#ui/static/grid/classesGridCols.ts"
+import { classesGridCols3xl } from "#ui/static/grid/classesGridCols3xl.ts"
 import { classArr } from "#ui/utils/classArr.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 

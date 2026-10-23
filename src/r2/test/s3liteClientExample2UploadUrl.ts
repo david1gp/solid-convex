@@ -1,4 +1,5 @@
 import { S3Client } from "@bradenmacdonald/s3-lite-client"
+import { createResult, createResultError, type PromiseResult } from "#result"
 import { envR2AccessKeyIdResult } from "#src/app/env/private/envR2AccessKeyIdResult.ts"
 import { envR2AccountIdResult } from "#src/app/env/private/envR2AccountIdResult.ts"
 import { envR2BucketNameResult } from "#src/app/env/private/envR2BucketNameResult.ts"
@@ -49,7 +50,8 @@ async function generateUploadUrl(customKey?: string) {
   return { key, url }
 }
 
-async function uploadFile(url: string, data: Uint8Array, contentType: string) {
+async function uploadFile(url: string, data: Uint8Array, contentType: string): PromiseResult<void> {
+  const op = "uploadFile"
   const response = await fetch(url, {
     method: "PUT",
     headers: {
@@ -58,23 +60,27 @@ async function uploadFile(url: string, data: Uint8Array, contentType: string) {
     body: new Blob([data.buffer as ArrayBuffer]),
   })
   if (!response.ok) {
-    throw new Error(`Upload failed: ${response.status} ${response.statusText}`)
+    return createResultError(op, `Upload failed: ${response.status} ${response.statusText}`)
   }
+  return createResult(undefined)
 }
 
-async function downloadFile(url: string): Promise<{ data: Uint8Array; contentType: string }> {
+async function downloadFile(url: string): PromiseResult<{ data: Uint8Array; contentType: string }> {
+  const op = "downloadFile"
   const response = await fetch(url)
   if (!response.ok) {
-    throw new Error(`Download failed: ${response.status} ${response.statusText}`)
+    return createResultError(op, `Download failed: ${response.status} ${response.statusText}`)
   }
   const data = new Uint8Array(await response.arrayBuffer())
   const contentType = response.headers.get("content-type") ?? "application/octet-stream"
-  return { data, contentType }
+  return createResult({ data, contentType })
 }
 
-async function main() {
+async function main(): PromiseResult<void> {
   console.log("Downloading test image...")
-  const { data, contentType } = await downloadFile("https://picsum.photos/seed/picsum/200/300")
+  const downloaded = await downloadFile("https://picsum.photos/seed/picsum/200/300")
+  if (!downloaded.success) return downloaded
+  const { data, contentType } = downloaded.data
   console.log(`Downloaded: ${data.length} bytes, type: ${contentType}`)
 
   console.log("\nGenerating upload URL...")
@@ -83,12 +89,18 @@ async function main() {
   console.log("URL:", url)
 
   console.log("\nUploading...")
-  await uploadFile(url, data, contentType)
+  const uploadedResult = await uploadFile(url, data, contentType)
+  if (!uploadedResult.success) return uploadedResult
   console.log("Upload complete!")
 
   console.log("\nVerifying upload...")
   const uploaded = await s3.getObject(key)
   console.log("Uploaded file size:", (await uploaded.arrayBuffer()).byteLength, "bytes")
+  return createResult(undefined)
 }
 
-main()
+const result = await main()
+if (!result.success) {
+  console.error(result)
+  process.exit(1)
+}

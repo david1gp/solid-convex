@@ -4,6 +4,7 @@ import { addRouteWithCors } from "#src/auth/convex/headers/cors/addRouteWithCors
 import type { HonoDispatcher } from "#src/auth/convex/headers/honoDispatcher.ts"
 import { httpMethod } from "#src/auth/convex/headers/httpMethod.ts"
 import { authorizationHeaderGetToken } from "#src/auth/server/authorizationHeaderGetToken.ts"
+import { type ApiErrorStatus, apiError } from "#src/api/apiError.ts"
 import { authActionCredentialResolve } from "#src/utils/convex_backend/authActionCredentialResolve.ts"
 import { projectDataSchema } from "#src/project/model/projectDataSchema.ts"
 import { noteDataSchema } from "#src/note/model/noteDataSchema.ts"
@@ -38,7 +39,8 @@ const postRoutes = [
   "/api/files/delete",
 ]
 
-const jsonError = (error: string, status: number) => Response.json({ error }, { status })
+const jsonError = (op: string, message: string, status: ApiErrorStatus): Response =>
+  apiError.response("api-project-note-resource", op, message, status)
 
 export function addHttpRoutesApiProjectNoteResourceFile(dispatcher: HonoDispatcher) {
   addRouteWithCors(dispatcher, "/api/resources/list", httpMethod.GET, resourceListHttpHandler)
@@ -46,29 +48,31 @@ export function addHttpRoutesApiProjectNoteResourceFile(dispatcher: HonoDispatch
   for (const path of [...getRoutes, ...postRoutes]) {
     const method = getRoutes.includes(path) ? httpMethod.GET : httpMethod.POST
     addRouteWithCors(dispatcher, path, method, async (ctx, request) => {
+      const op = `apiProjectNoteResource:${path}`
       const token = authorizationHeaderGetToken(request.headers.get("authorization"))
-      if (!token) return jsonError("Unauthorized", 401)
+      if (!token) return jsonError(op, "Unauthorized", 401)
       try {
         const credential = await authActionCredentialResolve(ctx, token)
-        if (!credential.success) return jsonError("Unauthorized", 401)
+        if (!credential.success) return jsonError(op, "Unauthorized", 401)
       } catch {
-        return jsonError("Unauthorized", 401)
+        return jsonError(op, "Unauthorized", 401)
       }
       const query = Object.fromEntries(new URL(request.url).searchParams.entries())
       const body = method === httpMethod.POST ? await request.json().catch(() => null) : query
-      if (body === null || typeof body !== "object") return jsonError("Invalid JSON body", 400)
+      if (body === null || typeof body !== "object") return jsonError(op, "Invalid JSON body", 400)
       const values = body as Record<string, unknown>
       const run = async (fn: (args: never) => Promise<unknown>, args: unknown) => {
         try {
           return Response.json(await fn(args as never))
         } catch {
-          return jsonError("Request failed", 500)
+          return jsonError(op, "Request failed", 500)
         }
       }
       const context = { token, ...values }
       if (path.startsWith("/api/projects")) {
         if (path === "/api/projects" || path.endsWith("/get")) {
-          if (path.endsWith("/get") && typeof values.projectId !== "string") return jsonError("Invalid projectId", 400)
+          if (path.endsWith("/get") && typeof values.projectId !== "string")
+            return jsonError(op, "Invalid projectId", 400)
           return run(
             ctx.runQuery.bind(
               ctx,
@@ -85,7 +89,7 @@ export function addHttpRoutesApiProjectNoteResourceFile(dispatcher: HonoDispatch
           (path.endsWith("update") && typeof values.projectId !== "string") ||
           (path.endsWith("create") && typeof values.teamId !== "string")
         )
-          return jsonError("Invalid project", 400)
+          return jsonError(op, "Invalid project", 400)
         return run(
           ctx.runMutation.bind(
             ctx,
@@ -96,7 +100,7 @@ export function addHttpRoutesApiProjectNoteResourceFile(dispatcher: HonoDispatch
       }
       if (path.startsWith("/api/notes")) {
         if (path === "/api/notes" || path.endsWith("/get")) {
-          if (path.endsWith("/get") && typeof values.noteId !== "string") return jsonError("Invalid noteId", 400)
+          if (path.endsWith("/get") && typeof values.noteId !== "string") return jsonError(op, "Invalid noteId", 400)
           return run(
             ctx.runQuery.bind(ctx, path.endsWith("/get") ? api.note.noteGetQuery : api.note.noteListQuery) as never,
             path.endsWith("/get")
@@ -116,7 +120,7 @@ export function addHttpRoutesApiProjectNoteResourceFile(dispatcher: HonoDispatch
           (path.endsWith("update") && typeof values.noteId !== "string") ||
           (path.endsWith("create") && typeof values.projectId !== "string")
         )
-          return jsonError("Invalid note", 400)
+          return jsonError(op, "Invalid note", 400)
         return run(
           ctx.runMutation.bind(
             ctx,
@@ -128,7 +132,7 @@ export function addHttpRoutesApiProjectNoteResourceFile(dispatcher: HonoDispatch
       if (path.startsWith("/api/resources")) {
         if (path === "/api/resources/get" || path.endsWith("delete-preview") || path.endsWith("/files")) {
           const id = a.safeParse(resourceIdSchema, values.resourceId)
-          if (!id.success) return jsonError("Invalid resourceId", 400)
+          if (!id.success) return jsonError(op, "Invalid resourceId", 400)
           const fn = path.endsWith("delete-preview")
             ? api.resource.resourceDeletePreviewQuery
             : path.endsWith("/files")
@@ -138,7 +142,7 @@ export function addHttpRoutesApiProjectNoteResourceFile(dispatcher: HonoDispatch
         }
         if (path.endsWith("file-add") || path.endsWith("file-remove")) {
           if (typeof values.resourceId !== "string" || typeof values.fileId !== "string")
-            return jsonError("Invalid resource file link", 400)
+            return jsonError(op, "Invalid resource file link", 400)
           return run(
             ctx.runMutation.bind(
               ctx,
@@ -151,7 +155,7 @@ export function addHttpRoutesApiProjectNoteResourceFile(dispatcher: HonoDispatch
         }
         const id = a.safeParse(resourceIdSchema, values.resourceId)
         const parsed = a.safeParse(resourceDataSchema, values)
-        if (!parsed.success || !id.success) return jsonError("Invalid resource", 400)
+        if (!parsed.success || !id.success) return jsonError(op, "Invalid resource", 400)
         const fn = path.endsWith("create")
           ? api.resource.resourceCreateMutation
           : path.endsWith("update")
@@ -161,12 +165,12 @@ export function addHttpRoutesApiProjectNoteResourceFile(dispatcher: HonoDispatch
       }
       if (path === "/api/files/list") return run(ctx.runQuery.bind(ctx, api.file.filesListQuery) as never, { token })
       if (path === "/api/files/get") {
-        if (typeof values.fileId !== "string") return jsonError("Invalid fileId", 400)
+        if (typeof values.fileId !== "string") return jsonError(op, "Invalid fileId", 400)
         return run(ctx.runQuery.bind(ctx, api.file.fileGetQuery) as never, context)
       }
       if (path === "/api/files/edit" || path === "/api/files/delete") {
-        if (typeof values.fileId !== "string") return jsonError("Invalid fileId", 400)
-        if (path.endsWith("edit") && !a.safeParse(fileSchema, values).success) return jsonError("Invalid file", 400)
+        if (typeof values.fileId !== "string") return jsonError(op, "Invalid fileId", 400)
+        if (path.endsWith("edit") && !a.safeParse(fileSchema, values).success) return jsonError(op, "Invalid file", 400)
         return run(
           ctx.runMutation.bind(
             ctx,
@@ -175,7 +179,7 @@ export function addHttpRoutesApiProjectNoteResourceFile(dispatcher: HonoDispatch
           context,
         )
       }
-      return jsonError("Not found", 404)
+      return jsonError(op, "Not found", 404)
     })
   }
   return dispatcher

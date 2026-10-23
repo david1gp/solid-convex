@@ -8,6 +8,16 @@ describe("project/note/resource/file HTTP API", () => {
     const dispatcher = addHttpRoutesApiProjectNoteResourceFile(createHonoDispatcher())
     const response = await dispatcher.fetch(new Request("https://example.test/api/projects"), {} as ActionCtx)
     expect(response.status).toBe(401)
+    expect(await response.json()).toEqual({
+      error: {
+        code: "api-project-note-resource.unauthorized",
+        message: "Unauthorized",
+        op: "apiProjectNoteResource:/api/projects",
+        status: 401,
+        requestId: expect.any(String),
+        retryable: false,
+      },
+    })
   })
 
   test("lists projects with the resolved Bearer token", async () => {

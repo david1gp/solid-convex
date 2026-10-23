@@ -89,17 +89,25 @@ async function main() {
   let input: Record<string, unknown> = {}
   try {
     if (args[0]?.startsWith("{")) input = JSON.parse(args.shift()!)
-    while (args.length) {
-      const name = args.shift()!
-      if (!name.startsWith("--")) throw new Error(`Expected flag, got ${name}`)
-      const value = args.shift()
-      if (value === undefined) throw new Error(`Missing value for ${name}`)
-      input[name.slice(2)] = value
-    }
   } catch (error) {
     process.stderr.write(`${error instanceof Error ? error.message : error}\n`)
     process.exitCode = 2
     return
+  }
+  while (args.length) {
+    const name = args.shift()!
+    if (!name.startsWith("--")) {
+      process.stderr.write(`Expected flag, got ${name}\n`)
+      process.exitCode = 2
+      return
+    }
+    const value = args.shift()
+    if (value === undefined) {
+      process.stderr.write(`Missing value for ${name}\n`)
+      process.exitCode = 2
+      return
+    }
+    input[name.slice(2)] = value
   }
   const route = routes[command]!
   const url = new URL(route.path, baseUrl)

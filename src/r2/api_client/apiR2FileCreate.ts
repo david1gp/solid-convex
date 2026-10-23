@@ -1,7 +1,7 @@
 import { createResult, createResultError, type PromiseResult, resultTryParsingFetchErr } from "#result"
 import { envBaseUrlApiResult } from "#src/app/env/public/envBaseUrlApiResult.ts"
 import { userTokenGet } from "#src/auth/ui/signals/userSessionSignal.ts"
-import type { FileDataModel } from "#src/file/model/FileModel.ts"
+import type { FileDataModel } from "#src/file/model/fileSchema.ts"
 import { apiBaseR2 } from "#src/r2/api_client/apiBaseR2.ts"
 import { apiPathR2FileCreate } from "#src/r2/convex/r2FileCreateHttpHandler.ts"
 

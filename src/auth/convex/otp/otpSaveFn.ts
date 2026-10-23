@@ -1,7 +1,7 @@
 import type { MutationCtx } from "#convex/_generated/server.js"
 import type { PromiseResult } from "#result"
 import type { IdUser } from "#src/auth/convex/IdUser.ts"
-import { generateOtpCode } from "#src/auth/convex/pw/generateOtpCode.ts"
+import { otpCodeGenerate } from "#src/auth/convex/pw/otpCodeGenerate.ts"
 import type { OtpPurpose } from "#src/auth/model_field/otpPurpose.ts"
 import { nowIso } from "#utils/date/nowIso.js"
 
@@ -14,7 +14,7 @@ export async function otpSaveFn(
 
   // await otpRemovePreviousFn(ctx, { userId, email, purpose })
 
-  const code = generateOtpCode()
+  const code = otpCodeGenerate()
 
   await ctx.db.insert("authOtps", {
     userId,

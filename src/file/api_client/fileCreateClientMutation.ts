@@ -5,7 +5,7 @@ import { envBaseUrlConvexResult } from "#src/app/env/public/envBaseUrlConvexResu
 import type { IdUser } from "#src/auth/convex/IdUser.ts"
 import { userSessionGet, userTokenGet } from "#src/auth/ui/signals/userSessionSignal.ts"
 import type { IdFile } from "#src/file/convex/IdFile.ts"
-import type { FileDataModel } from "#src/file/model/FileModel.ts"
+import type { FileDataModel } from "#src/file/model/fileSchema.ts"
 
 let convexClientSingleton: ConvexClient | undefined
 

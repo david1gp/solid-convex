@@ -3,7 +3,7 @@ import * as a from "valibot"
 import { fileIdGenerate } from "#src/file/model_field/fileIdGenerate.ts"
 import { fileIdSchema } from "#src/file/model_field/fileIdSchema.ts"
 
-test("fileIdGenerate", () => {
+test("generates IDs with a date prefix and normalized ending that pass validation", () => {
   const data = {
     a: "",
     "My document.pdf": ".pdf",

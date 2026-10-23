@@ -1,5 +1,5 @@
 import type { AssignmentTarget } from "#src/assignment/model/assignmentTargetSchema.ts"
-import type { FileDataModel } from "#src/file/model/FileModel.ts"
+import type { FileDataModel } from "#src/file/model/fileSchema.ts"
 import { baseUrlJoinPath } from "#src/utils/url/baseUrlJoinPath.ts"
 
 export interface FileCreateDataBuildParams {

@@ -1,6 +1,7 @@
 import * as a from "valibot"
 import { internal } from "#convex/_generated/api.js"
 import type { ActionCtx } from "#convex/_generated/server.js"
+import { apiError } from "#src/api/apiError.ts"
 import { commonApiErrorMessages } from "#src/auth/convex/sign_up/commonApiErrorMessages.ts"
 import { signUpConfirmEmailSchema } from "#src/auth/model/signUpConfirmEmailSchema.ts"
 import type { UserSession } from "#src/auth/model/UserSession.ts"
@@ -14,22 +15,20 @@ export async function signUpConfirmEmail1RequestHandler(ctx: ActionCtx, request:
   // 1. validate request
   //
   if (request.method !== "POST") {
-    return new Response(commonApiErrorMessages.methodNotAllowed, {
-      status: 405,
-    })
+    return apiError.response("auth", op, commonApiErrorMessages.methodNotAllowed, 400)
   }
   const textBody = await request.text()
   if (!textBody) {
     const errorMessage = commonApiErrorMessages.emptyBody
     console.warn(op, errorMessage, textBody)
-    return new Response(JSON.stringify({ errorMessage }), { status: 400 })
+    return apiError.response("auth", op, errorMessage, 400)
   }
   const schema = a.pipe(a.string(), a.parseJson(), signUpConfirmEmailSchema)
   const validation = a.safeParse(schema, textBody)
   if (!validation.success) {
     const errorMessage = commonApiErrorMessages.schemaValidationFailed + ": " + a.summarize(validation.issues)
     console.warn(op, errorMessage)
-    return new Response(JSON.stringify({ errorMessage }), { status: 400 })
+    return apiError.response("auth", op, errorMessage, 400)
   }
 
   const { email, code } = validation.output
@@ -42,7 +41,7 @@ export async function signUpConfirmEmail1RequestHandler(ctx: ActionCtx, request:
   if (!mutationResult.success) {
     const errorResult = mutationResult
     console.warn(errorResult)
-    return new Response(JSON.stringify(errorResult), { status: 400 })
+    return apiError.fromResultError("auth", errorResult, 400)
   }
   const userSession: UserSession = mutationResult.data
 
@@ -65,9 +64,7 @@ export async function signUpConfirmEmail1RequestHandler(ctx: ActionCtx, request:
   const userSessionSerializedResult = base64urlEncodeObject(userSession)
   if (!userSessionSerializedResult.success) {
     console.error(userSessionSerializedResult)
-    return new Response(jsonStringifyPretty(userSessionSerializedResult), {
-      status: 500,
-    })
+    return apiError.fromResultError("auth", userSessionSerializedResult, 500)
   }
 
   return new Response(JSON.stringify(userSession, null, 2))

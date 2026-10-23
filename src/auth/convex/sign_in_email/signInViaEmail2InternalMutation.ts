@@ -1,7 +1,7 @@
 import { v } from "convex/values"
 import { internalMutation, type MutationCtx } from "#convex/_generated/server.js"
 import { createError, type PromiseResult } from "#result"
-import { findUserByEmailFn } from "#src/auth/convex/crud/findUserByEmailQuery.ts"
+import { userEmailFindFn } from "#src/auth/convex/crud/findUserByEmailQuery.ts"
 import type { IdUser } from "#src/auth/convex/IdUser.ts"
 import { otpSaveFn } from "#src/auth/convex/otp/otpSaveFn.ts"
 import { otpPurpose } from "#src/auth/model_field/otpPurpose.ts"
@@ -29,7 +29,7 @@ export async function signInViaEmail2InternalMutationFn(
   const op = "signInEmailSaveCode2MutationFn"
   const { email } = args
 
-  const user = await findUserByEmailFn(ctx, email)
+  const user = await userEmailFindFn(ctx, email)
   if (!user) {
     return createError(op, "User not found")
   }

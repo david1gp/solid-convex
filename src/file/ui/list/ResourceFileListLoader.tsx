@@ -20,7 +20,7 @@ import { formMode, type HasFormMode } from "#ui/input/form/formMode.ts"
 import { formModeIcon } from "#ui/input/form/formModeIcon.ts"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonIconOnlyInternal } from "#ui/interactive/link/LinkButtonIconOnly.jsx"
-import { classesGridCols2xl } from "#ui/static/grid/classesGridCols.ts"
+import { classesGridCols2xl } from "#ui/static/grid/classesGridCols2xl.ts"
 import { classArr } from "#ui/utils/classArr.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 

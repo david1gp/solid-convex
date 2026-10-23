@@ -8,7 +8,16 @@ describe("org/team HTTP API authentication", () => {
     const dispatcher = addHttpRoutesApiOrgTeam(createHonoDispatcher())
     const response = await dispatcher.fetch(new Request("https://example.test/api/orgs"), {} as ActionCtx)
     expect(response.status).toBe(401)
-    expect(await response.json()).toEqual({ error: "Unauthorized" })
+    expect(await response.json()).toEqual({
+      error: {
+        code: "api-org-team.unauthorized",
+        message: "Unauthorized",
+        op: "apiOrgTeam:org-list",
+        status: 401,
+        requestId: expect.any(String),
+        retryable: false,
+      },
+    })
   })
 
   test("lists organizations after resolving a Bearer credential", async () => {

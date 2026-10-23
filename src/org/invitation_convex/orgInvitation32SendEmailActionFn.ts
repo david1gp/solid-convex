@@ -9,7 +9,7 @@ import {
   type GenerateEmailOrgInvitationProps,
   sendEmailOrgInvitation,
 } from "#src/auth/convex/email/sendEmailOrgInvitation.ts"
-import type { OrgInvitationDataModel } from "#src/org/invitation_model/OrgInvitationModel.ts"
+import type { OrgInvitationDataModel } from "#src/org/invitation_model/orgInvitationSchema.ts"
 import { orgInvitationDataSchemaFields } from "#src/org/invitation_model/orgInvitationSchema.ts"
 import { urlOrgInvitationAccept } from "#src/org/invitation_url/urlOrgInvitation.ts"
 import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"

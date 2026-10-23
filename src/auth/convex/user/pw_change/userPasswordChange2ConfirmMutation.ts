@@ -5,13 +5,13 @@ import { saveTokenIntoSessionReturnExpiresAtFn } from "#src/auth/convex/crud/sav
 import type { DocUser, IdUser } from "#src/auth/convex/IdUser.ts"
 import { otpConsumeFn } from "#src/auth/convex/otp/otpConsumeFn.ts"
 import { otpFindFn } from "#src/auth/convex/otp/otpFindFn.ts"
-import { hashPassword2 } from "#src/auth/convex/pw/hashPassword.ts"
+import { passwordHash2 } from "#src/auth/convex/pw/passwordHash2.ts"
 import { docUserToUserProfile } from "#src/auth/convex/user/docUserToUserProfile.ts"
 import type { UserSession } from "#src/auth/model/UserSession.ts"
 import { loginMethod } from "#src/auth/model_field/loginMethod.ts"
 import { otpPurpose } from "#src/auth/model_field/otpPurpose.ts"
 import { passwordSchema } from "#src/auth/model_field/passwordSchema.ts"
-import { createTokenResult } from "#src/auth/server/jwt_token/createTokenResult.ts"
+import { tokenCreateResult } from "#src/auth/server/jwt_token/tokenCreateResult.ts"
 import { orgMemberGetHandleAndRoleFn } from "#src/org/member_convex/orgMemberGetHandleAndRoleInternalQuery.ts"
 import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 import { authMutationTokenToUserId } from "#src/utils/convex_backend/authMutationTokenToUserId.ts"
@@ -75,7 +75,7 @@ async function userPasswordChange2ConfirmFn(
 
   await otpConsumeFn(ctx, { otpId: otpRecord._id })
 
-  const newPasswordHash = await hashPassword2(args.newPassword)
+  const newPasswordHash = await passwordHash2(args.newPassword)
   if (!newPasswordHash.success) {
     return createErrorAndLogError(op, newPasswordHash.errorMessage || "Password hashing failed")
   }
@@ -87,7 +87,7 @@ async function userPasswordChange2ConfirmFn(
 
   const { orgHandle, orgRole } = await orgMemberGetHandleAndRoleFn(ctx, userId)
   const userProfile = docUserToUserProfile(user as DocUser, orgHandle, orgRole)
-  const tokenResult = await createTokenResult(userId, orgHandle, orgRole)
+  const tokenResult = await tokenCreateResult(userId, orgHandle, orgRole)
   if (!tokenResult.success) return createError(op, tokenResult.errorMessage)
   const token = tokenResult.data
   const expiresAt = await saveTokenIntoSessionReturnExpiresAtFn(ctx, loginMethod.email, userId, token)

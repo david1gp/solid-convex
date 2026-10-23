@@ -1,6 +1,17 @@
 import { type Validator, v } from "convex/values"
 import type * as a from "valibot"
 
+/**
+ * Invariant-only schema compiler: converts static valibot field definitions
+ * into Convex validators at module scope. It never validates runtime input, so
+ * its failures are programmer errors (unsupported schema shapes), not fallible
+ * results. All such failures funnel through `invariantFail` below; callers must
+ * not try/catch around these helpers.
+ */
+function invariantFail(message: string): never {
+  throw new Error(message)
+}
+
 type Schema = a.BaseSchema<unknown, unknown, a.BaseIssue<unknown>>
 type SchemaRecord = Record<string, Schema>
 
@@ -53,7 +64,7 @@ export function valibotObjectToConvexFields<const TEntries extends SchemaRecord>
 ): ConvexFieldsFromValibotFields<TEntries> {
   const unknownSchema = unwrapSchema(schema as UnknownSchema)
   if (unknownSchema.type !== "object" || !unknownSchema.entries) {
-    throw new Error("valibot-to-convex: expected an object schema")
+    return invariantFail("valibot-to-convex: expected an object schema")
   }
   return valibotFieldsToConvexFields(unknownSchema.entries as TEntries)
 }
@@ -88,35 +99,41 @@ function valibotFieldToConvexValidatorUnknown(schema: UnknownSchema): Validator<
     case "enum":
       return enumToConvex(unwrappedSchema.enum)
     case "array":
-      if (!unwrappedSchema.item) throw new Error("valibot-to-convex: array schema is missing `item`")
+      if (!unwrappedSchema.item) return invariantFail("valibot-to-convex: array schema is missing `item`")
       return v.array(valibotFieldToConvexValidatorUnknownRequired(unwrappedSchema.item))
     case "record":
       if (!unwrappedSchema.key || !unwrappedSchema.value) {
-        throw new Error("valibot-to-convex: record schema is missing `key` or `value`")
+        return invariantFail("valibot-to-convex: record schema is missing `key` or `value`")
       }
       return v.record(
         valibotFieldToConvexValidatorUnknownRequired(unwrappedSchema.key),
         valibotFieldToConvexValidatorUnknownRequired(unwrappedSchema.value),
       )
     case "object":
-      if (!unwrappedSchema.entries) throw new Error("valibot-to-convex: object schema is missing `entries`")
+      if (!unwrappedSchema.entries) {
+        return invariantFail("valibot-to-convex: object schema is missing `entries`")
+      }
       return v.object(valibotFieldsToConvexFields(unwrappedSchema.entries as SchemaRecord))
     case "optional":
     case "exact_optional":
     case "undefinedable":
       if (!unwrappedSchema.wrapped) {
-        throw new Error(`valibot-to-convex: ${unwrappedSchema.type} schema is missing \`wrapped\``)
+        return invariantFail(`valibot-to-convex: ${unwrappedSchema.type} schema is missing \`wrapped\``)
       }
       return v.optional(valibotFieldToConvexValidatorUnknown(unwrappedSchema.wrapped))
     case "nullable":
-      if (!unwrappedSchema.wrapped) throw new Error("valibot-to-convex: nullable schema is missing `wrapped`")
+      if (!unwrappedSchema.wrapped) {
+        return invariantFail("valibot-to-convex: nullable schema is missing `wrapped`")
+      }
       return v.nullable(valibotFieldToConvexValidatorUnknownRequired(unwrappedSchema.wrapped))
     case "nullish":
-      if (!unwrappedSchema.wrapped) throw new Error("valibot-to-convex: nullish schema is missing `wrapped`")
+      if (!unwrappedSchema.wrapped) {
+        return invariantFail("valibot-to-convex: nullish schema is missing `wrapped`")
+      }
       return v.optional(v.nullable(valibotFieldToConvexValidatorUnknownRequired(unwrappedSchema.wrapped)))
     case "union":
       if (!Array.isArray(unwrappedSchema.options) || unwrappedSchema.options.length === 0) {
-        throw new Error("valibot-to-convex: union schema is missing `options`")
+        return invariantFail("valibot-to-convex: union schema is missing `options`")
       }
       return v.union(
         ...unwrappedSchema.options.map((option) =>
@@ -124,7 +141,7 @@ function valibotFieldToConvexValidatorUnknown(schema: UnknownSchema): Validator<
         ),
       )
     default:
-      throw new Error(`valibot-to-convex: unsupported valibot schema type "${unwrappedSchema.type}"`)
+      return invariantFail(`valibot-to-convex: unsupported valibot schema type "${unwrappedSchema.type}"`)
   }
 }
 
@@ -148,17 +165,17 @@ function literalToConvex(value: unknown): Validator<any, "required", any> {
   ) {
     return v.literal(value)
   }
-  throw new Error(`valibot-to-convex: unsupported literal type "${typeof value}"`)
+  return invariantFail(`valibot-to-convex: unsupported literal type "${typeof value}"`)
 }
 
 function enumToConvex(enumObject: UnknownSchema["enum"]): Validator<any, "required", any> {
-  if (!enumObject) throw new Error("valibot-to-convex: enum schema is missing `enum`")
+  if (!enumObject) return invariantFail("valibot-to-convex: enum schema is missing `enum`")
   const values = Object.values(enumObject)
-  if (values.length === 0) throw new Error("valibot-to-convex: enum schema has no values")
+  if (values.length === 0) return invariantFail("valibot-to-convex: enum schema has no values")
   const members = values.map((value) => literalToConvex(value))
   if (members.length === 1) {
     const member = members[0]
-    if (!member) throw new Error("valibot-to-convex: enum schema has no validator members")
+    if (!member) return invariantFail("valibot-to-convex: enum schema has no validator members")
     return member
   }
   return v.union(...members)
@@ -170,7 +187,7 @@ function isSchema(value: unknown): value is UnknownSchema {
 
 function schemaFromOption(option: unknown): UnknownSchema {
   if (!isSchema(option)) {
-    throw new Error("valibot-to-convex: union option is not a schema")
+    return invariantFail("valibot-to-convex: union option is not a schema")
   }
   return option
 }

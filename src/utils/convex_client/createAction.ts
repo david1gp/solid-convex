@@ -5,9 +5,10 @@ import { ConvexContext } from "./convexContext.js"
 export function createAction<Action extends FunctionReference<"action">>(
   action: Action,
 ): (args: FunctionArgs<Action>) => Promise<Awaited<FunctionReturnType<Action>>> {
+  const op = "createAction"
   const convex = useContext(ConvexContext)
   if (convex === undefined) {
-    throw "No convex context"
+    return () => Promise.reject(new Error(`${op}: No convex context`))
   }
   return (args) => {
     const fullArgs = args ?? {}

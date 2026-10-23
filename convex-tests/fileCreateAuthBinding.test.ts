@@ -4,7 +4,7 @@ import { convexTest } from "convex-test"
 import { describe, expect, it } from "vitest"
 import { api, internal } from "../convex/_generated/api.js"
 import schema from "../convex/schema.js"
-import { createToken } from "../src/auth/server/jwt_token/createToken.ts"
+import { tokenCreate } from "../src/auth/server/jwt_token/tokenCreate.ts"
 import { fileGetByIdFn } from "../src/file/convex/fileGetByIdFn.ts"
 
 const modules = import.meta.glob("../convex/**/*.ts")
@@ -35,7 +35,7 @@ describe("File creation auth binding", () => {
       return { userAId, userBId }
     })
 
-    const tokenA = await createToken(userAId, secret)
+    const tokenA = await tokenCreate(userAId, secret)
 
     // User Alice uploads a normal file
     const uploadResult = await t.mutation(api.file.fileCreateMutation, {
@@ -121,7 +121,7 @@ describe("File creation auth binding", () => {
       return { userAId, userBId }
     })
 
-    const tokenA = await createToken(userAId, secret)
+    const tokenA = await tokenCreate(userAId, secret)
 
     // User Alice creates an R2 file record with spoofed Bob userId
     const r2Result = await t.mutation(api.r2.r2FileCreateMutation, {
@@ -194,8 +194,8 @@ describe("File creation auth binding", () => {
       return { userAId, userBId }
     })
 
-    const tokenA = await createToken(userAId, secret)
-    const tokenB = await createToken(userBId, secret)
+    const tokenA = await tokenCreate(userAId, secret)
+    const tokenB = await tokenCreate(userBId, secret)
 
     const uploadPayload = {
       token: tokenA,

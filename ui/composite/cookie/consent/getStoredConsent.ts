@@ -1,6 +1,6 @@
 import { buildPreferences } from "./buildPreferences.js"
 import { type ConsentConfig, defaultConsentConfig } from "./consentConfig.js"
-import type { ConsentPreferences } from "./consentTypes.js"
+import type { ConsentPreferences } from "./consentPreferences.js"
 
 /** Read + normalize the persisted consent, or `null` when none is stored. */
 export function getStoredConsent(config: ConsentConfig = defaultConsentConfig): ConsentPreferences | null {

@@ -4,7 +4,7 @@ import { internalQuery, type QueryCtx, query } from "#convex/_generated/server.j
 import { createResult, createResultError, type PromiseResult } from "#result"
 import { docOrgInvitationToModel } from "#src/org/invitation_convex/docOrgInvitationToModel.ts"
 import type { DocOrgInvitation } from "#src/org/invitation_convex/IdOrgInvitation.ts"
-import type { OrgInvitationModel } from "#src/org/invitation_model/OrgInvitationModel.ts"
+import type { OrgInvitationModel } from "#src/org/invitation_model/orgInvitationSchema.ts"
 import { valibotToConvex } from "#src/utils/convex/valibotToConvex.ts"
 
 export const orgInvitationGetFields = valibotToConvex({

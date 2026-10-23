@@ -4,7 +4,7 @@ import { appIcons } from "#src/app/icon/appIcons.ts"
 import { ttc, ttc1 } from "#src/app/i18n/ttc.ts"
 import { userTokenGet } from "#src/auth/ui/signals/userSessionSignal.ts"
 import { allowEmailResendingInSeconds } from "#src/org/invitation_model/allowEmailResendingInSeconds.ts"
-import type { OrgInvitationModel } from "#src/org/invitation_model/OrgInvitationModel.ts"
+import type { OrgInvitationModel } from "#src/org/invitation_model/orgInvitationSchema.ts"
 import { orgInvitationShowRole } from "#src/org/invitation_model/orgInvitationShowRole.ts"
 import {
   invitationModelToStatus,

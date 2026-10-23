@@ -1,6 +1,6 @@
 import { internalMutation, type MutationCtx, mutation } from "#convex/_generated/server.js"
 import { createResult, createResultError, type PromiseResult } from "#result"
-import { findUserByEmailFn } from "#src/auth/convex/crud/findUserByEmailQuery.ts"
+import { userEmailFindFn } from "#src/auth/convex/crud/findUserByEmailQuery.ts"
 import { userDeleteHardAuthSessions } from "#src/auth/convex/user/delete_hard_parts/userDeleteHardAuthSessions.ts"
 import { authMutationTokenToUserId } from "#src/utils/convex_backend/authMutationTokenToUserId.ts"
 import {
@@ -28,7 +28,7 @@ export async function userDeleteSoftMutationFn(
   // Find user by ID or email
   let userId = args.userId
   if (!userId && args.email) {
-    const user = await findUserByEmailFn(ctx, args.email)
+    const user = await userEmailFindFn(ctx, args.email)
     if (!user) return createResultError(op, "User not found")
     userId = user._id
   }

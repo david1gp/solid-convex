@@ -1,7 +1,7 @@
 import * as a from "valibot"
 import { internal } from "#convex/_generated/api.js"
 import type { ActionCtx } from "#convex/_generated/server.js"
-import { createResultError } from "#result"
+import { apiError } from "#src/api/apiError.ts"
 import type { Language } from "#src/app/i18n/language.ts"
 import { languageParseString } from "#src/app/i18n/language.ts"
 import { resourceTypeSchema } from "#src/resource/model_field/resourceType.ts"
@@ -71,10 +71,5 @@ function parseNumItems(raw: string | null) {
 }
 
 function badRequest(op: string, errorMessage: string) {
-  return new Response(jsonStringifyPretty(createResultError(op, errorMessage)), {
-    status: 400,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
+  return apiError.response("resource", op, errorMessage, 400)
 }

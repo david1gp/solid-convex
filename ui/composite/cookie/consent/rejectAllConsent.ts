@@ -1,5 +1,5 @@
 import { type ConsentConfig, defaultConsentConfig } from "./consentConfig.js"
-import type { ConsentPreferences } from "./consentTypes.js"
+import type { ConsentPreferences } from "./consentPreferences.js"
 import { saveConsent } from "./saveConsent.js"
 
 export function rejectAllConsent(config: ConsentConfig = defaultConsentConfig): ConsentPreferences {

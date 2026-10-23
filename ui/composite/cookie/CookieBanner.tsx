@@ -1,27 +1,17 @@
 import { mdiCookie } from "@adaptive-ds/mdi/mdiCookie.js"
 import { mdiShieldCheckOutline } from "@adaptive-ds/mdi/mdiShieldCheckOutline.js"
 import Dialog from "@corvu/dialog"
-import { createSignal, For, onCleanup, onMount, Show } from "solid-js"
+import { For, Show } from "solid-js"
 import { Button } from "#ui/interactive/button/Button.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.js"
 import { classesDialogOverlayMerge } from "#ui/interactive/dialog/classesDialogContent.js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { ConsentCategoryCard } from "./ConsentCategoryCard.jsx"
 import { ConsentFooterLinks } from "./ConsentFooterLinks.jsx"
-import { acceptAllConsent } from "./consent/acceptAllConsent.js"
-import { type ConsentConfig, resolveConsentConfig } from "./consent/consentConfig.js"
-import type {
-  ConsentCategory,
-  ConsentChoices,
-  ConsentPreferences,
-  GoogleTrackingConfig,
-} from "./consent/consentTypes.js"
-import { enableGoogleTracking } from "./consent/enableGoogleTracking.js"
-import { getStoredConsent } from "./consent/getStoredConsent.js"
-import { initConsentMode } from "./consent/initConsentMode.js"
-import { rejectAllConsent } from "./consent/rejectAllConsent.js"
-import { saveConsent } from "./consent/saveConsent.js"
-import { type CookieBannerLabels, defaultCookieBannerLabels } from "./cookieBannerLabels.js"
+import type { ConsentConfig } from "./consent/consentConfig.js"
+import type { ConsentPreferences } from "./consent/consentPreferences.js"
+import type { CookieBannerLabels } from "./cookieBannerLabels.js"
+import { cookieBannerStateCreate } from "./cookieBannerStateCreate.js"
 
 export interface CookieBannerProps {
   /** GA4 measurement id, e.g. `G-XXXXXXXXXX`. */
@@ -50,101 +40,24 @@ export interface CookieBannerProps {
 
 /** Cookie consent banner gating Google tracking. */
 export function CookieBanner(p: CookieBannerProps) {
-  const [internalVisible, setInternalVisible] = createSignal(false)
-  const [internalShowSettings, setInternalShowSettings] = createSignal(false)
-  const [choices, setChoices] = createSignal<ConsentChoices>({
-    statistics: false,
-    marketing: false,
+  const state = cookieBannerStateCreate({
+    labels: () => p.labels,
+    consentConfig: () => p.consentConfig,
+    gaId: () => p.gaId,
+    adsId: () => p.adsId,
+    open: () => p.open,
+    onOpenChange: p.onOpenChange,
+    showSettings: () => p.showSettings,
+    onShowSettingsChange: p.onShowSettingsChange,
+    onConsentChange: p.onConsentChange,
   })
-
-  const labels = (): CookieBannerLabels => ({
-    ...defaultCookieBannerLabels,
-    ...p.labels,
-  })
-  const config = (): ConsentConfig => resolveConsentConfig(p.consentConfig)
-  const trackingConfig = (): GoogleTrackingConfig => ({
-    gaId: p.gaId,
-    adsId: p.adsId,
-  })
-
-  const isVisible = () => (p.open !== undefined ? p.open : internalVisible())
-  const setVisible = (v: boolean) => {
-    if (p.open === undefined) setInternalVisible(v)
-    p.onOpenChange?.(v)
-  }
-
-  const showSettings = () => (p.showSettings !== undefined ? p.showSettings : internalShowSettings())
-  const setShowSettings = (v: boolean) => {
-    if (p.showSettings === undefined) setInternalShowSettings(v)
-    p.onShowSettingsChange?.(v)
-  }
-
-  onMount(() => {
-    initConsentMode()
-
-    const stored = getStoredConsent(config())
-    if (stored) {
-      setChoices({
-        statistics: stored.statistics,
-        marketing: stored.marketing,
-      })
-      // Returning visitor with prior consent — re-arm Google tracking on this page load.
-      enableGoogleTracking(trackingConfig(), config())
-    } else {
-      setVisible(true)
-    }
-
-    const openPreferences = () => {
-      const current = getStoredConsent(config())
-      if (current)
-        setChoices({
-          statistics: current.statistics,
-          marketing: current.marketing,
-        })
-      setShowSettings(true)
-      setVisible(true)
-    }
-
-    const event = config().preferencesEvent
-    window.addEventListener(event, openPreferences)
-    onCleanup(() => window.removeEventListener(event, openPreferences))
-  })
-
-  const close = () => {
-    setVisible(false)
-    setShowSettings(false)
-  }
-
-  const applyAndClose = (choice: ConsentChoices) => {
-    const preferences = saveConsent(choice, config())
-    enableGoogleTracking(trackingConfig(), config())
-    p.onConsentChange?.(preferences)
-    close()
-  }
-
-  const handleAcceptAll = () => {
-    const preferences = acceptAllConsent(config())
-    enableGoogleTracking(trackingConfig(), config())
-    p.onConsentChange?.(preferences)
-    close()
-  }
-
-  const handleRejectAll = () => {
-    const preferences = rejectAllConsent(config())
-    p.onConsentChange?.(preferences)
-    close()
-  }
-
-  const handleSaveSelection = () => applyAndClose(choices())
-
-  const toggle = (id: ConsentCategory) => setChoices((c) => ({ ...c, [id]: !c[id] }))
 
   return (
     // Consent gate: non-dismissable (no Esc / outside-click / close button) so a choice must be made.
     // The corvu Dialog primitive gives focus-trap, scroll-lock and aria wiring for free.
     <Dialog
-      open={isVisible()}
-      onOpenChange={setVisible}
+      open={state.isVisible()}
+      onOpenChange={state.setVisible}
       role="alertdialog"
       closeOnEscapeKeyDown={false}
       closeOnOutsidePointer={false}
@@ -159,44 +72,44 @@ export function CookieBanner(p: CookieBannerProps) {
                 <div class="flex items-start justify-between gap-3">
                   <div>
                     <Dialog.Label class="text-xl font-semibold tracking-tight sm:text-2xl">
-                      <Show when={showSettings()} fallback={labels().defaultTitle}>
-                        {labels().settingsTitle}
+                      <Show when={state.showSettings()} fallback={state.labels().defaultTitle}>
+                        {state.labels().settingsTitle}
                       </Show>
                     </Dialog.Label>
                     <Dialog.Description class="mt-2 text-sm leading-relaxed text-slate-600 sm:text-base dark:text-slate-400">
-                      <Show when={showSettings()} fallback={labels().defaultDescription}>
-                        {labels().settingsDescription}
+                      <Show when={state.showSettings()} fallback={state.labels().defaultDescription}>
+                        {state.labels().settingsDescription}
                       </Show>
                     </Dialog.Description>
                   </div>
                   <span class="mt-0.5 flex shrink-0 items-center justify-center text-green-700 dark:text-green-300">
-                    <Icon path={showSettings() ? mdiCookie : mdiShieldCheckOutline} class="size-10 dark:fill-current" />
+                    <Icon path={state.showSettings() ? mdiCookie : mdiShieldCheckOutline} class="size-10 dark:fill-current" />
                   </span>
                 </div>
 
-                <Show when={showSettings()}>
+                <Show when={state.showSettings()}>
                   <div class="mt-5 space-y-3">
                     <ConsentCategoryCard
-                      title={labels().necessary.title}
-                      description={labels().necessary.description}
-                      tools={labels().necessary.tools}
-                      servicesLabel={labels().servicesLabel}
-                      enabledSuffix={labels().enabledSuffix}
-                      disabledSuffix={labels().disabledSuffix}
+                      title={state.labels().necessary.title}
+                      description={state.labels().necessary.description}
+                      tools={state.labels().necessary.tools}
+                      servicesLabel={state.labels().servicesLabel}
+                      enabledSuffix={state.labels().enabledSuffix}
+                      disabledSuffix={state.labels().disabledSuffix}
                       checked
                       disabled
                     />
-                    <For each={labels().optionalCategories}>
+                    <For each={state.labels().optionalCategories}>
                       {(category) => (
                         <ConsentCategoryCard
                           title={category.title}
                           description={category.description}
                           tools={category.tools}
-                          servicesLabel={labels().servicesLabel}
-                          enabledSuffix={labels().enabledSuffix}
-                          disabledSuffix={labels().disabledSuffix}
-                          checked={choices()[category.id]}
-                          onToggle={() => toggle(category.id)}
+                          servicesLabel={state.labels().servicesLabel}
+                          enabledSuffix={state.labels().enabledSuffix}
+                          disabledSuffix={state.labels().disabledSuffix}
+                          checked={state.choices.get()[category.id]}
+                          onToggle={() => state.toggle(category.id)}
                         />
                       )}
                     </For>
@@ -209,44 +122,44 @@ export function CookieBanner(p: CookieBannerProps) {
                   <Button
                     variant={buttonVariant.outline}
                     class="order-3 rounded-full sm:order-1"
-                    onClick={handleRejectAll}
+                    onClick={state.handleRejectAll}
                   >
-                    {labels().rejectAll}
+                    {state.labels().rejectAll}
                   </Button>
                   <Show
-                    when={showSettings()}
+                    when={state.showSettings()}
                     fallback={
                       <Button
                         variant={buttonVariant.outline}
                         class="order-2 rounded-full"
-                        onClick={() => setShowSettings(true)}
+                        onClick={() => state.setShowSettings(true)}
                       >
-                        {labels().customize}
+                        {state.labels().customize}
                       </Button>
                     }
                   >
                     <Button
                       variant={buttonVariant.filledGreen}
                       class="order-1 rounded-full sm:order-2"
-                      onClick={handleSaveSelection}
+                      onClick={state.handleSaveSelection}
                     >
-                      {labels().saveSelection}
+                      {state.labels().saveSelection}
                     </Button>
                   </Show>
                   <Button
-                    variant={showSettings() ? buttonVariant.outline : buttonVariant.filledGreen}
+                    variant={state.showSettings() ? buttonVariant.outline : buttonVariant.filledGreen}
                     class="order-1 rounded-full sm:order-3"
-                    onClick={handleAcceptAll}
+                    onClick={state.handleAcceptAll}
                   >
-                    {labels().acceptAll}
+                    {state.labels().acceptAll}
                   </Button>
                 </div>
                 <ConsentFooterLinks
                   privacyHref={p.privacyHref ?? "/datenschutz"}
-                  privacyLabel={labels().privacyLabel}
+                  privacyLabel={state.labels().privacyLabel}
                   imprintHref={p.imprintHref}
-                  imprintLabel={labels().imprintLabel}
-                  note={labels().footerNote}
+                  imprintLabel={state.labels().imprintLabel}
+                  note={state.labels().footerNote}
                 />
               </div>
             </div>

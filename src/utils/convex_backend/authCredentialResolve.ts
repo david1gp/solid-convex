@@ -1,7 +1,7 @@
 import type { MutationCtx, QueryCtx } from "#convex/_generated/server.js"
 import { createResult, createResultError, type PromiseResult } from "#result"
 import { apiKeyCredentialHash } from "#src/auth/model/apiKeyCredentialHash.ts"
-import { verifyTokenResult } from "#src/auth/server/jwt_token/verifyTokenResult.ts"
+import { tokenVerifyResult } from "#src/auth/server/jwt_token/tokenVerifyResult.ts"
 import type { ResolvedCredential } from "#src/utils/convex_backend/ResolvedCredential.ts"
 
 export async function authCredentialResolve(
@@ -9,7 +9,7 @@ export async function authCredentialResolve(
   credential: string,
 ): PromiseResult<ResolvedCredential> {
   const op = "authCredentialResolve"
-  const jwtResult = await verifyTokenResult(credential)
+  const jwtResult = await tokenVerifyResult(credential)
   if (jwtResult.success) {
     return createResult({
       kind: "jwt",

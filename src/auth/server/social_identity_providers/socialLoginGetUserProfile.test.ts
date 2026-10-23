@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test"
-import { githubOauthTokenRootUrl } from "#src/auth/server/social_identity_providers/getGithubOathToken.ts"
+import { githubOauthTokenRootUrl } from "#src/auth/server/social_identity_providers/githubOathTokenGet.ts"
 import { githubOauthUserProfileRootUrl } from "#src/auth/server/social_identity_providers/getGithubUserProfile.ts"
 import { googleOAuthTokenRootUrl } from "#src/auth/server/social_identity_providers/getGoogleOauthToken.ts"
 import {

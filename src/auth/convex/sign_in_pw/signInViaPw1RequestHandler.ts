@@ -2,6 +2,7 @@ import * as a from "valibot"
 import { internal } from "#convex/_generated/api.js"
 import type { ActionCtx } from "#convex/_generated/server.js"
 import { createError } from "#result"
+import { apiError } from "#src/api/apiError.ts"
 import type { IdUser } from "#src/auth/convex/IdUser.ts"
 import { verifyHashedPassword2 } from "#src/auth/convex/pw/verifyHashedPassword.ts"
 import { commonApiErrorMessages } from "#src/auth/convex/sign_up/commonApiErrorMessages.ts"
@@ -9,16 +10,14 @@ import { docUserToUserProfile } from "#src/auth/convex/user/docUserToUserProfile
 import { signInViaPwSchema } from "#src/auth/model/signInSchema.ts"
 import type { UserSession } from "#src/auth/model/UserSession.ts"
 import { loginMethod } from "#src/auth/model_field/loginMethod.ts"
-import { createTokenResult } from "#src/auth/server/jwt_token/createTokenResult.ts"
+import { tokenCreateResult } from "#src/auth/server/jwt_token/tokenCreateResult.ts"
 import { nowIso } from "#utils/date/nowIso.js"
 
 export async function signInViaPw1RequestHandler(ctx: ActionCtx, request: Request): Promise<Response> {
   const op = "signInPw1HttpHandler"
 
   if (request.method !== "POST") {
-    return new Response(commonApiErrorMessages.methodNotAllowed, {
-      status: 405,
-    })
+    return apiError.response("auth", op, commonApiErrorMessages.methodNotAllowed, 400)
   }
 
   const body = await request.text()
@@ -26,7 +25,7 @@ export async function signInViaPw1RequestHandler(ctx: ActionCtx, request: Reques
     const errorMessage = commonApiErrorMessages.emptyBody
     const errorResult = createError(op, errorMessage, body)
     console.warn(errorResult)
-    return new Response(JSON.stringify(errorResult), { status: 400 })
+    return apiError.fromResultError("auth", errorResult, 400)
   }
   const schema = a.pipe(a.string(), a.parseJson(), signInViaPwSchema)
   const validation = a.safeParse(schema, body)
@@ -34,7 +33,7 @@ export async function signInViaPw1RequestHandler(ctx: ActionCtx, request: Reques
     const errorMessage = commonApiErrorMessages.schemaValidationFailed + ": " + a.summarize(validation.issues)
     const errorResult = createError(op, errorMessage, body)
     console.warn(errorResult)
-    return new Response(JSON.stringify(errorResult), { status: 400 })
+    return apiError.fromResultError("auth", errorResult, 400)
   }
 
   const { email, pw } = validation.output
@@ -47,14 +46,14 @@ export async function signInViaPw1RequestHandler(ctx: ActionCtx, request: Reques
     const errorMessage = "User not found"
     const errorResult = createError(op, errorMessage, email)
     console.warn(errorResult)
-    return new Response(JSON.stringify(errorResult), { status: 404 })
+    return apiError.fromResultError("auth", errorResult, 404)
   }
 
   if (user.deletedAt) {
     const errorMessage = "User account has been deleted"
     const errorResult = createError(op, errorMessage, email)
     console.warn(errorResult)
-    return new Response(JSON.stringify(errorResult), { status: 403 })
+    return apiError.fromResultError("auth", errorResult, 403)
   }
 
   // Verify password
@@ -62,7 +61,7 @@ export async function signInViaPw1RequestHandler(ctx: ActionCtx, request: Reques
     const errorMessage = "Password not set"
     const errorResult = createError(op, errorMessage, email)
     console.warn(errorResult)
-    return new Response(JSON.stringify(errorResult), { status: 400 })
+    return apiError.fromResultError("auth", errorResult, 400)
   }
 
   const pwVerifyResult = await verifyHashedPassword2(pw, user.hashedPassword)
@@ -70,7 +69,7 @@ export async function signInViaPw1RequestHandler(ctx: ActionCtx, request: Reques
     const errorMessage = "Invalid password"
     const errorResult = createError(op, errorMessage)
     console.warn(errorResult)
-    return new Response(JSON.stringify(errorResult), { status: 401 })
+    return apiError.fromResultError("auth", errorResult, 401)
   }
 
   // Check for org membership
@@ -79,11 +78,11 @@ export async function signInViaPw1RequestHandler(ctx: ActionCtx, request: Reques
   })
 
   // Create token
-  const tokenResult = await createTokenResult(user._id, orgHandle, orgRole)
+  const tokenResult = await tokenCreateResult(user._id, orgHandle, orgRole)
   if (!tokenResult.success) {
     const errorResult = tokenResult
     console.warn(errorResult)
-    return new Response(JSON.stringify(errorResult), { status: 500 })
+    return apiError.fromResultError("auth", errorResult, 500)
   }
   const token = tokenResult.data
 

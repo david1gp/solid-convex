@@ -8,15 +8,6 @@ import { urlAuthSignInUsingOauth } from "#src/auth/url/urlAuthSignInUsingOauth.t
 import { queryString } from "#utils/url/queryString.js"
 import { intMin1OrStringSchema } from "#utils/valibot/intOrStringSchema.js"
 
-export interface GoogleOauthToken {
-  access_token: string
-  id_token: string
-  expires_in: number
-  refresh_token: string
-  token_type: string
-  scope: string
-}
-
 export const googleOAuthTokenRootUrl = "https://oauth2.googleapis.com/token"
 
 /**
@@ -73,6 +64,4 @@ export const googleOauthTokenSchema = a.object({
   scope: a.string(),
 })
 
-function types1(d: a.InferOutput<typeof googleOauthTokenSchema>): GoogleOauthToken {
-  return { ...d }
-}
+export type GoogleOauthToken = a.InferOutput<typeof googleOauthTokenSchema>

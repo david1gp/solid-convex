@@ -2,7 +2,7 @@ import { createResult, type PromiseResult } from "#result"
 import { type LoginProvider, loginProvider, socialLoginProvider } from "#src/auth/model_field/socialLoginProvider.ts"
 import { authLog } from "#src/auth/server/authLog.ts"
 import type { CommonAuthProvider } from "#src/auth/server/social_identity_providers/CommonAuthProvider.ts"
-import { getGithubOathToken } from "#src/auth/server/social_identity_providers/getGithubOathToken.ts"
+import { githubOathTokenGet } from "#src/auth/server/social_identity_providers/githubOathTokenGet.ts"
 import {
   type GitHubUserProfile,
   getGithubUserProfile,
@@ -43,7 +43,7 @@ async function oauthGithub(code: string): PromiseResult<CommonAuthProvider> {
   const op = "oauthGithub"
   const provider = socialLoginProvider.github
   // token
-  const tokenOrError = await getGithubOathToken(code)
+  const tokenOrError = await githubOathTokenGet(code)
   if (!tokenOrError.success) return tokenOrError
   // profile
   const profileOrError = await getProfile(tokenOrError.data.access_token, getGithubUserProfile)

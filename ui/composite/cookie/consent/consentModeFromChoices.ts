@@ -1,4 +1,5 @@
-import type { ConsentChoices, ConsentModeState } from "./consentTypes.js"
+import type { ConsentChoices } from "./consentChoices.js"
+import type { ConsentModeState } from "./consentModeState.js"
 
 /** Map the user's category choices onto Google Consent Mode v2 storage flags. */
 export function consentModeFromChoices(choices: ConsentChoices): ConsentModeState {

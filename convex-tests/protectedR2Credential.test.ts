@@ -4,7 +4,7 @@ import { internal } from "../convex/_generated/api.js"
 import type { ActionCtx } from "../convex/_generated/server.js"
 import schema from "../convex/schema.js"
 import { apiKeyCredentialHash } from "../src/auth/model/apiKeyCredentialHash.ts"
-import { createToken } from "../src/auth/server/jwt_token/createToken.ts"
+import { tokenCreate } from "../src/auth/server/jwt_token/tokenCreate.ts"
 import { r2FileCreateHttpHandler } from "../src/r2/convex/r2FileCreateHttpHandler.ts"
 import { r2UploadUrlGetHttpHandler } from "../src/r2/convex/r2UploadUrlGetHttpHandler.ts"
 
@@ -33,7 +33,7 @@ test.each([
       updatedAt: createdAt,
     })
   })
-  const credential = apiKey ? "a".repeat(64) : await createToken(userId, secret)
+  const credential = apiKey ? "a".repeat(64) : await tokenCreate(userId, secret)
   if (apiKey) {
     const digest = await apiKeyCredentialHash(credential)
     await t.run((ctx) =>

@@ -8,7 +8,16 @@ describe("keys/profile HTTP API", () => {
     const dispatcher = addHttpRoutesApiKeysProfile(createHonoDispatcher())
     const response = await dispatcher.fetch(new Request("https://example.test/api/keys"), {} as ActionCtx)
     expect(response.status).toBe(401)
-    expect(await response.json()).toEqual({ error: "Unauthorized" })
+    expect(await response.json()).toEqual({
+      error: {
+        code: "api-keys.unauthorized",
+        message: "Unauthorized",
+        op: "apiKeysGet",
+        status: 401,
+        requestId: expect.any(String),
+        retryable: false,
+      },
+    })
   })
 
   test("returns the one-time plaintext credential from key creation", async () => {

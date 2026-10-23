@@ -1,6 +1,6 @@
 import { internal } from "#convex/_generated/api.js"
 import type { ActionCtx } from "#convex/_generated/server.js"
-import { createResultError } from "#result"
+import { apiError } from "#src/api/apiError.ts"
 import { visibility } from "#src/resource/model_field/visibility.ts"
 import { paginationDefaultOptions } from "#src/utils/convex_backend/paginationDefaultOptions.ts"
 import { jsonStringifyPretty } from "#utils/json/jsonStringifyPretty.js"
@@ -18,12 +18,7 @@ export async function resourceGetRequestHandler(ctx: ActionCtx, request: Request
   const cursor = url.searchParams.get("cursor")
 
   if (!resourceId) {
-    return new Response(jsonStringifyPretty(createResultError(op, "Missing required parameter: resourceId")), {
-      status: 400,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    return apiError.response("resource", op, "Missing required parameter: resourceId", 400)
   }
 
   // Get resource files using the new query
@@ -36,32 +31,16 @@ export async function resourceGetRequestHandler(ctx: ActionCtx, request: Request
   })
 
   if (!resourceFilesResult.success) {
-    return new Response(jsonStringifyPretty(resourceFilesResult), {
-      status: 404,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    return apiError.fromResultError("resource", resourceFilesResult, 404)
   }
   const resourceFiles = resourceFilesResult.data
 
   if (!resourceFiles) {
-    return new Response(jsonStringifyPretty(createResultError(op, "Resource not found", resourceId)), {
-      status: 404,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    return apiError.response("resource", op, "Resource not found", 404, { resourceId })
   }
 
   if (resourceFiles.resource.visibility !== visibility.public) {
-    const err = createResultError(op, "Resource is not public", resourceId)
-    return new Response(jsonStringifyPretty(err), {
-      status: 403,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    return apiError.response("resource", op, "Resource is not public", 403, { resourceId })
   }
 
   return new Response(jsonStringifyPretty(resourceFiles), {
@@ -82,10 +61,5 @@ function parseNumItems(raw: string | null) {
 }
 
 function badRequest(op: string, errorMessage: string) {
-  return new Response(jsonStringifyPretty(createResultError(op, errorMessage)), {
-    status: 400,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
+  return apiError.response("resource", op, errorMessage, 400)
 }

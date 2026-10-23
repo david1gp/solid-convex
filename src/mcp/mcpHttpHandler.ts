@@ -53,8 +53,24 @@ function createMcpServer(ctx: ActionCtx, userId: string, token: string): Server 
   return server
 }
 
+/**
+ * JSON-RPC transport error. Catalog mapping: JSON-RPC -32001 corresponds to the
+ * unified envelope `{ error: { code: "auth.unauthorized", status: 401, retryable: false } }`;
+ * the numeric code and 401 status are kept because MCP clients speak JSON-RPC.
+ */
 function unauthorizedResponse(): Response {
-  return Response.json({ jsonrpc: "2.0", error: { code: -32001, message: "Unauthorized" }, id: null }, { status: 401 })
+  return Response.json(
+    {
+      jsonrpc: "2.0",
+      error: {
+        code: -32001,
+        message: "Unauthorized",
+        data: { code: "auth.unauthorized", status: 401, retryable: false },
+      },
+      id: null,
+    },
+    { status: 401 },
+  )
 }
 
 export async function mcpHttpHandler(ctx: ActionCtx, request: Request): Promise<Response> {

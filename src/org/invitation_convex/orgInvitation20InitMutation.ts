@@ -4,7 +4,7 @@ import { internal } from "#convex/_generated/api.js"
 import { type MutationCtx, mutation } from "#convex/_generated/server.js"
 import { createResult, createResultError, type PromiseResult } from "#result"
 import { languageSchema } from "#src/app/i18n/language.ts"
-import { findUserByEmailFn } from "#src/auth/convex/crud/findUserByEmailQuery.ts"
+import { userEmailFindFn } from "#src/auth/convex/crud/findUserByEmailQuery.ts"
 import { orgInvitation21CreateMutationFn } from "#src/org/invitation_convex/orgInvitation21CreateInternalMutation.ts"
 import { orgInvitationDataSchemaFields } from "#src/org/invitation_model/orgInvitationSchema.ts"
 import { orgMemberGetByUserIdFn } from "#src/org/member_convex/orgMemberGetByUserIdFn.ts"
@@ -61,7 +61,7 @@ export async function orgInvitation20InitMutationFn(
     .first()
 
   // Check if already in org
-  const invitedUser = await findUserByEmailFn(ctx, args.invitedEmail)
+  const invitedUser = await userEmailFindFn(ctx, args.invitedEmail)
   if (invitedUser) {
     const existingMember = await orgMemberGetByUserIdFn(ctx, invitedUser._id)
     if (existingMember && existingMember.orgHandle === args.orgHandle) {

@@ -1,7 +1,8 @@
 import * as a from "valibot"
 import { languageSchema } from "#src/app/i18n/language.ts"
-import type { DocOrgInvitation } from "#src/org/invitation_convex/IdOrgInvitation.ts"
-import type { OrgInvitationModel } from "#src/org/invitation_model/OrgInvitationModel.ts"
+export type OrgInvitationDataModel = a.InferOutput<typeof orgInvitationDataSchema>
+
+export type OrgInvitationModel = a.InferOutput<typeof orgInvitationSchema>
 import { orgRoleSchema } from "#src/org/org_model_field/orgRole.ts"
 import { fieldsSchemaCreatedAtUpdatedAt } from "#src/utils/data/fieldsSchemaCreatedAtUpdatedAt.ts"
 import { emailSchema } from "#src/utils/valibot/emailSchema.ts"
@@ -33,7 +34,3 @@ export const orgInvitationSchema = a.object({
   ...orgInvitationDataSchemaFields,
   ...fieldsSchemaCreatedAtUpdatedAt,
 })
-
-function types1(o: DocOrgInvitation): OrgInvitationModel {
-  return o
-}

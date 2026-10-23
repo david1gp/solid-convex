@@ -1,4 +1,4 @@
-import type { OrgInvitationModel } from "#src/org/invitation_model/OrgInvitationModel.ts"
+import type { OrgInvitationModel } from "#src/org/invitation_model/orgInvitationSchema.ts"
 import type { OrgInvitationListSection } from "#src/org/invitation_ui/list/OrgInvitationListSection.tsx"
 import type { OrgMemberProfile } from "#src/org/member_model/OrgMemberProfile.ts"
 import type { OrgMemberListSection } from "#src/org/member_ui/list/OrgMemberListSection.tsx"

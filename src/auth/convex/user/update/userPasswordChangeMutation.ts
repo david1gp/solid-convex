@@ -3,7 +3,7 @@ import * as a from "valibot"
 import { internalMutation, type MutationCtx, mutation } from "#convex/_generated/server.js"
 import type { PromiseResult } from "#result"
 import type { DocUser, IdUser } from "#src/auth/convex/IdUser.ts"
-import { hashPassword2 } from "#src/auth/convex/pw/hashPassword.ts"
+import { passwordHash2 } from "#src/auth/convex/pw/passwordHash2.ts"
 import { verifyHashedPassword2 } from "#src/auth/convex/pw/verifyHashedPassword.ts"
 import { vIdUser } from "#src/auth/convex/vIdUser.ts"
 import { passwordSchema } from "#src/auth/model_field/passwordSchema.ts"
@@ -67,7 +67,7 @@ async function userPasswordChangeFn(ctx: MutationCtx, args: UserPasswordChangeTy
     }
   }
 
-  const newPasswordHash = await hashPassword2(args.newPassword)
+  const newPasswordHash = await passwordHash2(args.newPassword)
   if (!newPasswordHash.success) {
     return createErrorAndLogError(op, newPasswordHash.errorMessage || "Password hashing failed")
   }

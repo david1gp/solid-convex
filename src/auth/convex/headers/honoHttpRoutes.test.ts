@@ -44,6 +44,8 @@ test("Hono dispatcher keeps the existing HTTP route surface", () => {
     "GET /api/auth/google",
     "GET /api/auth/oidc/start",
     "GET /api/auth/oidc/callback",
+    "GET /api/auth/authworks/start",
+    "GET /api/auth/authworks/callback",
     "GET /api/auth/admin",
     "POST /api/auth/sign-up",
     "POST /api/auth/sign-up-confirm-email",

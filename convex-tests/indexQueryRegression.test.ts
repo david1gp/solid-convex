@@ -10,7 +10,6 @@ import schema from "../convex/schema.js"
 import { otpFindFn } from "../src/auth/convex/otp/otpFindFn.ts"
 import { otpRemovePreviousFn } from "../src/auth/convex/otp/otpRemovePrevious.ts"
 import { week1timeMs } from "../src/auth/convex/otp/week1timeMs.ts"
-import { userDeleteHardOtps as userDeleteHardNestedOtps } from "../src/auth/convex/user/delete/delete_hard/userDeleteHardOtps.ts"
 import { userDeleteHardOtps } from "../src/auth/convex/user/delete_hard/userDeleteHardOtps.ts"
 import { userDeleteHardEmailLoginCodes } from "../src/auth/convex/user/delete_hard_parts/userDeleteHardEmailLoginCodes.ts"
 import { userDeleteHardFiles } from "../src/auth/convex/user/delete_hard_parts/userDeleteHardFiles.ts"
@@ -125,7 +124,6 @@ async function hardDeleteFileInsert(ctx: MutationCtx, userId: Id<"users">, delet
 }
 
 const hardDeleteCases = [
-  { label: "nested OTP helper", table: "authOtps", remove: userDeleteHardNestedOtps, insert: hardDeleteOtpInsert },
   { label: "OTP helper", table: "authOtps", remove: userDeleteHardOtps, insert: hardDeleteOtpInsert },
   {
     label: "email login codes",

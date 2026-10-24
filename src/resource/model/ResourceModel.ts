@@ -1,6 +1,4 @@
-import type { ResourceDataModel } from "#src/resource/model/resourceSchema.ts"
-import type { HasCreatedAtUpdatedAt } from "#src/utils/data/HasCreatedAtUpdatedAt.ts"
+import * as a from "valibot"
+import { resourceSchema } from "#src/resource/model/resourceSchema.ts"
 
-export interface ResourceModel extends ResourceDataModel, HasCreatedAtUpdatedAt {
-  deletedAt?: string
-}
+export type ResourceModel = a.InferOutput<typeof resourceSchema>

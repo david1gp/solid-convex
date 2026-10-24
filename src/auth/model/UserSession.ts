@@ -1,20 +1,11 @@
 import dayjs from "dayjs"
 import * as a from "valibot"
 import { createError, createResult, type Result } from "#result"
-import { type UserProfile, userProfileSchema } from "#src/auth/model/UserProfile.ts"
-import { type LoginMethod, loginMethodSchema } from "#src/auth/model_field/loginMethod.ts"
+import { userProfileSchema } from "#src/auth/model/UserProfile.ts"
+import { loginMethodSchema } from "#src/auth/model_field/loginMethod.ts"
 import { tokenValidDurationInDays } from "#src/auth/server/jwt_token/tokenValidDurationInDays.ts"
 import { tokenSchema } from "#src/utils/valibot/tokenSchema.ts"
 import { dateTimeSchema } from "#utils/valibot/dateTimeSchema.js"
-
-export type UserSession = {
-  token: string
-  profile: UserProfile
-  hasPw: boolean
-  signedInMethod: LoginMethod
-  signedInAt: string
-  expiresAt: string
-}
 
 export const userSessionSchema = a.object({
   token: tokenSchema,
@@ -24,6 +15,8 @@ export const userSessionSchema = a.object({
   signedInAt: dateTimeSchema,
   expiresAt: dateTimeSchema,
 })
+
+export type UserSession = a.InferOutput<typeof userSessionSchema>
 
 export const userSessionSchemaFromString = a.pipe(a.string(), a.parseJson(), userSessionSchema)
 

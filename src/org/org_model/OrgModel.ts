@@ -1,18 +1,9 @@
-import type { HasCreatedAtUpdatedAt } from "#src/utils/data/HasCreatedAtUpdatedAt.ts"
+import * as a from "valibot"
+import { orgDataSchema, orgSchema } from "#src/org/org_model/orgSchema.ts"
 
-export type OrgDataModel = {
-  // id
-  orgHandle: string
-  // data
-  name?: string
-  description?: string
-  url?: string
-  image?: string
-  deleting?: boolean
-  deletionJobId?: string
-}
+export type OrgDataModel = a.InferOutput<typeof orgDataSchema>
 
-export interface OrgModel extends OrgDataModel, HasCreatedAtUpdatedAt {}
+export type OrgModel = a.InferOutput<typeof orgSchema>
 
 export function orgModelCreateEmpty(): OrgModel {
   const now = new Date()

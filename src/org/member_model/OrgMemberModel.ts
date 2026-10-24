@@ -1,12 +1,6 @@
-import type { OrgRole } from "#src/org/org_model_field/orgRole.ts"
-import type { HasCreatedAtUpdatedAt } from "#src/utils/data/HasCreatedAtUpdatedAt.ts"
+import * as a from "valibot"
+import { orgMemberDataSchema, orgMemberSchema } from "#src/org/member_model/OrgMemberSchema.ts"
 
-export type OrgMemberDataModel = {
-  memberId: string
-  orgHandle: string
-  userId: string
-  role: OrgRole
-  invitedBy: string
-}
+export type OrgMemberDataModel = a.InferOutput<typeof orgMemberDataSchema>
 
-export interface OrgMemberModel extends OrgMemberDataModel, HasCreatedAtUpdatedAt {}
+export type OrgMemberModel = a.InferOutput<typeof orgMemberSchema>

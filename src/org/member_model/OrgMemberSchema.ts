@@ -16,4 +16,6 @@ export const orgMemberSchemaFields = {
   ...fieldsSchemaCreatedAtUpdatedAt,
 } as const
 
+export const orgMemberDataSchema = a.object(orgMemberDataSchemaFields)
+
 export const orgMemberSchema = a.object(orgMemberSchemaFields)

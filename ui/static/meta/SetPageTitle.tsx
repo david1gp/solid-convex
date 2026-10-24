@@ -1,4 +1,4 @@
-import { createEffect } from "solid-js"
+import { setPageTitleStateCreate } from "#ui/static/meta/setPageTitleStateCreate.js"
 
 export type SetPageTitleProps = {
   title: string
@@ -6,9 +6,6 @@ export type SetPageTitleProps = {
 
 /** Sets the document title; renders nothing. */
 export function SetPageTitle(p: SetPageTitleProps) {
-  createEffect(() => {
-    if (!p.title) return
-    document.title = p.title
-  })
+  setPageTitleStateCreate({ title: () => p.title })
   return null
 }

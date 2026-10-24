@@ -1,15 +1,10 @@
-import { createEffect, type JSXElement, Match, Switch } from "solid-js"
-import * as a from "valibot"
-import { api } from "#convex/_generated/api.js"
+import { type JSXElement, Match, Switch } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
-import { userTokenGet } from "#src/auth/ui/signals/userSessionSignal.ts"
 import type { HasOrgModel } from "#src/org/org_model/HasOrgModel.ts"
-import { orgSchema } from "#src/org/org_model/orgSchema.ts"
 import type { HasOrgHandle } from "#src/org/org_model_field/HasOrgHandle.ts"
+import { orgLoaderStateCreate } from "#src/org/org_ui/mutate/orgLoaderStateCreate.ts"
 import { ErrorPage } from "#src/ui/pages/ErrorPage.tsx"
 import { LoadingSection } from "#src/ui/pages/LoadingSection.tsx"
-import { createQueryCached } from "#src/utils/cache/createQueryCached.ts"
-import { queryCreate } from "#src/utils/convex_client/queryCreate.ts"
 import { resultHasData } from "#src/utils/result/resultHasData.ts"
 import { resultHasErrorMessage } from "#src/utils/result/resultHasErrorMessage.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
@@ -21,23 +16,18 @@ export interface OrgLoaderProps extends HasOrgHandle, MayHaveClass {
 export interface OrgComponentProps extends HasOrgModel, MayHaveClass {}
 
 export function OrgLoader(p: OrgLoaderProps) {
-  const getDataQuery = queryCreate(api.org.orgGetQuery, {
-    token: userTokenGet(),
-    orgHandle: p.orgHandle,
-  })
-  const getData = createQueryCached(getDataQuery, "orgGetQuery" + "/" + p.orgHandle, a.nullable(orgSchema))
-  createEffect(() => {
-    console.log("OrgLoader", getData())
-  })
+  const state = orgLoaderStateCreate({ orgHandle: () => p.orgHandle })
   return (
     <Switch>
-      <Match when={!getData()}>
+      <Match when={!state.getData()}>
         <OrgLoading />
       </Match>
-      <Match when={resultHasErrorMessage(getData())}>
+      <Match when={resultHasErrorMessage(state.getData())}>
         {(getErrorMessage) => <ErrorPage title={getErrorMessage()} />}
       </Match>
-      <Match when={resultHasData(getData())}>{(gotData) => p.OrgComponent({ org: gotData(), class: p.class })}</Match>
+      <Match when={resultHasData(state.getData())}>
+        {(gotData) => p.OrgComponent({ org: gotData(), class: p.class })}
+      </Match>
     </Switch>
   )
 }

@@ -1,12 +1,13 @@
 import { mdiChevronDown } from "@adaptive-ds/mdi/mdiChevronDown.js"
 import { mdiClose } from "@adaptive-ds/mdi/mdiClose.js"
 import Dialog from "@corvu/dialog"
-import { createSignal, type JSXElement, onMount, Show } from "solid-js"
+import { type JSXElement, Show } from "solid-js"
 import { buttonCvaIconOnly, buttonVariant } from "#ui/interactive/button/buttonCva.js"
 import { buttonIconCva } from "#ui/interactive/button/buttonIconCva.js"
 import type { CorcuDialogTexts } from "#ui/interactive/dialog/CorcuDialogTexts.js"
 import { corvuDialogTextDefault } from "#ui/interactive/dialog/CorcuDialogTexts.js"
 import { classesDialogContentMerge, classesDialogOverlayMerge } from "#ui/interactive/dialog/classesDialogContent.js"
+import { detailsDialogStateCreate } from "#ui/interactive/dialog/detailsDialogStateCreate.js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { classMerge } from "#ui/utils/classMerge.js"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
@@ -47,8 +48,7 @@ const summaryClasses = ["flex items-center justify-between gap-4", "p-6", "curso
  */
 export function DetailsDialog(p: DetailsDialogProps) {
   const texts = p.texts ?? corvuDialogTextDefault
-  const [enhanced, setEnhanced] = createSignal(false)
-  onMount(() => setEnhanced(true))
+  const state = detailsDialogStateCreate()
 
   const face = () => (
     <>
@@ -62,7 +62,7 @@ export function DetailsDialog(p: DetailsDialogProps) {
 
   return (
     <Show
-      when={enhanced()}
+      when={state.enhanced()}
       fallback={
         <details class={classMerge(detailsClasses, p.class)}>
           <summary

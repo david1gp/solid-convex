@@ -1,7 +1,9 @@
 import { mdiCheck } from "@adaptive-ds/mdi/mdiCheck.js"
 import { mdiMagnify } from "@adaptive-ds/mdi/mdiMagnify.js"
 import { mdiUndo } from "@adaptive-ds/mdi/mdiUndo.js"
-import { createSignal, For, onCleanup, Show } from "solid-js"
+import { For, Show } from "solid-js"
+import { filterDropdownStateCreate } from "#ui/composite/searchbox/filterDropdownStateCreate.js"
+import { searchBoxStateCreate } from "#ui/composite/searchbox/searchBoxStateCreate.js"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
@@ -30,60 +32,33 @@ export interface SearchBoxProps {
 
 /** Search input with filter dropdowns and search button. */
 export function SearchBox(p: SearchBoxProps) {
-  const [activeFilterKey, setActiveFilterKey] = createSignal<string | null>(null)
-
-  let containerRef: HTMLDivElement | undefined
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (containerRef && !containerRef.contains(event.target as Node)) {
-      setActiveFilterKey(null)
-    }
-  }
-
-  document.addEventListener("mousedown", handleClickOutside)
-  onCleanup(() => document.removeEventListener("mousedown", handleClickOutside))
-
-  const handleFilterClick = (key: string) => {
-    if (activeFilterKey() === key) {
-      setActiveFilterKey(null)
-    } else {
-      setActiveFilterKey(key)
-    }
-  }
-
-  const handleOptionSelect = (filter: SearchFilterEntry, value: string) => {
-    filter.valueSignal.set(value)
-    setActiveFilterKey(null)
-  }
-
-  const handleClear = () => {
-    clearAllFilters(p.filters)
-    setActiveFilterKey(null)
-  }
-
-  const activeFilter = () => p.filters.find((f) => f.key === activeFilterKey())
+  const state = searchBoxStateCreate({ filters: () => p.filters })
 
   return (
-    <div ref={containerRef} class="relative z-[120] isolate max-w-3xl mx-auto">
+    <div ref={state.setContainerRef} class="relative z-[120] isolate max-w-3xl mx-auto">
       <div class="relative rounded-[22px] bg-white dark:bg-slate-700 p-5 backdrop-blur-2xl sm:p-7 border border-slate-200 dark:border-slate-600">
         <SearchInput searchQuerySignal={p.searchQuerySignal} placeholder={p.placeholder} />
 
         <FilterButtons
           filters={p.filters}
-          activeFilterKey={activeFilterKey}
-          onFilterClick={handleFilterClick}
-          onClear={handleClear}
+          activeFilterKey={state.activeFilterKey}
+          onFilterClick={state.handleFilterClick}
+          onClear={state.handleClear}
+          filtersActive={state.filtersActive}
+          buttonActive={state.buttonActive}
+          buttonText={state.buttonText}
         />
 
-        <Show when={activeFilterKey()}>
+        <Show when={state.activeFilterKey()}>
           <div class="absolute left-0 right-0 top-full z-[300] mt-3 rounded-2xl p-0">
             <Show
-              when={activeFilter()}
+              when={state.activeFilter()}
               children={
                 <FilterDropdown
-                  filter={activeFilter()!}
+                  filter={state.activeFilter()!}
                   isActive={true}
-                  onSelect={(value) => activeFilter() && handleOptionSelect(activeFilter()!, value)}
+                  onSelect={(value) => state.activeFilter() && state.handleOptionSelect(state.activeFilter()!, value)}
+                  optionText={state.optionText}
                 />
               }
             />
@@ -94,28 +69,6 @@ export function SearchBox(p: SearchBoxProps) {
       </div>
     </div>
   )
-}
-
-function getOptionText(entry: SearchFilterEntry, value: string): string {
-  if (!value) return ""
-  if (entry.getOptionText) return entry.getOptionText(value)
-  return value
-}
-
-function hasActiveFilters(filters: SearchFilterEntry[]): boolean {
-  return filters.some((f) => f.valueSignal.get() !== "")
-}
-
-function clearAllFilters(filters: SearchFilterEntry[]) {
-  filters.forEach((f) => {
-    f.valueSignal.set("")
-  })
-}
-
-function filterOptions(options: string[], query: string): string[] {
-  if (!query.trim()) return options
-  const lowerQuery = query.toLowerCase()
-  return options.filter((opt) => opt.toLowerCase().includes(lowerQuery))
 }
 
 function SearchInput(p: { searchQuerySignal: SignalObject<string>; placeholder?: string }) {
@@ -138,11 +91,13 @@ function SearchInput(p: { searchQuerySignal: SignalObject<string>; placeholder?:
   )
 }
 
-function FilterDropdown(p: { filter: SearchFilterEntry; isActive: boolean; onSelect: (value: string) => void }) {
-  const [filterQuery, setFilterQuery] = createSignal("")
-
-  const filteredOptions = () => filterOptions(p.filter.getOptions(), filterQuery())
-  const isSelected = (option: string) => p.filter.valueSignal.get() === option
+function FilterDropdown(p: {
+  filter: SearchFilterEntry
+  isActive: boolean
+  onSelect: (value: string) => void
+  optionText: (entry: SearchFilterEntry, value: string) => string
+}) {
+  const state = filterDropdownStateCreate({ filter: () => p.filter, optionText: p.optionText })
 
   return (
     <div class="w-full overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm">
@@ -152,8 +107,8 @@ function FilterDropdown(p: { filter: SearchFilterEntry; isActive: boolean; onSel
           <div class="flex-1">
             <input
               type="text"
-              value={filterQuery()}
-              onInput={(e) => setFilterQuery(e.currentTarget.value)}
+              value={state.filterQuery()}
+              onInput={(e) => state.handleQueryInput(e.currentTarget.value)}
               placeholder={`Search ${p.filter.label}`}
               class="h-10 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 text-sm text-slate-900 dark:text-slate-100 outline-none transition focus:border-emerald-300 dark:focus:border-emerald-600 focus:bg-white dark:focus:bg-slate-900 placeholder:text-slate-400 dark:placeholder:text-slate-500"
             />
@@ -176,22 +131,22 @@ function FilterDropdown(p: { filter: SearchFilterEntry; isActive: boolean; onSel
           "-webkit-overflow-scrolling": "touch",
         }}
       >
-        <For each={filteredOptions()}>
+        <For each={state.filteredOptions()}>
           {(option) => (
             <button
               type="button"
               role="option"
-              aria-selected={isSelected(option)}
+              aria-selected={state.isSelected(option)}
               onClick={() => p.onSelect(option)}
               class={classMerge(
                 "flex w-full items-center justify-between border-t border-slate-100 dark:border-slate-800 px-4 py-2.5 text-left text-sm transition-colors",
-                isSelected(option)
+                state.isSelected(option)
                   ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-900 dark:text-emerald-100"
                   : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800",
               )}
             >
-              <span>{getOptionText(p.filter, option)}</span>
-              <Show when={isSelected(option)}>
+              <span>{state.displayText(option)}</span>
+              <Show when={state.isSelected(option)}>
                 <span class="text-emerald-600 dark:text-emerald-400">
                   <Icon path={mdiCheck} class="h-4 w-4" />
                 </span>
@@ -200,7 +155,7 @@ function FilterDropdown(p: { filter: SearchFilterEntry; isActive: boolean; onSel
           )}
         </For>
 
-        <Show when={filteredOptions().length === 0}>
+        <Show when={state.filteredOptions().length === 0}>
           <div class="px-4 py-4 text-sm text-slate-500 dark:text-slate-400">No results found.</div>
         </Show>
       </div>
@@ -213,6 +168,9 @@ function FilterButtons(p: {
   activeFilterKey: () => string | null
   onFilterClick: (key: string) => void
   onClear: () => void
+  filtersActive: () => boolean
+  buttonActive: (filter: SearchFilterEntry) => boolean
+  buttonText: (filter: SearchFilterEntry) => string
 }) {
   return (
     <div class="mb-6 space-y-3">
@@ -224,18 +182,18 @@ function FilterButtons(p: {
                 type="button"
                 icon={filter.icon}
                 variant={
-                  isButtonActive(filter) ? buttonVariant.filled : (filter.buttonVariant ?? buttonVariant.outline)
+                  p.buttonActive(filter) ? buttonVariant.filled : (filter.buttonVariant ?? buttonVariant.outline)
                 }
                 aria-pressed={p.activeFilterKey() === filter.key}
                 onClick={() => p.onFilterClick(filter.key)}
                 class="min-w-0 flex-1 justify-center rounded-full border border-slate-200 text-sm font-medium shadow-sm dark:border-slate-700"
               >
-                <span class="min-w-0 truncate">{getButtonText(filter)}</span>
+                <span class="min-w-0 truncate">{p.buttonText(filter)}</span>
               </ButtonIcon>
             )}
           </For>
 
-          <Show when={hasActiveFilters(p.filters)}>
+          <Show when={p.filtersActive()}>
             <ButtonIcon
               type="button"
               icon={mdiUndo}
@@ -267,14 +225,4 @@ function SearchButton(p: { onSearch: () => void | Promise<void>; scrollToId?: st
       {p.searchButtonText ?? "Search"}
     </button>
   )
-}
-
-function isButtonActive(filter: SearchFilterEntry): boolean {
-  return filter.valueSignal.get() !== ""
-}
-
-function getButtonText(filter: SearchFilterEntry): string {
-  const value = filter.valueSignal.get()
-  if (!value) return filter.label
-  return getOptionText(filter, value)
 }

@@ -1,10 +1,8 @@
-import { lazy, onMount } from "solid-js"
-import { signInLogic } from "#src/auth/ui/sign_in/logic/signInLogic.ts"
+import { lazy } from "solid-js"
+import { signInPageLoaderStateCreate } from "#src/auth/ui/sign_in/page/signInPageLoaderStateCreate.ts"
 
 export function SignInPageLoader() {
-  onMount(() => {
-    signInLogic()
-  })
+  signInPageLoaderStateCreate()
   return <SignInPageAsync />
 }
 

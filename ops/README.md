@@ -116,9 +116,9 @@ returned value securely immediately; it cannot be retrieved later.
   ```ini
   # ~/.config/containers/systemd/solid-convex-convex-preview.container.d/30-public-origin-loopback.conf
   [Container]
-  PodmanArgs=--add-host=solid-convex-backend.leonardomora.de:host-gateway
+  PodmanArgs=--add-host=solid-convex-backend.wonder1.de:host-gateway
   ```
-  *(Note: `PodmanArgs=--add-host=...` is verified in the live preview runtime; Quadlet's native `AddHost=solid-convex-backend.leonardomora.de:host-gateway` is an optional equivalent. Do not modify the repo base container `ops/convex/solid-convex-backend.container` to hardcode deployment-specific hostnames universally, as public origins differ by deployment and not all environments require a loopback override.)*
+  *(Note: `PodmanArgs=--add-host=...` is verified in the live preview runtime; Quadlet's native `AddHost=solid-convex-backend.wonder1.de:host-gateway` is an optional equivalent. Do not modify the repo base container `ops/convex/solid-convex-backend.container` to hardcode deployment-specific hostnames universally, as public origins differ by deployment and not all environments require a loopback override.)*
 - **Public client URL must stay public:** `CONVEX_CLOUD_ORIGIN` and public client URLs must remain publicly accessible for external clients and SSO callbacks; do not point public client endpoints to internal-only addresses to work around container egress.
 - **Diagnostics without secrets:** Test container loopback and egress using a minimal `curl` or secret-free Node `fetch` against the origin URL rather than testing through credential-bearing Zitadel or storage actions.
 - **Pre-flight setup test recommendation:** Run a lightweight setup/connectivity test before executing destructive hierarchy deletion cascades or Zitadel admin sync to verify that Node action mutation callbacks succeed end-to-end.

@@ -71,5 +71,5 @@ function parseNumItems(raw: string | null) {
 }
 
 function badRequest(op: string, errorMessage: string) {
-  return apiError.response("resource", op, errorMessage, 400)
+  return apiError.response("resource.bad-request", op, errorMessage)
 }

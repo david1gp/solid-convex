@@ -20,5 +20,6 @@ async function apiKeyRevokeMutationFn(
   const key = await ctx.db.get("authApiKeys", args.id)
   if (!key || key.userId !== args.userId) return createResultError("apiKeyRevokeMutation", "API key not found")
   if (!key.revokedAt) await ctx.db.patch("authApiKeys", key._id, { revokedAt: nowIso() })
+  console.info("apiKeyRevokeMutation", { userId: args.userId })
   return createResult(null)
 }

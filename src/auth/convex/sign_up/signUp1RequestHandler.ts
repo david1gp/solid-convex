@@ -17,7 +17,7 @@ export async function signUp1RequestHandler(ctx: ActionCtx, request: Request): P
   const op = "signUp1RequestHandler"
 
   if (request.method !== "POST") {
-    return apiError.response("auth", op, commonApiErrorMessages.methodNotAllowed, 400)
+    return apiError.response("auth.method-not-allowed", op, commonApiErrorMessages.methodNotAllowed)
   }
 
   const textBody = await request.text()
@@ -25,7 +25,7 @@ export async function signUp1RequestHandler(ctx: ActionCtx, request: Request): P
     const errorMessage = commonApiErrorMessages.emptyBody
     const errorResult = createError(op, errorMessage, textBody)
     console.error(errorResult)
-    return apiError.fromResultError("auth", errorResult, 400)
+    return apiError.fromResultError("auth.bad-request", errorResult)
   }
   const schema = a.pipe(a.string(), a.parseJson(), signUpSchema)
   const validation = a.safeParse(schema, textBody)
@@ -33,7 +33,7 @@ export async function signUp1RequestHandler(ctx: ActionCtx, request: Request): P
     const errorMessage = commonApiErrorMessages.schemaValidationFailed + ": " + a.summarize(validation.issues)
     const errorResult = createError(op, errorMessage, textBody)
     console.error(errorResult)
-    return apiError.fromResultError("auth", errorResult, 400)
+    return apiError.fromResultError("auth.bad-request", errorResult)
   }
   const { name, email, pw, l } = validation.output
 
@@ -43,18 +43,18 @@ export async function signUp1RequestHandler(ctx: ActionCtx, request: Request): P
       const errorMessage = "An account with this email was deleted. Please contact support."
       const errorResult = createError(op, errorMessage, email)
       console.warn(errorResult)
-      return apiError.fromResultError("auth", errorResult, 409)
+      return apiError.fromResultError("auth.conflict", errorResult)
     }
     const errorMessage = signUpErrorMessages.userAlreadyExists
     const errorResult = createError(op, errorMessage, email)
     console.warn(errorResult)
-    return apiError.fromResultError("auth", errorResult, 409)
+    return apiError.fromResultError("auth.conflict", errorResult)
   }
 
   const hashedPasswordResult = await passwordHash2(pw)
   if (!hashedPasswordResult.success) {
     console.warn(hashedPasswordResult)
-    return apiError.fromResultError("auth", hashedPasswordResult, 500)
+    return apiError.fromResultError("auth.internal", hashedPasswordResult)
   }
   const hashedPassword = hashedPasswordResult.data
 
@@ -72,7 +72,7 @@ export async function signUp1RequestHandler(ctx: ActionCtx, request: Request): P
   const hostnameAppResult = envBaseUrlAppResult()
   if (!hostnameAppResult.success) {
     console.error(hostnameAppResult)
-    return apiError.fromResultError("auth", hostnameAppResult, 500)
+    return apiError.fromResultError("auth.internal", hostnameAppResult)
   }
   const hostnameApp = hostnameAppResult.data
   const confirmUrl = new URL(pageRouteAuth.signUpConfirmEmail, hostnameApp)

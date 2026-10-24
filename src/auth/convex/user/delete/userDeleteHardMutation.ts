@@ -55,6 +55,7 @@ export async function userDeleteHardMutationFn(
 
   // Finally delete user record
   await ctx.db.delete("users", userId)
+  console.info(op, { userId })
 
   return createResult(null)
 }

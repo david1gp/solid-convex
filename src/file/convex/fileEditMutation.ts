@@ -168,5 +168,6 @@ export async function fileEditFn(ctx: MutationCtx, args: FileEditValidatorType):
 
   patch.updatedAt = nowIso()
   await ctx.db.patch("files", file._id, patch)
+  console.info(op, { fileId: args.fileId })
   return createResult(null)
 }

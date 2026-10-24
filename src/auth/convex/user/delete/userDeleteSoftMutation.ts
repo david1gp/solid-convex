@@ -41,6 +41,7 @@ export async function userDeleteSoftMutationFn(
   // Mark user as deleted
   const now = new Date().toISOString()
   await ctx.db.patch("users", userId, { deletedAt: now })
+  console.info(op, { userId })
 
   // Delete all sessions for this user
   await userDeleteHardAuthSessions(ctx, userId)

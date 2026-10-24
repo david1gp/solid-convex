@@ -39,5 +39,6 @@ export async function orgEditMutationFn(ctx: MutationCtx, args: OrgEditValidator
   patch.updatedAt = nowIso()
 
   await ctx.db.patch("orgs", org._id, patch)
+  console.info(op, { orgHandle: args.orgHandle })
   return createResult(null)
 }

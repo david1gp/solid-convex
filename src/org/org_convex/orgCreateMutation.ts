@@ -45,5 +45,6 @@ export async function orgCreateMutationFn(ctx: MutationCtx, args: OrgCreateValid
     createdAt: now,
     updatedAt: now,
   })
+  console.info(op, { orgId, orgHandle: args.orgHandle })
   return createResult(orgId)
 }

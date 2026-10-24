@@ -16,7 +16,7 @@ export async function signInViaEmailEnterOtp1RequestHandler(ctx: ActionCtx, requ
   // 1. validate request
   //
   if (request.method !== "POST") {
-    return apiError.response("auth", op, commonApiErrorMessages.methodNotAllowed, 400)
+    return apiError.response("auth.method-not-allowed", op, commonApiErrorMessages.methodNotAllowed)
   }
 
   const textBody = await request.text()
@@ -24,7 +24,7 @@ export async function signInViaEmailEnterOtp1RequestHandler(ctx: ActionCtx, requ
     const errorMessage = commonApiErrorMessages.emptyBody
     const errorResult = createError(op, errorMessage, textBody)
     console.error(errorResult)
-    return apiError.fromResultError("auth", errorResult, 400)
+    return apiError.fromResultError("auth.bad-request", errorResult)
   }
   const schema = a.pipe(a.string(), a.parseJson(), signInViaEmailEnterOtpSchema)
   const validation = a.safeParse(schema, textBody)
@@ -32,7 +32,7 @@ export async function signInViaEmailEnterOtp1RequestHandler(ctx: ActionCtx, requ
     const errorMessage = commonApiErrorMessages.schemaValidationFailed + ": " + a.summarize(validation.issues)
     const errorResult = createError(op, errorMessage, textBody)
     console.error(errorResult)
-    return apiError.fromResultError("auth", errorResult, 400)
+    return apiError.fromResultError("auth.bad-request", errorResult)
   }
 
   const { email, code } = validation.output
@@ -45,7 +45,7 @@ export async function signInViaEmailEnterOtp1RequestHandler(ctx: ActionCtx, requ
   if (!mutationResult.success) {
     const errorResult = mutationResult
     console.warn(errorResult)
-    return apiError.fromResultError("auth", errorResult, 400)
+    return apiError.fromResultError("auth.bad-request", errorResult)
   }
   const userSession: UserSession = mutationResult.data
 
@@ -60,7 +60,7 @@ export async function signInViaEmailEnterOtp1RequestHandler(ctx: ActionCtx, requ
   const userSessionSerializedResult = base64urlEncodeObject(userSession)
   if (!userSessionSerializedResult.success) {
     console.error(op, userSessionSerializedResult.errorMessage)
-    return apiError.fromResultError("auth", userSessionSerializedResult, 400)
+    return apiError.fromResultError("auth.bad-request", userSessionSerializedResult)
   }
 
   return new Response(jsonStringifyPretty(userSession))

@@ -31,12 +31,12 @@ export async function r2FileCreateHttpHandler(ctx: ActionCtx, request: Request):
   if (!token) {
     const errorMessage = "Missing authorization header"
     console.warn(op, errorMessage)
-    return apiError.fromResultError("r2", createResultError(op, errorMessage), 401)
+    return apiError.fromResultError("r2.unauthorized", createResultError(op, errorMessage))
   }
 
   const credentialResult = await authActionCredentialResolve(ctx, token)
   if (!credentialResult.success) {
-    return apiError.fromResultError("r2", credentialResult, 401)
+    return apiError.fromResultError("r2.unauthorized", credentialResult)
   }
   const userId = credentialResult.data.userId
 
@@ -46,7 +46,7 @@ export async function r2FileCreateHttpHandler(ctx: ActionCtx, request: Request):
   if (!user) {
     const errorMessage = "User not found"
     console.error(op, errorMessage)
-    return apiError.fromResultError("r2", createResultError(op, errorMessage), 404)
+    return apiError.fromResultError("r2.not-found", createResultError(op, errorMessage))
   }
 
   const body = await request.json()
@@ -54,7 +54,7 @@ export async function r2FileCreateHttpHandler(ctx: ActionCtx, request: Request):
   if (!parseResult.success) {
     const errorMessage = a.summarize(parseResult.issues)
     console.warn(op, errorMessage)
-    return apiError.fromResultError("r2", createResultError(op, errorMessage), 400)
+    return apiError.fromResultError("r2.bad-request", createResultError(op, errorMessage))
   }
 
   const data = { ...parseResult.output, userId, username: user.username }
@@ -64,7 +64,7 @@ export async function r2FileCreateHttpHandler(ctx: ActionCtx, request: Request):
   const result = await ctx.runMutation(internal.file.fileCreateInternalMutation, data)
   if (!result.success) {
     console.warn(op, result)
-    return apiError.fromResultError("r2", result, 400)
+    return apiError.fromResultError("r2.bad-request", result)
   }
 
   return new Response(jsonStringifyPretty(result))

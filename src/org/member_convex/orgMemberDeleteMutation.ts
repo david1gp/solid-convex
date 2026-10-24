@@ -35,5 +35,6 @@ export async function orgMemberDeleteFn(ctx: MutationCtx, args: OrgMemberDeleteV
   }
 
   await ctx.db.delete("orgMembers", args.memberId as IdOrgMember)
+  console.info(op, { orgHandle: args.orgHandle, memberId: args.memberId })
   return createResult(null)
 }

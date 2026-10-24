@@ -140,5 +140,6 @@ export async function resourceCreateFn(ctx: MutationCtx, args: ResourceCreateVal
     await updateAssignedFileIds(ctx, rest.resourceId, fileIds)
   }
 
+  console.info(op, { resourceId: rest.resourceId })
   return createResult(id)
 }

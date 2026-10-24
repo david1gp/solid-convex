@@ -11,26 +11,26 @@ export async function signInViaOidcStartRequestHandler(_ctx: ActionCtx, request:
   const configResult = oidcConfigGet()
   if (!configResult.success) {
     console.error(configResult)
-    return oidcRequestErrorResponseCreate(op, "OIDC sign-in is not configured", 500)
+    return oidcRequestErrorResponseCreate(op, "OIDC sign-in is not configured", "auth.internal")
   }
 
   const callbackUrlResult = oidcCallbackUrlGet()
   if (!callbackUrlResult.success) {
     console.error(callbackUrlResult)
-    return oidcRequestErrorResponseCreate(op, "OIDC sign-in callback is not configured", 500)
+    return oidcRequestErrorResponseCreate(op, "OIDC sign-in callback is not configured", "auth.internal")
   }
 
   const returnTo = new URL(request.url).searchParams.get("returnTo")
   const transactionResult = await oidcTransactionCookie.createHeaders(returnTo)
   if (!transactionResult.success) {
     console.error(transactionResult)
-    return oidcRequestErrorResponseCreate(op, "could not start OIDC sign-in", 500)
+    return oidcRequestErrorResponseCreate(op, "could not start OIDC sign-in", "auth.internal")
   }
 
   const discoveryResult = await oidcDiscoveryGet(configResult.data)
   if (!discoveryResult.success) {
     console.error(discoveryResult)
-    return oidcRequestErrorResponseCreate(op, "could not load OIDC configuration", 500)
+    return oidcRequestErrorResponseCreate(op, "could not load OIDC configuration", "auth.internal")
   }
 
   const authorizationUrlResult = await oidcAuthorizationUrlCreate({
@@ -43,7 +43,7 @@ export async function signInViaOidcStartRequestHandler(_ctx: ActionCtx, request:
   })
   if (!authorizationUrlResult.success) {
     console.error(authorizationUrlResult)
-    return oidcRequestErrorResponseCreate(op, "could not start OIDC sign-in", 500)
+    return oidcRequestErrorResponseCreate(op, "could not start OIDC sign-in", "auth.internal")
   }
 
   const headers = new Headers(transactionResult.data.headers)

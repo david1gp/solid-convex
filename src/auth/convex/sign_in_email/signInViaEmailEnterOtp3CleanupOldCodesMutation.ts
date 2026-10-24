@@ -10,15 +10,17 @@ export const signInViaEmailEnterOtp3CleanupOldCodesInternalMutation = internalMu
 export async function signInViaEmailEnterOtp3CleanupOldCodesFn(ctx: MutationCtx): Promise<{ deleted: number }> {
   const week1Ago = new Date(Date.now() - week1timeMs).toISOString()
 
-  const oldCodes = await ctx.db
-    .query("authEmailLoginCodes")
-    .withIndex("createdAt", (q) => q.lt("createdAt", week1Ago))
-    .collect()
-
   let deletedCount = 0
-  for (const code of oldCodes) {
-    await ctx.db.delete("authEmailLoginCodes", code._id)
-    deletedCount++
+  while (true) {
+    const oldCodes = await ctx.db
+      .query("authEmailLoginCodes")
+      .withIndex("createdAt", (q) => q.lt("createdAt", week1Ago))
+      .take(500)
+    if (oldCodes.length === 0) break
+    for (const code of oldCodes) {
+      await ctx.db.delete("authEmailLoginCodes", code._id)
+      deletedCount++
+    }
   }
   const otpDelted = await otpCleanupOldFn(ctx)
 

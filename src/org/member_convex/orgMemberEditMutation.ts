@@ -44,5 +44,6 @@ export async function orgMemberEditFn(ctx: MutationCtx, args: OrgMemberEditValid
   patch.updatedAt = nowIso()
 
   await ctx.db.patch("orgMembers", args.memberId as IdOrgMember, patch)
+  console.info(op, { orgHandle: args.orgHandle, memberId: args.memberId })
   return createResult(null)
 }

@@ -11,15 +11,17 @@ export async function signUpConfirmEmail3CleanupOldCodesInternalMutationFn(
 ): Promise<{ deleted: number }> {
   const oneDayAgo = new Date(Date.now() - week1timeMs).toISOString()
 
-  const oldCodes = await ctx.db
-    .query("authUserEmailRegistrations")
-    .withIndex("createdAt", (q) => q.lt("createdAt", oneDayAgo))
-    .collect()
-
   let deletedCount = 0
-  for (const code of oldCodes) {
-    await ctx.db.delete("authUserEmailRegistrations", code._id)
-    deletedCount++
+  while (true) {
+    const oldCodes = await ctx.db
+      .query("authUserEmailRegistrations")
+      .withIndex("createdAt", (q) => q.lt("createdAt", oneDayAgo))
+      .take(500)
+    if (oldCodes.length === 0) break
+    for (const code of oldCodes) {
+      await ctx.db.delete("authUserEmailRegistrations", code._id)
+      deletedCount++
+    }
   }
 
   return { deleted: deletedCount }

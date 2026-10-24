@@ -11,20 +11,20 @@ export async function signInViaAuthworksStartRequestHandler(_ctx: ActionCtx, req
   const configResult = authworksConfigGet()
   if (!configResult.success) {
     console.error(configResult)
-    return oidcRequestErrorResponseCreate(op, "Authworks sign-in is not configured", 500)
+    return oidcRequestErrorResponseCreate(op, "Authworks sign-in is not configured", "auth.internal")
   }
 
   const callbackUrlResult = authworksCallbackUrlGet()
   if (!callbackUrlResult.success) {
     console.error(callbackUrlResult)
-    return oidcRequestErrorResponseCreate(op, "Authworks sign-in callback is not configured", 500)
+    return oidcRequestErrorResponseCreate(op, "Authworks sign-in callback is not configured", "auth.internal")
   }
 
   const returnTo = new URL(request.url).searchParams.get("returnTo")
   const transactionResult = await authworksTransactionCookie.createHeaders(returnTo)
   if (!transactionResult.success) {
     console.error(transactionResult)
-    return oidcRequestErrorResponseCreate(op, "could not start Authworks sign-in", 500)
+    return oidcRequestErrorResponseCreate(op, "could not start Authworks sign-in", "auth.internal")
   }
 
   const discoveryResult = await oidcDiscoveryGet({
@@ -35,7 +35,7 @@ export async function signInViaAuthworksStartRequestHandler(_ctx: ActionCtx, req
   })
   if (!discoveryResult.success) {
     console.error(discoveryResult)
-    return oidcRequestErrorResponseCreate(op, "could not load Authworks configuration", 500)
+    return oidcRequestErrorResponseCreate(op, "could not load Authworks configuration", "auth.internal")
   }
 
   const authorizationUrlResult = await oidcAuthorizationUrlCreate({
@@ -53,7 +53,7 @@ export async function signInViaAuthworksStartRequestHandler(_ctx: ActionCtx, req
   })
   if (!authorizationUrlResult.success) {
     console.error(authorizationUrlResult)
-    return oidcRequestErrorResponseCreate(op, "could not start Authworks sign-in", 500)
+    return oidcRequestErrorResponseCreate(op, "could not start Authworks sign-in", "auth.internal")
   }
 
   const headers = new Headers(transactionResult.data.headers)

@@ -1,6 +1,7 @@
 import * as a from "valibot"
 import { cantBeEmpty } from "#src/utils/valibot/cantBeEmpty.ts"
-import { inputMaxLength100, inputMaxLength500 } from "#src/utils/valibot/inputMaxLength.ts"
+import { inputMaxLength100 } from "#src/utils/valibot/inputMaxLength100.ts"
+import { inputMaxLength500 } from "#src/utils/valibot/inputMaxLength500.ts"
 
 export const stringSchema0to100 = a.pipe(
   a.string(),

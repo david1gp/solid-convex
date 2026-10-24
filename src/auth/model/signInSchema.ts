@@ -2,7 +2,7 @@ import * as a from "valibot"
 import { languageSchema } from "#src/app/i18n/language.ts"
 import { passwordSchema } from "#src/auth/model_field/passwordSchema.ts"
 import { emailSchema } from "#src/utils/valibot/emailSchema.ts"
-import { inputMaxLength100 } from "#src/utils/valibot/inputMaxLength.ts"
+import { inputMaxLength100 } from "#src/utils/valibot/inputMaxLength100.ts"
 
 export type SignInViaPwType = a.InferOutput<typeof signInViaPwSchema>
 export const signInViaPwSchema = a.object({

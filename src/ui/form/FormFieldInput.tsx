@@ -1,5 +1,6 @@
 import { Show } from "solid-js"
-import { inputMaxLength500, inputMaxLengthDefault } from "#src/utils/valibot/inputMaxLength.ts"
+import { inputMaxLength500 } from "#src/utils/valibot/inputMaxLength500.ts"
+import { inputMaxLengthDefault } from "#src/utils/valibot/inputMaxLengthDefault.ts"
 import { type FormMode, formMode, formModeIsReadOnly } from "#ui/input/form/formMode.ts"
 import { Input } from "#ui/input/input/Input.jsx"
 import { Label } from "#ui/input/label/Label.jsx"

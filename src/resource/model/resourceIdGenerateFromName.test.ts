@@ -11,7 +11,7 @@ type Entry = {
   end?: string
 }
 
-test("resourceIdGenerateFromName", () => {
+test("generates dated slug resource IDs from file names", () => {
   const data: Record<string, Entry> = {
     a: { start: "a" },
     "My Document.pdf": { start: "my_document", end: ".pdf" },
@@ -37,7 +37,7 @@ test("resourceIdGenerateFromName", () => {
   }
 })
 
-test("resourceIdGenerateFromName with long names", () => {
+test("truncates long file names to the cutoff length", () => {
   const now = new Date(2020, 0, 10)
   const prefix = "2020-01-10_"
   const test = "a".repeat(resourceIdNamCutoffLength + 1)

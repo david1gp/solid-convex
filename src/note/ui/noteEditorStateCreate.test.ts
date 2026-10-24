@@ -83,7 +83,7 @@ describe("noteEditorStateCreate", () => {
     })
   })
 
-  test("saved then remote accepted", async () => {
+  test("accepts remote updates after save while the draft is clean", async () => {
     await createRoot(async (dispose) => {
       const [remoteContent, setRemoteContent] = createSignal("# Version 1")
       const [noteKey] = createSignal<string | undefined>("note-1")

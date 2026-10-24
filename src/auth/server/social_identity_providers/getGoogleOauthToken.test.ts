@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import * as a from "valibot"
 import { googleOauthTokenSchema } from "#src/auth/server/social_identity_providers/getGoogleOauthToken.ts"
 
-test("getGoogleOauthToken", () => {
+test("parses a Google OAuth token response", () => {
   const example = `
 
 {

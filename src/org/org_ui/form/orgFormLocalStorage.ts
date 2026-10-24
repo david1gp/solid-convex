@@ -33,11 +33,21 @@ function loadData(loadFormData: OrgFormDataLoadFn): void {
   loadFormData(combined)
 }
 
+function saveIdleSchedule(callback: () => void): void {
+  if (typeof window !== "undefined" && typeof window.requestIdleCallback === "function") {
+    window.requestIdleCallback(() => callback())
+  } else if (typeof window !== "undefined") {
+    setTimeout(callback, 0)
+  } else {
+    callback()
+  }
+}
+
 function createDebounceSave(mode: FormMode, state: OrgFormState) {
   if (mode !== formMode.add) return () => {}
   return debounce(() => {
     const orgModel = stateToPartialOrgModel(state)
-    saveToLocalStorage(orgModel)
+    saveIdleSchedule(() => saveToLocalStorage(orgModel))
   }, debounceSaveMs)
 }
 

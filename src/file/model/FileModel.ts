@@ -1,10 +1,8 @@
+import * as a from "valibot"
 import type { IdUser } from "#src/auth/convex/IdUser.ts"
-import type { FileDataModel } from "#src/file/model/fileSchema.ts"
-import type { HasCreatedAtUpdatedAt } from "#src/utils/data/HasCreatedAtUpdatedAt.ts"
+import { type FileDataModel, fileSchema } from "#src/file/model/fileSchema.ts"
 
-export interface FileModel extends FileDataModel, HasCreatedAtUpdatedAt {
-  deletedAt?: string
-}
+export type FileModel = a.InferOutput<typeof fileSchema>
 
 export interface FileDataModelWithUserMetadata extends FileDataModel {
   userId: IdUser

@@ -18,38 +18,43 @@ export async function signInViaOidcCallbackRequestHandler(ctx: ActionCtx, reques
   const op = "signInViaOidcCallbackRequestHandler"
   const url = new URL(request.url)
   const state = url.searchParams.get("state")
-  if (!state) return oidcRequestErrorResponseCreate(op, "missing state", 400)
+  if (!state) return oidcRequestErrorResponseCreate(op, "missing state", "auth.bad-request")
 
   const transactionResult = await oidcTransactionCookie.readHeaders(request, state)
   if (!transactionResult.success) {
     console.warn(transactionResult)
-    return oidcRequestErrorResponseCreate(op, "invalid transaction state", 400)
+    return oidcRequestErrorResponseCreate(op, "invalid transaction state", "auth.bad-request")
   }
   const clearCookieHeaders = oidcTransactionCookie.clearHeaders()
 
   if (url.searchParams.has("error")) {
-    return oidcRequestErrorResponseCreate(op, "OIDC authentication was denied", 400, clearCookieHeaders)
+    return oidcRequestErrorResponseCreate(op, "OIDC authentication was denied", "auth.bad-request", clearCookieHeaders)
   }
 
   const code = url.searchParams.get("code")
-  if (!code) return oidcRequestErrorResponseCreate(op, "missing code", 400, clearCookieHeaders)
+  if (!code) return oidcRequestErrorResponseCreate(op, "missing code", "auth.bad-request", clearCookieHeaders)
 
   const configResult = oidcConfigGet()
   if (!configResult.success) {
     console.error(configResult)
-    return oidcRequestErrorResponseCreate(op, "OIDC sign-in is not configured", 500, clearCookieHeaders)
+    return oidcRequestErrorResponseCreate(op, "OIDC sign-in is not configured", "auth.internal", clearCookieHeaders)
   }
 
   const callbackUrlResult = oidcCallbackUrlGet()
   if (!callbackUrlResult.success) {
     console.error(callbackUrlResult)
-    return oidcRequestErrorResponseCreate(op, "OIDC sign-in callback is not configured", 500, clearCookieHeaders)
+    return oidcRequestErrorResponseCreate(
+      op,
+      "OIDC sign-in callback is not configured",
+      "auth.internal",
+      clearCookieHeaders,
+    )
   }
 
   const discoveryResult = await oidcDiscoveryGet(configResult.data)
   if (!discoveryResult.success) {
     console.error(discoveryResult)
-    return oidcRequestErrorResponseCreate(op, "could not load OIDC configuration", 500, clearCookieHeaders)
+    return oidcRequestErrorResponseCreate(op, "could not load OIDC configuration", "auth.internal", clearCookieHeaders)
   }
 
   const tokenResult = await oidcTokenExchange({
@@ -61,7 +66,12 @@ export async function signInViaOidcCallbackRequestHandler(ctx: ActionCtx, reques
   })
   if (!tokenResult.success) {
     console.warn(op, "OIDC authorization code exchange failed")
-    return oidcRequestErrorResponseCreate(op, "could not exchange OIDC authorization code", 400, clearCookieHeaders)
+    return oidcRequestErrorResponseCreate(
+      op,
+      "could not exchange OIDC authorization code",
+      "auth.bad-request",
+      clearCookieHeaders,
+    )
   }
 
   const claimsResult = await oidcIdTokenVerify({
@@ -72,7 +82,7 @@ export async function signInViaOidcCallbackRequestHandler(ctx: ActionCtx, reques
   })
   if (!claimsResult.success) {
     console.warn(op, "OIDC ID-token verification failed")
-    return oidcRequestErrorResponseCreate(op, "could not verify OIDC ID token", 400, clearCookieHeaders)
+    return oidcRequestErrorResponseCreate(op, "could not verify OIDC ID token", "auth.bad-request", clearCookieHeaders)
   }
 
   const idTokenName = claimsResult.data.given_name?.trim() || claimsResult.data.name?.trim()
@@ -105,11 +115,11 @@ export async function signInViaOidcCallbackRequestHandler(ctx: ActionCtx, reques
   try {
     sessionResult = await ctx.runMutation(internal.auth.signInUsingSocialAuth3InternalMutation, providerInfo)
   } catch {
-    return oidcRequestErrorResponseCreate(op, "could not create auth session", 500, clearCookieHeaders)
+    return oidcRequestErrorResponseCreate(op, "could not create auth session", "auth.internal", clearCookieHeaders)
   }
   if (!sessionResult.success) {
     console.warn(op, "OIDC auth session creation failed")
-    return oidcRequestErrorResponseCreate(op, "could not create auth session", 400, clearCookieHeaders)
+    return oidcRequestErrorResponseCreate(op, "could not create auth session", "auth.bad-request", clearCookieHeaders)
   }
 
   return signInCallbackCompletionResponseCreate(

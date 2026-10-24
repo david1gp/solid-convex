@@ -25,6 +25,7 @@ export const fileDeleteInternalMutation = internalMutation({
 })
 
 export async function fileDeleteFn(ctx: MutationCtx, args: FileDeleteValidatorType): Promise<null> {
+  const op = "fileDeleteFn"
   const file = await fileGetByIdFn(ctx, args.fileId)
   if (!file) return null // idempotent
   // ctx.db.patch(file._id, { deletedAt: nowIso() })
@@ -36,5 +37,6 @@ export async function fileDeleteFn(ctx: MutationCtx, args: FileDeleteValidatorTy
     })
   }
   await ctx.db.delete("files", file._id)
+  console.info(op, { fileId: args.fileId })
   return null
 }

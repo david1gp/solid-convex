@@ -27,11 +27,21 @@ export const resourceFormLocalStorage: ResourceFormLocalStorage = {
   clearLocalStorage,
 }
 
+function saveIdleSchedule(callback: () => void): void {
+  if (typeof window !== "undefined" && typeof window.requestIdleCallback === "function") {
+    window.requestIdleCallback(() => callback())
+  } else if (typeof window !== "undefined") {
+    setTimeout(callback, 0)
+  } else {
+    callback()
+  }
+}
+
 function createDebounceSave(mode: FormMode, state: ResourceFormState) {
   if (mode !== formMode.add) return () => {}
   return debounce(() => {
     const resourceFilesModel = stateToResourceFilesModel(state)
-    saveToLocalStorage(resourceFilesModel)
+    saveIdleSchedule(() => saveToLocalStorage(resourceFilesModel))
   }, debounceSaveMs)
 }
 

@@ -1,6 +1,6 @@
 import * as a from "valibot"
 import { cantBeEmpty } from "#src/utils/valibot/cantBeEmpty.ts"
-import { inputMaxLength100 } from "#src/utils/valibot/inputMaxLength.ts"
+import { inputMaxLength100 } from "#src/utils/valibot/inputMaxLength100.ts"
 
 const regexMessage1 = "Must only consist of latin lowercase letters, digits, hyphens and underscores"
 const regexMessage2 = "No consecutive hyphens or underscores"

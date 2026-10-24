@@ -57,5 +57,6 @@ async function apiKeyCreateMutationFn(
   if (expiresAt) {
     await ctx.scheduler.runAt(new Date(expiresAt), internal.auth.apiKeyExpireInternalMutation, { id })
   }
+  console.info("apiKeyCreateMutation", { userId: args.userId })
   return createResult({ id, credential: generated.credential })
 }

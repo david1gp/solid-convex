@@ -1,34 +1,17 @@
-import { createMemo, For, Show } from "solid-js"
-import { api } from "#convex/_generated/api.js"
+import { For, Show } from "solid-js"
 import { appIcons } from "#src/app/icon/appIcons.ts"
-import { userTokenGet } from "#src/auth/ui/signals/userSessionSignal.ts"
 import { UserManagementRolesDialog } from "#src/user_management/ui/UserManagementRolesDialog.tsx"
-import { userManagementRolesDialogStateCreate } from "#src/user_management/ui/userManagementRolesDialogStateCreate.ts"
 import { UserRoleCheckMultipleField } from "#src/user_management/ui/UserRoleCheckMultipleField.tsx"
 import { UserTeamCheckMultipleField } from "#src/user_management/ui/UserTeamCheckMultipleField.tsx"
 import { userManagementPageStateCreate } from "#src/user_management/ui/userManagementPageStateCreate.ts"
-import { userManagementMembersFilter, userRoleFilterOptionsGet } from "#src/user_management/ui/userAvailableRoles.ts"
-import { createAction } from "#src/utils/convex_client/createAction.ts"
 import { CheckSingle } from "#ui/input/check/CheckSingle.tsx"
 import { Button } from "#ui/interactive/button/Button.tsx"
 import { ButtonIconOnly } from "#ui/interactive/button/ButtonIconOnly.tsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { PageWrapper } from "#ui/static/page/PageWrapper.tsx"
-import { createSignalObject } from "#ui/utils/createSignalObject.ts"
 
 export function UserManagementPage() {
   const state = userManagementPageStateCreate()
-  const rolesSaveAction = createAction(api.userManagementActions.userManagementSaveAction)
-  const rolesDialog = userManagementRolesDialogStateCreate({
-    setRoles: async ({ roles, userId }) => {
-      const res = await rolesSaveAction({ token: userTokenGet(), userId, roles: [...roles] })
-      if (res.success) return { success: true, errorMessage: "" }
-      return { success: false, errorMessage: res.errorMessage }
-    },
-  })
-  const roleFilter = createSignalObject<string>("all")
-  const roleFilterOptions = createMemo(() => userRoleFilterOptionsGet(state.users()))
-  const visibleUsers = createMemo(() => userManagementMembersFilter(state.users(), roleFilter.get()))
 
   return (
     <PageWrapper>
@@ -95,14 +78,14 @@ export function UserManagementPage() {
 
               <CheckSingle
                 id="user-management-role-filter"
-                valueSignal={roleFilter}
-                getOptions={() => [...roleFilterOptions()]}
+                valueSignal={state.roleFilter}
+                getOptions={() => [...state.roleFilterOptions()]}
                 valueText={(role) => (role === "all" ? "All" : role)}
                 disallowDeselection
               />
 
               <Show
-                when={visibleUsers().length > 0}
+                when={state.visibleUsers().length > 0}
                 fallback={
                   <Show when={!state.pagination.loading()}>
                     <p class="text-sm text-muted-foreground py-4 text-center">
@@ -112,7 +95,7 @@ export function UserManagementPage() {
                 }
               >
                 <ul class="divide-y divide-border -mx-4">
-                  <For each={visibleUsers()}>
+                  <For each={state.visibleUsers()}>
                     {(user) => {
                       const isSelected = () => state.selectedUserId() === user.userId
                       return (
@@ -152,8 +135,8 @@ export function UserManagementPage() {
                               title={`Edit roles for ${user.displayName || user.username || user.email || user.userId}`}
                               icon={appIcons.edit}
                               variant={buttonVariant.ghost}
-                              onClick={() => rolesDialog.openEdit(user)}
-                              disabled={rolesDialog.isUpdating(user.userId)}
+                              onClick={() => state.rolesDialog.openEdit(user)}
+                              disabled={state.rolesDialog.isUpdating(user.userId)}
                               aria-label={`Edit roles for ${user.displayName || user.username || user.email || user.userId}`}
                             />
                           </div>
@@ -163,7 +146,7 @@ export function UserManagementPage() {
                   </For>
                 </ul>
               </Show>
-              <UserManagementRolesDialog dialog={rolesDialog} members={state.users} />
+              <UserManagementRolesDialog dialog={state.rolesDialog} members={state.users} />
 
               <Show when={state.pagination.canPrevious() || state.pagination.canNext()}>
                 <div class="flex justify-between items-center pt-2 border-t border-border">

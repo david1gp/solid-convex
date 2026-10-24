@@ -1,16 +1,16 @@
-import { buildPreferences } from "./buildPreferences.js"
-import { clearGoogleCookies } from "./clearGoogleCookies.js"
+import { preferencesBuild } from "./preferencesBuild.js"
+import { googleCookiesClear } from "./googleCookiesClear.js"
 import { type ConsentConfig, defaultConsentConfig } from "./consentConfig.js"
 import type { ConsentChoices } from "./consentChoices.js"
 import type { ConsentPreferences } from "./consentPreferences.js"
-import { initConsentMode } from "./initConsentMode.js"
-import { updateConsentMode } from "./updateConsentMode.js"
+import { consentModeInit } from "./consentModeInit.js"
+import { consentModeUpdate } from "./consentModeUpdate.js"
 
 /** Persist the user's choices, dispatch the change event, and sync Google Consent Mode. */
-export function saveConsent(choices: ConsentChoices, config: ConsentConfig = defaultConsentConfig): ConsentPreferences {
-  initConsentMode()
+export function consentSave(choices: ConsentChoices, config: ConsentConfig = defaultConsentConfig): ConsentPreferences {
+  consentModeInit()
 
-  const preferences = buildPreferences(choices)
+  const preferences = preferencesBuild(choices)
 
   if (typeof window !== "undefined") {
     try {
@@ -21,9 +21,9 @@ export function saveConsent(choices: ConsentChoices, config: ConsentConfig = def
     window.dispatchEvent(new CustomEvent(config.changeEvent, { detail: preferences }))
   }
 
-  updateConsentMode(choices)
+  consentModeUpdate(choices)
 
-  if (!choices.statistics && !choices.marketing) clearGoogleCookies()
+  if (!choices.statistics && !choices.marketing) googleCookiesClear()
 
   return preferences
 }

@@ -46,6 +46,7 @@ export async function orgLeaveFn(ctx: MutationCtx, args: OrgLeaveValidatorType):
   }
 
   await ctx.db.delete("orgMembers", member._id)
+  console.info(op, { orgHandle: args.orgHandle, userId: args.userId })
 
   await ctx.runMutation(internal.org.orgCleanupIfEmptyInternalMutation, {
     orgHandle: args.orgHandle,

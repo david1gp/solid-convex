@@ -12,7 +12,7 @@ import { userPasswordChange2ConfirmHandler } from "#src/auth/convex/user/pw_chan
 import { apiKeyListItemSchema } from "#src/auth/model/apiKeyListItemSchema.ts"
 import { apiKeyNameSchema } from "#src/auth/model/apiKeyNameSchema.ts"
 import { authorizationHeaderGetToken } from "#src/auth/server/authorizationHeaderGetToken.ts"
-import { type ApiErrorStatus, apiError } from "#src/api/apiError.ts"
+import { apiError } from "#src/api/apiError.ts"
 import { authActionCredentialResolve } from "#src/utils/convex_backend/authActionCredentialResolve.ts"
 
 const pageSchema = a.object({
@@ -22,25 +22,26 @@ const pageSchema = a.object({
 const expirySchema = a.optional(a.picklist(["never", "1-day", "1-week", "1-month", "1-year", "2-years", "3-years"]))
 const keyIdSchema = a.pipe(a.string(), a.minLength(1))
 
-function jsonError(op: string, message: string, status: ApiErrorStatus): Response {
-  return apiError.response("api-keys", op, message, status)
+function jsonError(op: string, message: string, code: string): Response {
+  return apiError.response(code, op, message)
 }
 
 async function bearerRequest(ctx: ActionCtx, request: Request, op: string): Promise<{ token: string } | Response> {
   const token = authorizationHeaderGetToken(request.headers.get("authorization"))
-  if (!token) return jsonError(op, "Unauthorized", 401)
+  if (!token) return jsonError(op, "Unauthorized", "api-keys.unauthorized")
   try {
     const credential = await authActionCredentialResolve(ctx, token)
-    if (!credential.success) return jsonError(op, "Unauthorized", 401)
+    if (!credential.success) return jsonError(op, "Unauthorized", "api-keys.unauthorized")
   } catch {
-    return jsonError(op, "Unauthorized", 401)
+    return jsonError(op, "Unauthorized", "api-keys.unauthorized")
   }
   return { token }
 }
 
 async function bodyRead(request: Request, op: string): Promise<Record<string, unknown> | Response> {
   const value: unknown = await request.json().catch(() => null)
-  if (!value || typeof value !== "object" || Array.isArray(value)) return jsonError(op, "Invalid JSON body", 400)
+  if (!value || typeof value !== "object" || Array.isArray(value))
+    return jsonError(op, "Invalid JSON body", "api-keys.bad-request")
   return value as Record<string, unknown>
 }
 
@@ -58,7 +59,7 @@ export function addHttpRoutesApiKeysProfile(dispatcher: HonoDispatcher) {
       numItems: Number(query.get("numItems") ?? 50),
       cursor: query.get("cursor"),
     })
-    if (!pagination.success) return jsonError(op, "Invalid pagination", 400)
+    if (!pagination.success) return jsonError(op, "Invalid pagination", "api-keys.bad-request")
     try {
       const result = await ctx.runQuery(api.auth.apiKeyListQuery, {
         token: auth.token,
@@ -67,11 +68,11 @@ export function addHttpRoutesApiKeysProfile(dispatcher: HonoDispatcher) {
       const data = result.success ? (result.data as { page?: unknown[] } | undefined) : undefined
       if (data && Array.isArray(data.page)) {
         const items = data.page.map((item: unknown) => a.safeParse(apiKeyListItemSchema, item))
-        if (items.some((item) => !item.success)) return jsonError(op, "Invalid key response", 500)
+        if (items.some((item) => !item.success)) return jsonError(op, "Invalid key response", "api-keys.internal")
       }
       return Response.json(result)
     } catch {
-      return jsonError(op, "Request failed", 500)
+      return jsonError(op, "Request failed", "api-keys.internal")
     }
   })
 
@@ -84,11 +85,11 @@ export function addHttpRoutesApiKeysProfile(dispatcher: HonoDispatcher) {
       if (body instanceof Response) return body
       const name =
         path.endsWith("create") || path.endsWith("rename") ? a.safeParse(apiKeyNameSchema, body.name) : undefined
-      if (name && !name.success) return jsonError(op, "Invalid key name", 400)
+      if (name && !name.success) return jsonError(op, "Invalid key name", "api-keys.bad-request")
       const id = path.endsWith("create") ? undefined : a.safeParse(keyIdSchema, body.id)
-      if (id && !id.success) return jsonError(op, "Invalid key id", 400)
+      if (id && !id.success) return jsonError(op, "Invalid key id", "api-keys.bad-request")
       const expiry = path.endsWith("create") ? a.safeParse(expirySchema, body.expiryPreset) : undefined
-      if (expiry && !expiry.success) return jsonError(op, "Invalid expiry preset", 400)
+      if (expiry && !expiry.success) return jsonError(op, "Invalid expiry preset", "api-keys.bad-request")
       const fn = path.endsWith("create")
         ? api.auth.apiKeyCreateMutation
         : path.endsWith("rename")
@@ -105,7 +106,7 @@ export function addHttpRoutesApiKeysProfile(dispatcher: HonoDispatcher) {
         // Create and rotate intentionally return the credential once; callers must store it securely.
         return Response.json(await ctx.runMutation(fn, args as never))
       } catch {
-        return jsonError(op, "Request failed", 500)
+        return jsonError(op, "Request failed", "api-keys.internal")
       }
     })
   }

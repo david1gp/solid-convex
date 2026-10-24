@@ -1,5 +1,6 @@
 import { useParams } from "@tanstack/solid-router"
 import { createEffect, createMemo, onCleanup } from "solid-js"
+import * as v from "valibot"
 import { api } from "#convex/_generated/api.js"
 import type { Id } from "#convex/_generated/dataModel.js"
 import { appIcons } from "#src/app/icon/appIcons.ts"
@@ -14,11 +15,14 @@ import { queryCreate } from "#src/utils/convex_client/queryCreate.ts"
 import { navigateTo } from "#src/utils/router/navigateTo.ts"
 import { createSignalObject, type SignalObject } from "#ui/utils/createSignalObject.ts"
 
+const teamTabSchema = v.picklist(["details", "projects"])
+
 function initialTabGet(): string {
   if (typeof window === "undefined") return "details"
   try {
     const tab = new URL(window.location.href).searchParams.get("tab")
-    return tab || "details"
+    const parsed = v.safeParse(teamTabSchema, tab)
+    return parsed.success ? parsed.output : "details"
   } catch {
     return "details"
   }

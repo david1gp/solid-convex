@@ -1,8 +1,33 @@
 import { debounce, type Scheduled } from "@solid-primitives/scheduled"
 import { type Accessor, createSignal, onCleanup } from "solid-js"
 import { isServer } from "solid-js/web"
+import * as v from "valibot"
 import { debounceMs as defaultDebounceMs } from "#src/utils/ui/debounceMs.ts"
 import { createSignalObject, type SignalObject } from "#ui/utils/createSignalObject.ts"
+
+const searchValueSchema = v.pipe(v.string(), v.maxLength(500, "Only a max length of 500 is allowed"))
+
+function searchValueFromUrl(raw: string | null): string {
+  if (raw === null) return ""
+  const parsed = v.safeParse(searchValueSchema, raw)
+  return parsed.success ? parsed.output : ""
+}
+
+function filterValueFromUrl(raw: string | null, fallback: string): string {
+  if (raw === null) return fallback
+  const parsed = v.safeParse(searchValueSchema, raw)
+  return parsed.success ? parsed.output : fallback
+}
+
+function idleSchedule(callback: () => void): void {
+  if (typeof window !== "undefined" && typeof window.requestIdleCallback === "function") {
+    window.requestIdleCallback(() => callback())
+  } else if (typeof window !== "undefined") {
+    setTimeout(callback, 0)
+  } else {
+    callback()
+  }
+}
 
 export function searchFilterStateCreate<T extends Record<string, string>>(
   defaultFilters: T,
@@ -35,14 +60,18 @@ export function searchFilterStateCreate<T extends Record<string, string>>(
     setDebouncedSearch(search.get())
     setDebouncedFilters(() => ({ ...filters.get() }))
     if (typeof window === "undefined") return
-    const currentUrl = new URL(window.location.href)
-    currentUrl.searchParams.delete(searchKey)
-    if (search.get()) currentUrl.searchParams.set(searchKey, search.get())
-    for (const [key, value] of Object.entries(filters.get())) {
-      currentUrl.searchParams.delete(key)
-      if (value !== defaultFilters[key as keyof T] && value) currentUrl.searchParams.set(key, value)
-    }
-    window.history.replaceState(null, "", currentUrl.href)
+    const nextSearch = search.get()
+    const nextFilters = { ...filters.get() }
+    idleSchedule(() => {
+      const currentUrl = new URL(window.location.href)
+      currentUrl.searchParams.delete(searchKey)
+      if (nextSearch) currentUrl.searchParams.set(searchKey, nextSearch)
+      for (const [key, value] of Object.entries(nextFilters)) {
+        currentUrl.searchParams.delete(key)
+        if (value !== defaultFilters[key as keyof T] && value) currentUrl.searchParams.set(key, value)
+      }
+      window.history.replaceState(null, "", currentUrl.href)
+    })
   }, wait)
 
   if (typeof window !== "undefined") {
@@ -62,11 +91,11 @@ export function searchFilterStateCreate<T extends Record<string, string>>(
 
   function applyUrl(nextUrl: URL) {
     isApplyingUrl = true
-    const nextSearch = nextUrl.searchParams.get(searchKey) ?? ""
+    const nextSearch = searchValueFromUrl(nextUrl.searchParams.get(searchKey))
     const nextFilters = { ...defaultFilters }
     for (const key of Object.keys(defaultFilters)) {
-      const value = nextUrl.searchParams.get(key)
-      if (value !== null) nextFilters[key as keyof T] = value as T[keyof T]
+      const fallback = defaultFilters[key as keyof T]
+      nextFilters[key as keyof T] = filterValueFromUrl(nextUrl.searchParams.get(key), fallback as string) as T[keyof T]
     }
     search.set(nextSearch)
     filters.set(nextFilters)

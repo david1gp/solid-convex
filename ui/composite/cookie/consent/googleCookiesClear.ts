@@ -1,7 +1,7 @@
 const googleCookiePrefixes = ["_ga", "_gid", "_gat", "_gcl", "_gac"]
 
 /** Best-effort removal of Google's first-party cookies after consent is withdrawn. */
-export function clearGoogleCookies(): void {
+export function googleCookiesClear(): void {
   if (typeof document === "undefined") return
 
   const { hostname } = window.location

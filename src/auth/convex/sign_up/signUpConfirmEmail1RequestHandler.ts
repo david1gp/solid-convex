@@ -15,20 +15,20 @@ export async function signUpConfirmEmail1RequestHandler(ctx: ActionCtx, request:
   // 1. validate request
   //
   if (request.method !== "POST") {
-    return apiError.response("auth", op, commonApiErrorMessages.methodNotAllowed, 400)
+    return apiError.response("auth.method-not-allowed", op, commonApiErrorMessages.methodNotAllowed)
   }
   const textBody = await request.text()
   if (!textBody) {
     const errorMessage = commonApiErrorMessages.emptyBody
     console.warn(op, errorMessage, textBody)
-    return apiError.response("auth", op, errorMessage, 400)
+    return apiError.response("auth.bad-request", op, errorMessage)
   }
   const schema = a.pipe(a.string(), a.parseJson(), signUpConfirmEmailSchema)
   const validation = a.safeParse(schema, textBody)
   if (!validation.success) {
     const errorMessage = commonApiErrorMessages.schemaValidationFailed + ": " + a.summarize(validation.issues)
     console.warn(op, errorMessage)
-    return apiError.response("auth", op, errorMessage, 400)
+    return apiError.response("auth.bad-request", op, errorMessage)
   }
 
   const { email, code } = validation.output
@@ -41,7 +41,7 @@ export async function signUpConfirmEmail1RequestHandler(ctx: ActionCtx, request:
   if (!mutationResult.success) {
     const errorResult = mutationResult
     console.warn(errorResult)
-    return apiError.fromResultError("auth", errorResult, 400)
+    return apiError.fromResultError("auth.bad-request", errorResult)
   }
   const userSession: UserSession = mutationResult.data
 
@@ -64,7 +64,7 @@ export async function signUpConfirmEmail1RequestHandler(ctx: ActionCtx, request:
   const userSessionSerializedResult = base64urlEncodeObject(userSession)
   if (!userSessionSerializedResult.success) {
     console.error(userSessionSerializedResult)
-    return apiError.fromResultError("auth", userSessionSerializedResult, 500)
+    return apiError.fromResultError("auth.internal", userSessionSerializedResult)
   }
 
   return new Response(JSON.stringify(userSession, null, 2))

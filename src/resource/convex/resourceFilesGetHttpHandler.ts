@@ -18,7 +18,7 @@ export async function resourceGetRequestHandler(ctx: ActionCtx, request: Request
   const cursor = url.searchParams.get("cursor")
 
   if (!resourceId) {
-    return apiError.response("resource", op, "Missing required parameter: resourceId", 400)
+    return apiError.response("resource.bad-request", op, "Missing required parameter: resourceId")
   }
 
   // Get resource files using the new query
@@ -31,16 +31,16 @@ export async function resourceGetRequestHandler(ctx: ActionCtx, request: Request
   })
 
   if (!resourceFilesResult.success) {
-    return apiError.fromResultError("resource", resourceFilesResult, 404)
+    return apiError.fromResultError("resource.not-found", resourceFilesResult)
   }
   const resourceFiles = resourceFilesResult.data
 
   if (!resourceFiles) {
-    return apiError.response("resource", op, "Resource not found", 404, { resourceId })
+    return apiError.response("resource.not-found", op, "Resource not found", { resourceId })
   }
 
   if (resourceFiles.resource.visibility !== visibility.public) {
-    return apiError.response("resource", op, "Resource is not public", 403, { resourceId })
+    return apiError.response("resource.forbidden", op, "Resource is not public", { resourceId })
   }
 
   return new Response(jsonStringifyPretty(resourceFiles), {
@@ -61,5 +61,5 @@ function parseNumItems(raw: string | null) {
 }
 
 function badRequest(op: string, errorMessage: string) {
-  return apiError.response("resource", op, errorMessage, 400)
+  return apiError.response("resource.bad-request", op, errorMessage)
 }

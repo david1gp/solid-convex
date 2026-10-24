@@ -21,26 +21,36 @@ export async function signInViaAuthworksCallbackRequestHandler(ctx: ActionCtx, r
   const op = "signInViaAuthworksCallbackRequestHandler"
   const url = new URL(request.url)
   const state = url.searchParams.get("state")
-  if (!state) return oidcRequestErrorResponseCreate(op, "missing state", 400)
+  if (!state) return oidcRequestErrorResponseCreate(op, "missing state", "auth.bad-request")
 
   const transactionResult = await authworksTransactionCookie.readHeaders(request, state)
   if (!transactionResult.success) {
     console.warn(transactionResult)
-    return oidcRequestErrorResponseCreate(op, "invalid transaction state", 400)
+    return oidcRequestErrorResponseCreate(op, "invalid transaction state", "auth.bad-request")
   }
   const clearCookieHeaders = authworksTransactionCookie.clearHeaders()
 
   if (url.searchParams.has("error")) {
-    return oidcRequestErrorResponseCreate(op, "Authworks authentication was denied", 400, clearCookieHeaders)
+    return oidcRequestErrorResponseCreate(
+      op,
+      "Authworks authentication was denied",
+      "auth.bad-request",
+      clearCookieHeaders,
+    )
   }
 
   const code = url.searchParams.get("code")
-  if (!code) return oidcRequestErrorResponseCreate(op, "missing code", 400, clearCookieHeaders)
+  if (!code) return oidcRequestErrorResponseCreate(op, "missing code", "auth.bad-request", clearCookieHeaders)
 
   const configResult = authworksConfigGet()
   if (!configResult.success) {
     console.error(configResult)
-    return oidcRequestErrorResponseCreate(op, "Authworks sign-in is not configured", 500, clearCookieHeaders)
+    return oidcRequestErrorResponseCreate(
+      op,
+      "Authworks sign-in is not configured",
+      "auth.internal",
+      clearCookieHeaders,
+    )
   }
   const oidcConfig = {
     issuer: configResult.data.issuer,
@@ -52,13 +62,23 @@ export async function signInViaAuthworksCallbackRequestHandler(ctx: ActionCtx, r
   const callbackUrlResult = authworksCallbackUrlGet()
   if (!callbackUrlResult.success) {
     console.error(callbackUrlResult)
-    return oidcRequestErrorResponseCreate(op, "Authworks sign-in callback is not configured", 500, clearCookieHeaders)
+    return oidcRequestErrorResponseCreate(
+      op,
+      "Authworks sign-in callback is not configured",
+      "auth.internal",
+      clearCookieHeaders,
+    )
   }
 
   const discoveryResult = await oidcDiscoveryGet(oidcConfig)
   if (!discoveryResult.success) {
     console.error(discoveryResult)
-    return oidcRequestErrorResponseCreate(op, "could not load Authworks configuration", 500, clearCookieHeaders)
+    return oidcRequestErrorResponseCreate(
+      op,
+      "could not load Authworks configuration",
+      "auth.internal",
+      clearCookieHeaders,
+    )
   }
 
   const tokenResult = await oidcTokenExchange({
@@ -73,7 +93,7 @@ export async function signInViaAuthworksCallbackRequestHandler(ctx: ActionCtx, r
     return oidcRequestErrorResponseCreate(
       op,
       "could not exchange Authworks authorization code",
-      400,
+      "auth.bad-request",
       clearCookieHeaders,
     )
   }
@@ -86,7 +106,12 @@ export async function signInViaAuthworksCallbackRequestHandler(ctx: ActionCtx, r
   })
   if (!claimsResult.success) {
     console.warn(op, "Authworks ID-token verification failed")
-    return oidcRequestErrorResponseCreate(op, "could not verify Authworks ID token", 400, clearCookieHeaders)
+    return oidcRequestErrorResponseCreate(
+      op,
+      "could not verify Authworks ID token",
+      "auth.bad-request",
+      clearCookieHeaders,
+    )
   }
 
   const idTokenName = claimsResult.data.given_name?.trim() || claimsResult.data.name?.trim()
@@ -133,11 +158,11 @@ export async function signInViaAuthworksCallbackRequestHandler(ctx: ActionCtx, r
   try {
     sessionResult = await ctx.runMutation(internal.auth.signInUsingSocialAuth3InternalMutation, providerInfo)
   } catch {
-    return oidcRequestErrorResponseCreate(op, "could not create auth session", 500, clearCookieHeaders)
+    return oidcRequestErrorResponseCreate(op, "could not create auth session", "auth.internal", clearCookieHeaders)
   }
   if (!sessionResult.success) {
     console.warn(op, "Authworks auth session creation failed")
-    return oidcRequestErrorResponseCreate(op, "could not create auth session", 400, clearCookieHeaders)
+    return oidcRequestErrorResponseCreate(op, "could not create auth session", "auth.bad-request", clearCookieHeaders)
   }
 
   return signInCallbackCompletionResponseCreate(

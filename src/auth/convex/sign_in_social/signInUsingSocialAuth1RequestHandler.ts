@@ -1,5 +1,6 @@
 import type { ActionCtx } from "#convex/_generated/server.js"
 import { createResultError } from "#result"
+import { apiError } from "#src/api/apiError.ts"
 import { enableGithub } from "#src/app/config/enableGithub.ts"
 import { enableSignInAdmin } from "#src/app/config/enableSignInAdmin.ts"
 import { signInCallbackCompletionResponseCreate } from "#src/auth/convex/sign_in_shared/signInCallbackCompletionResponseCreate.ts"
@@ -7,7 +8,6 @@ import { signInUsingSocialAuth2ActionFn } from "#src/auth/convex/sign_in_social/
 import type { UserSession } from "#src/auth/model/UserSession.ts"
 import { type LoginProvider, loginProvider } from "#src/auth/model_field/socialLoginProvider.ts"
 import { getDefaultUrlSignedIn } from "#src/auth/url/getDefaultUrlSignedIn.ts"
-import { jsonStringifyPretty } from "#utils/json/jsonStringifyPretty.js"
 
 export async function signInUsingSocialAuth1RequestHandler(
   provider: Exclude<LoginProvider, typeof loginProvider.oidc>,
@@ -21,21 +21,21 @@ export async function signInUsingSocialAuth1RequestHandler(
     const errorMessage = `oauth returned error value: ${error}`
     const err = createResultError(op, errorMessage)
     console.warn(err)
-    return new Response(jsonStringifyPretty(err), { status: 400 })
+    return apiError.fromResultError("auth.bad-request", err)
   }
 
   if (provider === loginProvider.github && !enableGithub()) {
     const errorMessage = "Github provider disabled"
     const err = createResultError(op, errorMessage)
     console.warn(err)
-    return new Response(jsonStringifyPretty(err), { status: 400 })
+    return apiError.fromResultError("auth.bad-request", err)
   }
 
   if (provider === loginProvider.admin && !enableSignInAdmin()) {
     const errorMessage = "Admin provider disabled"
     const err = createResultError(op, errorMessage)
     console.warn(err)
-    return new Response(jsonStringifyPretty(err), { status: 400 })
+    return apiError.fromResultError("auth.bad-request", err)
   }
 
   const code = url.searchParams.get("code")
@@ -43,13 +43,13 @@ export async function signInUsingSocialAuth1RequestHandler(
     const errorMessage = "missing code"
     const err = createResultError(op, errorMessage)
     console.warn(err)
-    return new Response(jsonStringifyPretty(err), { status: 400 })
+    return apiError.fromResultError("auth.bad-request", err)
   }
 
   const tokenResult = await signInUsingSocialAuth2ActionFn(ctx, provider, code)
   if (!tokenResult.success) {
     console.warn(tokenResult)
-    return new Response(jsonStringifyPretty(tokenResult), { status: 400 })
+    return apiError.fromResultError("auth.bad-request", tokenResult)
   }
   const userSession: UserSession = tokenResult.data
 

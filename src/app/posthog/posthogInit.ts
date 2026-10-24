@@ -31,6 +31,7 @@ export function posthogInit(session?: UserSession) {
     if (!session) return
     const user = session.profile
     const distinctId = user.email
+    if (!distinctId) return
     posthog.identify(distinctId, user)
   }
 

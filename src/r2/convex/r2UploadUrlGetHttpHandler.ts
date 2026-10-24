@@ -1,9 +1,9 @@
 import type { ActionCtx } from "#convex/_generated/server.js"
 import { createResultError } from "#result"
+import { apiError } from "#src/api/apiError.ts"
 import { authorizationHeaderGetToken } from "#src/auth/server/authorizationHeaderGetToken.ts"
 import { r2ApiGetUploadUrl } from "#src/r2/api_r2/r2ApiGetUploadUrl.ts"
 import { authActionCredentialResolve } from "#src/utils/convex_backend/authActionCredentialResolve.ts"
-import { jsonStringifyPretty } from "#utils/json/jsonStringifyPretty.js"
 
 export async function r2UploadUrlGetHttpHandler(ctx: ActionCtx, request: Request): Promise<Response> {
   const op = "r2UploadUrlHttpHandler"
@@ -14,12 +14,12 @@ export async function r2UploadUrlGetHttpHandler(ctx: ActionCtx, request: Request
     const errorMessage = "Missing authorization header"
     console.warn(op, errorMessage)
     const err = createResultError(op, errorMessage)
-    return new Response(jsonStringifyPretty(err), { status: 400 })
+    return apiError.fromResultError("r2.bad-request", err)
   }
 
   const credentialResult = await authActionCredentialResolve(ctx, token)
   if (!credentialResult.success) {
-    return new Response(jsonStringifyPretty(credentialResult), { status: 400 })
+    return apiError.fromResultError("r2.bad-request", credentialResult)
   }
 
   const fileId = url.searchParams.get("fileId")
@@ -27,13 +27,13 @@ export async function r2UploadUrlGetHttpHandler(ctx: ActionCtx, request: Request
     const errorMessage = "Missing fileId query parameter"
     console.warn(op, errorMessage)
     const err = createResultError(op, errorMessage)
-    return new Response(jsonStringifyPretty(err), { status: 400 })
+    return apiError.fromResultError("r2.bad-request", err)
   }
 
   const urlResult = await r2ApiGetUploadUrl(fileId)
 
   if (!urlResult.success) {
-    return new Response(jsonStringifyPretty(urlResult), { status: 500 })
+    return apiError.fromResultError("r2.internal", urlResult)
   }
 
   return new Response(urlResult.data, {

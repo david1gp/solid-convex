@@ -32,6 +32,7 @@ export async function orgInvitation60DismissMutationFn(
   }
 
   await ctx.db.delete("orgInvitations", invitation._id)
+  console.info(op, { orgHandle: invitation.orgHandle })
 
   return createResult(null)
 }

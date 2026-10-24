@@ -236,5 +236,6 @@ export async function fileCreateFn(ctx: MutationCtx, args: FileCreateValidatorTy
     createdAt: now,
     updatedAt: now,
   })
+  console.info(op, { fileId: rest.fileId, resourceId: resourceId ?? undefined })
   return createResult(id)
 }

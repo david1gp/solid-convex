@@ -28,7 +28,11 @@ export function themeSet(theme: ThemeVariant, saveToStorage: boolean) {
   themeSignal.set(theme)
   setThemeToBrowser(theme)
   if (!saveToStorage) return
-  localStorage.setItem(themeLocalStorageKey, theme)
+  if (typeof window !== "undefined" && typeof window.requestIdleCallback === "function") {
+    window.requestIdleCallback(() => localStorage.setItem(themeLocalStorageKey, theme))
+  } else {
+    localStorage.setItem(themeLocalStorageKey, theme)
+  }
 }
 
 function themeRegisterStorageListener() {

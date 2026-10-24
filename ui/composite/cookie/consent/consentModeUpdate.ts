@@ -1,11 +1,11 @@
 import { consentModeFromChoices } from "./consentModeFromChoices.js"
 import type { ConsentChoices } from "./consentChoices.js"
-import { ensureGtag } from "./ensureGtag.js"
+import { gtagEnsure } from "./gtagEnsure.js"
 
 /** Push a Consent Mode v2 update reflecting the latest choices. */
-export function updateConsentMode(choices: ConsentChoices): void {
+export function consentModeUpdate(choices: ConsentChoices): void {
   if (typeof window === "undefined") return
 
-  ensureGtag()
+  gtagEnsure()
   window.gtag?.("consent", "update", consentModeFromChoices(choices))
 }

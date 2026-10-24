@@ -148,6 +148,7 @@ export async function resourceEditFn(ctx: MutationCtx, args: ResourceEditValidat
   patch.updatedAt = nowIso()
 
   await ctx.db.patch("resources", resource._id, patch)
+  console.info(op, { resourceId })
 
   if (orgSyncNeeded) {
     await resourceOrgResourcesSync(ctx, resource.resourceId, syncOrgId, searchProjection)

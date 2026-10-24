@@ -7,13 +7,13 @@ export async function userDelete1RequestHandler(ctx: ActionCtx, request: Request
   const op = "userDelete1RequestHandler"
 
   if (request.method !== "POST") {
-    return apiError.response("auth", op, `${commonApiErrorMessages.methodNotAllowed}: expected POST`, 400)
+    return apiError.response("auth.method-not-allowed", op, `${commonApiErrorMessages.methodNotAllowed}: expected POST`)
   }
 
   try {
     const body = await request.text()
     if (!body) {
-      return apiError.response("auth", op, String(commonApiErrorMessages.emptyBody), 400)
+      return apiError.response("auth.bad-request", op, String(commonApiErrorMessages.emptyBody))
     }
 
     let args: { token: string }
@@ -21,19 +21,19 @@ export async function userDelete1RequestHandler(ctx: ActionCtx, request: Request
       const parsed = JSON.parse(body)
       args = { token: parsed.token }
     } catch {
-      return apiError.response("auth", op, "Invalid JSON body", 400)
+      return apiError.response("auth.bad-request", op, "Invalid JSON body")
     }
 
     const result = await ctx.runMutation(api.auth.userDeleteSoftMutation, args)
 
     if (!result.success) {
-      return apiError.fromResultError("auth", result, 400)
+      return apiError.fromResultError("auth.bad-request", result)
     }
 
     return Response.json({ success: true, data: null })
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error"
     console.error(op, errorMessage)
-    return apiError.response("auth", op, errorMessage, 500)
+    return apiError.response("auth.internal", op, errorMessage)
   }
 }

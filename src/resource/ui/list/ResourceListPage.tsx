@@ -1,5 +1,5 @@
 import { mdiPlus } from "@adaptive-ds/mdi/mdiPlus.js"
-import { createEffect, For, Match, Switch } from "solid-js"
+import { For, Match, Switch } from "solid-js"
 import type { Result } from "#result"
 import { pageDemoHref } from "#src/app/demos/pageDemoHref.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
@@ -7,7 +7,7 @@ import { NavResource } from "#src/app/nav/NavResource.tsx"
 import type { ResourceModel } from "#src/resource/model/ResourceModel.ts"
 import { resourceFilterFields } from "#src/resource/model_field/resourceFilterFields.ts"
 import { resourceListLoaderStateCreate } from "#src/resource/ui/list/resourceListLoaderStateCreate.ts"
-import { resourceNameAddList } from "#src/resource/ui/resourceNameRecordSignal.ts"
+import { resourceListStateCreate } from "#src/resource/ui/list/resourceListStateCreate.ts"
 import { ResourceCardLink } from "#src/resource/ui/shared/ResourceCardLink.tsx"
 import { urlResourceAdd } from "#src/resource/url/urlResource.ts"
 import { NoData } from "#src/ui/illustrations/NoData.tsx"
@@ -113,13 +113,7 @@ function resultHasNoResources(
 }
 
 function ResourceList(p: ResourceListProps) {
-  createEffect(() => {
-    if (p.demo) return
-    const got = p.resources
-    if (!got) return
-    if (got.length <= 0) return
-    resourceNameAddList(got)
-  })
+  resourceListStateCreate({ demo: () => p.demo, resources: () => p.resources })
   return (
     <div class={classArr(classesGridCols2xl, "gap-4")}>
       <For each={p.resources} fallback={p.demo ? <NoResources /> : undefined}>

@@ -52,6 +52,7 @@ export const resourceOrgResourcesDeleteInternalMutation = internalMutation({
 })
 
 export async function resourceDeleteFn(ctx: MutationCtx, args: ResourceDeleteValidatorType): Promise<null> {
+  const op = "resourceDeleteFn"
   const resourceId = args.resourceId
   const resource = await ctx.db
     .query("resources")
@@ -64,6 +65,7 @@ export async function resourceDeleteFn(ctx: MutationCtx, args: ResourceDeleteVal
 
   if (!resource.deletedAt) {
     await ctx.db.patch("resources", resource._id, { deletedAt: nowIso() })
+    console.info(op, { resourceId })
   }
   await resourceFileRelationshipsDeleteFn(ctx, {
     resourceId,

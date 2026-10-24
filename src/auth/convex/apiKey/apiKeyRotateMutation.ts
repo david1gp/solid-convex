@@ -43,5 +43,6 @@ async function apiKeyRotateMutationFn(
   if (key.expiresAt) {
     await ctx.scheduler.runAt(new Date(key.expiresAt), internal.auth.apiKeyExpireInternalMutation, { id })
   }
+  console.info("apiKeyRotateMutation", { userId: args.userId })
   return createResult({ id, credential: generated.credential })
 }

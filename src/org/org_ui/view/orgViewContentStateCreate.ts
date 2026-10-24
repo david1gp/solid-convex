@@ -1,14 +1,18 @@
 import { createEffect, onCleanup } from "solid-js"
+import * as v from "valibot"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { appIcons } from "#src/app/icon/appIcons.ts"
 import type { OrgViewContentProps } from "#src/org/org_ui/view/OrgViewContentProps.ts"
 import { createSignalObject, type SignalObject } from "#ui/utils/createSignalObject.ts"
 
+const orgTabSchema = v.picklist(["overview", "teams", "members", "invitations"])
+
 function initialTabGet(): string {
   if (typeof window === "undefined") return "overview"
   try {
     const tab = new URL(window.location.href).searchParams.get("tab")
-    return tab || "overview"
+    const parsed = v.safeParse(orgTabSchema, tab)
+    return parsed.success ? parsed.output : "overview"
   } catch {
     return "overview"
   }

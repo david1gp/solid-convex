@@ -17,7 +17,7 @@ export async function signInViaPw1RequestHandler(ctx: ActionCtx, request: Reques
   const op = "signInPw1HttpHandler"
 
   if (request.method !== "POST") {
-    return apiError.response("auth", op, commonApiErrorMessages.methodNotAllowed, 400)
+    return apiError.response("auth.method-not-allowed", op, commonApiErrorMessages.methodNotAllowed)
   }
 
   const body = await request.text()
@@ -25,7 +25,7 @@ export async function signInViaPw1RequestHandler(ctx: ActionCtx, request: Reques
     const errorMessage = commonApiErrorMessages.emptyBody
     const errorResult = createError(op, errorMessage, body)
     console.warn(errorResult)
-    return apiError.fromResultError("auth", errorResult, 400)
+    return apiError.fromResultError("auth.bad-request", errorResult)
   }
   const schema = a.pipe(a.string(), a.parseJson(), signInViaPwSchema)
   const validation = a.safeParse(schema, body)
@@ -33,7 +33,7 @@ export async function signInViaPw1RequestHandler(ctx: ActionCtx, request: Reques
     const errorMessage = commonApiErrorMessages.schemaValidationFailed + ": " + a.summarize(validation.issues)
     const errorResult = createError(op, errorMessage, body)
     console.warn(errorResult)
-    return apiError.fromResultError("auth", errorResult, 400)
+    return apiError.fromResultError("auth.bad-request", errorResult)
   }
 
   const { email, pw } = validation.output
@@ -46,14 +46,14 @@ export async function signInViaPw1RequestHandler(ctx: ActionCtx, request: Reques
     const errorMessage = "User not found"
     const errorResult = createError(op, errorMessage, email)
     console.warn(errorResult)
-    return apiError.fromResultError("auth", errorResult, 404)
+    return apiError.fromResultError("auth.not-found", errorResult)
   }
 
   if (user.deletedAt) {
     const errorMessage = "User account has been deleted"
     const errorResult = createError(op, errorMessage, email)
     console.warn(errorResult)
-    return apiError.fromResultError("auth", errorResult, 403)
+    return apiError.fromResultError("auth.forbidden", errorResult)
   }
 
   // Verify password
@@ -61,7 +61,7 @@ export async function signInViaPw1RequestHandler(ctx: ActionCtx, request: Reques
     const errorMessage = "Password not set"
     const errorResult = createError(op, errorMessage, email)
     console.warn(errorResult)
-    return apiError.fromResultError("auth", errorResult, 400)
+    return apiError.fromResultError("auth.bad-request", errorResult)
   }
 
   const pwVerifyResult = await verifyHashedPassword2(pw, user.hashedPassword)
@@ -69,7 +69,7 @@ export async function signInViaPw1RequestHandler(ctx: ActionCtx, request: Reques
     const errorMessage = "Invalid password"
     const errorResult = createError(op, errorMessage)
     console.warn(errorResult)
-    return apiError.fromResultError("auth", errorResult, 401)
+    return apiError.fromResultError("auth.unauthorized", errorResult)
   }
 
   // Check for org membership
@@ -82,7 +82,7 @@ export async function signInViaPw1RequestHandler(ctx: ActionCtx, request: Reques
   if (!tokenResult.success) {
     const errorResult = tokenResult
     console.warn(errorResult)
-    return apiError.fromResultError("auth", errorResult, 500)
+    return apiError.fromResultError("auth.internal", errorResult)
   }
   const token = tokenResult.data
 

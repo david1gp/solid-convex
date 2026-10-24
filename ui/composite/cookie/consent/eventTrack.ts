@@ -1,15 +1,15 @@
 import { type ConsentConfig, defaultConsentConfig } from "./consentConfig.js"
-import { ensureGtag } from "./ensureGtag.js"
-import { hasAnyTrackingConsent } from "./hasAnyTrackingConsent.js"
+import { gtagEnsure } from "./gtagEnsure.js"
+import { consentHasAnyTracking } from "./consentHasAnyTracking.js"
 
-export function trackEvent(
+export function eventTrack(
   name: string,
   params: Record<string, unknown> = {},
   config: ConsentConfig = defaultConsentConfig,
 ): boolean {
-  if (typeof window === "undefined" || !hasAnyTrackingConsent(config)) return false
+  if (typeof window === "undefined" || !consentHasAnyTracking(config)) return false
 
-  ensureGtag()
+  gtagEnsure()
   window.gtag?.("event", name, params)
   return true
 }

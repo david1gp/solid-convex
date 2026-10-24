@@ -1,16 +1,16 @@
 import { onCleanup, onMount } from "solid-js"
 import { createSignalObject } from "#ui/utils/createSignalObject.ts"
-import { acceptAllConsent } from "./consent/acceptAllConsent.js"
+import { consentAcceptAll } from "./consent/consentAcceptAll.js"
 import type { ConsentCategory } from "./consent/consentCategory.js"
 import type { ConsentChoices } from "./consent/consentChoices.js"
-import { type ConsentConfig, resolveConsentConfig } from "./consent/consentConfig.js"
+import { type ConsentConfig, consentConfigResolve } from "./consent/consentConfig.js"
 import type { ConsentPreferences } from "./consent/consentPreferences.js"
-import { enableGoogleTracking } from "./consent/enableGoogleTracking.js"
-import { getStoredConsent } from "./consent/getStoredConsent.js"
+import { googleTrackingEnable } from "./consent/googleTrackingEnable.js"
+import { consentGetStored } from "./consent/consentGetStored.js"
 import type { GoogleTrackingConfig } from "./consent/googleTrackingConfig.js"
-import { initConsentMode } from "./consent/initConsentMode.js"
-import { rejectAllConsent } from "./consent/rejectAllConsent.js"
-import { saveConsent } from "./consent/saveConsent.js"
+import { consentModeInit } from "./consent/consentModeInit.js"
+import { consentRejectAll } from "./consent/consentRejectAll.js"
+import { consentSave } from "./consent/consentSave.js"
 import { type CookieBannerLabels, defaultCookieBannerLabels } from "./cookieBannerLabels.js"
 
 export function cookieBannerStateCreate(p: {
@@ -35,7 +35,7 @@ export function cookieBannerStateCreate(p: {
     ...defaultCookieBannerLabels,
     ...p.labels?.(),
   })
-  const config = (): ConsentConfig => resolveConsentConfig(p.consentConfig?.())
+  const config = (): ConsentConfig => consentConfigResolve(p.consentConfig?.())
   const trackingConfig = (): GoogleTrackingConfig => ({
     gaId: p.gaId?.(),
     adsId: p.adsId?.(),
@@ -54,22 +54,22 @@ export function cookieBannerStateCreate(p: {
   }
 
   onMount(() => {
-    initConsentMode()
+    consentModeInit()
 
-    const stored = getStoredConsent(config())
+    const stored = consentGetStored(config())
     if (stored) {
       choices.set({
         statistics: stored.statistics,
         marketing: stored.marketing,
       })
       // Returning visitor with prior consent — re-arm Google tracking on this page load.
-      enableGoogleTracking(trackingConfig(), config())
+      googleTrackingEnable(trackingConfig(), config())
     } else {
       setVisible(true)
     }
 
     const openPreferences = () => {
-      const current = getStoredConsent(config())
+      const current = consentGetStored(config())
       if (current)
         choices.set({
           statistics: current.statistics,
@@ -90,21 +90,21 @@ export function cookieBannerStateCreate(p: {
   }
 
   const applyAndClose = (choice: ConsentChoices) => {
-    const preferences = saveConsent(choice, config())
-    enableGoogleTracking(trackingConfig(), config())
+    const preferences = consentSave(choice, config())
+    googleTrackingEnable(trackingConfig(), config())
     p.onConsentChange?.(preferences)
     close()
   }
 
   const handleAcceptAll = () => {
-    const preferences = acceptAllConsent(config())
-    enableGoogleTracking(trackingConfig(), config())
+    const preferences = consentAcceptAll(config())
+    googleTrackingEnable(trackingConfig(), config())
     p.onConsentChange?.(preferences)
     close()
   }
 
   const handleRejectAll = () => {
-    const preferences = rejectAllConsent(config())
+    const preferences = consentRejectAll(config())
     p.onConsentChange?.(preferences)
     close()
   }

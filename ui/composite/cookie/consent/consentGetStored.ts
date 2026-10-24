@@ -1,9 +1,9 @@
-import { buildPreferences } from "./buildPreferences.js"
+import { preferencesBuild } from "./preferencesBuild.js"
 import { type ConsentConfig, defaultConsentConfig } from "./consentConfig.js"
 import type { ConsentPreferences } from "./consentPreferences.js"
 
 /** Read + normalize the persisted consent, or `null` when none is stored. */
-export function getStoredConsent(config: ConsentConfig = defaultConsentConfig): ConsentPreferences | null {
+export function consentGetStored(config: ConsentConfig = defaultConsentConfig): ConsentPreferences | null {
   if (typeof window === "undefined") return null
 
   try {
@@ -13,7 +13,7 @@ export function getStoredConsent(config: ConsentConfig = defaultConsentConfig): 
     const parsed = JSON.parse(raw) as Partial<ConsentPreferences> | null
     if (!parsed || typeof parsed !== "object") return null
 
-    return buildPreferences({
+    return preferencesBuild({
       statistics: parsed.statistics === true,
       marketing: parsed.marketing === true,
     })

@@ -1,9 +1,9 @@
 import { type ConsentConfig, defaultConsentConfig } from "./consentConfig.js"
-import { trackEvent } from "./trackEvent.js"
+import { eventTrack } from "./eventTrack.js"
 
-export function trackPageView(path?: string, config: ConsentConfig = defaultConsentConfig): boolean {
+export function pageViewTrack(path?: string, config: ConsentConfig = defaultConsentConfig): boolean {
   const page = path ?? (typeof window !== "undefined" ? window.location.pathname + window.location.search : undefined)
-  return trackEvent(
+  return eventTrack(
     "page_view",
     {
       page_path: page,

@@ -29,6 +29,8 @@ const authSessionDataSchemaFields = {
   loginMethod: loginMethodSchema,
   token: tokenSchema,
   expiresAt: dateTimeSchema,
+  e2eRunId: a.optional(a.string()),
+  e2eOwnedAt: a.optional(a.number()),
 } as const
 
 const authRateLimitDataSchemaFields = {
@@ -98,7 +100,10 @@ export const authTables = {
     ...valibotToConvex(fieldsSchemaCreatedAtUpdatedAtDeletedAt),
   })
     //
-    .index("userId", ["userId"]),
+    .index("userId", ["userId"])
+    .index("token", ["token"])
+    .index("userIdAndE2eOwnedAt", ["userId", "e2eOwnedAt"])
+    .index("userIdAndE2eRun", ["userId", "e2eRunId", "e2eOwnedAt"]),
 
   authRateLimits: defineTable({
     ...valibotToConvex(authRateLimitDataSchemaFields),

@@ -1,8 +1,10 @@
 import { createHash, randomUUID } from "node:crypto"
-import { readdir, readFile, rm } from "node:fs/promises"
+import { spawn } from "node:child_process"
+import { mkdir, readdir, readFile, rm } from "node:fs/promises"
 import { join, resolve } from "node:path"
 import * as v from "valibot"
-import { type E2eCheckpoint, type E2eOwnedResource, e2eCheckpointSchema } from "./config/e2eCheckpointSchema.ts"
+import { type E2eCheckpoint, e2eCheckpointSchema } from "./config/e2eCheckpointSchema.ts"
+import type { E2eOwnedResource } from "./config/e2eOwnedResourceSchema.ts"
 import { e2eCheckpointWrite } from "./config/e2eCheckpointWrite.ts"
 import { e2eSuitePathsGet } from "./e2eSuitePathsGet.ts"
 
@@ -19,6 +21,7 @@ type E2eRunnerOptions = {
     context: { baseUrl: string; target: "production" | "dev"; checkpointPath: string; runId: string },
   ) => Promise<void>
   cleanupResource?: (resource: E2eOwnedResource, checkpoint: E2eCheckpoint) => Promise<void>
+  cleanupStale?: () => Promise<void>
 }
 
 async function e2eCheckpointRead(
@@ -59,6 +62,15 @@ async function e2eCheckpointRead(
       resource.createdAt > now
     )
       throw new Error(`Invalid owned resource identity or creation time at ${path}`)
+    if (resource.resourceType === "auth-session" && (
+      !resource.sessionProof ||
+      resource.resourceId !== `e2e-${checkpoint.runId}-session-${resource.sessionProof.sessionId}` ||
+      resource.createdAt !== resource.sessionProof.creationTime ||
+      Date.parse(resource.sessionProof.createdAt) < checkpoint.createdAt ||
+      Date.parse(resource.sessionProof.createdAt) > now
+    )) throw new Error(`Invalid owned session proof at ${path}`)
+    if (resource.resourceType !== "auth-session" && resource.sessionProof)
+      throw new Error(`Unexpected session proof at ${path}`)
   }
   let canonicalBaseUrl: string
   try {
@@ -118,7 +130,7 @@ async function e2eCheckpointSweepExpired(
     const path = join(checkpointDirectory, entry.name)
     try {
       const checkpoint = await e2eCheckpointRead(path, checkpointDirectory, now())
-      if (checkpoint && now() - checkpoint.createdAt >= checkpointLifetimeMs)
+      if (checkpoint && now() - checkpoint.createdAt > checkpointLifetimeMs)
         await e2eCheckpointRemove(path, checkpoint, cleanupResource)
     } catch (error) {
       errors.push(error)
@@ -127,7 +139,7 @@ async function e2eCheckpointSweepExpired(
   if (errors.length) throw new AggregateError(errors, "One or more expired E2E checkpoints could not be swept")
 }
 
-export async function e2eRunnerRun(options: E2eRunnerOptions): Promise<void> {
+async function e2eRunnerRunLocked(options: E2eRunnerOptions): Promise<void> {
   const now = options.now ?? Date.now
   const suitePaths = (options.suitePaths ?? e2eSuitePathsGet()).map((path) => path.replaceAll("\\", "/"))
   const suiteIds = suitePaths
@@ -143,12 +155,9 @@ export async function e2eRunnerRun(options: E2eRunnerOptions): Promise<void> {
   try {
     if (suitePaths.length === 0) throw new Error("No E2E workflow suites were discovered")
     checkpoint = await e2eCheckpointRead(checkpointPath, options.checkpointDirectory, now())
-    if (
-      checkpoint &&
-      (checkpoint.environment !== target ||
-        checkpoint.baseUrl !== baseUrl ||
-        now() - checkpoint.createdAt >= checkpointLifetimeMs)
-    ) {
+    if (checkpoint && (checkpoint.environment !== target || checkpoint.baseUrl !== baseUrl))
+      throw new Error("E2E checkpoint target does not match the requested target")
+    if (checkpoint && now() - checkpoint.createdAt > checkpointLifetimeMs) {
       await e2eCheckpointRemove(checkpointPath, checkpoint, options.cleanupResource)
       checkpoint = undefined
     }
@@ -172,6 +181,7 @@ export async function e2eRunnerRun(options: E2eRunnerOptions): Promise<void> {
       if (!updatedCheckpoint) throw new Error(`E2E checkpoint disappeared during suite execution: ${suiteId}`)
       if (
         updatedCheckpoint.runId !== checkpoint.runId ||
+        updatedCheckpoint.createdAt !== checkpoint.createdAt ||
         updatedCheckpoint.environment !== target ||
         updatedCheckpoint.baseUrl !== baseUrl
       )
@@ -188,7 +198,12 @@ export async function e2eRunnerRun(options: E2eRunnerOptions): Promise<void> {
   } catch (error) {
     errors.push(error)
   }
-  if (succeeded && checkpoint) {
+  try {
+    await options.cleanupStale?.()
+  } catch (error) {
+    errors.push(error)
+  }
+  if (succeeded && checkpoint && errors.length === 0) {
     try {
       await e2eCheckpointRemove(checkpointPath, checkpoint, options.cleanupResource)
     } catch (error) {
@@ -197,4 +212,30 @@ export async function e2eRunnerRun(options: E2eRunnerOptions): Promise<void> {
   }
   if (errors.length === 1) throw errors[0]
   if (errors.length > 1) throw new AggregateError(errors, "E2E execution and cleanup failed")
+}
+
+export async function e2eRunnerRun(options: E2eRunnerOptions): Promise<void> {
+  const suitePaths = options.suitePaths ?? e2eSuitePathsGet()
+  if (suitePaths.some((path) => !path.trim())) throw new Error("E2E suite identities must be nonempty")
+  if (new Set(suitePaths.map((path) => path.replaceAll("\\", "/"))).size !== suitePaths.length)
+    throw new Error("E2E suite identities must be distinct")
+  await mkdir(options.checkpointDirectory, { recursive: true, mode: 0o700 })
+  const lockPath = `${options.checkpointDirectory}.lock`
+  const lock = spawn("flock", ["-n", lockPath, "sh", "-c", "printf locked; cat >/dev/null"], {
+    stdio: ["pipe", "pipe", "ignore"],
+  })
+  await new Promise<void>((resolve, reject) => {
+    lock.once("error", reject)
+    lock.once("exit", () => reject(new Error(`Unable to acquire E2E invocation lock: ${lockPath}`)))
+    lock.stdout.once("data", () => resolve())
+  })
+  try {
+    await e2eRunnerRunLocked(options)
+  } finally {
+    lock.stdin.end()
+    await new Promise<void>((resolve) => {
+      if (lock.exitCode !== null) return resolve()
+      lock.once("exit", () => resolve())
+    })
+  }
 }

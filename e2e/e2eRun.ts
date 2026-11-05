@@ -2,6 +2,7 @@ import { spawnSync } from "node:child_process"
 import { resolve } from "node:path"
 import { e2eBaseUrlGet } from "./config/e2eBaseUrlGet.ts"
 import { e2eRunnerRun } from "./e2eRunnerRun.ts"
+import { e2eSessionCleanupCreate } from "./sessionCleanup/e2eSessionCleanupCreate.ts"
 
 const targetArgument = process.argv[2]
 if (targetArgument !== "production" && targetArgument !== "dev")
@@ -10,11 +11,17 @@ if (targetArgument !== "production" && targetArgument !== "dev")
 const target: "production" | "dev" = targetArgument
 const baseUrl = e2eBaseUrlGet(process.env, target)
 const checkpointDirectory = "/tmp/opencode/solid-convex/e2e"
+const cleanup = {
+  production: e2eSessionCleanupCreate({ target: "production" }),
+  dev: e2eSessionCleanupCreate({ target: "dev" }),
+}
 
 await e2eRunnerRun({
   target,
   baseUrl,
   checkpointDirectory,
+  cleanupResource: (resource, checkpoint) => cleanup[checkpoint.environment].cleanupResource(resource, checkpoint),
+  cleanupStale: () => cleanup[target].cleanupStale(),
   runSuite: async (suitePath, context) => {
     console.info(`E2E [${target}] ${suitePath}`)
     const result = spawnSync("bunx", ["rstest", "run", "--config", "e2e/rstest.config.ts", suitePath], {

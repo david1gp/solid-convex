@@ -8,6 +8,7 @@ After=network-online.target solid-convex-backend.service
 Wants=solid-convex-backend.service
 
 [Service]
+Nice=7
 Type=simple
 WorkingDirectory=%h/solid-convex
 Environment=PATH=%h/.local/bin:%h/.bun/bin:/usr/local/bin:/usr/bin:/bin

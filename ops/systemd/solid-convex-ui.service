@@ -5,6 +5,7 @@ Description=solid-convex demo frontend dev server (rsbuild, :3016)
 After=network-online.target
 
 [Service]
+Nice=7
 Type=simple
 WorkingDirectory=%h/solid-convex
 Environment=PATH=%h/.local/bin:%h/.bun/bin:/usr/local/bin:/usr/bin:/bin

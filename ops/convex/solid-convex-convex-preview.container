@@ -1,0 +1,33 @@
+# Tracked source for the solid-convex isolated preview Convex backend quadlet.
+# Symlinked into ~/.config/containers/systemd by ops/systemd/install.bash
+# (the podman-user-generator turns it into solid-convex-convex-preview.service).
+[Unit]
+Description=solid-convex isolated preview Convex backend
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+ContainerName=solid-convex-convex-preview
+Image=ghcr.io/get-convex/convex-backend:latest
+AutoUpdate=registry
+PublishPort=127.0.0.1:3226:3210
+PublishPort=127.0.0.1:3227:3211
+Volume=solid-convex-convex-preview-data.volume:/convex/data
+EnvironmentFile=/home/leo/projects/solid-convex/.env.development
+Environment=DOCUMENT_RETENTION_DELAY=172800
+Environment=RUST_LOG=info
+Notify=healthy
+HealthCmd=curl -f http://localhost:3210/version
+HealthInterval=5s
+HealthStartPeriod=10s
+
+[Service]
+Nice=4
+MemoryHigh=6G
+MemoryMax=8G
+Restart=always
+RestartSec=2
+TimeoutStartSec=300
+
+[Install]
+WantedBy=default.target

@@ -32,7 +32,7 @@ done
 
 # Podman quadlets — the Convex backend + dashboard containers and their volume.
 mkdir -p "$QUADLET_DIR"
-for quadlet in solid-convex-backend.container solid-convex-dashboard.container solid-convex-data.volume; do
+for quadlet in solid-convex-backend.container solid-convex-dashboard.container solid-convex-data.volume solid-convex-convex-preview.container solid-convex-convex-preview-data.volume; do
   ln -sf "$REPO_DIR/ops/convex/$quadlet" "$QUADLET_DIR/$quadlet"
   echo "linked $quadlet"
 done

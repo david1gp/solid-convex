@@ -34,7 +34,7 @@ export function CorvuPopover(p: CorvuPopoverProps) {
       floatingOptions={{
         offset: 8,
         flip: true,
-        shift: true,
+        shift: { padding: 8 },
       }}
       open={p.open}
       onOpenChange={p.onOpenChange}

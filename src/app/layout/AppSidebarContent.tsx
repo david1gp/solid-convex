@@ -1,12 +1,11 @@
 import { mdiAccountOutline } from "@adaptive-ds/mdi/mdiAccountOutline.js"
 import { mdiCogOutline } from "@adaptive-ds/mdi/mdiCogOutline.js"
-import { mdiKeyOutline } from "@adaptive-ds/mdi/mdiKeyOutline.js"
 import { mdiLogout } from "@adaptive-ds/mdi/mdiLogout.js"
 import { Link } from "@tanstack/solid-router"
 import { For, type JSX, Show } from "solid-js"
 import { urlOverview } from "#src/app/pages/urlOverview.ts"
 import { appNameClient } from "#src/app/text/appName.ts"
-import { urlUserProfileMe, urlUserProfileMeApiKeys, urlUserProfileMeEdit } from "#src/auth/url/pageRouteAuth.ts"
+import { urlUserProfileMe, urlUserProfileMeEdit } from "#src/auth/url/pageRouteAuth.ts"
 import { ttt } from "#ui/i18n/ttt.ts"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
@@ -132,14 +131,6 @@ export function AppSidebarContent(p: {
                     class="min-h-11 w-full justify-start gap-2 no-underline hover:no-underline"
                   >
                     {ttt("Settings")}
-                  </LinkButtonInternal>
-                  <LinkButtonInternal
-                    to={urlUserProfileMeApiKeys()}
-                    icon={mdiKeyOutline}
-                    variant={buttonVariant.outline}
-                    class="min-h-11 w-full justify-start gap-2 no-underline hover:no-underline"
-                  >
-                    {ttt("API Keys")}
                   </LinkButtonInternal>
                   <ButtonIcon
                     icon={mdiLogout}

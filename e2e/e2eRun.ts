@@ -1,13 +1,16 @@
 import { spawnSync } from "node:child_process"
 import { resolve } from "node:path"
 import { e2eBaseUrlGet } from "./config/e2eBaseUrlGet.ts"
+import { type E2eTarget, e2eTargetParse } from "./config/e2eTargetGet.ts"
 import { e2eRunnerRun } from "./e2eRunnerRun.ts"
 
 const targetArgument = process.argv[2]
-if (targetArgument !== "production" && targetArgument !== "dev")
-  throw new Error("Usage: bun e2e/e2eRun.ts <production|dev>")
-
-const target: "production" | "dev" = targetArgument
+let target: E2eTarget
+try {
+  target = e2eTargetParse(targetArgument)
+} catch (error) {
+  throw new Error(`Usage: bun e2e/e2eRun.ts <dev|production>. ${(error as Error).message}`)
+}
 const baseUrl = e2eBaseUrlGet(process.env, target)
 const checkpointDirectory = "/tmp/opencode/solid-convex/e2e"
 

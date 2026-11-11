@@ -6,7 +6,7 @@ import { assignmentTargetLabelFormat } from "#src/assignment/ui/assignmentTarget
 import { assignmentTargetSelectorStateCreate } from "#src/assignment/ui/assignmentTargetSelectorStateCreate.ts"
 import type { SelectorKindChoice } from "#src/assignment/ui/SelectorKindChoice.ts"
 import { Button } from "#ui/interactive/button/Button.jsx"
-import { buttonSize, buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { classMerge } from "#ui/utils/classMerge.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
@@ -49,7 +49,6 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
               <Button
                 type="button"
                 variant={state.selectedKind() === opt.kind ? buttonVariant.filled : buttonVariant.outline}
-                size={buttonSize.sm}
                 disabled={state.disabled()}
                 onClick={() => state.selectKind(opt.kind)}
               >
@@ -85,7 +84,6 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
               <Button
                 type="button"
                 variant={buttonVariant.outline}
-                size={buttonSize.sm}
                 onClick={state.loadMoreOrgs}
                 disabled={state.disabled()}
               >
@@ -122,8 +120,7 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
                 <Button
                   type="button"
                   variant={buttonVariant.ghost}
-                  size={buttonSize.sm}
-                  onClick={state.loadMoreOrgs}
+                    onClick={state.loadMoreOrgs}
                   disabled={state.disabled()}
                 >
                   Load more
@@ -154,8 +151,7 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
                 <Button
                   type="button"
                   variant={buttonVariant.outline}
-                  size={buttonSize.sm}
-                  onClick={state.loadMoreTeams}
+                    onClick={state.loadMoreTeams}
                   disabled={state.disabled()}
                 >
                   Load more
@@ -231,8 +227,7 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
                 <Button
                   type="button"
                   variant={buttonVariant.outline}
-                  size={buttonSize.sm}
-                  onClick={state.loadMoreProjects}
+                    onClick={state.loadMoreProjects}
                   disabled={state.disabled()}
                 >
                   Load more
@@ -324,8 +319,7 @@ export function AssignmentTargetSelector(props: AssignmentSelectorComponentProps
                 <Button
                   type="button"
                   variant={buttonVariant.outline}
-                  size={buttonSize.sm}
-                  onClick={state.loadMoreNotes}
+                    onClick={state.loadMoreNotes}
                   disabled={state.disabled()}
                 >
                   Load more

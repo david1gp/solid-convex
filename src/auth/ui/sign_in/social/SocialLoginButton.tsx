@@ -2,14 +2,13 @@ import type { SocialLoginProvider } from "#src/auth/model_field/socialLoginProvi
 import { socialProviderButtonProps } from "#src/auth/ui/sign_in/social/SocialProviderButtonProps.ts"
 import { urlAuthProvider } from "#src/auth/url/urlAuthProvider.ts"
 import { urlSignInRedirectUrl } from "#src/auth/url/urlSignInRedirectUrl.ts"
-import { type ButtonSize, buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonExternal } from "#ui/interactive/link/LinkButton.jsx"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import { capitalizeFirstLetter } from "#utils/text/capitalizeFirstLetter.js"
 
 export interface SocialLoginButtonProps extends MayHaveClass {
   provider: SocialLoginProvider
-  size?: ButtonSize
 }
 
 export function SocialLoginButton(p: SocialLoginButtonProps) {
@@ -23,7 +22,6 @@ export function SocialLoginButton(p: SocialLoginButtonProps) {
       href={url}
       icon={mdiIconPath}
       iconClass={"fill-white"}
-      size={p.size}
       style={{ background: background }}
       variant={buttonVariant.filledIndigo}
       class={p.class}

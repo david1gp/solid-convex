@@ -51,12 +51,11 @@ export function AppThemeSegmentedControl() {
         {(option) => (
           <Button
             type="button"
-            size="sm"
             variant={themeSignal.get() === option.value ? buttonVariant.subtle : buttonVariant.ghost}
             aria-pressed={themeSignal.get() === option.value}
             title={themeLabel(option.value)}
             onClick={() => selectTheme(option.value)}
-            class="min-w-0 justify-center gap-1 px-1"
+            class="min-w-0 justify-center gap-1"
           >
             <Icon path={themeIcon(option.value)} class="size-4 shrink-0" />
             <span class="whitespace-nowrap">{themeLabel(option.value)}</span>

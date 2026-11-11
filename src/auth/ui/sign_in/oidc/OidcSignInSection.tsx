@@ -4,7 +4,7 @@ import { oidcSignInLabel } from "#src/app/config/oidcSignInLabel.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { AuthSectionCard } from "#src/auth/ui/shared/AuthSectionCard.tsx"
 import { urlSignInViaOidc } from "#src/auth/url/urlSignInViaOidc.ts"
-import { buttonSize, buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonExternal } from "#ui/interactive/link/LinkButton.jsx"
 
 export function OidcSignInSection() {
@@ -19,7 +19,6 @@ export function OidcSignInSection() {
     >
       <LinkButtonExternal
         href={urlSignInViaOidc()}
-        size={buttonSize.default}
         variant={buttonVariant.filledIndigo}
         class="w-full"
         aria-label={label}

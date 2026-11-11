@@ -30,7 +30,7 @@ function ChildrenLeft(p: DemoNavDataProps) {
         <ChildrenLeftComp {...p} />
       </Show>
       <NavSeparatingSlash />
-      <LinkButtonInternal variant={buttonVariant.link} to="/demos" class="text-sm font-medium">
+      <LinkButtonInternal variant={buttonVariant.link} to="/demos" class="font-medium">
         All demos
       </LinkButtonInternal>
     </>
@@ -44,7 +44,7 @@ function ChildrenLeftCategory(s: DemoNavDataProps) {
       <LinkButtonInternal
         variant={buttonVariant.link}
         to={`${s.demoPrefix}/${s.category}/`}
-        class="text-sm font-medium"
+        class="font-medium"
       >
         {s.category}
       </LinkButtonInternal>
@@ -70,7 +70,7 @@ function ComponentPopover(
     .flatMap(([category, tree]) => objectKeys(tree).map((compName) => `${s.demoPrefix}/${category}/${compName}`))
   if (!links || links.length <= 0) return null
   return (
-    <CorvuPopover variant={buttonVariant.ghost} buttonChildren={s.compName} class="text-sm font-medium">
+    <CorvuPopover variant={buttonVariant.ghost} buttonChildren={s.compName} class="font-medium">
       <LinkBlock header={s.category} removeUrlPrefix={`${s.demoPrefix}/${s.category}/`} links={links} />
     </CorvuPopover>
   )

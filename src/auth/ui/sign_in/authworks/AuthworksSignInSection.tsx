@@ -4,7 +4,7 @@ import { enableAuthworks } from "#src/app/config/enableAuthworks.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { AuthSectionCard } from "#src/auth/ui/shared/AuthSectionCard.tsx"
 import { urlSignInViaAuthworks } from "#src/auth/url/urlSignInViaAuthworks.ts"
-import { buttonSize, buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonExternal } from "#ui/interactive/link/LinkButton.jsx"
 
 export function AuthworksSignInSection() {
@@ -19,7 +19,6 @@ export function AuthworksSignInSection() {
     >
       <LinkButtonExternal
         href={urlSignInViaAuthworks()}
-        size={buttonSize.default}
         variant={buttonVariant.filledIndigo}
         class="w-full"
         aria-label={label}

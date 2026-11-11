@@ -152,7 +152,6 @@ export function UserManagementPage() {
                 <div class="flex justify-between items-center pt-2 border-t border-border">
                   <Button
                     variant={buttonVariant.outline}
-                    size="sm"
                     onClick={state.pagination.previous}
                     disabled={!state.pagination.canPrevious()}
                   >
@@ -160,7 +159,6 @@ export function UserManagementPage() {
                   </Button>
                   <Button
                     variant={buttonVariant.outline}
-                    size="sm"
                     onClick={state.pagination.next}
                     disabled={!state.pagination.canNext()}
                   >
@@ -214,7 +212,7 @@ export function UserManagementPage() {
                           </Show>
                         </dl>
                       </div>
-                      <Button variant={buttonVariant.ghost} size="sm" onClick={state.deselectUser}>
+                      <Button variant={buttonVariant.ghost} onClick={state.deselectUser}>
                         Close
                       </Button>
                     </div>
@@ -241,7 +239,6 @@ export function UserManagementPage() {
                         <div class="pt-1">
                           <Button
                             variant={buttonVariant.outline}
-                            size="sm"
                             onClick={state.loadMoreTeams}
                             disabled={state.isSaving()}
                           >

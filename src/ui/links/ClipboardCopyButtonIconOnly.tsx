@@ -24,7 +24,6 @@ export function ClipboardCopyButtonIconOnly(p: ClipboardCopyButtonIconOnlyProps)
   return (
     <ButtonIconOnly
       icon={state.copied.get() ? mdiCheckboxMarkedOutline : mdiContentCopy}
-      iconClass="size-5"
       onClick={state.copyData}
       title={state.copied.get() ? ttc("Copied") : state.copyText()}
       disabled={p.disabled || state.copied.get()}

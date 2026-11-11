@@ -6,7 +6,7 @@ import type { FilterFieldConfig } from "#src/ui/input/search/FilterFieldConfig.t
 import { InputS } from "#ui/input/input/InputS.jsx"
 import { SelectSingleNative } from "#ui/input/select/SelectSingleNative.jsx"
 import { ButtonIconOnly } from "#ui/interactive/button/ButtonIconOnly.jsx"
-import { buttonSize, buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { CorvuPopover } from "#ui/interactive/popover/CorvuPopover.jsx"
 import { classArr } from "#ui/utils/classArr.ts"
 import type { SignalObject } from "#ui/utils/createSignalObject.ts"
@@ -37,8 +37,7 @@ export function SearchFilterPopover<T extends Record<string, string>>(p: SearchF
     <CorvuPopover
       icon={mdiFilterVariant}
       variant={buttonVariant.filled}
-      size={buttonSize.minimal}
-      class={classArr("bg-gray-50", "border border-input", "p-2", "rounded-lg", p.class)}
+      class={classArr("bg-gray-50", "border border-input", "rounded-lg", p.class)}
       title={title}
     >
       <h3 class="text-xl font-semibold mb-3">{title}</h3>
@@ -89,11 +88,8 @@ function FilterField(
           <ButtonIconOnly
             variant={buttonVariant.ghost}
             icon={mdiClose}
-            iconClass="size-5"
             onClick={() => onClear(fieldKey)}
             title={ttc("Clear filter")}
-            size={buttonSize.sm}
-            class="p-1.5"
           />
         </Show>
       </div>
@@ -131,11 +127,8 @@ function DateFilterField(
           <ButtonIconOnly
             variant={buttonVariant.ghost}
             icon={mdiClose}
-            iconClass="size-5"
             onClick={() => onClear(fieldKey)}
             title={ttc("Clear filter")}
-            size={buttonSize.sm}
-            class="p-1.5"
           />
         </Show>
       </div>

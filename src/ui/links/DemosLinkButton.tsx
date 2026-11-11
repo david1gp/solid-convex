@@ -12,7 +12,6 @@ export function DemosLinkButton() {
       title="Demos"
       variant={buttonVariant.ghost}
       icon={mdiAlphaDCircleOutline}
-      iconClass="size-7"
     />
   )
 }

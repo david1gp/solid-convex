@@ -16,7 +16,6 @@ export function SiteNavLinkButton(p: SiteNavLinkButtonProps) {
       title={ttc("Go to public website")}
       variant={buttonVariant.ghost}
       icon={mdiAlphaSCircleOutline}
-      iconClass="size-7"
       newTab
     />
   )

@@ -12,7 +12,6 @@ function ButtonIconOnlyAnchor(p: ButtonAnchorProps) {
   const [s, rest] = splitProps(p, [
     "class",
     "variant",
-    "size",
     "newTab",
     "isLoading",
     "icon",

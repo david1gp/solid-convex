@@ -3,7 +3,7 @@ import { ContactSupportLinkButton } from "#src/ui/links/ContactSupportLinkButton
 import { GoBackLinkButton } from "#src/ui/links/GoBackLinkButton.tsx"
 import { GoHomeLinkButton } from "#src/ui/links/GoHomeLinkButton.tsx"
 import styles from "#src/ui/loaders/AnimateFadeIn.module.css"
-import { buttonSize, buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { classMerge } from "#ui/utils/classMerge.ts"
 import type { HasTitle } from "#ui/utils/HasTitle.ts"
@@ -48,9 +48,9 @@ function OptionsSection(p: ErrorPageProps) {
       class={classMerge("container max-w-7xl mx-auto text-center space-y-8", styles.animateFadeIn2s, p.class)}
     >
       {/* <h2>{ttt("If the problem persists contact support")}</h2> */}
-      <GoBackLinkButton size={buttonSize.lg} variant={buttonVariant.link} class="text-xl" iconClass="size-8" />
-      <GoHomeLinkButton size={buttonSize.lg} variant={buttonVariant.link} class="text-xl" iconClass="size-8" />
-      <ContactSupportLinkButton size={buttonSize.lg} variant={buttonVariant.link} class="text-xl" iconClass="size-8" />
+      <GoBackLinkButton variant={buttonVariant.link} />
+      <GoHomeLinkButton variant={buttonVariant.link} />
+      <ContactSupportLinkButton variant={buttonVariant.link} />
     </section>
   )
 }

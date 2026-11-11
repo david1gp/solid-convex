@@ -38,7 +38,6 @@ export const CorvuDialogIcon: Component<CorvuDialogIconProps> = (p) => {
   const [s, rest] = splitProps(p, [
     // button
     "variant",
-    "size",
     "class",
     // state
     "isLoading",

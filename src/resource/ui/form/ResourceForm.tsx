@@ -21,7 +21,7 @@ import { type FormMode, formMode, getFormModeButtonTitle, getFormModeTitle } fro
 import { formModeIcon } from "#ui/input/form/formModeIcon.ts"
 import { LabelPseudo } from "#ui/input/label/LabelPseudo.jsx"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
-import { buttonSize, buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { classMerge } from "#ui/utils/classMerge.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
@@ -106,7 +106,6 @@ export function ResourceForm(p: ResourceFormProps) {
         <div class="hidden md:flex" />
         <ButtonIcon
           type="submit"
-          size={buttonSize.lg}
           icon={formModeIcon[p.mode]}
           variant={
             p.mode === formMode.remove || p.sm.hasErrors() ? buttonVariant.filledRed : buttonVariant.filledIndigo

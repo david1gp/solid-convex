@@ -3,7 +3,7 @@ import { Show } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { ContactSupportLinkButton } from "#src/ui/links/ContactSupportLinkButton.tsx"
 import { GoSignInLinkButton } from "#src/ui/links/GoSignInLinkButton.tsx"
-import { buttonSize, buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { classesPageWrapper } from "#ui/static/page/classesPageWrapper.ts"
@@ -27,22 +27,17 @@ export function SignInErrorView(p: { errorMessage: string | null; signInHref?: s
         <Show
           when={p.signInHref}
           fallback={
-            <GoSignInLinkButton size={buttonSize.lg} variant={buttonVariant.link} class="text-xl" iconClass="size-8" />
+            <GoSignInLinkButton variant={buttonVariant.link} />
           }
         >
           {(href) => (
-            <LinkButtonInternal to={href()} size={buttonSize.lg} variant={buttonVariant.link}>
+            <LinkButtonInternal to={href()} variant={buttonVariant.link}>
               Go to Sign-In demo
             </LinkButtonInternal>
           )}
         </Show>
         <Show when={!p.signInHref}>
-          <ContactSupportLinkButton
-            size={buttonSize.lg}
-            variant={buttonVariant.link}
-            class="text-xl"
-            iconClass="size-8"
-          />
+          <ContactSupportLinkButton variant={buttonVariant.link} />
         </Show>
       </section>
     </div>

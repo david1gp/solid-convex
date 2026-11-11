@@ -3,7 +3,7 @@ import { mdiArrowRight } from "@adaptive-ds/mdi/mdiArrowRight.js"
 import { type Accessor, Show } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
-import { buttonSize, buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { classMerge } from "#ui/utils/classMerge.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
@@ -23,7 +23,6 @@ export function PaginationControls(p: PaginationControlsProps) {
         <ButtonIcon
           icon={mdiArrowLeft}
           variant={buttonVariant.subtle}
-          size={buttonSize.sm}
           onClick={p.previous}
           disabled={p.loading?.() || !p.canPrevious()}
         >
@@ -35,7 +34,6 @@ export function PaginationControls(p: PaginationControlsProps) {
         <ButtonIcon
           iconRight={mdiArrowRight}
           variant={buttonVariant.subtle}
-          size={buttonSize.sm}
           onClick={p.next}
           disabled={p.loading?.() || !p.canNext()}
         >

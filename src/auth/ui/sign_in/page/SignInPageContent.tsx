@@ -18,7 +18,7 @@ import { SignInViaEmailForm } from "#src/auth/ui/sign_in/via_email/SignInViaEmai
 import { signInViaEmailDemoStateCreate } from "#src/auth/ui/sign_in/via_email/signInViaEmailDemoStateCreate.ts"
 import { SignInViaPasswordForm } from "#src/auth/ui/sign_in/via_pw/SignInViaPasswordForm.tsx"
 import { signInViaPasswordDemoStateCreate } from "#src/auth/ui/sign_in/via_pw/signInViaPasswordDemoStateCreate.ts"
-import { buttonSize, buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { classesCardWrapperP4 } from "#ui/static/card/classesCardWrapper.ts"
 import { classesGridCols3lg } from "#ui/static/grid/classesGridCols3lg.ts"
 import { iconGithub } from "#ui/static/icons/iconGithub.ts"
@@ -84,7 +84,7 @@ function AuthSectionSocials() {
       when={enableGithub()}
       fallback={
         <AuthSectionCard icon={iconGoogle} title={ttc("Google")} subtitle={ttc("One-click sign in")}>
-          <SocialLoginButton provider={loginProvider.google} size={buttonSize.default} class="w-full" />
+          <SocialLoginButton provider={loginProvider.google} class="w-full" />
         </AuthSectionCard>
       }
     >
@@ -96,8 +96,8 @@ function AuthSectionSocials() {
         <h2 class="text-xl font-semibold">{ttc("Socials")}</h2>
         <p class="text-muted-foreground mb-4">{ttc("One-click sign in")}</p>
         <div class="space-y-2">
-          <SocialLoginButton provider={loginProvider.google} size={buttonSize.default} class="w-full" />
-          <SocialLoginButton provider={loginProvider.github} size={buttonSize.default} class="w-full" />
+          <SocialLoginButton provider={loginProvider.google} class="w-full" />
+          <SocialLoginButton provider={loginProvider.github} class="w-full" />
         </div>
       </section>
     </Show>

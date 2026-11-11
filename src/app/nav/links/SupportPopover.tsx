@@ -16,7 +16,6 @@ export function SupportPopover(p: SupportPopoverProps) {
   return (
     <CorvuPopoverIcon
       icon={mdiHelpCircleOutline}
-      iconClass="size-7"
       variant={buttonVariant.ghost}
       class={p.class}
       title={getTitle()}

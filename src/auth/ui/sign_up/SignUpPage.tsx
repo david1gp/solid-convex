@@ -15,7 +15,7 @@ import { urlAuthProvider } from "#src/auth/url/urlAuthProvider.ts"
 import { urlSignInRedirectUrl } from "#src/auth/url/urlSignInRedirectUrl.ts"
 import { searchParamGet } from "#src/utils/router/searchParamGet.ts"
 import { classesBgGray } from "#ui/classes/classesBg.jsx"
-import { buttonSize, buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonExternal, LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { linkIcons } from "#ui/static/icon/linkIcons.ts"
 import { Img } from "#ui/static/img/Img.jsx"
@@ -36,7 +36,6 @@ export const SignUpPage: Component<SignUpPageProps> = (p) => {
       <div class={classMerge("min-h-dvh w-full", classesBgGray, p.class)}>
         <NavAuth title={ttc("Sign up")}>
           <SignInButtonLink
-            size={buttonSize.default}
             variant={buttonVariant.link}
             icon={linkIcons.enter}
             iconRight=""
@@ -136,13 +135,12 @@ function SignUpEmailPasswordSection(p: { demo?: boolean } = {}) {
 
 function SignUpSocialSection() {
   const buttonClasses = "w-full"
-  const btnSize = buttonSize.default
   return (
     <section class="flex flex-col gap-2">
       <h2 class="text-xl font-semibold">{ttc("Sign Up With")}</h2>
-      <SocialSignUpButton provider={socialLoginProvider.google} size={btnSize} class={buttonClasses} />
+      <SocialSignUpButton provider={socialLoginProvider.google} class={buttonClasses} />
       {enableGithub() && (
-        <SocialSignUpButton provider={socialLoginProvider.github} size={btnSize} class={buttonClasses} />
+        <SocialSignUpButton provider={socialLoginProvider.github} class={buttonClasses} />
       )}
     </section>
   )
@@ -150,7 +148,6 @@ function SignUpSocialSection() {
 
 interface SocialSignUpButtonProps {
   provider: (typeof socialLoginProvider)[keyof typeof socialLoginProvider]
-  size?: (typeof buttonSize)[keyof typeof buttonSize]
   class?: string
 }
 
@@ -166,7 +163,6 @@ function SocialSignUpButton(p: SocialSignUpButtonProps) {
       href={getReturnPath()}
       icon={props.mdiIconPath}
       iconClass="fill-white"
-      size={p.size}
       style={{ background: props.background }}
       variant={buttonVariant.filledIndigo}
       class={p.class}

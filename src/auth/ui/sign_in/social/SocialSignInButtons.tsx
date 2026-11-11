@@ -3,7 +3,7 @@ import { mdiGoogle } from "@adaptive-ds/mdi/mdiGoogle.js"
 import { socialLoginProvider } from "#src/auth/model_field/socialLoginProvider.ts"
 import { urlAuthProvider } from "#src/auth/url/urlAuthProvider.ts"
 import { urlSignInRedirectUrl } from "#src/auth/url/urlSignInRedirectUrl.ts"
-import { buttonSize, buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonExternal } from "#ui/interactive/link/LinkButton.jsx"
 import { classMerge } from "#ui/utils/classMerge.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
@@ -24,8 +24,6 @@ function SocialSignInButton(p: SocialSignInButtonProps) {
     <LinkButtonExternal
       href={url}
       icon={iconPath}
-      iconClass="size-8"
-      size={buttonSize.lg}
       variant={buttonVariant.filledIndigo}
       class={classMerge(
         "justify-start",

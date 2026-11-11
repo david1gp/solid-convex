@@ -91,7 +91,7 @@ export function NotePage() {
                       : "border-border-subtle hover:border-border"
                   }`}
                 >
-                  <LinkButtonInternal to={state.noteItemHref(note)} class="block font-medium truncate text-sm">
+                  <LinkButtonInternal to={state.noteItemHref(note)} class="block font-medium truncate">
                     {note.title}
                   </LinkButtonInternal>
                   <p class="text-xs text-muted-foreground mt-1">Updated {note.updatedAt}</p>

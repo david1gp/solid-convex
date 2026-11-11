@@ -31,7 +31,6 @@ export const CorvuPopoverIcon: Component<CorvuPopoverIconProps> = (p) => {
   const [s, rest] = splitProps(p, [
     // button
     "variant",
-    "size",
     "class",
     // state
     "isLoading",

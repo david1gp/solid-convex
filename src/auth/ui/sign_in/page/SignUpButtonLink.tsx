@@ -5,7 +5,7 @@ import { urlPageSignUp } from "#src/auth/url/pageRouteAuth.ts"
 import { urlSignInRedirectUrl } from "#src/auth/url/urlSignInRedirectUrl.ts"
 import { createUrl } from "#src/utils/router/createUrl.ts"
 import { searchParamGet } from "#src/utils/router/searchParamGet.ts"
-import { buttonSize, buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 
 export interface SignUpButtonLinkProps extends Omit<ComponentProps<typeof LinkButtonInternal>, "to" | "href"> {
@@ -13,7 +13,7 @@ export interface SignUpButtonLinkProps extends Omit<ComponentProps<typeof LinkBu
 }
 
 export function SignUpButtonLink(p: SignUpButtonLinkProps) {
-  const [s, rest] = splitProps(p, ["text", "children", "iconRight", "size", "variant"])
+  const [s, rest] = splitProps(p, ["text", "children", "iconRight", "variant"])
   function getUrl() {
     const url = createUrl()
     const email = searchParamGet("email", url) ?? ""
@@ -24,7 +24,6 @@ export function SignUpButtonLink(p: SignUpButtonLinkProps) {
     <LinkButtonInternal
       to={getUrl()}
       iconRight={s.iconRight ?? mdiArrowRight}
-      size={s.size ?? buttonSize.default}
       variant={s.variant ?? buttonVariant.contrast}
       {...rest}
     >

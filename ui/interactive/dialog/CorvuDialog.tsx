@@ -44,7 +44,6 @@ export function CorvuDialog(p: CorvuDialogProps) {
       <Dialog.Trigger
         class={buttonCva2(
           p.variant,
-          p.size,
           classesButtonClickAnimation,
           (p.disabled || p.isDisabled?.()) && classesDisabledDirectly,
           p.class,

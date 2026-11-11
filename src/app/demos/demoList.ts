@@ -36,6 +36,11 @@ const DemoAnimateFadeIn = lazy(async () => {
   return { default: c.DemoAnimateFadeIn }
 })
 
+const DemoButtons = lazy(async () => {
+  const c = await import("#src/ui/buttons/DemoButtons.tsx")
+  return { default: c.DemoButtons }
+})
+
 const DemoLoaders = lazy(async () => {
   const c = await import("#src/ui/loaders/DemoLoaders.tsx")
   return { default: c.DemoLoaders }
@@ -69,6 +74,7 @@ export const demoList = {
   },
   ui: {
     DemoAnimateFadeIn: DemoAnimateFadeIn,
+    DemoButtons: DemoButtons,
     DemoLoaders: DemoLoaders,
     DemosLinkButton: DemosLinkButton,
   },

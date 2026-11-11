@@ -37,22 +37,13 @@ export const buttonVariant = {
   outlineRed: "outlineRed",
 } as const
 
-export type ButtonSize = keyof typeof buttonSize
-export const buttonSize = {
-  none: "none",
-  minimal: "minimal",
-  sm: "sm",
-  default: "default",
-  lg: "lg",
-} as const
-
 export type ButtonCvaProps = {
   variant?: ButtonVariant
-  size?: ButtonSize
 }
 
 const baseClasses = classArr(
   "inline-flex", // layout
+  "py-2 px-3", // sizing (single uniform size)
   "font-medium", // text
   "items-center justify-center", // layout children
   "rounded-md ring-offset-background", // rounded, rings
@@ -231,37 +222,11 @@ const variantClasses = {
   ),
 } as const satisfies Record<ButtonVariant, string>
 
-const sizeClasses = {
-  none: "",
-  minimal: "rounded-none",
-  sm: "px-3",
-  default: "py-2 px-3",
-  lg: "px-8 py-4 text-lg",
-} as const satisfies Record<ButtonSize, string>
-
-const defaultSize = buttonSize.default
-
-export function buttonCva1(variant: ButtonVariant, ...customClasses: (string | boolean | undefined | null | 0)[]) {
-  return buttonCva2(variant, null, ...customClasses)
-}
-
 export function buttonCva2(
   variant: ButtonVariant = buttonVariant.ghost,
-  size: ButtonSize | null = defaultSize,
   ...customClasses: (string | boolean | undefined | null | 0)[]
 ) {
-  const v = variant
-  const s = size ?? defaultSize
-  return classMerge(baseClasses, variantClasses[v], sizeClasses[s], combinedClasses(v, s), customClasses)
-}
-
-function combinedClasses(variant: ButtonVariant, size: ButtonSize) {
-  const variantGroup1 =
-    variant === buttonVariant.outline || variant === buttonVariant.filledYellow || variant === buttonVariant.outlineRed
-  if (variantGroup1 && size === buttonSize.lg) {
-    return "border-2"
-  }
-  return null
+  return classMerge(baseClasses, variantClasses[variant], customClasses)
 }
 
 export function buttonCvaIconOnly(
@@ -272,7 +237,6 @@ export function buttonCvaIconOnly(
 ) {
   const classes = buttonCva2(
     variant ?? buttonVariant.ghost,
-    buttonSize.none,
     classesButtonClickAnimation,
     "rounded-full p-2.5",
     (isDisabled || isLoading) && classesButtonDisabled,

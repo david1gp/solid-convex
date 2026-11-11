@@ -18,7 +18,6 @@ export function Table2DSortButton<T>(p: Table2DSortButtonProps<T>) {
       variant={buttonVariant.ghost}
       onClick={() => p.onClick(p.sortHeader)}
       class={classMerge("w-full justify-start py-2 pl-1 pr-3 rounded-sm", p.sortHeader.headerClass)}
-      iconClass={"size-5"}
       // iconRight={sortIcon(h, prevHeader, sortDir)}
       title={p.sortHeader.title}
     >

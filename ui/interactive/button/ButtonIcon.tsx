@@ -35,7 +35,6 @@ export const ButtonIcon: Component<ButtonIconProps> = (p) => {
     "validationIcon",
     // button
     "variant",
-    "size",
     "class",
     "disabled",
     "onClick",
@@ -57,7 +56,6 @@ export const ButtonIcon: Component<ButtonIconProps> = (p) => {
         s.class,
       )}
       variant={s.validationMessage ? s.validationVariant : s.variant}
-      size={s.size}
       onClick={onClick2}
       disabled={s.disabled}
       aria-disabled={s.isLoading || !!s.validationMessage}

@@ -25,7 +25,6 @@ export const ButtonIconOnly: Component<ButtonIconOnlyProps> = (p) => {
   const [s, rest] = splitProps(p, [
     // button
     "variant",
-    "size",
     "class",
     // state
     "isLoading",

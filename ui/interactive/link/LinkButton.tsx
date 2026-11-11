@@ -10,7 +10,6 @@ function ButtonAnchor(p: ButtonAnchorProps) {
   const [s, rest] = splitProps(p, [
     "class",
     "variant",
-    "size",
     "newTab",
     "isLoading",
     "icon",
@@ -24,7 +23,6 @@ function ButtonAnchor(p: ButtonAnchorProps) {
     <a
       class={buttonCva2(
         s.variant,
-        s.size,
         "break-all", // line breaks for long links
         s.class,
       )}

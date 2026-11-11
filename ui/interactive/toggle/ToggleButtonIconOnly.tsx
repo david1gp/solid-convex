@@ -27,7 +27,6 @@ export interface ToggleButtonIconOnlyProps
 export const ToggleButtonIconOnly: Component<ToggleButtonIconOnlyProps> = (p) => {
   const [s, rest] = splitProps(p, [
     "variant",
-    "size",
     "class",
     "isLoading",
     "title",

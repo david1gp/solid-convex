@@ -1,6 +1,6 @@
 export function e2eBaseUrlGet(
   environment: Record<string, string | undefined>,
-  target: "production" | "dev" = "production",
+  target: "production" | "dev",
 ): string {
   const targetUrl = target === "production" ? environment.E2E_PRODUCTION_BASE_URL : environment.E2E_DEV_BASE_URL
   const appUrl = target === "dev" ? environment.PUBLIC_BASE_URL_APP?.trim() : undefined

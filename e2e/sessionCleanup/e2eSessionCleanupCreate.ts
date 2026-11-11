@@ -1,9 +1,8 @@
-import { readFileSync } from "node:fs"
 import { ConvexHttpClient } from "convex/browser"
-import { parse } from "dotenv"
 import * as v from "valibot"
 import type { E2eCheckpoint } from "../config/e2eCheckpointSchema.ts"
 import type { E2eOwnedResource } from "../config/e2eOwnedResourceSchema.ts"
+import { e2eConvexBackendGet } from "../config/e2eConvexBackendGet.ts"
 
 const pageSchema = v.object({
   success: v.literal(true),
@@ -26,10 +25,7 @@ export function e2eSessionCleanupCreate(options: {
   let admin = options.admin
   function adminGet(): Admin {
     if (admin) return admin
-    const environment = parse(readFileSync(options.target === "dev" ? ".env.development" : ".env.production"))
-    const url = process.env.E2E_CONVEX_URL ?? environment.CONVEX_SELF_HOSTED_URL
-    const key = process.env.E2E_CONVEX_ADMIN_KEY ?? environment.CONVEX_SELF_HOSTED_ADMIN_KEY
-    if (!url || !key) throw new Error("Selected target requires Convex admin URL and key for session cleanup")
+    const { backendUrl: url, adminKey: key } = e2eConvexBackendGet(process.env, options.target)
     const client = new ConvexHttpClient(url, { skipConvexDeploymentUrlCheck: true }) as ConvexHttpClient & {
       setAdminAuth: (key: string) => void
     }

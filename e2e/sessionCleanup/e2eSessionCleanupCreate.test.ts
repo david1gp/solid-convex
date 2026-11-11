@@ -65,6 +65,23 @@ test("cleanup continues failed groups, verifies absence and retries on next invo
   expect(attempts).toEqual(["a", "b", "a"])
 })
 
+test("refuses a partial E2E_CONVEX override instead of mixing env sources", async () => {
+  const previousUrl = process.env.E2E_CONVEX_URL
+  const previousKey = process.env.E2E_CONVEX_ADMIN_KEY
+  process.env.E2E_CONVEX_URL = "https://override.example.com"
+  delete process.env.E2E_CONVEX_ADMIN_KEY
+  try {
+    await expect(e2eSessionCleanupCreate({ target: "dev", now }).cleanupStale()).rejects.toThrow(
+      "both E2E_CONVEX_URL",
+    )
+  } finally {
+    if (previousUrl === undefined) delete process.env.E2E_CONVEX_URL
+    else process.env.E2E_CONVEX_URL = previousUrl
+    if (previousKey === undefined) delete process.env.E2E_CONVEX_ADMIN_KEY
+    else process.env.E2E_CONVEX_ADMIN_KEY = previousKey
+  }
+})
+
 test("stale cleanup rejects markers at the cutoff without deleting", async () => {
   let mutations = 0
   const admin = { async function(name: string) {

@@ -12,12 +12,12 @@ export function UserProfileMeChangeEmailView(p: { stateFactory?: typeof userProf
   return (
     <div class="max-w-xl mx-auto">
       <h1 class="text-3xl font-bold mb-4">{ttc("Change Email")}</h1>
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+      <div class="rounded-md border border-border bg-background p-4 sm:p-5">
         <Show when={state.step() === 1}>
           <form class="space-y-6" onSubmit={state.request}>
             <div>
-              <h2 class="text-xl font-semibold mb-2">{ttc("Step 1: Enter New Email")}</h2>
-              <p class="text-gray-600 dark:text-gray-400 mb-6">
+              <h2 class="text-sm font-semibold mb-2">{ttc("Step 1: Enter New Email")}</h2>
+              <p class="text-sm text-muted-foreground mb-6">
                 {state.hasPassword()
                   ? ttc("Enter your current password and the new email address you want to use.")
                   : ttc("Enter the new email address you want to use.")}
@@ -49,8 +49,8 @@ export function UserProfileMeChangeEmailView(p: { stateFactory?: typeof userProf
         <Show when={state.step() === 2}>
           <form class="space-y-6" onSubmit={state.confirm}>
             <div>
-              <h2 class="text-xl font-semibold mb-2">{ttc("Step 2: Enter Confirmation Code")}</h2>
-              <p class="text-gray-600 dark:text-gray-400 mb-6">
+              <h2 class="text-sm font-semibold mb-2">{ttc("Step 2: Enter Confirmation Code")}</h2>
+              <p class="text-sm text-muted-foreground mb-6">
                 {ttc(
                   "We've sent a 6-digit confirmation code to your new email address. Enter it below to complete the email change.",
                 )}

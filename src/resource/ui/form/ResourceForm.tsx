@@ -49,13 +49,14 @@ export function ResourceForm(p: ResourceFormProps) {
         p.class,
       )}
     >
-      <div class="flex flex-wrap justify-between mt-6 mb-2 col-span-full">
+      <div class="flex flex-wrap items-center justify-between gap-2 mt-6 mb-2 col-span-full">
         <h1 class="text-2xl font-bold">{getResourceTitle(p.mode)}</h1>
         {p.mode === formMode.edit && (
           <LinkButtonInternal
             to={p.removeHref ?? urlResourceRemove(p.sm.serverState.get().resource.resourceId)}
             icon={formModeIcon.remove}
             variant={buttonVariant.link}
+            class="text-danger"
           >
             {ttc("Remove")}
           </LinkButtonInternal>
@@ -64,7 +65,7 @@ export function ResourceForm(p: ResourceFormProps) {
       <form class="contents" onSubmit={p.sm.handleSubmit}>
         {/* General */}
         <section class="contents">
-          <h2 class="text-2xl font-semibold mb-4 text-muted-foreground">{resourceMetaSectionGetText("general")}</h2>
+          <h2 class="text-sm font-semibold mb-4 text-muted-foreground">{resourceMetaSectionGetText("general")}</h2>
           <div class="space-y-4">
             <NameField sm={p.sm} />
             {showTechnicalId() && p.mode === formMode.add && <ResourceIdField sm={p.sm} />}
@@ -75,7 +76,7 @@ export function ResourceForm(p: ResourceFormProps) {
 
         {/* Display */}
         <section class="contents">
-          <h2 class="text-2xl font-semibold mb-4 text-muted-foreground">{resourceMetaSectionGetText("display")}</h2>
+          <h2 class="text-sm font-semibold mb-4 text-muted-foreground">{resourceMetaSectionGetText("display")}</h2>
           <div class="space-y-4">
             <VisibilityField sm={p.sm} />
             <LanguageField sm={p.sm} />
@@ -84,7 +85,7 @@ export function ResourceForm(p: ResourceFormProps) {
 
         {/* Hierarchy Assignment */}
         <section class="contents">
-          <h2 class="text-2xl font-semibold mb-4 text-muted-foreground">{ttc("Hierarchy Assignment")}</h2>
+          <h2 class="text-sm font-semibold mb-4 text-muted-foreground">{ttc("Hierarchy Assignment")}</h2>
           <div class="space-y-4">
             <AssignmentTargetSelector valueSignal={p.sm.state.assignment} />
           </div>
@@ -92,14 +93,14 @@ export function ResourceForm(p: ResourceFormProps) {
 
         {p.showFiles !== false && (
           <section class="contents">
-            <h2 class="text-2xl font-semibold mb-4 text-muted-foreground">{ttc("Files")}</h2>
+            <h2 class="text-sm font-semibold mb-4 text-muted-foreground">{ttc("Files")}</h2>
             <ResourceFormFiles sm={p.sm} />
           </section>
         )}
 
         {/* Image */}
         <section class="contents">
-          <h2 class="text-2xl font-semibold mb-4 text-muted-foreground">{resourceMetaSectionGetText("image")}</h2>
+          <h2 class="text-sm font-semibold mb-4 text-muted-foreground">{resourceMetaSectionGetText("image")}</h2>
           <ResourceFormImage sm={p.sm} showUpload={p.showImageUpload} />
         </section>
 
@@ -185,7 +186,7 @@ function TypeField(p: HasResourceFormStateManagement) {
         valueText={resourceTypeGetText}
         disabled={p.sm.mode === formMode.remove}
         innerClass="flex flex-wrap gap-2"
-        optionClass="bg-gray-50"
+        optionClass="bg-hover"
         disallowDeselection={true}
       />
       <Show when={p.sm.errors.type.get()}>
@@ -205,7 +206,7 @@ function LanguageField(p: HasResourceFormStateManagement) {
         valueText={languageGetText}
         disabled={p.sm.mode === formMode.remove}
         innerClass="flex flex-wrap gap-2"
-        optionClass="bg-gray-50"
+        optionClass="bg-hover"
         disallowDeselection={true}
       />
       <Show when={p.sm.errors.language.get()}>
@@ -227,7 +228,7 @@ function VisibilityField(p: HasResourceFormStateManagement) {
         valueText={visibilityGetText}
         disabled={p.sm.mode === formMode.remove}
         innerClass="flex flex-wrap gap-2"
-        optionClass="bg-gray-50"
+        optionClass="bg-hover"
         disallowDeselection={true}
       />
       <Show when={p.sm.errors.visibility.get()}>

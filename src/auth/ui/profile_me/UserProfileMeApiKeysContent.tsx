@@ -27,12 +27,12 @@ export function UserProfileMeApiKeysContent(p: { stateFactory: typeof userProfil
       <Show when={state.credential()}>
         {(value) => (
           <section
-            class="ph-no-capture bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 space-y-3"
+            class="ph-no-capture rounded-md border border-border bg-background p-4 sm:p-5 space-y-3"
             aria-live="polite"
           >
-            <h2 class="text-xl font-semibold">{ttc("Your new API key")}</h2>
-            <p>{ttc("Copy this credential now. It will not be shown again.")}</p>
-            <code class="block break-all select-all rounded bg-gray-100 dark:bg-gray-900 p-3">{value()}</code>
+            <h2 class="text-sm font-semibold">{ttc("Your new API key")}</h2>
+            <p class="text-sm text-muted-foreground">{ttc("Copy this credential now. It will not be shown again.")}</p>
+            <code class="block break-all select-all rounded-md bg-hover p-3 text-sm">{value()}</code>
             <div class="flex gap-2">
               <ButtonIcon icon={mdiContentCopy} variant={buttonVariant.filledIndigo} onClick={state.copy}>
                 {ttc("Copy key")}
@@ -46,13 +46,13 @@ export function UserProfileMeApiKeysContent(p: { stateFactory: typeof userProfil
       </Show>
 
       <Show when={!state.credential()}>
-        <section class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 space-y-4">
-          <h2 class="text-xl font-semibold">{ttc("Create API key")}</h2>
+        <section class="rounded-md border border-border bg-background p-4 sm:p-5 space-y-4">
+          <h2 class="text-sm font-semibold">{ttc("Create API key")}</h2>
           <form class="space-y-4" onSubmit={state.create}>
             <label class="block space-y-1">
-              <span>{ttc("Name")}</span>
+              <span class="text-sm font-medium">{ttc("Name")}</span>
               <input
-                class="block w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 p-2"
+                class="block w-full rounded-md border border-input bg-background p-2 text-sm"
                 type="text"
                 required
                 maxLength={80}
@@ -61,10 +61,10 @@ export function UserProfileMeApiKeysContent(p: { stateFactory: typeof userProfil
               />
             </label>
             <label class="block space-y-1">
-              <span>{ttc("Expiry")}</span>
+              <span class="text-sm font-medium">{ttc("Expiry")}</span>
               <div class="relative w-full min-w-0">
                 <select
-                  class="block w-full appearance-none rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 py-2 pl-2.5 pr-10"
+                  class="block w-full appearance-none rounded-md border border-input bg-background py-2 pl-2.5 pr-10 text-sm"
                   value={state.expiryPreset()}
                   onChange={(e) => state.expiryChange(e.currentTarget.value)}
                 >
@@ -78,7 +78,7 @@ export function UserProfileMeApiKeysContent(p: { stateFactory: typeof userProfil
                 </select>
                 <Icon
                   path={mdiChevronDown}
-                  class="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-gray-900 dark:text-white"
+                  class="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
                 />
               </div>
             </label>
@@ -91,14 +91,14 @@ export function UserProfileMeApiKeysContent(p: { stateFactory: typeof userProfil
 
       <Show when={state.error()}>
         {(message) => (
-          <p role="alert" class="text-red-600">
+          <p role="alert" class="text-sm text-danger">
             {message()}
           </p>
         )}
       </Show>
 
       <section class="space-y-4">
-        <h2 class="text-xl font-semibold">{ttc("Your keys")}</h2>
+        <h2 class="text-sm font-semibold text-muted-foreground">{ttc("Your keys")}</h2>
         <Show when={state.listError()}>{(message) => <p role="alert">{message()}</p>}</Show>
         <Show when={state.page()} fallback={!state.listError() && <p>{ttc("Loading API keys...")}</p>}>
           {(page) => (
@@ -106,13 +106,13 @@ export function UserProfileMeApiKeysContent(p: { stateFactory: typeof userProfil
               <div class="space-y-3">
                 <For each={page().page}>
                   {(key) => (
-                    <article class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 space-y-2">
+                    <article class="rounded-md border border-border bg-background p-4 sm:p-5 space-y-2">
                       <Show when={state.editingId() === key.id} fallback={<h3 class="font-semibold">{key.name}</h3>}>
                         <form class="space-y-2" onSubmit={state.saveEdit}>
                           <label class="block space-y-1">
-                            <span>{ttc("Name")}</span>
+                            <span class="text-sm font-medium">{ttc("Name")}</span>
                             <input
-                              class="block w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 p-2"
+                              class="block w-full rounded-md border border-input bg-background p-2 text-sm"
                               type="text"
                               required
                               maxLength={80}
@@ -122,7 +122,7 @@ export function UserProfileMeApiKeysContent(p: { stateFactory: typeof userProfil
                           </label>
                           <Show when={state.editError()}>
                             {(message) => (
-                              <p role="alert" class="text-red-600">
+                              <p role="alert" class="text-sm text-danger">
                                 {message()}
                               </p>
                             )}

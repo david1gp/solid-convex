@@ -10,6 +10,7 @@ import { NoData } from "#src/ui/illustrations/NoData.tsx"
 import { PaginationControls } from "#src/ui/pagination/PaginationControls.tsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
+import { Badge } from "#ui/static/badge/Badge.jsx"
 
 interface OrgInvitationListViewProps {
   orgHandle: string
@@ -31,12 +32,16 @@ export function OrgInvitationListView(p: OrgInvitationListViewProps) {
         <LinkButtonInternal
           icon={appIcons.create}
           to={p.addHref ?? urlOrgInvitationAdd(p.orgHandle)}
-          variant={buttonVariant.filledGreen}
+          variant={buttonVariant.filledIndigo}
         >
           {ttc("Add Invitation")}
         </LinkButtonInternal>
       </PageHeader>
       <Show when={p.invitations.length > 0} fallback={<NoData noDataText={ttc("No Organization Invitations")} />}>
+        <div class="mb-2 flex items-center gap-2">
+          <h2 class="text-xs font-semibold text-muted-foreground">{ttc("Organization Invitations")}</h2>
+          <Badge>{p.invitations.length}</Badge>
+        </div>
         <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <For each={p.invitations}>
             {(invitation) => (

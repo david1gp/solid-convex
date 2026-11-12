@@ -10,7 +10,7 @@ interface ResourceFilesSectionProps extends HasResourceId, MayHaveClass {}
 export function ResourceFilesSection(p: ResourceFilesSectionProps) {
   return (
     <section class={classMerge("my-4", p.class)}>
-      <h2 class="text-2xl font-semibold">{ttc("Manage Files")}</h2>
+      <h2 class="text-sm font-semibold text-muted-foreground">{ttc("Manage Files")}</h2>
       <ResourceFileListLoader mode={formMode.add} resourceId={p.resourceId} />
       <ResourceFileAdd resourceId={p.resourceId} />
     </section>

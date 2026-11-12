@@ -34,7 +34,7 @@ export function HierarchyDeletePreviewCounts(props: HierarchyDeletePreviewCounts
       </div>
 
       <Show when={state.isTruncated()}>
-        <p class="text-xs text-amber-600 dark:text-amber-400">* Item count exceeds query limit and was truncated.</p>
+        <p class="text-xs text-warning">* Item count exceeds query limit and was truncated.</p>
       </Show>
     </div>
   )

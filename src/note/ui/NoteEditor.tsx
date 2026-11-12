@@ -27,7 +27,7 @@ export function NoteEditor(props: {
           <Show when={state.canSave()}>
             <button
               type="button"
-              class="px-3 py-1 text-sm rounded bg-primary text-primary-foreground disabled:opacity-50"
+              class="h-7 px-2 text-sm rounded-md bg-primary text-primary-foreground disabled:opacity-50"
               disabled={state.isDisabled()}
               onClick={state.save}
             >
@@ -39,12 +39,12 @@ export function NoteEditor(props: {
       <Show when={state.hasConflict()}>
         <aside
           role="alert"
-          class="flex items-center justify-between p-2.5 rounded text-xs bg-amber-500/10 text-amber-900 dark:text-amber-200 border border-amber-500/20"
+          class="flex items-center justify-between p-2.5 rounded-md text-xs bg-warning-soft text-warning border border-warning/20"
         >
           <span>A newer version of this note exists on the server. Your unsaved draft was preserved.</span>
           <button
             type="button"
-            class="px-2 py-0.5 rounded border border-amber-500/30 hover:bg-amber-500/20 text-xs font-medium shrink-0 ml-2"
+            class="px-2 py-0.5 rounded-md border border-warning/30 hover:bg-warning/10 text-xs font-medium shrink-0 ml-2"
             onClick={state.resolveConflict}
           >
             Accept remote

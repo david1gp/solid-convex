@@ -86,7 +86,7 @@ export function UserManagementRolesDialog(props: UserManagementRolesDialogProps)
                   </Button>
                   <Button
                     type="button"
-                    variant={buttonVariant.contrast}
+                    variant={buttonVariant.filledIndigo}
                     onClick={() => void props.dialog.saveRoles()}
                     disabled={props.dialog.isUpdating(user().userId) || props.dialog.draftRoles.get().length === 0}
                   >

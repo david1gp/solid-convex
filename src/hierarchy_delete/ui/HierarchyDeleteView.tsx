@@ -31,7 +31,7 @@ export function HierarchyDeleteView(props: HierarchyDeleteViewProps) {
       </header>
 
       <Show when={state.isPreviewLoading()}>
-        <div class="rounded-lg border border-border-subtle bg-muted/30 p-6 text-center text-sm text-muted-foreground space-y-2">
+        <div class="rounded-md border border-border bg-muted/30 p-6 text-center text-sm text-muted-foreground space-y-2">
           <p class="animate-pulse font-medium">Calculating cascading deletion preview…</p>
           <p class="text-xs">Scanning descendant entities, resources, and storage files.</p>
         </div>
@@ -39,10 +39,7 @@ export function HierarchyDeleteView(props: HierarchyDeleteViewProps) {
 
       <Show when={state.previewError()}>
         {(errorMessage) => (
-          <div
-            role="alert"
-            class="rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-900 dark:border-red-900 dark:bg-red-950 dark:text-red-200"
-          >
+          <div role="alert" class="rounded-md border border-danger/20 bg-danger-soft px-4 py-3 text-sm text-danger">
             <p class="font-semibold">Unable to load deletion preview</p>
             <p class="mt-1 text-xs">{errorMessage()}</p>
           </div>
@@ -59,7 +56,7 @@ export function HierarchyDeleteView(props: HierarchyDeleteViewProps) {
 
           <HierarchyDeletePreviewCounts counts={state.counts} isTruncated={state.isTruncated} />
 
-          <div class="space-y-2 pt-2 border-t border-border-subtle">
+          <div class="space-y-2 pt-2 border-t border-border">
             <label for="hierarchy-delete-confirm-input" class="block text-xs font-semibold text-foreground">
               Type <strong class="font-bold underline">{state.rootName() || "DELETE"}</strong> or{" "}
               <strong class="font-bold underline">DELETE</strong> to confirm:
@@ -67,7 +64,7 @@ export function HierarchyDeleteView(props: HierarchyDeleteViewProps) {
             <input
               id="hierarchy-delete-confirm-input"
               type="text"
-              class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-destructive focus:border-destructive"
+              class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-destructive focus:border-destructive"
               placeholder={state.confirmationPlaceholder()}
               value={state.typedConfirmation.get()}
               onInput={(e) => state.typedConfirmation.set(e.currentTarget.value)}
@@ -86,31 +83,28 @@ export function HierarchyDeleteView(props: HierarchyDeleteViewProps) {
       </Show>
 
       <Show when={state.jobStatus.get() === "submitting" || state.jobStatus.get() === "in_progress"}>
-        <div class="rounded-lg border border-blue-200 bg-blue-50 p-4 text-xs text-blue-900 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-200 space-y-1">
+        <div class="rounded-md border border-primary/20 bg-accent-soft px-4 py-3 text-xs text-foreground space-y-1">
           <p class="font-semibold">{state.jobProgressMessage.get()}</p>
           <p class="text-muted-foreground">Please keep this window open while the deletion cascade processes.</p>
         </div>
       </Show>
 
       <Show when={state.jobStatus.get() === "completed"}>
-        <div class="rounded-lg border border-green-200 bg-green-50 p-4 text-xs text-green-900 dark:border-green-900 dark:bg-green-950 dark:text-green-200">
+        <div class="rounded-md border border-success/20 bg-success-soft px-4 py-3 text-xs text-success">
           <p class="font-semibold">{state.jobProgressMessage.get()}</p>
         </div>
       </Show>
 
       <Show when={state.jobError.get()}>
         {(err) => (
-          <div
-            role="alert"
-            class="rounded-lg border border-red-300 bg-red-50 p-4 text-xs text-red-900 dark:border-red-900 dark:bg-red-950 dark:text-red-200"
-          >
+          <div role="alert" class="rounded-md border border-danger/20 bg-danger-soft px-4 py-3 text-xs text-danger">
             <p class="font-semibold">Deletion failed</p>
             <p class="mt-1">{err()}</p>
           </div>
         )}
       </Show>
 
-      <div class="flex items-center justify-end gap-3 pt-3 border-t border-border-subtle">
+      <div class="flex items-center justify-end gap-3 pt-3 border-t border-border">
         <ButtonIcon
           type="button"
           icon={appIcons.cancel}

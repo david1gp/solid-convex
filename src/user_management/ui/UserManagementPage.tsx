@@ -8,10 +8,11 @@ import { CheckSingle } from "#ui/input/check/CheckSingle.tsx"
 import { Button } from "#ui/interactive/button/Button.tsx"
 import { ButtonIconOnly } from "#ui/interactive/button/ButtonIconOnly.tsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
+import { Badge } from "#ui/static/badge/Badge.jsx"
 import { PageWrapper } from "#ui/static/page/PageWrapper.tsx"
 
-export function UserManagementPage() {
-  const state = userManagementPageStateCreate()
+export function UserManagementPage(p: { demo?: ReturnType<typeof userManagementPageStateCreate> }) {
+  const state = p.demo ?? userManagementPageStateCreate()
 
   return (
     <PageWrapper>
@@ -52,7 +53,7 @@ export function UserManagementPage() {
           fallback={
             <div
               role="alert"
-              class="p-8 text-center space-y-3 rounded-lg border border-destructive/30 bg-destructive/5"
+              class="p-8 text-center space-y-3 rounded-md border border-destructive/30 bg-destructive/5"
             >
               <h2 class="text-xl font-bold text-destructive">Access Denied</h2>
               <p class="text-muted-foreground text-sm">
@@ -62,9 +63,12 @@ export function UserManagementPage() {
           }
         >
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            <section class="lg:col-span-5 border border-border rounded-lg p-4 space-y-4 bg-card">
+            <section class="lg:col-span-5 border border-border rounded-md p-4 space-y-4 bg-card">
               <div class="flex justify-between items-center">
-                <h2 class="text-lg font-semibold">Users</h2>
+                <div class="flex items-center gap-2">
+                  <h2 class="text-xs font-semibold text-muted-foreground">Users</h2>
+                  <Badge>{state.visibleUsers().length}</Badge>
+                </div>
                 <Show when={state.pagination.loading()}>
                   <span class="text-xs text-muted-foreground animate-pulse">Loading…</span>
                 </Show>
@@ -170,7 +174,7 @@ export function UserManagementPage() {
               </Show>
             </section>
 
-            <section class="lg:col-span-7 border border-border rounded-lg p-6 bg-card space-y-6">
+            <section class="lg:col-span-7 border border-border rounded-md p-6 bg-card space-y-6">
               <Show
                 when={state.selectedUser()}
                 fallback={
@@ -254,7 +258,7 @@ export function UserManagementPage() {
                     <Show when={state.saveStatus()}>
                       <div
                         role="status"
-                        class="p-3 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-sm rounded-md border border-emerald-500/20"
+                        class="p-3 bg-success-soft text-success text-sm rounded-md border border-success/20"
                       >
                         {state.saveStatus()}
                       </div>

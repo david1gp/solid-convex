@@ -21,6 +21,7 @@ import type { PaginationResultType } from "#src/utils/convex_backend/paginationR
 import { resultHasErrorMessage } from "#src/utils/result/resultHasErrorMessage.ts"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
+import { Badge } from "#ui/static/badge/Badge.jsx"
 import { classesGridCols2xl } from "#ui/static/grid/classesGridCols2xl.ts"
 import { PageWrapper } from "#ui/static/page/PageWrapper.jsx"
 import { classArr } from "#ui/utils/classArr.ts"
@@ -115,16 +116,22 @@ function resultHasNoResources(
 function ResourceList(p: ResourceListProps) {
   resourceListStateCreate({ demo: () => p.demo, resources: () => p.resources })
   return (
-    <div class={classArr(classesGridCols2xl, "gap-4")}>
-      <For each={p.resources} fallback={p.demo ? <NoResources /> : undefined}>
-        {(r) => (
-          <ResourceCardLink
-            resource={r}
-            href={p.demo ? pageDemoHref("/resources/:resourceId", { resourceId: r.resourceId }) : undefined}
-          />
-        )}
-      </For>
-    </div>
+    <>
+      <div class="mb-2 flex items-center gap-2">
+        <h2 class="text-xs font-semibold text-muted-foreground">{ttc("Resources")}</h2>
+        <Badge>{p.resources.length}</Badge>
+      </div>
+      <div class={classArr(classesGridCols2xl, "gap-4")}>
+        <For each={p.resources} fallback={p.demo ? <NoResources /> : undefined}>
+          {(r) => (
+            <ResourceCardLink
+              resource={r}
+              href={p.demo ? pageDemoHref("/resources/:resourceId", { resourceId: r.resourceId }) : undefined}
+            />
+          )}
+        </For>
+      </div>
+    </>
   )
 }
 
@@ -133,7 +140,7 @@ function ResourceCreateLink(p: { demo?: boolean }) {
     <LinkButtonInternal
       icon={mdiPlus}
       to={p.demo ? pageDemoHref("/resources/add") : urlResourceAdd()}
-      variant={buttonVariant.filledGreen}
+      variant={buttonVariant.filledIndigo}
     >
       {ttc("Create Resource")}
     </LinkButtonInternal>

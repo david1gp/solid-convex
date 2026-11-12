@@ -36,7 +36,7 @@ export function OrgInvitationListSection(p: OrgInvitationsProps) {
   return (
     <section id={orgPageSection.invitations} class={classMerge("space-y-1", "my-2", s.class)}>
       <Header {...rest} />
-      <Show when={!p.loading} fallback={<p class="text-muted-foreground">{ttc("Loading invitations...")}</p>}>
+      <Show when={!p.loading} fallback={<p class="text-sm text-muted-foreground">{ttc("Loading invitations...")}</p>}>
         <Show when={p.invitations.length > 0} fallback={<NoOrgInvitationsText />}>
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <For each={p.invitations}>
@@ -62,7 +62,7 @@ export function OrgInvitationListSection(p: OrgInvitationsProps) {
 }
 
 function NoOrgInvitationsText() {
-  return <p class="text-muted-foreground">{ttc("No invitations yet")}</p>
+  return <p class="text-sm text-muted-foreground">{ttc("No invitations yet")}</p>
 }
 
 function Header(p: OrgInvitationsProps) {
@@ -72,7 +72,7 @@ function Header(p: OrgInvitationsProps) {
         to={p.addHref ?? urlOrgInvitationAdd(p.orgHandle)}
         variant={buttonVariant.subtle}
         icon={appIcons.create}
-        class="hover:bg-gray-200"
+        class="hover:bg-hover"
       >
         {ttc("Invite Member")}
       </LinkButtonInternal>

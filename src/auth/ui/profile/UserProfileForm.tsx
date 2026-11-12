@@ -22,7 +22,7 @@ export interface UserProfileFormProps extends MayHaveClass, HasUserProfileFormSt
 
 export function UserProfileForm(p: UserProfileFormProps) {
   return (
-    <section class={classMerge("px-2 sm:px-4 pb-10", "text-gray-900 dark:text-gray-100", p.class)}>
+    <section class={classMerge("px-2 sm:px-4 pb-10", "text-foreground", p.class)}>
       <ProfileSectionImage image={p.sm.state.image.get()} name={p.sm.state.name.get()} />
       {/* <h1 class="text-2xl font-bold mt-6 mb-2">{getUserProfileTitle(p.mode)}</h1> */}
       <form class="space-y-4">
@@ -221,7 +221,7 @@ function CreatedAtField(p: HasUserProfileFormStateManagement) {
   return (
     <div class="flex flex-col gap-2">
       <Label for={userProfileFormField.createdAt}>{ttc("Created At")}</Label>
-      <DateView date={p.sm.state.createdAt.get()} class="w-full bg-gray-50 dark:bg-gray-800 p-2 rounded" />
+      <DateView date={p.sm.state.createdAt.get()} class="w-full bg-hover p-2 rounded-md text-sm" />
     </div>
   )
 }

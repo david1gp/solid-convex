@@ -34,7 +34,7 @@ function Left(p: ResourceViewInlineProps) {
     <div class={classArr("flex-1", "flex flex-col gap-4", p.class)}>
       <div
         class={classArr(
-          p.showCardWrapper || p.showCardWrapper === undefined ? classesCardWrapper + " " + "shadow-md" : "",
+          p.showCardWrapper || p.showCardWrapper === undefined ? classesCardWrapper : "",
           "flex-1",
           "flex flex-col gap-4",
         )}
@@ -94,7 +94,7 @@ function ShowImage(p: ResourceViewInlineProps) {
         <img
           src={getImageUrl()}
           alt={ttc("Image for ") + (p.resource.name || "Resource")}
-          class={classArr("max-w-xl h-auto rounded-xl", p.class)}
+          class={classArr("max-w-xl h-auto rounded-md", p.class)}
         />
       )}
     </Show>

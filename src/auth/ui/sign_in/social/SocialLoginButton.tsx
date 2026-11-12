@@ -13,7 +13,7 @@ export interface SocialLoginButtonProps extends MayHaveClass {
 
 export function SocialLoginButton(p: SocialLoginButtonProps) {
   const props = socialProviderButtonProps[p.provider]
-  const { background, mdiIconPath } = props
+  const { mdiIconPath } = props
   const currentUrl = urlSignInRedirectUrl()
   const text = "Sign in with " + capitalizeFirstLetter(p.provider)
   const url = urlAuthProvider(p.provider, currentUrl)
@@ -21,9 +21,7 @@ export function SocialLoginButton(p: SocialLoginButtonProps) {
     <LinkButtonExternal
       href={url}
       icon={mdiIconPath}
-      iconClass={"fill-white"}
-      style={{ background: background }}
-      variant={buttonVariant.filledIndigo}
+      variant={buttonVariant.outline}
       class={p.class}
       aria-label={text}
     >

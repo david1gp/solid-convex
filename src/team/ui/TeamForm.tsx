@@ -4,17 +4,22 @@ import type { Team } from "#src/team/model/teamSchema.ts"
 import { teamFormStateCreate } from "#src/team/ui/teamFormStateCreate.ts"
 import { FormFieldInput } from "#src/ui/form/FormFieldInput.tsx"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
+import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 
-export function TeamForm(p: { orgHandle?: string; team?: Team }) {
-  const state = teamFormStateCreate(
-    () => p.orgHandle,
-    () => p.team,
-  )
+export function TeamForm(p: { orgHandle?: string; team?: Team; demoState?: ReturnType<typeof teamFormStateCreate> }) {
+  const state =
+    p.demoState ??
+    teamFormStateCreate(
+      () => p.orgHandle,
+      () => p.team,
+    )
   return (
-    <section class="px-2 sm:px-4 py-6 max-w-3xl space-y-4">
+    <section class="max-w-3xl space-y-4 rounded-md border border-border bg-background p-4 sm:p-5">
       <h1 class="text-2xl font-bold">{state.title()}</h1>
-      <p class="text-muted-foreground">Organization: {state.parent()} · A team's organization cannot be changed.</p>
+      <p class="text-sm text-muted-foreground">
+        Organization: {state.parent()} · A team's organization cannot be changed.
+      </p>
       <form class="space-y-4" onSubmit={state.submit}>
         <FormFieldInput
           config={state.nameConfig}
@@ -40,10 +45,16 @@ export function TeamForm(p: { orgHandle?: string; team?: Team }) {
           </p>
         </Show>
         <div class="flex gap-3">
-          <ButtonIcon type="submit" icon={appIcons.save} isLoading={state.busy()} disabled={state.busy()}>
+          <ButtonIcon
+            type="submit"
+            icon={appIcons.save}
+            variant={buttonVariant.filledIndigo}
+            isLoading={state.busy()}
+            disabled={state.busy()}
+          >
             {state.busy() ? "Saving…" : state.title()}
           </ButtonIcon>
-          <LinkButtonInternal to={state.cancelHref()} icon={appIcons.cancel}>
+          <LinkButtonInternal to={state.cancelHref()} icon={appIcons.cancel} variant={buttonVariant.outline}>
             Cancel
           </LinkButtonInternal>
         </div>

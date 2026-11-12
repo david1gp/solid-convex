@@ -13,15 +13,12 @@ export function ResourceDeletionWarning(props: ResourceDeletionWarningProps) {
   })
 
   return (
-    <div
-      role="alert"
-      class="rounded-lg border border-red-200 bg-red-50 p-4 text-red-900 dark:border-red-900/50 dark:bg-red-950/50 dark:text-red-200"
-    >
+    <div role="alert" class="rounded-md border border-danger/20 bg-danger-soft px-4 py-3 text-sm text-danger">
       <div class="flex items-start gap-3">
         <div class="flex-1 space-y-1">
-          <p class="text-sm font-semibold leading-none text-red-800 dark:text-red-300">{state.dangerText()}</p>
+          <p class="text-sm font-semibold leading-none">{state.dangerText()}</p>
           <Show when={state.hasCount()}>
-            <p class="text-sm text-red-700 dark:text-red-400">{state.countLabel()}</p>
+            <p class="text-sm">{state.countLabel()}</p>
           </Show>
         </div>
       </div>

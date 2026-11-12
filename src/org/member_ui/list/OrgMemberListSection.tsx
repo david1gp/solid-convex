@@ -31,7 +31,7 @@ export function OrgMemberListSection(p: OrgMemberListProps) {
   return (
     <section id={orgPageSection.members} class={classMerge("space-y-1", "my-2", p.class)}>
       <Header />
-      <Show when={!p.loading} fallback={<p class="text-muted-foreground">{ttc("Loading members...")}</p>}>
+      <Show when={!p.loading} fallback={<p class="text-sm text-muted-foreground">{ttc("Loading members...")}</p>}>
         <Show when={p.members.length > 0} fallback={<NoOrgMembersText />}>
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <For each={p.members}>
@@ -74,5 +74,5 @@ function Header() {
 }
 
 function NoOrgMembersText() {
-  return <p class="text-muted-foreground">{ttc("No members yet")}</p>
+  return <p class="text-sm text-muted-foreground">{ttc("No members yet")}</p>
 }

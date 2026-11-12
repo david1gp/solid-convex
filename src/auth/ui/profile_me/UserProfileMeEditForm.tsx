@@ -20,7 +20,7 @@ export interface UserProfileMeEditFormProps extends MayHaveClass {
 export function UserProfileMeEditForm(p: UserProfileMeEditFormProps) {
   const state = userProfileMeEditFormViewStateCreate(() => p)
   return (
-    <div class={classMerge("bg-white dark:bg-gray-800 rounded-lg shadow-md p-6", p.class)}>
+    <div class={classMerge("rounded-md border border-border bg-background p-4 sm:p-5", p.class)}>
       <form class="space-y-6" onSubmit={state.handleSubmit}>
         <NameField sm={p.sm} />
         <BioField sm={p.sm} />

@@ -13,8 +13,8 @@ export function UserProfileMeDeleteView(p: {
   return (
     <div class="max-w-xl mx-auto">
       <h1 class="text-3xl font-bold mb-4">{ttc("Delete Account")}</h1>
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 space-y-6">
-        <p class="text-gray-600 dark:text-gray-400">
+      <div class="rounded-md border border-border bg-background p-4 sm:p-5 space-y-6">
+        <p class="text-sm text-muted-foreground">
           {ttc("Are you sure you want to delete your account? This action cannot be undone.")}
         </p>
         <Button

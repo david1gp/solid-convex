@@ -33,9 +33,8 @@ export function OrgInvitationCard(p: OrgInvitationCardProps) {
   return (
     <section
       class={classMerge(
+        "rounded-md border border-border bg-background", // card
         "p-4", // padding
-        "border border-gray-200 dark:border-slate-700 rounded-lg ", // border
-        "bg-gray-50 dark:bg-stone-800", // bg
         "flex flex-col justify-start gap-2", // layout children
         p.class,
       )}
@@ -53,10 +52,10 @@ export function OrgInvitationCard(p: OrgInvitationCardProps) {
 function Left(p: OrgInvitationCardProps) {
   return (
     <div class="flex-1 flex flex-col justify-start gap-2">
-      <h3 class="text-xl font-medium">{p.invitation.invitedEmail}</h3>
+      <h3 class="text-sm font-semibold">{p.invitation.invitedEmail}</h3>
       {orgInvitationShowRole && (
-        <div class="text-muted-foreground capitalize">
-          <span>{ttc("Role:")}</span>
+        <div class="text-sm capitalize">
+          <span class="text-xs text-muted-foreground">{ttc("Role:")} </span>
           {p.invitation.role}
         </div>
       )}
@@ -70,7 +69,7 @@ function Right(p: OrgInvitationCardProps) {
     <div
       class={classArr(
         "size-14",
-        "bg-gray-200 dark:bg-gray-600",
+        "bg-hover",
         "rounded-full",
         "flex flex-col justify-center items-center", // layout children
       )}
@@ -124,7 +123,7 @@ function OrgInvitationActions(p: OrgInvitationCardProps) {
       <ButtonIcon
         variant={buttonVariant.outline}
         icon={appIcons.delete}
-        iconClass="fill-red-800 text-red-800 dark:fill-red-800 dark:text-red-800"
+        iconClass="fill-danger text-danger"
         onClick={dismissClick}
         class="flex-1"
       >

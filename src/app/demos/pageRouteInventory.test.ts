@@ -50,12 +50,12 @@ describe("page demo route inventory", () => {
     }
   })
 
-  test("guards unmounted new routes and keeps isolated renderers mounted", () => {
+  test("mounts every inventory route with an isolated renderer", () => {
     const guardedRoutes = pageRouteInventory.filter(({ route }) => !pageDemoRouteIsMounted(route))
     const mountedRoutes = pageRouteInventory.filter(({ route }) => pageDemoRouteIsMounted(route))
 
-    expect(guardedRoutes).toHaveLength(55)
-    expect(mountedRoutes).toHaveLength(36)
+    expect(guardedRoutes).toHaveLength(0)
+    expect(mountedRoutes).toHaveLength(91)
   })
 
   test("keeps app, organization, and resource inventory routes mounted in the demo boundary", () => {
@@ -72,6 +72,23 @@ describe("page demo route inventory", () => {
       } else if (route === "/" || route === "/overview" || route === "/todo") {
         expect(pageDemoRouteIsMounted(route)).toBe(true)
       }
+    }
+  })
+
+  test("keeps team, project, note, and user-management inventory routes mounted in the demo boundary", () => {
+    const teamProjectNoteUserRoutes = pageRouteInventory.filter(
+      ({ route }) =>
+        route.startsWith("/team") ||
+        route.startsWith("/project") ||
+        route.startsWith("/note") ||
+        route.startsWith("/user-management") ||
+        route.includes("/team") ||
+        route.includes("/project") ||
+        route.includes("/note"),
+    )
+    expect(teamProjectNoteUserRoutes).toHaveLength(55)
+    for (const { route } of teamProjectNoteUserRoutes) {
+      expect(pageDemoRouteIsMounted(route)).toBe(true)
     }
   })
 })

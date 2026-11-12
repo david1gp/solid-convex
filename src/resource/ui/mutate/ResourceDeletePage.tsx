@@ -50,7 +50,7 @@ export function ResourceDeletePage(p: ResourceDeletePageProps) {
             </header>
 
             <Show when={state.isLoading()}>
-              <div class="rounded-lg border border-border-subtle bg-muted/30 p-6 text-center text-sm text-muted-foreground space-y-2">
+              <div class="rounded-md border border-border bg-muted/30 p-6 text-center text-sm text-muted-foreground space-y-2">
                 <p class="animate-pulse font-medium">Loading deletion preview…</p>
                 <p class="text-xs">Checking linked file relationships and storage status.</p>
               </div>
@@ -60,7 +60,7 @@ export function ResourceDeletePage(p: ResourceDeletePageProps) {
               {(err) => (
                 <div
                   role="alert"
-                  class="rounded-lg border border-red-300 bg-red-50 p-4 text-sm text-red-900 dark:border-red-900 dark:bg-red-950 dark:text-red-200"
+                  class="rounded-md border border-danger/20 bg-danger-soft px-4 py-3 text-sm text-danger"
                 >
                   <p class="font-semibold">Unable to load deletion preview</p>
                   <p class="mt-1 text-xs">{err()}</p>
@@ -69,23 +69,18 @@ export function ResourceDeletePage(p: ResourceDeletePageProps) {
             </Show>
 
             <Show when={!state.isLoading() && !state.errorMessage()}>
-              <div
-                role="alert"
-                class="rounded-lg border border-amber-300 bg-amber-50 p-4 text-amber-950 dark:border-amber-900/60 dark:bg-amber-950/40 dark:text-amber-200 space-y-2"
-              >
+              <div role="alert" class="rounded-md border border-warning/20 bg-warning-soft px-4 py-3 text-sm space-y-2">
                 <div class="flex items-start gap-2">
                   <span class="text-lg font-bold select-none leading-none" aria-hidden="true">
                     ⚠️
                   </span>
                   <div class="space-y-1 flex-1">
-                    <h2 class="text-sm font-bold text-amber-800 dark:text-amber-300 leading-tight">
-                      Legacy Standalone Deletion Warning
-                    </h2>
-                    <p class="text-xs text-amber-700 dark:text-amber-300/90 leading-relaxed">
+                    <h2 class="text-sm font-semibold text-warning leading-tight">Legacy Standalone Deletion Warning</h2>
+                    <p class="text-sm text-muted-foreground leading-relaxed">
                       This action permanently removes the resource record and unlinks its associated files. Attached
                       file records and R2 storage objects are NOT deleted and remain intact.
                     </p>
-                    <p class="text-xs font-semibold text-amber-800 dark:text-amber-200">
+                    <p class="text-xs font-semibold text-warning">
                       Unlinking is permanent, but file storage is preserved.
                     </p>
                   </div>
@@ -102,7 +97,7 @@ export function ResourceDeletePage(p: ResourceDeletePageProps) {
                 <div class="grid grid-cols-2 gap-2">
                   <For each={state.effects()}>
                     {(item) => (
-                      <div class="flex items-center justify-between rounded-md border border-border-subtle bg-muted/40 px-3 py-2 text-sm">
+                      <div class="flex items-center justify-between rounded-md border border-border bg-muted/40 px-3 py-2 text-sm">
                         <div class="flex flex-col">
                           <span class="text-muted-foreground">{item.label}</span>
                           <span class="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/75">
@@ -116,14 +111,14 @@ export function ResourceDeletePage(p: ResourceDeletePageProps) {
                 </div>
 
                 <Show when={state.isTruncated()}>
-                  <p class="text-xs text-amber-600 dark:text-amber-400 font-semibold" role="alert">
+                  <p class="text-xs text-warning font-semibold" role="alert">
                     * Warning: Linked file count exceeds limit (100) and was truncated. Deletion is blocked to prevent
                     untracked relationships.
                   </p>
                 </Show>
               </div>
 
-              <div class="space-y-2 pt-2 border-t border-border-subtle">
+              <div class="space-y-2 pt-2 border-t border-border">
                 <label for="resource-delete-confirm-input" class="block text-xs font-semibold text-foreground">
                   Type <strong class="font-bold underline">{state.title() || "DELETE"}</strong> or{" "}
                   <strong class="font-bold underline">DELETE</strong> to confirm:
@@ -131,7 +126,7 @@ export function ResourceDeletePage(p: ResourceDeletePageProps) {
                 <input
                   id="resource-delete-confirm-input"
                   type="text"
-                  class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-destructive focus:border-destructive"
+                  class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-destructive focus:border-destructive"
                   placeholder={state.confirmationPlaceholder()}
                   value={state.typedConfirmation.get()}
                   onInput={(e) => state.typedConfirmation.set(e.currentTarget.value)}
@@ -142,7 +137,7 @@ export function ResourceDeletePage(p: ResourceDeletePageProps) {
                 </Show>
               </div>
 
-              <div class="flex items-center justify-end gap-3 pt-3 border-t border-border-subtle">
+              <div class="flex items-center justify-end gap-3 pt-3 border-t border-border">
                 <Button
                   type="button"
                   variant={buttonVariant.outline}

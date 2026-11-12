@@ -12,38 +12,31 @@ export function OverviewPage(p: { demo?: boolean } = {}) {
   const state = overviewPageStateCreate()
   return (
     <PageWrapper>
-      <PageHeader
-        title={ttt("Overview")}
-        subtitle={ttt("Everything you need — organizations and resources in one place.")}
-        class="pb-8 pt-4"
-      />
+      <PageHeader title={ttt("Overview")} subtitle={ttt("Organizations and resources in one place.")} />
       <section aria-label={ttt("Shortcuts")} class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <For each={state.cards()}>
           {(card) => (
             <Link
               to={card.href}
-              class="focus-ring group flex flex-col gap-3 rounded-card border border-border-subtle bg-surface p-5 shadow-sm shadow-slate-900/5 transition-all hover:-translate-y-0.5 hover:shadow-md hover:shadow-slate-900/10 dark:shadow-black/20"
+              class="focus-ring flex flex-col gap-3 rounded-md border border-border bg-background p-4 transition-colors hover:bg-hover sm:p-5"
             >
-              <span class="flex size-11 items-center justify-center rounded-control bg-brand-soft text-brand-accent">
-                <Icon path={card.icon} class="size-6" />
+              <span class="flex size-9 items-center justify-center rounded-md bg-brand-soft text-brand-accent">
+                <Icon path={card.icon} class="size-5" />
               </span>
               <span>
-                <span class="flex items-center gap-1 text-base font-semibold">
+                <span class="flex items-center gap-1 text-sm font-semibold">
                   {card.title}
-                  <Icon
-                    path={mdiChevronRight}
-                    class="size-4 text-content-muted transition-transform group-hover:translate-x-0.5"
-                  />
+                  <Icon path={mdiChevronRight} class="size-4 text-muted-foreground" />
                 </span>
-                <span class="mt-1 block text-sm text-content-muted">{card.description}</span>
+                <span class="mt-1 block text-sm text-muted-foreground">{card.description}</span>
               </span>
             </Link>
           )}
         </For>
       </section>
       <section class="mt-8">
-        <h2 class="mb-3 text-lg font-semibold">{ttt("Demo Auth Links")}</h2>
-        <div class="rounded-card border border-border-subtle bg-surface p-5 shadow-sm shadow-slate-900/5 dark:shadow-black/20">
+        <h2 class="mb-3 text-xs font-semibold text-muted-foreground">{ttt("Demo Auth Links")}</h2>
+        <div class="rounded-md border border-border bg-background p-4 sm:p-5">
           <AuthLinks demo={p.demo} />
         </div>
       </section>

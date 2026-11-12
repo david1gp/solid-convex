@@ -1,5 +1,6 @@
 import { mdiChevronDown } from "@adaptive-ds/mdi/mdiChevronDown.js"
 import { For, Show } from "solid-js"
+import { pageDemoHref } from "#src/app/demos/pageDemoHref.ts"
 import { HierarchyDeleteDialog } from "#src/hierarchy_delete/ui/HierarchyDeleteDialog.tsx"
 import { NoteEditor } from "#src/note/ui/NoteEditor.tsx"
 import { notePageStateCreate } from "#src/note/ui/notePageStateCreate.ts"
@@ -9,22 +10,35 @@ import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 
-export function NotePage() {
-  const state = notePageStateCreate()
+export function NotePage(p: { demo?: ReturnType<typeof notePageStateCreate> }) {
+  const state = p.demo ?? notePageStateCreate()
+  const orgListHref = () => (p.demo ? pageDemoHref("/org") : "/org")
+  const orgHref = () => {
+    const orgHandle = state.orgHandle()
+    if (!orgHandle) return orgListHref()
+    if (!p.demo) return `/org/${encodeURIComponent(orgHandle)}`
+    return pageDemoHref("/org/:orgHandle", { orgHandle })
+  }
+  const teamHref = () => {
+    const orgHandle = state.orgHandle()
+    const teamId = state.teamId()
+    if (!p.demo || !teamId) return `/team/${encodeURIComponent(teamId ?? "")}`
+    return orgHandle
+      ? pageDemoHref("/org/:orgHandle/team/:teamId", { orgHandle, teamId })
+      : pageDemoHref("/team/:teamId", { teamId })
+  }
 
   return (
     <div class="flex flex-col md:flex-row flex-1 min-h-[calc(100dvh-3.5rem)] md:h-dvh">
       {/* Column 2: Note List Panel */}
-      <section class="w-full md:w-80 lg:w-96 shrink-0 border-b md:border-b-0 md:border-r border-border-subtle flex flex-col p-4 gap-4 overflow-y-auto">
+      <section class="w-full md:w-80 lg:w-96 shrink-0 border-b md:border-b-0 md:border-r border-border flex flex-col p-4 gap-4 overflow-y-auto">
         <nav aria-label="Breadcrumb" class="flex flex-wrap gap-2 text-xs text-muted-foreground">
-          <LinkButtonInternal to="/org">Organizations</LinkButtonInternal>
+          <LinkButtonInternal to={orgListHref()}>Organizations</LinkButtonInternal>
           <Show when={state.orgHandle()}>
-            <LinkButtonInternal to={`/org/${encodeURIComponent(state.orgHandle()!)}`}>
-              {state.orgHandle()}
-            </LinkButtonInternal>
+            <LinkButtonInternal to={orgHref()}>{state.orgHandle()}</LinkButtonInternal>
           </Show>
           <Show when={state.teamId()}>
-            <LinkButtonInternal to={`/team/${encodeURIComponent(state.teamId()!)}`}>Team</LinkButtonInternal>
+            <LinkButtonInternal to={teamHref()}>Team</LinkButtonInternal>
           </Show>
           <Show when={state.projectHref()}>
             <LinkButtonInternal to={state.projectHref()!}>Project</LinkButtonInternal>
@@ -85,10 +99,8 @@ export function NotePage() {
               const isSelected = () => note.noteId === state.selectedNoteId()
               return (
                 <article
-                  class={`rounded-lg border p-3 transition-colors ${
-                    isSelected()
-                      ? "border-primary bg-primary/5 dark:bg-primary/10"
-                      : "border-border-subtle hover:border-border"
+                  class={`rounded-md border border-border p-3 transition-colors ${
+                    isSelected() ? "bg-hover" : "bg-background hover:bg-hover"
                   }`}
                 >
                   <LinkButtonInternal to={state.noteItemHref(note)} class="block font-medium truncate">
@@ -114,7 +126,7 @@ export function NotePage() {
       {/* Column 3: Detail / Editor Panel */}
       <section class="flex-1 min-w-0 flex flex-col p-4 overflow-y-auto">
         <Show when={state.saveStatus()}>
-          <p role="status" class="text-sm text-green-600 dark:text-green-400 mb-2">
+          <p role="status" class="text-sm text-success mb-2">
             {state.saveStatus()}
           </p>
         </Show>
@@ -165,7 +177,7 @@ export function NotePage() {
                   disabled={state.isSaving}
                   onSave={state.saveNote}
                 />
-                <footer class="mt-auto px-4 py-3 text-xs text-muted-foreground border-t border-border-subtle flex flex-wrap items-center justify-between gap-4">
+                <footer class="mt-auto px-4 py-3 text-xs text-muted-foreground border-t border-border flex flex-wrap items-center justify-between gap-4">
                   <div class="flex flex-wrap gap-4">
                     <span>Project: {note().projectId}</span>
                     <span>Created: {note().createdAt}</span>

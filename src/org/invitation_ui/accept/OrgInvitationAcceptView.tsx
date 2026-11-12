@@ -7,7 +7,7 @@ import { OrgViewInformation } from "#src/org/org_ui/view/OrgViewInformation.tsx"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { classesCardWrapperP8 } from "#ui/static/card/classesCardWrapper.ts"
-import { classArr } from "#ui/utils/classArr.ts"
+import { classMerge } from "#ui/utils/classMerge.ts"
 
 interface OrgInvitationAcceptViewProps {
   invitation: OrgInvitationModel
@@ -20,7 +20,15 @@ export function OrgInvitationAcceptView(p: OrgInvitationAcceptViewProps) {
   return (
     <div class="space-y-6">
       <OrgViewInformation showEditButton={false} org={p.org} />
-      <section class={classArr(classesCardWrapperP8, "max-w-md mx-auto", "mt-10 mb-15")}>
+      <section
+        class={classMerge(
+          classesCardWrapperP8,
+          "max-w-md mx-auto",
+          "mt-10 mb-15",
+          "rounded-md border-border bg-background shadow-none",
+          "dark:border-border dark:bg-background",
+        )}
+      >
         <h2 class="text-xl font-semibold mb-4">{ttc("Accept Invitation")}</h2>
         <p class="text-muted-foreground mb-4">
           {ttc("You have been invited to join as")} {orgRoleGetText(p.invitation.role)}.

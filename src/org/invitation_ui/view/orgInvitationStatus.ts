@@ -21,8 +21,8 @@ export const orgInvitationStatusIcon = {
 } as const
 
 export const orgInvitationStatusClasses = {
-  sendingEmail: "text-yellow-600",
-  waitingForConfirmation: "text-yellow-600",
+  sendingEmail: "text-warning",
+  waitingForConfirmation: "text-warning",
 } as const
 
 export function invitationModelToStatus(i: OrgInvitationModel): OrgInvitationStatus {

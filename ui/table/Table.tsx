@@ -30,7 +30,7 @@ const TableRow: Component<ComponentProps<"tr">> = (p) => {
   const [s, rest] = splitProps(p, ["class"])
   return (
     <tr
-      class={classMerge("hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors", s.class)}
+      class={classMerge("hover:bg-hover data-[state=selected]:bg-muted border-b transition-colors", s.class)}
       {...rest}
     />
   )
@@ -41,7 +41,7 @@ const TableHead: Component<ComponentProps<"th">> = (p) => {
   return (
     <th
       class={classMerge(
-        "text-muted-foreground h-12 px-4 text-left align-middle font-medium [&:has([role=checkbox])]:pr-0",
+        "text-muted-foreground h-8 px-2 text-left align-middle text-xs font-medium [&:has([role=checkbox])]:pr-0",
         s.class,
       )}
       {...rest}
@@ -51,7 +51,7 @@ const TableHead: Component<ComponentProps<"th">> = (p) => {
 
 const TableCell: Component<ComponentProps<"td">> = (p) => {
   const [s, rest] = splitProps(p, ["class"])
-  return <td class={classMerge("p-4 align-middle [&:has([role=checkbox])]:pr-0", s.class)} {...rest} />
+  return <td class={classMerge("h-8 px-2 py-1 align-middle [&:has([role=checkbox])]:pr-0", s.class)} {...rest} />
 }
 
 const TableCaption: Component<ComponentProps<"caption">> = (p) => {

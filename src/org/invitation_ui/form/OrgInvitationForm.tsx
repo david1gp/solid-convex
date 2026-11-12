@@ -31,9 +31,9 @@ export function OrgInvitationForm(p: OrgInvitationContentProps) {
     addKeyboardListenerAlt("t", p.sm.fillTestData)
   }
   return (
-    <section class={classMerge("px-2 sm:px-4 pb-10", "text-gray-900 dark:text-gray-100", p.class)}>
+    <section class={classMerge("px-2 sm:px-4 pb-10", "text-foreground", p.class)}>
       <h1 class="text-2xl font-bold mt-6 mb-2">{p.title ?? getOrgInvitationTitle(p.mode)}</h1>
-      <form class="space-y-4" onSubmit={p.sm.handleSubmit}>
+      <form class="rounded-md border border-border bg-background p-4 sm:p-5 space-y-4" onSubmit={p.sm.handleSubmit}>
         <InvitedNameField sm={p.sm} />
         <InvitedEmailField sm={p.sm} />
         <LanguageField sm={p.sm} />
@@ -112,7 +112,7 @@ function LanguageField(p: HasOrgInvitationFormStateManagement) {
         valueText={(value) => languageGetText(value)}
         disabled={p.sm.mode === formMode.remove}
         innerClass="flex flex-wrap gap-2"
-        optionClass="bg-gray-50"
+        optionClass="bg-hover"
         disallowDeselection={true}
       />
       <Show when={p.sm.errors.l.get()}>

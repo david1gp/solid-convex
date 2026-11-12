@@ -42,7 +42,7 @@ function ShowImage(p: ResourceViewProps) {
       <img
         src={p.resource.image!}
         alt={ttc("Image for ") + (p.resource.name || "Resource")}
-        class={classArr("max-w-xl h-auto rounded-xl", "col-span-full mx-auto", p.class)}
+        class={classArr("max-w-xl h-auto rounded-md", "col-span-full mx-auto", p.class)}
       />
     </Show>
   )

@@ -21,21 +21,23 @@ export interface OrgViewProps extends MayHaveClass {
 
 export function OrgViewInformation(p: OrgViewProps) {
   return (
-    <section id={orgPageSection.org} class="text-center">
+    <section id={orgPageSection.org} class="text-left">
       <ShowImg {...p} />
-      <h1 class="text-5xl font-bold mb-6 text-balance">{p.org.name}</h1>
+      <div class="flex items-center gap-2">
+        <h1 class="text-lg font-semibold">{p.org.name}</h1>
+        {p.showEditButton && (
+          <LinkButtonInternal
+            to={p.editHref ?? urlOrgEdit(p.org.orgHandle)}
+            variant={buttonVariant.outline}
+            icon={appIcons.edit}
+            class="ml-auto"
+          >
+            {ttc("Edit")}
+          </LinkButtonInternal>
+        )}
+      </div>
       <ShowDescription {...p} />
       <ShowUrl {...p} />
-      {p.showEditButton && (
-        <LinkButtonInternal
-          to={p.editHref ?? urlOrgEdit(p.org.orgHandle)}
-          variant={buttonVariant.ghost}
-          icon={appIcons.edit}
-          class="flex mt-4"
-        >
-          {ttc("Edit")}
-        </LinkButtonInternal>
-      )}
     </section>
   )
 }
@@ -44,11 +46,7 @@ function ShowImg(p: OrgViewProps) {
   return (
     <Show when={p.org.image}>
       {(getImageUrl) => (
-        <Img
-          src={getImageUrl()}
-          alt={ttc("Logo of ") + " " + p.org.name}
-          class={classArr("h-40 rounded-xl mx-auto mb-6")}
-        />
+        <Img src={getImageUrl()} alt={ttc("Logo of ") + " " + p.org.name} class={classArr("h-40 rounded-md mb-6")} />
       )}
     </Show>
   )
@@ -62,10 +60,8 @@ function ImageFallBack() {
         " mx-auto",
         "size-40", // size
         "p-6",
-        "fill-white text-white bg-blue-400", // bg
-        "rounded-4xl",
-        // "ring-4 ring-blue-300", // ring
-        "shadow-lg hover:shadow-xl", // shadow
+        "fill-white text-white bg-primary", // bg
+        "rounded-md",
       )}
     />
   )
@@ -75,7 +71,7 @@ function ShowDescription(p: OrgViewProps) {
   return (
     <Show when={p.org.description}>
       {(getDescription) => (
-        <div class="text-lg mx-auto text-pretty mb-4">
+        <div class="text-sm text-muted-foreground text-pretty mb-4">
           <Ps text={getDescription()} />
         </div>
       )}
@@ -91,7 +87,7 @@ function ShowUrl(p: OrgViewProps) {
           href={getUrl()}
           class={classArr(
             "text-lg font-semibold",
-            "text-black dark:text-white", // text color
+            "text-foreground", // text color
             "underline decoration-2 underline-offset-4",
           )}
         >

@@ -3,24 +3,22 @@ import { Show } from "solid-js"
 import { enableGithub } from "#src/app/config/enableGithub.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { loginProvider } from "#src/auth/model_field/socialLoginProvider.ts"
+import { classesAuthCard } from "#src/auth/ui/shared/classesAuthCard.ts"
 import { AuthSectionCard } from "#src/auth/ui/shared/AuthSectionCard.tsx"
-import { AuthSectionHeroIcon } from "#src/auth/ui/shared/AuthSectionHeroIcon.tsx"
+import { AuthSplitLayout } from "#src/auth/ui/shared/AuthSplitLayout.tsx"
 import { AdminLoginSection } from "#src/auth/ui/sign_in/admin/AdminLoginSection.tsx"
 import { AuthworksSignInSection } from "#src/auth/ui/sign_in/authworks/AuthworksSignInSection.tsx"
 import { SignInWithAnExistingSession } from "#src/auth/ui/sign_in/existing/SignInWithAnExistingSession.tsx"
 import { AuthLegalAgree } from "#src/auth/ui/sign_in/legal/AuthLegalAgree.tsx"
 import { authLegalAgreeVariant } from "#src/auth/ui/sign_in/legal/authLegalAgreeVariant.tsx"
 import { OidcSignInSection } from "#src/auth/ui/sign_in/oidc/OidcSignInSection.tsx"
-import { AuthMiniHero } from "#src/auth/ui/sign_in/page/AuthMiniHero.tsx"
 import { SignUpButtonLink } from "#src/auth/ui/sign_in/page/SignUpButtonLink.tsx"
 import { SocialLoginButton } from "#src/auth/ui/sign_in/social/SocialLoginButton.tsx"
 import { SignInViaEmailForm } from "#src/auth/ui/sign_in/via_email/SignInViaEmailForm.tsx"
 import { signInViaEmailDemoStateCreate } from "#src/auth/ui/sign_in/via_email/signInViaEmailDemoStateCreate.ts"
 import { SignInViaPasswordForm } from "#src/auth/ui/sign_in/via_pw/SignInViaPasswordForm.tsx"
 import { signInViaPasswordDemoStateCreate } from "#src/auth/ui/sign_in/via_pw/signInViaPasswordDemoStateCreate.ts"
-import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
-import { classesCardWrapperP4 } from "#ui/static/card/classesCardWrapper.ts"
-import { classesGridCols3lg } from "#ui/static/grid/classesGridCols3lg.ts"
+import { Icon } from "#ui/static/icon/Icon.jsx"
 import { iconGithub } from "#ui/static/icons/iconGithub.ts"
 import { iconGoogle } from "#ui/static/icons/iconGoogle.ts"
 import { classArr } from "#ui/utils/classArr.ts"
@@ -28,28 +26,15 @@ import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 export function SignInPageContent(p: MayHaveClass & { demo?: boolean }) {
   return (
-    <div
-      class={classArr(
-        "max-w-7xl w-full mx-auto",
-        // "space-y-8",
-        // "dark:text-white",
-        "p-4 pb-8",
-        classesGridCols3lg,
-        "gap-4 lg:gap-8",
-        p.class,
-      )}
-    >
-      <AuthMiniHero class="col-span-full text-center text-balance" />
-      <Show when={p.demo} fallback={<NoAccountSection class="col-span-full mx-auto" />}>
-        <p class="col-span-full text-center">Demo only — no account or network request is used.</p>
+    <AuthSplitLayout class={p.class}>
+      <h1 class="text-base font-semibold lg:text-lg">{ttc("Sign In")}</h1>
+      <p class="text-sm text-muted-foreground">{ttc("Sign in with")}</p>
+      <Show when={p.demo}>
+        <p>Demo only — no account or network request is used.</p>
       </Show>
       <Show when={!p.demo}>
-        <SignInWithAnExistingSession
-          class="col-span-full mx-auto contents"
-          h2Class="text-2xl col-span-full text-center"
-        />
+        <SignInWithAnExistingSession h2Class="text-sm font-semibold" innerClass="flex flex-col gap-2" />
       </Show>
-      <h2 class="text-2xl font-semibold col-span-full text-center">{ttc("Sign in with")}</h2>
 
       <AuthSectionCard icon={mdiLockOutline} title={ttc("Password")} subtitle={ttc("Traditional sign in")}>
         <SignInViaPasswordForm class="w-full" stateFactory={p.demo ? signInViaPasswordDemoStateCreate : undefined} />
@@ -72,9 +57,10 @@ export function SignInPageContent(p: MayHaveClass & { demo?: boolean }) {
         <AdminLoginSection class="" />
       </Show>
       <Show when={!p.demo}>
-        <AuthLegalAgree variant={authLegalAgreeVariant.signIn} class="col-span-full text-center" />
+        <AuthLegalAgree variant={authLegalAgreeVariant.signIn} class="text-center text-xs" />
       </Show>
-    </div>
+      <NoAccountSection class="text-center" />
+    </AuthSplitLayout>
   )
 }
 
@@ -88,14 +74,20 @@ function AuthSectionSocials() {
         </AuthSectionCard>
       }
     >
-      <section class={classArr(classesCardWrapperP4, "flex flex-col items-center")}>
-        <div class="flex flex-wrap gap-2">
-          <AuthSectionHeroIcon icon={iconGoogle} class="" />
-          <AuthSectionHeroIcon icon={iconGithub} class="" />
+      <section class={classesAuthCard}>
+        <div class="mb-3 flex items-center gap-3">
+          <span class="grid size-9 shrink-0 place-items-center rounded-md bg-hover">
+            <Icon path={iconGoogle} class="size-5" />
+          </span>
+          <span class="grid size-9 shrink-0 place-items-center rounded-md bg-hover">
+            <Icon path={iconGithub} class="size-5" />
+          </span>
+          <div class="min-w-0">
+            <h2 class="text-sm font-semibold">{ttc("Socials")}</h2>
+            <p class="text-xs text-muted-foreground">{ttc("One-click sign in")}</p>
+          </div>
         </div>
-        <h2 class="text-xl font-semibold">{ttc("Socials")}</h2>
-        <p class="text-muted-foreground mb-4">{ttc("One-click sign in")}</p>
-        <div class="space-y-2">
+        <div class="flex flex-col gap-2">
           <SocialLoginButton provider={loginProvider.google} class="w-full" />
           <SocialLoginButton provider={loginProvider.github} class="w-full" />
         </div>
@@ -106,9 +98,8 @@ function AuthSectionSocials() {
 
 function NoAccountSection(p: MayHaveClass) {
   return (
-    <section class={classArr("flex flex-wrap gap-4 items-center", p.class)}>
-      <h2 class="font-medium">{ttc("Don't have an account?")}</h2>
-      <SignUpButtonLink text={ttc("Sign Up instead")} variant={buttonVariant.contrast} class="pl-4" />
-    </section>
+    <p class={classArr("text-sm text-muted-foreground", p.class)}>
+      {ttc("Don't have an account?")} <SignUpButtonLink text={ttc("Sign Up instead")} />
+    </p>
   )
 }

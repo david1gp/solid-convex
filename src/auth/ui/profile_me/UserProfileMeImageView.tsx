@@ -18,11 +18,11 @@ export function UserProfileMeImageView(p: {
   return (
     <div class="max-w-4xl mx-auto px-4 py-8">
       <h1 class="text-3xl font-bold mb-4">{ttc("Change Profile Image")}</h1>
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+      <div class="rounded-md border border-border bg-background p-4 sm:p-5">
         <div class="space-y-6">
           <Show when={state.hasImage()}>
             <div class="flex flex-col gap-2 max-w-sm">
-              <img src={state.image()} alt="Profile preview" class="w-full rounded-lg" />
+              <img src={state.image()} alt="Profile preview" class="w-full rounded-md" />
               <ButtonIcon
                 icon={mdiTrashCanOutline}
                 variant={buttonVariant.outline}

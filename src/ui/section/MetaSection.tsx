@@ -13,10 +13,19 @@ export interface MetaSectionProps<T extends string> extends MayHaveClass, HasChi
 
 export function MetaSection<T extends string>(p: MetaSectionProps<T>) {
   return (
-    <section id={p.s} class={classMerge(classesCard, "flex flex-col gap-2", p.class)}>
+    <section
+      id={p.s}
+      class={classMerge(
+        classesCard,
+        "flex flex-col gap-2",
+        "rounded-md border-border bg-background",
+        "dark:border-border dark:bg-background",
+        p.class,
+      )}
+    >
       <div class={classMerge("flex items-center gap-2", "text-muted-foreground", p.headerClass)}>
-        <Icon path={p.icons[p.s]} class="fill-gray-500 dark:fill-gray-500" />
-        <h2 class={classMerge("text-lg font-semibold")}>{p.getTexts(p.s)}</h2>
+        <Icon path={p.icons[p.s]} class="fill-muted-foreground" />
+        <h2 class={classMerge("text-sm font-semibold")}>{p.getTexts(p.s)}</h2>
       </div>
       {p.children}
     </section>

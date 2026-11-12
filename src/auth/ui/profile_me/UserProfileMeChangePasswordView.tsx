@@ -14,12 +14,12 @@ export function UserProfileMeChangePasswordView(p: {
   return (
     <div class="max-w-xl mx-auto">
       <h1 class="text-3xl font-bold mb-4">{ttc("Change Password")}</h1>
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+      <div class="rounded-md border border-border bg-background p-4 sm:p-5">
         <Show when={state.step() === 1}>
           <form class="space-y-6" onSubmit={state.request}>
             <div>
-              <h2 class="text-xl font-semibold mb-2">{ttc("Step 1: Send Verification Code")}</h2>
-              <p class="text-gray-600 dark:text-gray-400 mb-6">
+              <h2 class="text-sm font-semibold mb-2">{ttc("Step 1: Send Verification Code")}</h2>
+              <p class="text-sm text-muted-foreground mb-6">
                 {ttc("We'll send a verification code to your email address.")}
               </p>
             </div>
@@ -31,8 +31,8 @@ export function UserProfileMeChangePasswordView(p: {
         <Show when={state.step() === 2}>
           <form class="space-y-6" onSubmit={state.confirm}>
             <div>
-              <h2 class="text-xl font-semibold mb-2">{ttc("Step 2: Enter Confirmation Code")}</h2>
-              <p class="text-gray-600 dark:text-gray-400 mb-6">
+              <h2 class="text-sm font-semibold mb-2">{ttc("Step 2: Enter Confirmation Code")}</h2>
+              <p class="text-sm text-muted-foreground mb-6">
                 {ttc("Enter the 6-digit code from your email and your new password.")}
               </p>
             </div>

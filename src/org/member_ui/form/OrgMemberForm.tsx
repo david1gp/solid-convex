@@ -27,9 +27,9 @@ export function OrgMemberForm(p: OrgMemberContentProps) {
     addKeyboardListenerAlt("t", p.sm.fillTestData)
   }
   return (
-    <section class={classMerge("px-2 sm:px-4 pb-10", "text-gray-900 dark:text-gray-100", p.class)}>
+    <section class={classMerge("px-2 sm:px-4 pb-10", "text-foreground", p.class)}>
       <h1 class="text-2xl font-bold mt-6 mb-2">{getOrgMemberTitle(p.mode)}</h1>
-      <form class="space-y-4" onSubmit={p.sm.handleSubmit}>
+      <form class="rounded-md border border-border bg-background p-4 sm:p-5 space-y-4" onSubmit={p.sm.handleSubmit}>
         <RoleField sm={p.sm} />
         <ButtonIcon
           type="submit"
@@ -60,7 +60,7 @@ function RoleField(p: HasOrgMemberFormStateManagement) {
             p.sm.validateOnChange(orgMemberFormField.role)(e.currentTarget.value)
           }}
           class={classMerge(
-            "w-full appearance-none pl-3 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
+            "w-full appearance-none pl-3 pr-10 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring",
             p.sm.errors.role.get() && "border-destructive focus-visible:ring-destructive",
           )}
         >
@@ -69,7 +69,7 @@ function RoleField(p: HasOrgMemberFormStateManagement) {
         </select>
         <Icon
           path={mdiChevronDown}
-          class="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-gray-900 dark:text-white"
+          class="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
         />
       </div>
       <Show when={p.sm.errors.role.get()}>

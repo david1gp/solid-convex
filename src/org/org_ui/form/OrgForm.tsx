@@ -29,21 +29,21 @@ export function OrgForm(p: OrgContentProps) {
     () => p.sm.fillTestData,
   )
   return (
-    <section class={classMerge("px-2 sm:px-4 pb-10", "text-gray-900 dark:text-gray-100", p.class)}>
-      <div class="flex flex-wrap justify-between items-center mt-6 mb-2">
+    <section class={classMerge("px-2 sm:px-4 pb-10", "text-foreground", p.class)}>
+      <div class="flex flex-wrap items-center justify-between gap-2 mt-6 mb-2">
         <h1 class="text-2xl font-bold">{getOrgTitle(p.mode)}</h1>
         <Show when={p.mode === formMode.edit}>
           <LinkButtonInternal
             icon={appIcons.delete}
             to={urlOrgRemove(p.sm.state.orgHandle.get())}
             variant={buttonVariant.link}
-            class="text-red-600 dark:text-red-400"
+            class="text-danger"
           >
             {ttc("Remove")}
           </LinkButtonInternal>
         </Show>
       </div>
-      <form class="space-y-4" onSubmit={p.sm.handleSubmit}>
+      <form class="rounded-md border border-border bg-background p-4 sm:p-5 space-y-4" onSubmit={p.sm.handleSubmit}>
         <NameField sm={p.sm} />
         {p.mode === formMode.add && <HandleField sm={p.sm} />}
         <DescriptionField sm={p.sm} />

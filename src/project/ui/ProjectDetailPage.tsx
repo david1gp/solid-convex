@@ -2,6 +2,7 @@ import { Match, Show, Switch } from "solid-js"
 import { appIcons } from "#src/app/icon/appIcons.ts"
 import { HierarchyDeleteDialog } from "#src/hierarchy_delete/ui/HierarchyDeleteDialog.tsx"
 import { NoteListSection } from "#src/note/ui/NoteListSection.tsx"
+import type { noteListSectionStateCreate } from "#src/note/ui/noteListSectionStateCreate.ts"
 import { projectDetailPageStateCreate } from "#src/project/ui/projectDetailPageStateCreate.ts"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
@@ -9,11 +10,16 @@ import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { TabsTop } from "#ui/interactive/tabs/TabsTop.tsx"
 import { PageWrapper } from "#ui/static/page/PageWrapper.jsx"
 
-export function ProjectDetailPage() {
-  const state = projectDetailPageStateCreate()
+export function ProjectDetailPage(p: {
+  demo?: {
+    detail: ReturnType<typeof projectDetailPageStateCreate>
+    notes: ReturnType<typeof noteListSectionStateCreate>
+  }
+}) {
+  const state = p.demo?.detail ?? projectDetailPageStateCreate()
   return (
     <PageWrapper>
-      <section class="px-2 sm:px-4 py-6 space-y-6">
+      <section class="space-y-6">
         <div class="flex gap-2">
           <LinkButtonInternal to={state.listHref()} icon={appIcons.back}>
             Back to projects
@@ -25,7 +31,9 @@ export function ProjectDetailPage() {
           </Show>
         </div>
         <Show when={state.loading()}>
-          <p role="status">Loading project…</p>
+          <p role="status" class="text-sm text-muted-foreground">
+            Loading project…
+          </p>
         </Show>
         <Show when={state.error()}>
           <p role="alert" class="text-destructive">
@@ -35,9 +43,9 @@ export function ProjectDetailPage() {
         <Show when={state.project()}>
           {(project) => (
             <>
-              <div class="flex justify-between items-center gap-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
                 <h1 class="text-2xl font-bold">{project().name}</h1>
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                   <LinkButtonInternal to={state.editHref()} icon={appIcons.edit}>
                     Edit project
                   </LinkButtonInternal>
@@ -59,19 +67,19 @@ export function ProjectDetailPage() {
                 valueChildren={(tab) => (
                   <Switch>
                     <Match when={tab === "details"}>
-                      <div class="space-y-4">
+                      <div class="rounded-md border border-border bg-background p-4 sm:p-5 space-y-4">
                         <Show when={project().description}>
-                          <p class="whitespace-pre-wrap break-words">{project().description}</p>
+                          <p class="text-sm whitespace-pre-wrap break-words">{project().description}</p>
                         </Show>
-                        <dl class="text-sm text-muted-foreground grid gap-2">
-                          <dt>Team</dt>
-                          <dd>{state.teamId() ?? project().teamId}</dd>
-                          <dt>Organization</dt>
-                          <dd>{state.orgHandle() ?? project().orgId}</dd>
-                          <dt>Created</dt>
-                          <dd>{project().createdAt}</dd>
-                          <dt>Last updated</dt>
-                          <dd>{project().updatedAt}</dd>
+                        <dl class="grid gap-2">
+                          <dt class="text-xs text-muted-foreground">Team</dt>
+                          <dd class="text-sm">{state.teamId() ?? project().teamId}</dd>
+                          <dt class="text-xs text-muted-foreground">Organization</dt>
+                          <dd class="text-sm">{state.orgHandle() ?? project().orgId}</dd>
+                          <dt class="text-xs text-muted-foreground">Created</dt>
+                          <dd class="text-sm">{project().createdAt}</dd>
+                          <dt class="text-xs text-muted-foreground">Last updated</dt>
+                          <dd class="text-sm">{project().updatedAt}</dd>
                         </dl>
                       </div>
                     </Match>
@@ -80,6 +88,7 @@ export function ProjectDetailPage() {
                         orgHandle={state.orgHandle()}
                         teamId={state.teamId() ?? project().teamId}
                         projectId={project().projectId}
+                        demoState={p.demo?.notes}
                       />
                     </Match>
                   </Switch>

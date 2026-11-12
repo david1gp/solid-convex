@@ -16,30 +16,23 @@ export function HierarchyDeleteWarning(props: HierarchyDeleteWarningProps) {
   })
 
   return (
-    <div
-      role="alert"
-      class="rounded-lg border border-red-300 bg-red-50 p-4 text-red-950 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200 space-y-2"
-    >
+    <div role="alert" class="rounded-md border border-danger/20 bg-danger-soft px-4 py-3 text-sm space-y-2">
       <div class="flex items-start gap-2">
         <span class="text-lg font-bold select-none leading-none" aria-hidden="true">
           ⚠️
         </span>
         <div class="space-y-1 flex-1">
-          <h3 class="text-sm font-bold text-red-800 dark:text-red-300 leading-tight">{state.title()}</h3>
-          <p class="text-xs text-red-700 dark:text-red-300/90 leading-relaxed">{state.description()}</p>
+          <h3 class="text-sm font-semibold text-danger leading-tight">{state.title()}</h3>
+          <p class="text-sm text-muted-foreground leading-relaxed">{state.description()}</p>
           <Show when={state.accountWarning()}>
-            <p class="text-xs font-medium text-amber-800 dark:text-amber-300 leading-relaxed">
-              {state.accountWarning()}
-            </p>
+            <p class="text-xs font-medium text-warning leading-relaxed">{state.accountWarning()}</p>
           </Show>
-          <p class="text-xs font-semibold text-red-800 dark:text-red-200">
-            This action is permanent and cannot be undone.
-          </p>
+          <p class="text-xs font-semibold text-danger">This action is permanent and cannot be undone.</p>
         </div>
       </div>
 
       <Show when={state.isTruncated()}>
-        <div class="mt-2 rounded border border-amber-400 bg-amber-50 p-2 text-xs font-semibold text-amber-900 dark:border-amber-700 dark:bg-amber-950/60 dark:text-amber-200">
+        <div class="mt-2 rounded-md border border-warning/20 bg-warning-soft p-2 text-xs font-semibold text-warning">
           {state.truncationWarning()}
         </div>
       </Show>

@@ -27,6 +27,8 @@ export function ResourceCardLink(p: ResourceCardLinkProps) {
         // "flex flex-col gap-2",
         "grid grid-cols-1 gap-4",
         p.resource.image && "lg:grid-cols-2",
+        "rounded-md border-border bg-background dark:border-border dark:bg-background",
+        "h-auto items-start justify-start text-left",
         p.class,
       )}
     >

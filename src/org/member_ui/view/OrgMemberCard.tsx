@@ -26,14 +26,13 @@ export function OrgMemberCard(p: OrgMemberCardProps) {
   return (
     <section
       class={classMerge(
+        "rounded-md border border-border bg-background", // card
         "p-4", // padding
-        "border border-gray-200 dark:border-slate-700 rounded-lg ", // border
-        "bg-gray-50 dark:bg-stone-800", // bg
         "flex flex-col justify-start gap-2", // layout children
         p.class,
       )}
     >
-      <h3 class="text-xl font-medium">{p.member.profile.name}</h3>
+      <h3 class="text-sm font-semibold">{p.member.profile.name}</h3>
 
       {p.member.profile.email && (
         <div class="flex flex-wrap gap-1">
@@ -58,8 +57,8 @@ export function OrgMemberCard(p: OrgMemberCardProps) {
       )}
 
       {orgInvitationShowRole && (
-        <div class="text-muted-foreground capitalize">
-          <span>{ttc("Role:")}</span>
+        <div class="text-sm capitalize">
+          <span class="text-xs text-muted-foreground">{ttc("Role:")} </span>
           {p.member.role}
         </div>
       )}
@@ -73,12 +72,12 @@ export function OrgMemberCard(p: OrgMemberCardProps) {
 function ShowTimes(p: OrgMemberCardProps) {
   return (
     <div class="space-y-1">
-      <div class="flex items-center gap-2">
-        <span class="font-medium text-muted-foreground">{ttc("Created at:")}</span>
+      <div class="flex items-center gap-2 text-sm">
+        <span class="text-xs text-muted-foreground">{ttc("Created at:")}</span>
         <DateView date={p.member.profile.createdAt} />
       </div>
-      <div class="flex items-center gap-2">
-        <span class="font-medium text-muted-foreground">{ttc("Joined at:")}</span>
+      <div class="flex items-center gap-2 text-sm">
+        <span class="text-xs text-muted-foreground">{ttc("Joined at:")}</span>
         <DateView date={p.member.createdAt} />
       </div>
     </div>
@@ -125,7 +124,7 @@ function OrgMemberActions(p: OrgMemberCardProps) {
       <ButtonIcon
         variant={buttonVariant.outline}
         icon={appIcons.delete}
-        iconClass="fill-red-800 text-red-800 dark:fill-red-800 dark:text-red-800"
+        iconClass="fill-danger text-danger"
         onClick={deleteClick}
         class="flex-1"
       >

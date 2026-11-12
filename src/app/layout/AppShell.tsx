@@ -5,8 +5,9 @@ import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { Sidebar } from "#ui/interactive/sidebar/Sidebar.jsx"
 import { SidebarToggle } from "#ui/interactive/sidebar/SidebarToggle.jsx"
 import { LogoImageText } from "#ui/static/logo/LogoImageText.jsx"
+import { ttt } from "#ui/i18n/ttt.ts"
 import { AppSidebarCollapseToggle } from "./AppSidebarCollapseToggle.tsx"
-import { AppSidebarContent } from "./AppSidebarContent.tsx"
+import { AppSidebarContent, type AppSidebarDemoUser } from "./AppSidebarContent.tsx"
 import {
   appSidebarCollapsedInit,
   appSidebarCollapsedSignal,
@@ -15,41 +16,63 @@ import {
 import { appShellStateCreate } from "./appShellStateCreate.ts"
 
 /** Eventoren-style app shell: sidebar navigation with user popover, no top navbar. */
-export function AppShell(p: { children: JSX.Element }) {
+export function AppShell(p: {
+  children: JSX.Element
+  /** Demo-only fake user, passed through to the sidebar; the real app never passes it. */
+  user?: () => AppSidebarDemoUser | undefined
+  /** Demo-only sign-out no-op, passed through to the sidebar. */
+  onSignOut?: () => void
+  /** Demo-only nav-highlight override, passed through to the sidebar. */
+  activeHref?: string
+}) {
   const state = appShellStateCreate()
   appSidebarCollapsedInit()
   const collapsed = () => appSidebarCollapsedSignal.get()
 
   return (
-    <div class="flex min-h-dvh bg-surface-base text-content">
+    <div class="flex min-h-dvh bg-background text-foreground">
+      <a
+        href="#main-content"
+        class="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded-md focus:bg-surface focus:px-3 focus:py-1.5 focus:text-sm focus:text-foreground"
+      >
+        {ttt("Skip to content")}
+      </a>
       <Sidebar
         state={state.sidebarState}
         title="Main navigation"
         titleClass="sr-only"
         desktopChildren={
           <aside
-            class={`sticky top-0 hidden h-dvh shrink-0 flex-col overflow-y-auto bg-surface-muted/50 p-4 md:flex dark:bg-slate-900/50 ${
-              collapsed() ? "w-[76px]" : "w-64"
-            }`}
+            class={`sticky top-0 hidden h-dvh w-[220px] shrink-0 flex-col overflow-y-auto border-r border-border bg-surface md:flex${collapsed() ? " md:w-12" : ""}`}
           >
             <AppSidebarContent
               state={state}
               collapsed={collapsed}
-              headerAction={
-                <AppSidebarCollapseToggle collapsed={collapsed} onToggle={appSidebarCollapsedToggle} />
-              }
+              user={p.user}
+              onSignOut={p.onSignOut}
+              activeHref={p.activeHref}
+              headerAction={<AppSidebarCollapseToggle collapsed={collapsed} onToggle={appSidebarCollapsedToggle} />}
             />
           </aside>
         }
-        mobileChildren={<AppSidebarContent state={state} />}
+        mobileChildren={
+          <AppSidebarContent state={state} user={p.user} onSignOut={p.onSignOut} activeHref={p.activeHref} />
+        }
       />
       <div class="flex min-w-0 flex-1 flex-col">
         {/* Mobile top bar: logo + sidebar toggle (part of the sidebar pattern). */}
-        <div class="sticky top-0 z-20 flex items-center justify-between gap-2 border-b border-border-subtle bg-surface-base/90 px-4 py-2 backdrop-blur-xl md:hidden">
-          <LogoImageText to={urlOverview()} logoText={appNameClient()} logoTextClass="text-base font-semibold" />
+        <div class="sticky top-0 z-20 flex h-11 items-center justify-between gap-2 border-b border-border bg-surface px-4 md:hidden">
+          <LogoImageText
+            to={urlOverview()}
+            logoText={appNameClient()}
+            logoTextClass="truncate text-sm font-semibold"
+            class="min-w-0 flex-1"
+          />
           <SidebarToggle {...state.sidebarState} variant={buttonVariant.ghost} />
         </div>
-        <div class="min-w-0 flex-1">{p.children}</div>
+        <div id="main-content" class="min-w-0 flex-1">
+          {p.children}
+        </div>
       </div>
     </div>
   )

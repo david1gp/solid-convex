@@ -18,14 +18,23 @@ export interface PageHeaderProps
 
 export function PageHeader(p: PageHeaderProps) {
   return (
-    <header class={classMerge("flex flex-col gap-2", p.class)}>
-      <div class={classMerge("flex flex-wrap justify-between items-center gap-4", p.innerClass)}>
-        {p.icon && <Icon path={p.icon} class={p.iconClass} />}
-        <h1 class={classMerge("text-2xl font-semibold", p.titleClass)}>{p.title}</h1>
-        {p.children}
-      </div>
-      {p.subtitle && <p class={classMerge("text-lg text-content-muted", p.subtitleClass)}>{p.subtitle}</p>}
+    <>
+      <header
+        class={classMerge(
+          "sticky top-11 z-10 flex h-11 items-center gap-2 border-b border-border bg-background px-4 md:top-0 md:px-6",
+          p.class,
+        )}
+      >
+        <div class={classMerge("flex min-w-0 flex-1 items-center gap-2", p.innerClass)}>
+          {p.icon && <Icon path={p.icon} class={p.iconClass} />}
+          <h1 class={classMerge("truncate text-base font-semibold lg:text-lg", p.titleClass)}>{p.title}</h1>
+          {p.subtitle && (
+            <p class={classMerge("truncate text-xs text-muted-foreground", p.subtitleClass)}>{p.subtitle}</p>
+          )}
+        </div>
+        {p.children && <div class="ml-auto flex shrink-0 items-center gap-2">{p.children}</div>}
+      </header>
       {p.subtitleChildren}
-    </header>
+    </>
   )
 }

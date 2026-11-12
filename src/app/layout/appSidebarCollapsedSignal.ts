@@ -2,7 +2,7 @@ import { onCleanup, onMount } from "solid-js"
 import { isServer } from "solid-js/web"
 import { createSignalObject } from "#ui/utils/createSignalObject.ts"
 
-export const appSidebarCollapsedStorageKey = "solid-convex.sidebar-collapsed.v1"
+export const appSidebarCollapsedStorageKey = "solid-convex:sidebar-collapsed"
 
 /** Desktop sidebar rail state (expanded ↔ icon rail); SSR-safe default expanded. */
 export const appSidebarCollapsedSignal = createSignalObject(false)

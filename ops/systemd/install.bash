@@ -25,7 +25,7 @@ fi
 
 # Plain systemd --user units (bun processes).
 mkdir -p "$USER_UNIT_DIR"
-for unit in solid-convex-dev.service solid-convex-ui.service solid-convex-vite.service solid-convex-adaptive-ui.service; do
+for unit in solid-convex-dev.service solid-convex-ui.service solid-convex-vite.service; do
   ln -sf "$SCRIPT_DIR/$unit" "$USER_UNIT_DIR/$unit"
   echo "linked $unit"
 done

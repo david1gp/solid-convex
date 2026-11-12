@@ -18,8 +18,8 @@ export const badgeVariant = {
 
 const baseClasses = classArr(
   "inline-flex items-center", // layout
-  "text-sm", // text
-  "px-2.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700", // padding + soft border
+  "text-xs font-medium", // text
+  "px-1.5 py-0.5 rounded-full border border-border", // padding + soft border
   "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2", // focus ring
 )
 

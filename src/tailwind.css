@@ -15,90 +15,124 @@
   --breakpoint-2xl: 2560px;
   --breakpoint-3xl: 3840px;
 
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+
+  /* House tokens (shared with atlas/offers): warm neutral greys, one blue accent. */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+
+  --color-surface: #f7f7f5;
+  --color-hover: #efefed;
 
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
 
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: #e9f2fc;
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
 
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
+  /* Legacy aliases: every pre-redesign token name still exists, remapped to house values. */
+  --color-surface-base: #ffffff;
+  --color-surface-muted: #efefed;
+  --color-surface-inverted: #37352f;
+  --color-border-subtle: #e9e9e7;
+  --color-border-strong: #dbdbd6;
 
-  /* eventoren-inspired app shell palette (soft slate surfaces, teal brand) */
-  --color-surface-base: #f8fafc;
-  --color-surface: #ffffff;
-  --color-surface-muted: #f1f5f9;
-  --color-surface-inverted: #0f172a;
-  --color-border-subtle: #e2e8f0;
-  --color-border-strong: #94a3b8;
-
-  --color-content: #0f172a;
-  --color-content-muted: #475569;
+  --color-content: #37352f;
+  --color-content-muted: #787774;
   --color-content-inverted: #ffffff;
+  --color-foreground-muted: #787774;
 
-  --color-brand: #0f766e;
-  --color-brand-strong: #115e59;
-  --color-brand-soft: #ccfbf1;
-  --color-brand-accent: #134e4a;
+  --color-brand: #2383e2;
+  --color-brand-strong: #1b62b3;
+  --color-brand-soft: #e9f2fc;
+  --color-brand-accent: #1b62b3;
   --color-brand-content: #ffffff;
 
-  --color-accent: #f59e0b;
-  --color-accent-soft: #fef3c7;
+  --color-success: #1c7c3e;
+  --color-success-soft: #e6f3ea;
+  --color-warning: #9a6700;
+  --color-warning-soft: #faf0da;
+  --color-danger: #e03e3e;
+  --color-danger-soft: #fdecec;
 
-  --color-success: #166534;
-  --color-success-soft: #dcfce7;
-  --color-warning: #92400e;
-  --color-warning-soft: #fef3c7;
-  --color-danger: #b91c1c;
-  --color-danger-soft: #fee2e2;
-
-  --radius-card: 16px;
-  --radius-control: 12px;
+  --radius-card: 6px;
+  --radius-control: 6px;
 }
 
-/* shadcn setup - https://ui.shadcn.com/docs/installation */
-/* shadcn theming - https://ui.shadcn.com/docs/theming */
-/* background colors - https://tailwindcss.com/docs/background-color */
+/* shadcn setup - https://ui.shadcn.com/docs/theming */
 @layer base {
-  /*
-  [Tutorial] How to make use of Tailwind Colors directly in CSS Variables
-  https://github.com/shadcn-ui/ui/issues/669
-   */
   :root {
-    --background: hsl(210, 20%, 98%); /* gray-50 */
-    --foreground: hsl(222.2 47.4% 11.2%);
+    --background: #ffffff;
+    --foreground: #37352f;
 
-    --muted: hsl(210 40% 96.1%);
-    --muted-foreground: hsl(216, 13%, 40%); /* gray-600 */
+    --muted: #f7f7f5;
+    --muted-foreground: #787774;
 
-    --border: hsl(214.3 31.8% 91.4%); /* slate-200 */
-    --input: hsl(214.3 31.8% 91.4%);
+    --border: #e9e9e7;
+    --input: #e9e9e7;
+    --ring: #2383e2;
 
-    --primary: hsl(238.7 83.5% 66.7%); /* bg-indigo-500 */
-    --primary-foreground: hsl(210 40% 98%);
+    --primary: #2383e2;
+    --primary-foreground: #ffffff;
 
-    --destructive: hsl(0 100% 50%);
-    --destructive-foreground: hsl(210 40% 98%);
-  }
+    --secondary: #efefed;
+    --secondary-foreground: #37352f;
 
-  :root {
+    --accent: #2383e2;
+    --accent-foreground: #ffffff;
+
+    --card: #ffffff;
+    --card-foreground: #37352f;
+    --popover: #ffffff;
+    --popover-foreground: #37352f;
+
+    --destructive: #e03e3e;
+    --destructive-foreground: #ffffff;
+
     color-scheme: light;
   }
 
+  *,
+  ::before,
+  ::after,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-border-subtle);
+  }
+
   html {
-    background-color: var(--color-surface-base);
+    background-color: var(--color-background);
     scrollbar-gutter: stable;
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
   }
 
   body {
-    background-color: var(--color-surface-base);
-    color: var(--color-content);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.45;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
     -webkit-font-smoothing: antialiased;
   }
 
@@ -107,40 +141,65 @@
     color: var(--color-brand-content);
   }
 
+  :root.dark,
   .dark {
+    --background: #191919;
+    --foreground: #d4d4d4;
+
+    --muted: #202020;
+    --muted-foreground: #a09f9b;
+
+    --border: #2f2f2f;
+    --input: #2f2f2f;
+    --ring: #529de9;
+
+    --primary: #529de9;
+    --primary-foreground: #ffffff;
+
+    --secondary: #2c2c2c;
+    --secondary-foreground: #d4d4d4;
+
+    --accent: #529de9;
+    --accent-foreground: #ffffff;
+
+    --card: #191919;
+    --card-foreground: #d4d4d4;
+    --popover: #202020;
+    --popover-foreground: #d4d4d4;
+
+    --destructive: #f06a6a;
+    --destructive-foreground: #ffffff;
+
+    --color-surface: #202020;
+    --color-hover: #2c2c2c;
+
+    --color-accent-soft: #1e3a5c;
+
+    --color-surface-base: #191919;
+    --color-surface-muted: #2c2c2c;
+    --color-surface-inverted: #d4d4d4;
+    --color-border-subtle: #2f2f2f;
+    --color-border-strong: #454545;
+
+    --color-content: #d4d4d4;
+    --color-content-muted: #a09f9b;
+    --color-content-inverted: #191919;
+    --color-foreground-muted: #a09f9b;
+
+    --color-brand: #529de9;
+    --color-brand-strong: #7ab5ef;
+    --color-brand-soft: #1e3a5c;
+    --color-brand-accent: #8fc3f1;
+    --color-brand-content: #ffffff;
+
+    --color-success: #6fbf8b;
+    --color-success-soft: #1d3326;
+    --color-warning: #d9a13b;
+    --color-warning-soft: #37301b;
+    --color-danger: #f06a6a;
+    --color-danger-soft: #3d2222;
+
     color-scheme: dark;
-    --color-surface-base: #020617;
-    --color-surface: #0f172a;
-    --color-surface-muted: #1e293b;
-    --color-surface-inverted: #f8fafc;
-    --color-border-subtle: #334155;
-    --color-border-strong: #64748b;
-    --color-content: #f8fafc;
-    --color-content-muted: #cbd5e1;
-    --color-content-inverted: #0f172a;
-    --color-brand: #5eead4;
-    --color-brand-strong: #2dd4bf;
-    --color-brand-soft: #134e4a;
-    --color-brand-accent: #5eead4;
-    --color-brand-content: #042f2e;
-  }
-
-  .dark {
-    --background: hsl(224 71.4% 4.1%); /* gray-950 */
-    --foreground: hsl(213 31% 91%);
-
-    --muted: hsl(223 47% 11%);
-    --muted-foreground: hsl(218, 17%, 72%); /* gray-400 */
-
-    --border: hsl(214.3 31.8% 91.4%); /* slate-200 */
-    --input: hsl(216 34% 17%);
-
-    /*--primary: hsl(210 40% 98%);*/
-    --primary: hsl(217.2, 91.2%, 59.8%);
-    --primary-foreground: hsl(222.2 47.4% 1.2%);
-
-    --destructive: hsl(0, 100%, 48%);
-    --destructive-foreground: hsl(0 0% 100%);
   }
 }
 
@@ -155,8 +214,7 @@
 }
 
 /* Invert svg colors in dark mode */
-/* https://stackoverflow.com/questions/39761120/invert-svg-image-using-css */
-/* https://forums.ankiweb.net/t/invert-only-specific-color-of-svg-file/26092/2 */
+/* https://stackoverflow.com/questions/39761120/invert-svg-image-using-css-color-of-svg-file/26092/2 */
 @layer base {
   .dark img.invert-black,
   .dark svg.invert-black {

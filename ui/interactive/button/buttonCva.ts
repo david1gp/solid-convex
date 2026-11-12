@@ -68,22 +68,22 @@ const variantClasses = {
   //
   none: "",
   outline: classArr(
-    "bg-transparent dark:bg-transparent",
-    "dark:text-slate-100", // text
-    "hover:bg-slate-100", // bg hover
-    "border border-slate-200 dark:border-slate-700 dark:hover:bg-slate-900", // border
+    "bg-transparent", // bg
+    "text-foreground", // text
+    "hover:bg-hover", // bg hover
+    "border border-border", // border
   ),
   ghost: classArr(
-    "dark:text-slate-100 dark:hover:text-slate-100", // text
-    "bg-transparent dark:bg-transparent", // bg
-    "data-[state=open]:bg-transparent dark:data-[state=open]:bg-transparent", // bg data
-    "hover:bg-slate-100 dark:hover:bg-slate-800", // bg hover
+    "text-foreground", // text
+    "bg-transparent", // bg
+    "data-[state=open]:bg-transparent", // bg data
+    "hover:bg-hover", // bg hover
   ),
   link: classArr(
-    "text-slate-900 dark:text-slate-100", // text
+    "text-foreground", // text
     "underline-offset-4 hover:underline ", // underline
-    "bg-transparent dark:bg-transparent", // bg
-    "hover:bg-transparent dark:hover:bg-transparent", // bg hover
+    "bg-transparent", // bg
+    "hover:bg-transparent", // bg hover
   ),
   //
   // filled grayscale
@@ -141,10 +141,10 @@ const variantClasses = {
     "focus:ring-sky-400 dark:focus:ring-sky-400", // focus
   ),
   filledIndigo: classArr(
-    "text-white", // text
-    "bg-indigo-500 dark:bg-indigo-800 ", // bg
-    "hover:bg-indigo-700 dark:hover:bg-indigo-600", // bg hover
-    "focus:ring-indigo-400 dark:focus:ring-indigo-400", // focus
+    "text-primary-foreground", // text
+    "bg-primary", // bg (house accent, theme-adaptive)
+    "hover:bg-brand-strong", // bg hover
+    "focus:ring-ring", // focus
   ),
   filledBlue: classArr(
     "text-white", // text
@@ -234,9 +234,9 @@ const variantClasses = {
 const sizeClasses = {
   none: "",
   minimal: "rounded-none",
-  sm: "px-3",
-  default: "py-2 px-3",
-  lg: "px-8 py-4 text-lg",
+  sm: "h-6 px-2 text-sm",
+  default: "h-7 px-2 text-sm",
+  lg: "h-8 px-3 text-sm",
 } as const satisfies Record<ButtonSize, string>
 
 const defaultSize = buttonSize.default
@@ -274,7 +274,7 @@ export function buttonCvaIconOnly(
     variant ?? buttonVariant.ghost,
     buttonSize.none,
     classesButtonClickAnimation,
-    "rounded-full p-2.5",
+    "size-7 rounded-md p-0",
     (isDisabled || isLoading) && classesButtonDisabled,
     ...customClasses,
   )

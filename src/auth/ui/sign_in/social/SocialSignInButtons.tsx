@@ -1,6 +1,6 @@
 import { mdiGithub } from "@adaptive-ds/mdi/mdiGithub.js"
 import { mdiGoogle } from "@adaptive-ds/mdi/mdiGoogle.js"
-import { socialLoginProvider } from "#src/auth/model_field/socialLoginProvider.ts"
+import type { socialLoginProvider } from "#src/auth/model_field/socialLoginProvider.ts"
 import { urlAuthProvider } from "#src/auth/url/urlAuthProvider.ts"
 import { urlSignInRedirectUrl } from "#src/auth/url/urlSignInRedirectUrl.ts"
 import { buttonSize, buttonVariant } from "#ui/interactive/button/buttonCva.ts"
@@ -14,7 +14,6 @@ interface SocialSignInButtonProps extends MayHaveClass {
 }
 
 function SocialSignInButton(p: SocialSignInButtonProps) {
-  const providerConfig = socialLoginProvider[p.provider]
   const currentUrl = urlSignInRedirectUrl()
   const url = urlAuthProvider(p.provider, currentUrl)
   const iconPath = p.provider === "google" ? mdiGoogle : mdiGithub
@@ -24,14 +23,9 @@ function SocialSignInButton(p: SocialSignInButtonProps) {
     <LinkButtonExternal
       href={url}
       icon={iconPath}
-      iconClass="size-8"
       size={buttonSize.lg}
-      variant={buttonVariant.filledIndigo}
-      class={classMerge(
-        "justify-start",
-        p.provider === "google" ? "bg-red-500 hover:bg-red-600" : "bg-gray-800 hover:bg-gray-900",
-        "text-white",
-      )}
+      variant={buttonVariant.outline}
+      class={classMerge("w-full", p.class)}
       aria-label={text}
     >
       {text}

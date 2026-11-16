@@ -1,7 +1,7 @@
 import { classesButtonClickAnimation } from "#ui/interactive/button/classesButtonClickAnimation.js"
 import { classesButtonDisabled } from "#ui/interactive/button/classesButtonDisabled.js"
 import { classArr } from "#ui/utils/classArr.js"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 
 export type ButtonVariant = keyof typeof buttonVariant
 export const buttonVariant = {
@@ -226,7 +226,7 @@ export function buttonCva2(
   variant: ButtonVariant = buttonVariant.ghost,
   ...customClasses: (string | boolean | undefined | null | 0)[]
 ) {
-  return classMerge(baseClasses, variantClasses[variant], customClasses)
+  return cn(baseClasses, variantClasses[variant], customClasses)
 }
 
 export function buttonCvaIconOnly(

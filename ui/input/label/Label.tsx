@@ -1,11 +1,11 @@
 import type { Component, ComponentProps } from "solid-js"
 import { splitProps } from "solid-js"
 import { classesLabel } from "#ui/input/label/classesLabel.js"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 
 /** Styled native label element for form fields. */
 export const Label: Component<ComponentProps<"label">> = (p) => {
   const [s, rest] = splitProps(p, ["class"])
   // biome-ignore lint/a11y/noLabelWithoutControl: generic wrapper; callers pass `for` via props
-  return <label class={classMerge(classesLabel, s.class)} {...rest} />
+  return <label class={cn(classesLabel, s.class)} {...rest} />
 }

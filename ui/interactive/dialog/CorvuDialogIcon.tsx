@@ -9,7 +9,7 @@ import type { CorcuDialogTexts } from "#ui/interactive/dialog/CorcuDialogTexts.j
 import { corvuDialogTextDefault } from "#ui/interactive/dialog/CorcuDialogTexts.js"
 import { classesDialogContentMerge, classesDialogOverlayMerge } from "#ui/interactive/dialog/classesDialogContent.js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 import type { HasIcon } from "#ui/utils/HasIcon.js"
 import type { HasTitle } from "#ui/utils/HasTitle.js"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"
@@ -80,9 +80,9 @@ export const CorvuDialogIcon: Component<CorvuDialogIconProps> = (p) => {
         <Dialog.Content class={classesDialogContentMerge(s.innerClass)}>
           <header class="flex items-start justify-between mb-4">
             <div>
-              <Dialog.Label class={classMerge("text-lg font-semibold", s.titleClass)}>{s.dialogTitle}</Dialog.Label>
+              <Dialog.Label class={cn("text-lg font-semibold", s.titleClass)}>{s.dialogTitle}</Dialog.Label>
               {s.description && (
-                <Dialog.Description class={classMerge("text-muted-foreground", s.descriptionClass)}>
+                <Dialog.Description class={cn("text-muted-foreground", s.descriptionClass)}>
                   {s.description}
                 </Dialog.Description>
               )}

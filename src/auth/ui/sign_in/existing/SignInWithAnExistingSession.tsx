@@ -12,7 +12,7 @@ import { Button } from "#ui/interactive/button/Button.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { classesCardWrapper } from "#ui/static/card/classesCardWrapper.ts"
 import { classArr } from "#ui/utils/classArr.ts"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import type { MayHaveInnerClass } from "#ui/utils/MayHaveInnerClass.ts"
 
@@ -28,13 +28,13 @@ export function SignInWithAnExistingSession(p: SignInWithAnExistingSessionProps)
   return (
     <Show when={sessions().length > 0} fallback={p.fallback}>
       <section
-        class={classMerge(
+        class={cn(
           // "space-y-4 max-w-2xl",
           // sessions().length > 4 ? "row-span-3" : sessions().length > 2 ? "row-span-2" : "",
           p.class,
         )}
       >
-        <h2 class={classMerge("text-xl font-semibold", p.h2Class)}>{ttc("Continue with an earlier session")}</h2>
+        <h2 class={cn("text-xl font-semibold", p.h2Class)}>{ttc("Continue with an earlier session")}</h2>
         <div class={p.innerClass ?? "contents"}>
           <For each={sessions()}>{(session: UserSession) => <SessionButton session={session} />}</For>
           <DeleteEarlierSessions />

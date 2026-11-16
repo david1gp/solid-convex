@@ -2,7 +2,7 @@ import { For, Match, Switch } from "solid-js"
 import { Separator } from "#ui/static/separator/Separator.jsx"
 import type { MobileTableClassNames } from "#ui/table/shared/MobileTableClassNames.js"
 import type { TableColumnDef } from "#ui/table/shared/TableColumnDef.js"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"
 
 export type Table2MEntryProps<T> = {
@@ -14,7 +14,7 @@ export type Table2MEntryProps<T> = {
 /** Renders one table2 mobile card with its field rows. */
 export function Table2MEntry<T>(p: Table2MEntryProps<T>) {
   return (
-    <div class={classMerge("flex flex-col flex-wrap gap-2", p.mobileClasses?.entry)}>
+    <div class={cn("flex flex-col flex-wrap gap-2", p.mobileClasses?.entry)}>
       <For each={p.columns}>
         {(header, i) => (
           <>
@@ -37,7 +37,7 @@ export function Table2MEntry<T>(p: Table2MEntryProps<T>) {
 }
 
 function MobileEntryFirst({ mobileClasses: c, children }: { mobileClasses?: MobileTableClassNames } & MayHaveChildren) {
-  return <span class={classMerge("font-semibold", c?.first)}>{children}</span>
+  return <span class={cn("font-semibold", c?.first)}>{children}</span>
 }
 
 function MobileEntryOther({
@@ -49,9 +49,9 @@ function MobileEntryOther({
   mobileClasses?: MobileTableClassNames
 } & MayHaveChildren) {
   return (
-    <span class={classMerge("flex flex-wrap justify-between", c?.entry)}>
-      <span class={classMerge("text-gray-600 dark:text-gray-400", c?.header)}>{`${headerName}:`}</span>
-      <span class={classMerge("text-right", c?.other)}>{children}</span>
+    <span class={cn("flex flex-wrap justify-between", c?.entry)}>
+      <span class={cn("text-gray-600 dark:text-gray-400", c?.header)}>{`${headerName}:`}</span>
+      <span class={cn("text-right", c?.other)}>{children}</span>
     </span>
   )
 }

@@ -14,7 +14,7 @@ import { type FormMode, formMode, getFormModeTitle } from "#ui/input/form/formMo
 import { LabelPseudo } from "#ui/input/label/LabelPseudo.jsx"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import type { MayHaveTitle } from "#ui/utils/MayHaveTitle.ts"
 
@@ -31,7 +31,7 @@ export function OrgInvitationForm(p: OrgInvitationContentProps) {
     addKeyboardListenerAlt("t", p.sm.fillTestData)
   }
   return (
-    <section class={classMerge("px-2 sm:px-4 pb-10", "text-foreground", p.class)}>
+    <section class={cn("px-2 sm:px-4 pb-10", "text-foreground", p.class)}>
       <h1 class="text-2xl font-bold mt-6 mb-2">{p.title ?? getOrgInvitationTitle(p.mode)}</h1>
       <form class="rounded-md border border-border bg-background p-4 sm:p-5 space-y-4" onSubmit={p.sm.handleSubmit}>
         <InvitedNameField sm={p.sm} />

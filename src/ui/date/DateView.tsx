@@ -3,7 +3,7 @@ import relativeTime from "dayjs/plugin/relativeTime.js"
 import utc from "dayjs/plugin/utc.js"
 import type { JSXElement } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 dayjs.extend(relativeTime)
@@ -31,7 +31,7 @@ export function DateView(p: DateViewProps) {
   return (
     <time datetime={p.date} title={utcTime} class={p.class}>
       {p.start}
-      <span class={classMerge("font-medium", p.relativeClass)}>{timeAgo}</span>
+      <span class={cn("font-medium", p.relativeClass)}>{timeAgo}</span>
       {p.showAt || (p.showAt === undefined && <span>{at}</span>)}
       <span class={p.absoluteClass}>{absoluteTime}</span>
       {p.end}

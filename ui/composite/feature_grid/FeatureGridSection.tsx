@@ -2,7 +2,7 @@ import { type ComponentProps, splitProps } from "solid-js"
 import type { GridFeatureType } from "#ui/static/grid/GridFeatureType.js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { classArr } from "#ui/utils/classArr.js"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 
 export interface FeatureGridSectionProps extends ComponentProps<"section"> {
   id: string
@@ -35,7 +35,7 @@ export function FeatureGridSection(p: FeatureGridSectionProps) {
     "class",
   ])
   return (
-    <section id={s.id} class={classMerge("w-full", "py-25 px-4", s.class)} {...rest}>
+    <section id={s.id} class={cn("w-full", "py-25 px-4", s.class)} {...rest}>
       <div class={classArr("max-w-7xl mx-auto", "text-center mb-8", s.headerClass)}>
         <h2 class={classArr("text-3xl sm:text-4xl font-bold", "mb-4", "group flex items-center justify-center")}>
           <span>{s.title}</span>
@@ -50,15 +50,13 @@ export function FeatureGridSection(p: FeatureGridSectionProps) {
             />
           </a>
         </h2>
-        <p class={classMerge("text-xl text-muted-foreground mx-auto", s.subtitle1Class)}>{s.subtitle1}</p>
-        {s.subtitle2 && (
-          <p class={classMerge("text-xl text-muted-foreground mx-auto mt-1", s.subtitle2Class)}>{s.subtitle2}</p>
-        )}
+        <p class={cn("text-xl text-muted-foreground mx-auto", s.subtitle1Class)}>{s.subtitle1}</p>
+        {s.subtitle2 && <p class={cn("text-xl text-muted-foreground mx-auto mt-1", s.subtitle2Class)}>{s.subtitle2}</p>}
       </div>
 
-      <div class={classMerge("grid md:grid-cols-2 lg:grid-cols-3 gap-8", "max-w-7xl mx-auto", s.gridClass)}>
+      <div class={cn("grid md:grid-cols-2 lg:grid-cols-3 gap-8", "max-w-7xl mx-auto", s.gridClass)}>
         {s.features.map((feature) => (
-          <div class={classMerge("bg-white dark:bg-gray-800", "rounded-lg p-6", "shadow-md lg:shadow-lg", s.cardClass)}>
+          <div class={cn("bg-white dark:bg-gray-800", "rounded-lg p-6", "shadow-md lg:shadow-lg", s.cardClass)}>
             <div class="flex items-center gap-3 mb-4">
               <Icon path={feature.icon} class="size-8" />
               <h3 class="text-xl font-semibold">{feature.title}</h3>

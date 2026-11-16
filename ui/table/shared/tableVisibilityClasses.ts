@@ -1,10 +1,10 @@
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 import type { TailwindBreakpoint } from "#ui/utils/tailwindBreakpoint.js"
 import { tailwindBreakpoint } from "#ui/utils/tailwindBreakpoint.js"
 
 function tableDesktopClassName(b: TailwindBreakpoint) {
   const tb = tailwindBreakpoint
-  return classMerge(
+  return cn(
     "hidden",
     b === tb.sm && "sm:table",
     b === tb.md && "md:table",
@@ -14,7 +14,7 @@ function tableDesktopClassName(b: TailwindBreakpoint) {
 }
 function tableMobileClassName(b: TailwindBreakpoint) {
   const tb = tailwindBreakpoint
-  return classMerge(
+  return cn(
     "w-full",
     b === tb.sm && "sm:hidden",
     b === tb.md && "md:hidden",

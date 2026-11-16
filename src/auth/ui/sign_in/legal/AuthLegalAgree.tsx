@@ -2,7 +2,7 @@ import { envBaseUrlSiteResult } from "#src/app/env/public/envBaseUrlSiteResult.t
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { type AuthLegalAgreeVariant, authLegalAgreeText } from "#src/auth/ui/sign_in/legal/authLegalAgreeVariant.tsx"
 import { LinkTextExternal } from "#ui/interactive/link/LinkText.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 export interface AuthLegalAgreeProps extends MayHaveClass {
@@ -18,7 +18,7 @@ export function AuthLegalAgree(p: AuthLegalAgreeProps) {
   }
   const baseUrlSite = baseUrlSiteResult.data
   return (
-    <div class={classMerge("text-muted-foreground", p.class)}>
+    <div class={cn("text-muted-foreground", p.class)}>
       {authLegalAgreeText(p.variant)}
       <LinkTextExternal href={baseUrlSite + "/terms"} class="mx-1">
         {ttc("Terms of Service")}

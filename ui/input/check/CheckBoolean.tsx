@@ -2,7 +2,7 @@ import { mdiCheckboxBlankCircleOutline } from "@adaptive-ds/mdi/mdiCheckboxBlank
 import { mdiCheckboxMarkedCircle } from "@adaptive-ds/mdi/mdiCheckboxMarkedCircle.js"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.js"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 import type { SignalObject } from "#ui/utils/createSignalObject.js"
 import type { MayHaveButtonVariant } from "#ui/utils/MayHaveButtonVariant.js"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
@@ -28,7 +28,7 @@ export function CheckBoolean(p: CheckBooleanProps) {
   return (
     <div
       id={p.id}
-      class={classMerge(
+      class={cn(
         "group border border-input",
         "px-2 py-2",
         "ring-offset-background",
@@ -45,7 +45,7 @@ export function CheckBoolean(p: CheckBooleanProps) {
           icon={!currentValue() ? mdiCheckboxMarkedCircle : mdiCheckboxBlankCircleOutline}
           onClick={() => p.valueSignal.set(false)}
           variant={!currentValue() ? (p.variant ?? buttonVariant.filled) : buttonVariant.outline}
-          class={classMerge("justify-start text-left", p.innerClass, p.optionClass)}
+          class={cn("justify-start text-left", p.innerClass, p.optionClass)}
           disabled={p.disabled}
         >
           {p.valueText(false)}
@@ -57,7 +57,7 @@ export function CheckBoolean(p: CheckBooleanProps) {
           icon={currentValue() ? mdiCheckboxMarkedCircle : mdiCheckboxBlankCircleOutline}
           onClick={() => p.valueSignal.set(true)}
           variant={currentValue() ? (p.variant ?? buttonVariant.filled) : buttonVariant.outline}
-          class={classMerge("justify-start text-left", p.innerClass, p.optionClass)}
+          class={cn("justify-start text-left", p.innerClass, p.optionClass)}
           disabled={p.disabled}
         >
           {p.valueText(true)}

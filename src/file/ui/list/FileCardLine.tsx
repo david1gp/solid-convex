@@ -13,7 +13,7 @@ import { ButtonIconOnly } from "#ui/interactive/button/ButtonIconOnly.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonIconOnlyExternal, LinkButtonIconOnlyInternal } from "#ui/interactive/link/LinkButtonIconOnly.jsx"
 import { classesCardWrapper } from "#ui/static/card/classesCardWrapper.ts"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 interface FileCardLineProps extends HasResourceId, HasFormMode, HasFileModel, MayHaveClass {}
@@ -21,7 +21,7 @@ interface FileCardLineProps extends HasResourceId, HasFormMode, HasFileModel, Ma
 export function FileCardLine(p: FileCardLineProps) {
   return (
     <article
-      class={classMerge(
+      class={cn(
         classesCardWrapper,
         "shadow-sm", // override card style
         "pl-4 pr-2 py-2", // padding

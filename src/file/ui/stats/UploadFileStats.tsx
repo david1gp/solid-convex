@@ -5,7 +5,7 @@ import type { FileDataUnuploaded } from "#src/file/model/FileDataUnuploaded.ts"
 import { bytesToFormatedText } from "#src/file/ui/stats/bytesToFormatedText.ts"
 import { classesCard } from "#src/ui/card/classesCard.ts"
 import { Icon } from "#ui/static/icon/Icon.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 export interface UploadFileStatsProps extends MayHaveClass {
@@ -14,7 +14,7 @@ export interface UploadFileStatsProps extends MayHaveClass {
 
 export function UploadFileStats(p: UploadFileStatsProps) {
   return (
-    <div class={classMerge(classesCard, "grid grid-cols-2 gap-2", "mx-auto", p.class)}>
+    <div class={cn(classesCard, "grid grid-cols-2 gap-2", "mx-auto", p.class)}>
       <Heading text={ttc("Status:")} />
       <div class="flex items-center gap-2">
         <Icon path={mdiLoading} class="size-7 animate-spin text-yellow-600" />

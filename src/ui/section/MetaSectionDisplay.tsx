@@ -8,7 +8,7 @@ import { type Visibility, visibility } from "#src/resource/model_field/visibilit
 import { visibilityGetText } from "#src/resource/model_field/visibilityGetText.ts"
 import { BadgeSoft } from "#src/ui/badge/BadgeSoft.tsx"
 import { Icon } from "#ui/static/icon/Icon.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
@@ -19,7 +19,7 @@ export interface MetaSectionTechnicalProps extends MayHaveClass, MayHaveChildren
 
 export function MetaSectionDisplay(p: MetaSectionTechnicalProps) {
   return (
-    <div class={classMerge("flex flex-wrap gap-4", p.class)}>
+    <div class={cn("flex flex-wrap gap-4", p.class)}>
       <Show when={p.visibility}>{(getVisibility) => <VisibilityBadge visibility={getVisibility()} />}</Show>
       <Show when={p.language}>{(getLanguage) => <LanguageBadge language={getLanguage()} />}</Show>
       {p.children}

@@ -5,14 +5,14 @@ import { OrgViewInformation } from "#src/org/org_ui/view/OrgViewInformation.tsx"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { classesCardWrapperP8 } from "#ui/static/card/classesCardWrapper.ts"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 
 export function OrgLeaveView(p: { org: OrgModel; onLeave: () => void; loading?: boolean }) {
   return (
     <div class="space-y-6">
       <OrgViewInformation showEditButton={false} org={p.org} />
       <section
-        class={classMerge(
+        class={cn(
           classesCardWrapperP8,
           "max-w-md mx-auto",
           "mt-10 mb-15",

@@ -8,7 +8,7 @@ import { Checkbox } from "#ui/input/check/Checkbox.jsx"
 import { formMode } from "#ui/input/form/formMode.ts"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import { type SignUpUiStateManagement, signUpFormField } from "./signUpCreateFormState.js"
 import { signUpEmailPasswordFormStateCreate } from "./signUpEmailPasswordFormStateCreate.ts"
@@ -21,7 +21,7 @@ export function SignUpEmailPasswordForm(p: SignUpEmailPasswordFormProps) {
   const sm = signUpEmailPasswordFormStateCreate(() => p)
 
   return (
-    <form onSubmit={sm.handleSubmit} autocomplete="on" class={classMerge("flex flex-col gap-6", p.class)}>
+    <form onSubmit={sm.handleSubmit} autocomplete="on" class={cn("flex flex-col gap-6", p.class)}>
       <FormFieldInput
         config={{
           ...formFieldConfigs.name,

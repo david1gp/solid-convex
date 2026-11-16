@@ -8,7 +8,7 @@ import type { NumberInputText } from "#ui/input/number/NumberInputTexts.jsx"
 import { numberInputTextDefault } from "#ui/input/number/NumberInputTexts.jsx"
 import { ButtonIconOnly } from "#ui/interactive/button/ButtonIconOnly.jsx"
 import { type ButtonVariant, buttonVariant } from "#ui/interactive/button/buttonCva.js"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 import type { SignalObject } from "#ui/utils/createSignalObject.js"
 import { safeParseInt } from "#utils/int/safeParseInt.js"
 
@@ -87,14 +87,14 @@ export function NumberInputS(p: NumberInputSProps) {
   const texts = s.texts ?? numberInputTextDefault
 
   return (
-    <div class={classMerge("flex flex-row flex-nowrap items-center", s.class)}>
+    <div class={cn("flex flex-row flex-nowrap items-center", s.class)}>
       {s.incrDecrAmountMajor && (
         <ButtonIconOnly
           icon={mdiMinusBox}
           title={texts.decreaseByX(s.incrDecrAmountMajor)}
           onClick={decrementMajor}
           variant={s.variant ?? defaultVariant}
-          class={classMerge("rounded-r-none", s.buttonClass)}
+          class={cn("rounded-r-none", s.buttonClass)}
           disabled={s.disabled || (s.min !== undefined && s.valueSignal.get() <= s.min)}
           type={"button"}
         />
@@ -104,7 +104,7 @@ export function NumberInputS(p: NumberInputSProps) {
         title={texts.decreaseByX(s.incrDecrAmount ?? 1)}
         onClick={decrement}
         variant={s.variant ?? defaultVariant}
-        class={classMerge(hasMajor ? "rounded-none" : "rounded-r-none", s.buttonClass)}
+        class={cn(hasMajor ? "rounded-none" : "rounded-r-none", s.buttonClass)}
         disabled={s.disabled || (s.min !== undefined && s.valueSignal.get() <= s.min)}
         type={"button"}
       />
@@ -113,7 +113,7 @@ export function NumberInputS(p: NumberInputSProps) {
         value={s.valueSignal.get()}
         onInput={onChange}
         id={s.id}
-        class={classMerge("w-14 rounded-none text-center outline-0 focus:z-10", s.inputClass)}
+        class={cn("w-14 rounded-none text-center outline-0 focus:z-10", s.inputClass)}
         disabled={s.disabled}
         min={s.min}
         max={s.max}
@@ -124,7 +124,7 @@ export function NumberInputS(p: NumberInputSProps) {
         title={texts.increaseByX(s.incrDecrAmount ?? 1)}
         onClick={increment}
         variant={s.variant ?? defaultVariant}
-        class={classMerge(hasMajor ? "rounded-none" : "rounded-l-none", s.buttonClass)}
+        class={cn(hasMajor ? "rounded-none" : "rounded-l-none", s.buttonClass)}
         disabled={s.disabled || (s.max !== undefined && s.valueSignal.get() >= s.max)}
         type={"button"}
       />
@@ -134,7 +134,7 @@ export function NumberInputS(p: NumberInputSProps) {
           title={texts.increaseByX(s.incrDecrAmountMajor)}
           onClick={incrementMajor}
           variant={s.variant ?? defaultVariant}
-          class={classMerge("rounded-l-none", s.buttonClass)}
+          class={cn("rounded-l-none", s.buttonClass)}
           disabled={s.disabled || (s.max !== undefined && s.valueSignal.get() >= s.max)}
           type={"button"}
         />

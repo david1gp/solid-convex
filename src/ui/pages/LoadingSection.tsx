@@ -3,7 +3,7 @@ import styles from "#src/ui/loaders/AnimateFadeIn.module.css"
 import { RandomLoader } from "#src/ui/loaders/RandomLoader.tsx"
 import { classesCardWrapperBorderDark } from "#ui/static/card/classesCardWrapper.ts"
 import { SeparatorWithText } from "#ui/static/separator/SeparatorWithText.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveChildrenAndClass } from "#ui/utils/MayHaveChildrenAndClass.ts"
 import type { MayHaveId } from "#ui/utils/MayHaveId.ts"
 import type { MayHaveInnerClass } from "#ui/utils/MayHaveInnerClass.ts"
@@ -18,7 +18,7 @@ export function LoadingSection(p: LoadingSectionProps) {
   return (
     <section
       id={p.id}
-      class={classMerge(
+      class={cn(
         classesCardWrapperBorderDark,
         styles.animateFadeIn2s,
         "min-h-60", // h

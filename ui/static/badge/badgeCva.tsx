@@ -1,5 +1,5 @@
 import { classArr } from "#ui/utils/classArr.js"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 
 export type BadgeVariant = keyof typeof badgeVariant
 
@@ -39,5 +39,5 @@ export function badgeCva1(
   variant: BadgeVariant | null = defaultVariant,
   ...customClasses: (string | boolean | undefined | null | 0)[]
 ) {
-  return classMerge(baseClasses, variantClasses[variant ?? defaultVariant], customClasses)
+  return cn(baseClasses, variantClasses[variant ?? defaultVariant], customClasses)
 }

@@ -1,5 +1,5 @@
 import { isProdEnv } from "#ui/env/isProdEnv.js"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 
 /** Shows the active Tailwind breakpoint in development. */
 export function TailwindIndicator() {
@@ -7,7 +7,7 @@ export function TailwindIndicator() {
 
   return (
     <div
-      class={classMerge(
+      class={cn(
         "fixed bottom-1 left-1 z-50", // position
         "flex size-6 items-center justify-center", // size
         "rounded-full p-3", // size

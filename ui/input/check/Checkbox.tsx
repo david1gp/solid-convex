@@ -3,7 +3,7 @@ import { mdiCheckboxMarked } from "@adaptive-ds/mdi/mdiCheckboxMarked.js"
 import { type ComponentProps, splitProps } from "solid-js"
 import { classesDisabledDirectly } from "#ui/classes/classesDisabledDirectly.js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
 import type { MayHaveDisabled } from "#ui/utils/MayHaveDisabled.js"
@@ -19,7 +19,7 @@ export function Checkbox(p: CheckboxProps) {
   const [s, rest] = splitProps(p, ["id", "checked", "onChange", "disabled", "class", "children"])
   return (
     <label
-      class={classMerge(
+      class={cn(
         "flex items-start gap-1 cursor-pointer",
         s.disabled && classesDisabledDirectly, // disabled state
         s.class,

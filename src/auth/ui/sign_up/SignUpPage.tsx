@@ -21,7 +21,7 @@ import { Img } from "#ui/static/img/Img.jsx"
 import { LayoutWrapperDemo } from "#ui/static/layout/LayoutWrapperDemo.jsx"
 import { Separator } from "#ui/static/separator/Separator.jsx"
 import { classArr } from "#ui/utils/classArr.ts"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import type { MayHaveInnerClass } from "#ui/utils/MayHaveInnerClass.ts"
 import { capitalizeFirstLetter } from "#utils/text/capitalizeFirstLetter.js"
@@ -86,7 +86,7 @@ export function SignUpPageContent(p: { demo?: boolean; signInHref?: string; conf
 
 function SignUpPageContent2() {
   return (
-    <div class={classMerge("container max-w-7xl mx-auto py-8 px-4")}>
+    <div class={cn("container max-w-7xl mx-auto py-8 px-4")}>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <LeftSide />
         <RightSide />
@@ -101,7 +101,7 @@ function LeftSide() {
 
 export function AuthCoverIllustration(p: MayHaveClass) {
   const url = "/img/illustrations/auth/sign_in_1.svg"
-  return <Img src={url} alt="Sign up illustration" class={classMerge("hidden lg:flex w-full max-w-3xl", p.class)} />
+  return <Img src={url} alt="Sign up illustration" class={cn("hidden lg:flex w-full max-w-3xl", p.class)} />
 }
 
 function RightSide() {
@@ -139,9 +139,7 @@ function SignUpSocialSection() {
     <section class="flex flex-col gap-2">
       <h2 class="text-sm font-semibold">{ttc("Sign Up With")}</h2>
       <SocialSignUpButton provider={socialLoginProvider.google} class={buttonClasses} />
-      {enableGithub() && (
-        <SocialSignUpButton provider={socialLoginProvider.github} class={buttonClasses} />
-      )}
+      {enableGithub() && <SocialSignUpButton provider={socialLoginProvider.github} class={buttonClasses} />}
     </section>
   )
 }
@@ -159,12 +157,7 @@ function SocialSignUpButton(p: SocialSignUpButtonProps) {
     return urlAuthProvider(p.provider, returnPath)
   }
   return (
-    <LinkButtonExternal
-      href={getReturnPath()}
-      icon={props.mdiIconPath}
-      variant={buttonVariant.outline}
-      class={p.class}
-    >
+    <LinkButtonExternal href={getReturnPath()} icon={props.mdiIconPath} variant={buttonVariant.outline} class={p.class}>
       {text}
     </LinkButtonExternal>
   )

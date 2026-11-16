@@ -12,7 +12,7 @@ import { ClipboardCopyButtonIcon } from "#src/ui/links/ClipboardCopyButtonIcon.t
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonExternal } from "#ui/interactive/link/LinkButton.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
@@ -23,7 +23,7 @@ export interface FileCardViewProps extends MayHaveResourceId, HasFileModel, MayH
 export function FileCardView(p: FileCardViewProps) {
   return (
     <article
-      class={classMerge(
+      class={cn(
         classesCard,
         "flex flex-col", // layout children
         p.class,

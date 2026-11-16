@@ -9,7 +9,7 @@ import { corvuDialogTextDefault } from "#ui/interactive/dialog/CorcuDialogTexts.
 import { classesDialogContentMerge, classesDialogOverlayMerge } from "#ui/interactive/dialog/classesDialogContent.js"
 import { detailsDialogStateCreate } from "#ui/interactive/dialog/detailsDialogStateCreate.js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
 
 export interface DetailsDialogProps extends MayHaveClass {
@@ -64,13 +64,9 @@ export function DetailsDialog(p: DetailsDialogProps) {
     <Show
       when={state.enhanced()}
       fallback={
-        <details class={classMerge(detailsClasses, p.class)}>
+        <details class={cn(detailsClasses, p.class)}>
           <summary
-            class={classMerge(
-              summaryClasses,
-              "hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors",
-              p.summaryClass,
-            )}
+            class={cn(summaryClasses, "hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors", p.summaryClass)}
           >
             {face()}
           </summary>
@@ -80,7 +76,7 @@ export function DetailsDialog(p: DetailsDialogProps) {
     >
       <Dialog>
         <Dialog.Trigger
-          class={classMerge(
+          class={cn(
             "group",
             detailsClasses,
             summaryClasses,

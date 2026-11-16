@@ -11,7 +11,7 @@ import { type FormMode, formMode, getFormModeTitle } from "#ui/input/form/formMo
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { Icon } from "#ui/static/icon/Icon.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 interface HasOrgMemberFormStateManagement {
@@ -27,7 +27,7 @@ export function OrgMemberForm(p: OrgMemberContentProps) {
     addKeyboardListenerAlt("t", p.sm.fillTestData)
   }
   return (
-    <section class={classMerge("px-2 sm:px-4 pb-10", "text-foreground", p.class)}>
+    <section class={cn("px-2 sm:px-4 pb-10", "text-foreground", p.class)}>
       <h1 class="text-2xl font-bold mt-6 mb-2">{getOrgMemberTitle(p.mode)}</h1>
       <form class="rounded-md border border-border bg-background p-4 sm:p-5 space-y-4" onSubmit={p.sm.handleSubmit}>
         <RoleField sm={p.sm} />
@@ -59,7 +59,7 @@ function RoleField(p: HasOrgMemberFormStateManagement) {
             p.sm.state.role.set(e.currentTarget.value)
             p.sm.validateOnChange(orgMemberFormField.role)(e.currentTarget.value)
           }}
-          class={classMerge(
+          class={cn(
             "w-full appearance-none pl-3 pr-10 py-2 border border-input bg-background text-foreground rounded-md focus:outline-none focus:ring-2 focus:ring-ring",
             p.sm.errors.role.get() && "border-destructive focus-visible:ring-destructive",
           )}

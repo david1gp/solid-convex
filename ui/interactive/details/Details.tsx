@@ -2,7 +2,7 @@ import { mdiChevronDown } from "@adaptive-ds/mdi/mdiChevronDown.js"
 import { type JSXElement, Show } from "solid-js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { classArr } from "#ui/utils/classArr.js"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
 import type { MayHaveIcon } from "#ui/utils/MayHaveIcon.js"
@@ -18,7 +18,7 @@ export interface DetailsProps extends MayHaveClass, MayHaveIcon, MayHaveTitle, M
 export function Details(p: DetailsProps) {
   return (
     <details
-      class={classMerge(
+      class={cn(
         "group",
         "bg-white dark:bg-gray-800",
         "rounded-lg border border-gray-200",
@@ -28,7 +28,7 @@ export function Details(p: DetailsProps) {
       )}
     >
       <summary
-        class={classMerge(
+        class={cn(
           "flex flex-col sm:flex-row items-center justify-between",
           "p-6",
           "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors",

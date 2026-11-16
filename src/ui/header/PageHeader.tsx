@@ -1,6 +1,6 @@
 import type { JSXElement } from "solid-js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { HasTitle } from "#ui/utils/HasTitle.ts"
 import type { MayHaveChildrenAndClass } from "#ui/utils/MayHaveChildrenAndClass.ts"
 import type { MayHaveIcon } from "#ui/utils/MayHaveIcon.ts"
@@ -20,17 +20,15 @@ export function PageHeader(p: PageHeaderProps) {
   return (
     <>
       <header
-        class={classMerge(
+        class={cn(
           "sticky top-11 z-10 flex h-11 items-center gap-2 border-b border-border bg-background px-4 md:top-0 md:px-6",
           p.class,
         )}
       >
-        <div class={classMerge("flex min-w-0 flex-1 items-center gap-2", p.innerClass)}>
+        <div class={cn("flex min-w-0 flex-1 items-center gap-2", p.innerClass)}>
           {p.icon && <Icon path={p.icon} class={p.iconClass} />}
-          <h1 class={classMerge("truncate text-base font-semibold lg:text-lg", p.titleClass)}>{p.title}</h1>
-          {p.subtitle && (
-            <p class={classMerge("truncate text-xs text-muted-foreground", p.subtitleClass)}>{p.subtitle}</p>
-          )}
+          <h1 class={cn("truncate text-base font-semibold lg:text-lg", p.titleClass)}>{p.title}</h1>
+          {p.subtitle && <p class={cn("truncate text-xs text-muted-foreground", p.subtitleClass)}>{p.subtitle}</p>}
         </div>
         {p.children && <div class="ml-auto flex shrink-0 items-center gap-2">{p.children}</div>}
       </header>

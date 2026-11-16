@@ -8,7 +8,7 @@ import { DateView } from "#src/ui/date/DateView.tsx"
 import { FormFieldInput } from "#src/ui/form/FormFieldInput.tsx"
 import type { FormMode } from "#ui/input/form/formMode.ts"
 import { Label } from "#ui/input/label/Label.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import type { UserProfileFormStateManagement } from "./userProfileFormState.js"
 
@@ -22,7 +22,7 @@ export interface UserProfileFormProps extends MayHaveClass, HasUserProfileFormSt
 
 export function UserProfileForm(p: UserProfileFormProps) {
   return (
-    <section class={classMerge("px-2 sm:px-4 pb-10", "text-foreground", p.class)}>
+    <section class={cn("px-2 sm:px-4 pb-10", "text-foreground", p.class)}>
       <ProfileSectionImage image={p.sm.state.image.get()} name={p.sm.state.name.get()} />
       {/* <h1 class="text-2xl font-bold mt-6 mb-2">{getUserProfileTitle(p.mode)}</h1> */}
       <form class="space-y-4">

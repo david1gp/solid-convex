@@ -1,14 +1,14 @@
 import type { Component, ComponentProps } from "solid-js"
 import { splitProps } from "solid-js"
 import { classesDisabledModifier } from "#ui/classes/classesDisabledModifier.js"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 
 /** Styled native multiline textarea element. */
 export const Textarea: Component<ComponentProps<"textarea">> = (p) => {
   const [s, rest] = splitProps(p, ["class"])
   return (
     <textarea
-      class={classMerge(
+      class={cn(
         "flex", // layout
         "min-h-[80px] w-full", // sizing
         // "bg-transparent", // background

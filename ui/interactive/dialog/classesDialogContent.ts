@@ -1,4 +1,4 @@
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 
 export const classesDialogContent = [
   "z-50", // positioning
@@ -21,9 +21,9 @@ export const classesDialogOverlay = [
 ]
 
 export function classesDialogContentMerge(innerClass?: string) {
-  return classMerge(classesDialogContent, innerClass)
+  return cn(classesDialogContent, innerClass)
 }
 
 export function classesDialogOverlayMerge(innerClass?: string) {
-  return classMerge(classesDialogOverlay, innerClass)
+  return cn(classesDialogOverlay, innerClass)
 }

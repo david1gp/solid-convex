@@ -7,7 +7,7 @@ import type { HasOrgHandle } from "#src/org/org_model_field/HasOrgHandle.ts"
 import { orgPageSection } from "#src/org/org_ui/view/orgPageSection.tsx"
 import { SectionHeader } from "#src/ui/header/SectionHeader.tsx"
 import { PaginationControls } from "#src/ui/pagination/PaginationControls.tsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 export interface OrgMemberListProps extends HasOrgHandle, MayHaveClass {
@@ -29,7 +29,7 @@ export interface OrgMemberListPagination {
 export function OrgMemberListSection(p: OrgMemberListProps) {
   const showMemberActionsNotImplemented = false
   return (
-    <section id={orgPageSection.members} class={classMerge("space-y-1", "my-2", p.class)}>
+    <section id={orgPageSection.members} class={cn("space-y-1", "my-2", p.class)}>
       <Header />
       <Show when={!p.loading} fallback={<p class="text-sm text-muted-foreground">{ttc("Loading members...")}</p>}>
         <Show when={p.members.length > 0} fallback={<NoOrgMembersText />}>

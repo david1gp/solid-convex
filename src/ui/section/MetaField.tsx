@@ -1,4 +1,4 @@
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 interface FieldProps extends MayHaveClass {
@@ -10,9 +10,9 @@ interface FieldProps extends MayHaveClass {
 
 export function MetaField(p: FieldProps) {
   return (
-    <div class={classMerge("flex flex-col gap-1", p.class)}>
-      <span class={classMerge("text-muted-foreground font-medium", p.headingClass)}>{p.heading}</span>
-      <span class={classMerge("font-medium", p.valueClass)}>{p.value}</span>
+    <div class={cn("flex flex-col gap-1", p.class)}>
+      <span class={cn("text-muted-foreground font-medium", p.headingClass)}>{p.heading}</span>
+      <span class={cn("font-medium", p.valueClass)}>{p.value}</span>
     </div>
   )
 }

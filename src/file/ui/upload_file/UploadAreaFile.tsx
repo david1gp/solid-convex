@@ -6,7 +6,7 @@ import { UploadFileStats } from "#src/file/ui/stats/UploadFileStats.tsx"
 import { UploadAreaFileView } from "#src/file/ui/upload_file/UploadAreaFileView.tsx"
 import { uploadAreaFileStateCreate } from "#src/file/ui/upload_file/uploadAreaFileStateCreate.ts"
 import type { MayHaveResourceId } from "#src/resource/model/MayHaveResourceId.ts"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { SignalObject } from "#ui/utils/createSignalObject.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import type { MayHaveId } from "#ui/utils/MayHaveId.ts"
@@ -35,7 +35,7 @@ export function UploadAreaFile(p: UploadAreaFileProps) {
 
   return (
     <>
-      <label for={state.id} class={classMerge("flex cursor-pointer flex-col items-center", p.class)}>
+      <label for={state.id} class={cn("flex cursor-pointer flex-col items-center", p.class)}>
         <UploadAreaFileView status={state.getCurrentStatus()} error={p.error?.get()} info={p.info.get()} />
       </label>
       <input id={state.id} type="file" accept={p.accept} class="hidden" onChange={state.handler} />

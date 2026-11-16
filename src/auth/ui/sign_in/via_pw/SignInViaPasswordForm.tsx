@@ -5,7 +5,7 @@ import { formFieldConfigs } from "#src/ui/form/formFieldConfigs.ts"
 import { formMode } from "#ui/input/form/formMode.ts"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import type { signInViaPasswordCreateStateManagement } from "./signInViaPasswordCreateStateManagement.js"
 
@@ -15,7 +15,7 @@ export function SignInViaPasswordForm(
   const sm = signInViaPasswordFormStateCreate(() => p.stateFactory)
 
   return (
-    <form onSubmit={sm.handleSubmit} autocomplete="on" class={classMerge("flex flex-col gap-4", p.class)}>
+    <form onSubmit={sm.handleSubmit} autocomplete="on" class={cn("flex flex-col gap-4", p.class)}>
       <FormFieldInput
         config={{
           ...formFieldConfigs.email,

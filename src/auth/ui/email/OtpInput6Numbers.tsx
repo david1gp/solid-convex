@@ -1,5 +1,5 @@
 import { InputS } from "#ui/input/input/InputS.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { SignalObject } from "#ui/utils/createSignalObject.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
@@ -25,7 +25,7 @@ export function OtpInput6Numbers(p: OtpInput6NumbersProps) {
       valueSignal={p.valueSignal}
       onInput={handleInput}
       maxLength={6}
-      class={classMerge(
+      class={cn(
         "w-full text-center text-lg font-mono", // typography
         "border-2 rounded-md focus:outline-none focus:ring-2", // borders
         p.error ? "border-red-500 focus:ring-red-200" : "border-gray-300 focus:border-blue-500 focus:ring-blue-200", // state

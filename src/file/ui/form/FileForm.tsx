@@ -18,7 +18,7 @@ import { LabelPseudo } from "#ui/input/label/LabelPseudo.jsx"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 interface HasFileFormStateManagement {
@@ -34,7 +34,7 @@ export function FileForm(p: FileFormProps) {
     addKeyboardListenerAlt("t", p.sm.fillTestData)
   }
   return (
-    <section class={classMerge("px-2 sm:px-4 pb-10", "text-gray-900 dark:text-gray-100", p.class)}>
+    <section class={cn("px-2 sm:px-4 pb-10", "text-gray-900 dark:text-gray-100", p.class)}>
       <div class="flex flex-wrap justify-between mt-6 mb-2">
         <h1 class="text-2xl font-bold">{getFileTitle(p.mode)}</h1>
         {p.mode === formMode.edit && (

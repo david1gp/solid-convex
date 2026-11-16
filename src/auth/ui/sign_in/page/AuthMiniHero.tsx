@@ -1,4 +1,4 @@
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 export interface AuthMiniHeroProps extends MayHaveClass {
@@ -8,7 +8,7 @@ export interface AuthMiniHeroProps extends MayHaveClass {
 
 export function AuthMiniHero(p: AuthMiniHeroProps) {
   return (
-    <h1 class={classMerge("text-4xl font-bold max-w-5xl mx-auto", p.class)}>
+    <h1 class={cn("text-4xl font-bold max-w-5xl mx-auto", p.class)}>
       <span class="text-primary">Adaptive Convex Auth</span>
       <span>
         {" "}

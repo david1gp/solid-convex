@@ -1,6 +1,6 @@
 import { type ButtonVariant, buttonVariant } from "#ui/interactive/button/buttonCva.js"
 import { classArr } from "#ui/utils/classArr.js"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 
 const classesTextFillBlack = "text-black fill-black"
 const classesTextFillWhite = "text-white fill-white"
@@ -60,5 +60,5 @@ export function buttonIconCva(
   variant: ButtonVariant = buttonVariant.ghost,
   ...customClasses: (string | boolean | undefined | null | 0 | 0n)[]
 ) {
-  return classMerge(baseClasses, buttonIconClasses[variant], customClasses)
+  return cn(baseClasses, buttonIconClasses[variant], customClasses)
 }

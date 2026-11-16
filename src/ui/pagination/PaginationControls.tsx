@@ -4,7 +4,7 @@ import { type Accessor, Show } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 interface PaginationControlsProps extends MayHaveClass {
@@ -19,7 +19,7 @@ interface PaginationControlsProps extends MayHaveClass {
 export function PaginationControls(p: PaginationControlsProps) {
   return (
     <Show when={p.loading?.() || p.canPrevious() || p.canNext()} fallback={null}>
-      <div class={classMerge("flex items-center justify-center gap-2", p.class)}>
+      <div class={cn("flex items-center justify-center gap-2", p.class)}>
         <ButtonIcon
           icon={mdiArrowLeft}
           variant={buttonVariant.subtle}

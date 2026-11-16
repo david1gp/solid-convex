@@ -1,4 +1,4 @@
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
 
 export interface IconProps extends MayHaveClass {
@@ -16,7 +16,7 @@ export function Icon(p: IconProps) {
       aria-label={p.title}
       aria-hidden={!p.title}
       stroke-width={0.5}
-      class={classMerge("size-6 shrink-0 align-middle fill-current", p.class)}
+      class={cn("size-6 shrink-0 align-middle fill-current", p.class)}
     >
       <path d={p.path} />
     </svg>

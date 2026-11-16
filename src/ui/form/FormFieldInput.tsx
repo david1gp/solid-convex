@@ -6,7 +6,7 @@ import { Input } from "#ui/input/input/Input.jsx"
 import { Label } from "#ui/input/label/Label.jsx"
 import { LabelAsterix } from "#ui/input/label/LabelAsterix.jsx"
 import { Textarea } from "#ui/input/textarea/Textarea.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import type { FormFieldConfig } from "./formFieldConfigs.js"
 
@@ -34,13 +34,13 @@ export function FormFieldInput(p: FormFieldInputProps) {
   const isTextareaLong = maxLength > inputMaxLength500
 
   return (
-    <div class={classMerge("flex flex-col gap-2", p.class)}>
+    <div class={cn("flex flex-col gap-2", p.class)}>
       <Label for={p.config.name} class={p.config.labelClass}>
         {p.config.label()}
         {p.config.required && <LabelAsterix />}
       </Label>
       <Show when={p.config.subtitle}>
-        <p class={classMerge("text-muted-foreground", p.config.subtitleClass)}>{p.config.subtitle}</p>
+        <p class={cn("text-muted-foreground", p.config.subtitleClass)}>{p.config.subtitle}</p>
       </Show>
       <Component
         id={p.config.name}
@@ -53,7 +53,7 @@ export function FormFieldInput(p: FormFieldInputProps) {
           p.onInput(value)
         }}
         onBlur={(e: FocusEvent) => p.onBlur((e.currentTarget as HTMLInputElement | HTMLTextAreaElement).value)}
-        class={classMerge(
+        class={cn(
           "w-full",
           p.config.type === "date" && "w-[18ch]",
           isTextarea && (isTextareaLong ? "min-h-[10lh]" : "min-h-[3lh]"),

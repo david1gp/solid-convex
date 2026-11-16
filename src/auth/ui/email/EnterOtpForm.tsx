@@ -5,14 +5,14 @@ import { enterOtpFormStateCreate } from "#src/auth/ui/email/EnterOtpFormStateCre
 import { Label } from "#ui/input/label/Label.jsx"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import { OtpInput6Numbers } from "./OtpInput6Numbers.js"
 
 export function EnterOtpForm(p: EnterOtpFormProps) {
   const state = enterOtpFormStateCreate(() => p)
 
   return (
-    <form onSubmit={state.handleSubmit} autocomplete="off" class={classMerge("flex flex-col gap-2", p.class)}>
+    <form onSubmit={state.handleSubmit} autocomplete="off" class={cn("flex flex-col gap-2", p.class)}>
       <div class="flex flex-col gap-2 mb-2">
         <h1 class="text-2xl font-bold text-foreground">{p.title}</h1>
         <p class="text-muted-foreground">{p.subtitle}</p>

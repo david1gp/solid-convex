@@ -6,7 +6,7 @@ import type { Table2Signals } from "#ui/table/table2/createSortableTableSignals.
 import { sortData } from "#ui/table/table2/sortData.js"
 import { nextSortDir } from "#ui/table/table2/sortDir.js"
 import { Table2DSortButton } from "#ui/table/table2/Table2DSortButton.jsx"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
 
 export interface SortableTableDProps<T> extends Table2Signals<T>, MayHaveClass {
@@ -35,12 +35,12 @@ export function Table2D<T>(p: SortableTableDProps<T>) {
   }
 
   return (
-    <table class={classMerge("overflow-x-auto", p.class, p.desktopClasses?.class)}>
+    <table class={cn("overflow-x-auto", p.class, p.desktopClasses?.class)}>
       <thead>
         <tr>
           <For each={p.columns.get()}>
             {(h) => (
-              <th scope={"col"} class={classMerge("text-left", p.desktopClasses?.header, h.headerClass)}>
+              <th scope={"col"} class={cn("text-left", p.desktopClasses?.header, h.headerClass)}>
                 <Table2DSortButton sortHeader={h} onClick={doSort} />
               </th>
             )}
@@ -50,9 +50,9 @@ export function Table2D<T>(p: SortableTableDProps<T>) {
       <tbody>
         <For each={p.rows.get()}>
           {(d) => (
-            <tr class={classMerge(sharedTableRowClassName, p.desktopClasses?.row)}>
+            <tr class={cn(sharedTableRowClassName, p.desktopClasses?.row)}>
               <For each={p.columns.get()}>
-                {(h) => <td class={classMerge(p.desktopClasses?.data, h.dataClass)}>{h.cell(d)}</td>}
+                {(h) => <td class={cn(p.desktopClasses?.data, h.dataClass)}>{h.cell(d)}</td>}
               </For>
             </tr>
           )}

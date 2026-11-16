@@ -11,7 +11,7 @@ import type { CorvuPopoverProps } from "#ui/interactive/popover/CorvuPopover.jsx
 import { CorvuPopover } from "#ui/interactive/popover/CorvuPopover.jsx"
 import { classesGridCols3xl } from "#ui/static/grid/classesGridCols3xl.js"
 import { classArr } from "#ui/utils/classArr.js"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 import type { SignalObject } from "#ui/utils/createSignalObject.js"
 import type { HasGetOptions } from "#ui/utils/HasGetOptions.js"
 import type { HasValueSignalStringArray } from "#ui/utils/HasValueSignalStringArray.js"
@@ -47,7 +47,7 @@ export interface SelectMultipleProps
 export function SelectMultiple(p: SelectMultipleProps) {
   const texts = p.texts ?? selectMultipleTextDefault
 
-  const buttonClass = classMerge(p.addEntryClass, p.buttonProps.class)
+  const buttonClass = cn(p.addEntryClass, p.buttonProps.class)
   const buttonProps = mergeProps(p.buttonProps, {
     icon: mdiPlus,
     children: p.textAddEntry ?? texts.addEntry,
@@ -192,7 +192,7 @@ function ListOption(p: ListOptionProps) {
         toggleOption(p)
       }}
       variant={buttonVariant.ghost}
-      class={classMerge("justify-start", p.listOptionClass)}
+      class={cn("justify-start", p.listOptionClass)}
       disabled={p.disabled}
     >
       {label()}
@@ -230,7 +230,7 @@ interface NoItemsProps extends MayHaveClass {
 function NoItems(p: NoItemsProps) {
   return (
     <div
-      class={classMerge(
+      class={cn(
         "py-2 px-3",
         // button
         "rounded-md ring-offset-background", // rounded, rings

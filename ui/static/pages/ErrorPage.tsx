@@ -1,6 +1,6 @@
 import { mdiAlertBoxOutline } from "@adaptive-ds/mdi/mdiAlertBoxOutline.js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 import type { HasTitle } from "#ui/utils/HasTitle.js"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
@@ -13,7 +13,7 @@ export interface ErrorPageProps extends HasTitle, MayHaveSubtitle, MayHaveIcon, 
 export function ErrorPage(p: ErrorPageProps) {
   return (
     <div
-      class={classMerge(
+      class={cn(
         "flex flex-row items-center justify-center", // layout
         "my-25",
         // "min-h-[80dvh]", // sizing
@@ -21,7 +21,7 @@ export function ErrorPage(p: ErrorPageProps) {
       )}
     >
       <div
-        class={classMerge(
+        class={cn(
           "max-w-md w-full", // sizing
           "bg-white dark:bg-gray-800", // bg
           "rounded-lg shadow-md", // styling
@@ -30,14 +30,14 @@ export function ErrorPage(p: ErrorPageProps) {
       >
         <Icon
           path={p.icon ?? mdiAlertBoxOutline}
-          class={classMerge(
+          class={cn(
             "w-16 h-16 mx-auto", // sizing + layout
             "fill-red-500", // color
             p.iconClass,
           )}
         />
         <h1
-          class={classMerge(
+          class={cn(
             "text-2xl font-bold", // typography
             "text-gray-800 dark:text-white", // color
             "mt-4", // spacing
@@ -48,7 +48,7 @@ export function ErrorPage(p: ErrorPageProps) {
         </h1>
         {p.subtitle && (
           <p
-            class={classMerge(
+            class={cn(
               "text-gray-600 dark:text-gray-300", // color
               "mt-2", // spacing
               p.subtitleClass,

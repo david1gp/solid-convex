@@ -23,7 +23,7 @@ import { LabelPseudo } from "#ui/input/label/LabelPseudo.jsx"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 interface HasResourceFormStateManagement {
@@ -43,7 +43,7 @@ export function ResourceForm(p: ResourceFormProps) {
   }
   return (
     <main
-      class={classMerge(
+      class={cn(
         //
         "grid md:grid-cols-[max-content_1fr] gap-12",
         p.class,

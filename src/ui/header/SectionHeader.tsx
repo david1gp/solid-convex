@@ -3,7 +3,7 @@ import type { PageHeaderProps } from "#src/ui/header/PageHeader.tsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonExternal, LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { Icon } from "#ui/static/icon/Icon.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 
 export interface SectionHeaderProps extends PageHeaderProps {
   icon: string
@@ -13,8 +13,8 @@ export interface SectionHeaderProps extends PageHeaderProps {
 
 export function SectionHeader(p: SectionHeaderProps) {
   return (
-    <div class={classMerge("flex flex-wrap items-center justify-between gap-4", p.class)}>
-      <h2 class={classMerge("text-2xl font-semibold", p.titleClass)}>
+    <div class={cn("flex flex-wrap items-center justify-between gap-4", p.class)}>
+      <h2 class={cn("text-2xl font-semibold", p.titleClass)}>
         {p.to ? (
           <LinkButtonInternal to={p.to} icon={p.icon} variant={buttonVariant.link} class="pl-0">
             {p.title}
@@ -30,7 +30,7 @@ export function SectionHeader(p: SectionHeaderProps) {
           </div>
         )}
       </h2>
-      {p.subtitle && <p class={classMerge("text-lg", p.subtitleClass)}>{p.subtitle}</p>}
+      {p.subtitle && <p class={cn("text-lg", p.subtitleClass)}>{p.subtitle}</p>}
       {p.children}
     </div>
   )

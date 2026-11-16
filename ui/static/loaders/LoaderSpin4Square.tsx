@@ -1,4 +1,4 @@
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
 import styles from "./LoaderSpin4Square.module.css"
 
@@ -7,5 +7,5 @@ import styles from "./LoaderSpin4Square.module.css"
  * https://dev.to/afif/i-made-100-css-loaders-for-your-next-project-4eje
  */
 export function LoaderSpin4Square(p: MayHaveClass) {
-  return <div class={classMerge(p.class, styles.LoaderSpin4Square)} />
+  return <div class={cn(p.class, styles.LoaderSpin4Square)} />
 }

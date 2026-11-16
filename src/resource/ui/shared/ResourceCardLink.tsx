@@ -8,7 +8,7 @@ import { classesCard } from "#src/ui/card/classesCard.ts"
 import { IconTextPair } from "#src/ui/card/IconTextPair.tsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 
 export interface ResourceCardLinkProps {
   resource: ResourceModel
@@ -21,7 +21,7 @@ export function ResourceCardLink(p: ResourceCardLinkProps) {
     <LinkButtonInternal
       variant={buttonVariant.filled}
       to={p.href ?? urlResourceView(p.resource.resourceId)}
-      class={classMerge(
+      class={cn(
         classesCard,
         "pl-4",
         // "flex flex-col gap-2",

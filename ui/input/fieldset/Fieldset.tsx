@@ -1,6 +1,6 @@
 import type { Component, JSXElement } from "solid-js"
 import { splitProps } from "solid-js"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"
 import type { MayHaveSubtitle } from "#ui/utils/MayHaveSubtitle.js"
 import type { MayHaveTitle } from "#ui/utils/MayHaveTitle.js"
@@ -16,8 +16,8 @@ export const Fieldset: Component<FieldsetProps> = (p) => {
   const [s, rest] = splitProps(p, ["children", "title", "titleClass", "titleChildren", "subtitleClass", "class"])
 
   return (
-    <fieldset class={classMerge(classesFieldset, s.class)} {...rest}>
-      <legend class={classMerge("px-1", s.titleClass)}>{s.titleChildren ?? s.title}</legend>
+    <fieldset class={cn(classesFieldset, s.class)} {...rest}>
+      <legend class={cn("px-1", s.titleClass)}>{s.titleChildren ?? s.title}</legend>
       {s.children}
     </fieldset>
   )

@@ -5,7 +5,7 @@ import type { ButtonCvaProps, ButtonVariant } from "#ui/interactive/button/butto
 import { buttonIconCva } from "#ui/interactive/button/buttonIconCva.js"
 import { classesButtonClickAnimation } from "#ui/interactive/button/classesButtonClickAnimation.js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 
 export interface ButtonIconProps extends ComponentProps<"button">, ButtonCvaProps {
   // icon
@@ -50,11 +50,7 @@ export const ButtonIcon: Component<ButtonIconProps> = (p) => {
   }
   return (
     <Button
-      class={classMerge(
-        classesButtonClickAnimation,
-        (s.isLoading || !!s.validationMessage) && "cursor-not-allowed",
-        s.class,
-      )}
+      class={cn(classesButtonClickAnimation, (s.isLoading || !!s.validationMessage) && "cursor-not-allowed", s.class)}
       variant={s.validationMessage ? s.validationVariant : s.variant}
       onClick={onClick2}
       disabled={s.disabled}

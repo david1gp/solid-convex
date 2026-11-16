@@ -1,5 +1,5 @@
 import { Icon } from "#ui/static/icon/Icon.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 export interface IconTextPairProps extends MayHaveClass {
@@ -10,7 +10,7 @@ export interface IconTextPairProps extends MayHaveClass {
 
 export function IconTextPair(p: IconTextPairProps) {
   return (
-    <div class={classMerge("flex items-center gap-2", p.class)}>
+    <div class={cn("flex items-center gap-2", p.class)}>
       <Icon path={p.icon} class="size-5" />
       {p.children}
     </div>

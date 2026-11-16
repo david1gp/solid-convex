@@ -28,7 +28,7 @@ import { LinkButtonIconOnlyInternal } from "#ui/interactive/link/LinkButtonIconO
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { PageWrapper } from "#ui/static/page/PageWrapper.jsx"
 import { classArr } from "#ui/utils/classArr.ts"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import { capitalizeFirstLetter } from "#utils/text/capitalizeFirstLetter.js"
 import { userProfileMeViewStateCreate } from "./userProfileMeViewStateCreate.ts"
@@ -88,7 +88,7 @@ export function UserProfileMeView(p: {
 }) {
   const state = userProfileMeViewStateCreate(() => p)
   return (
-    <div class={classMerge("max-w-2xl mx-auto", "space-y-6")}>
+    <div class={cn("max-w-2xl mx-auto", "space-y-6")}>
       <ProfileSectionImage image={p.profile.image} name={p.profile.name} href={state.hrefs().image} demo={!!p.hrefs} />
       <ProfileSectionInfo userProfile={p.profile} editHref={state.hrefs().edit} demo={!!p.hrefs} />
       <ProfileSectionEmail email={p.profile.email} emailHref={state.hrefs().email} />
@@ -112,11 +112,7 @@ function ProfileSectionImage(p: ProfileSectionImageProps) {
         component={p.demo ? Link : "a"}
         to={p.demo ? p.href : undefined}
         href={p.href}
-        class={classMerge(
-          "group relative w-32 h-32 rounded-full overflow-hidden border-4 border-border",
-          "z-10",
-          p.class,
-        )}
+        class={cn("group relative w-32 h-32 rounded-full overflow-hidden border-4 border-border", "z-10", p.class)}
       >
         {p.image ? (
           <img src={p.image} alt={ttc("Profile picture")} class="w-full h-full object-cover" />

@@ -1,4 +1,4 @@
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { HasChildren } from "#ui/utils/HasChildren.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
@@ -9,8 +9,8 @@ interface FieldChildrenProps extends MayHaveClass, HasChildren {
 
 export function MetaFieldChildren(p: FieldChildrenProps) {
   return (
-    <div class={classMerge("flex flex-col gap-1", p.class)}>
-      <span class={classMerge("text-muted-foreground font-medium", p.headingClass)}>{p.heading}</span>
+    <div class={cn("flex flex-col gap-1", p.class)}>
+      <span class={cn("text-muted-foreground font-medium", p.headingClass)}>{p.heading}</span>
       {p.children}
     </div>
   )

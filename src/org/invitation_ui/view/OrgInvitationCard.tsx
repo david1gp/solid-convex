@@ -20,7 +20,7 @@ import { toastAdd } from "#ui/interactive/toast/toastAdd.ts"
 import { toastVariant } from "#ui/interactive/toast/toastVariant.ts"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { classArr } from "#ui/utils/classArr.ts"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import type { MayHaveClassAndChildren } from "#ui/utils/MayHaveClassAndChildren.ts"
 
@@ -32,7 +32,7 @@ export interface OrgInvitationCardProps extends MayHaveClass {
 export function OrgInvitationCard(p: OrgInvitationCardProps) {
   return (
     <section
-      class={classMerge(
+      class={cn(
         "rounded-md border border-border bg-background", // card
         "p-4", // padding
         "flex flex-col justify-start gap-2", // layout children
@@ -157,7 +157,5 @@ interface OrgInvitationStatusIconProps extends MayHaveClass {
 }
 
 function OrgInvitationStatusIcon(p: OrgInvitationStatusIconProps) {
-  return (
-    <Icon path={orgInvitationStatusIcon[invitationModelToStatus(p.invitation)]} class={classMerge("size-8", p.class)} />
-  )
+  return <Icon path={orgInvitationStatusIcon[invitationModelToStatus(p.invitation)]} class={cn("size-8", p.class)} />
 }

@@ -7,7 +7,7 @@ import { searchBoxStateCreate } from "#ui/composite/searchbox/searchBoxStateCrea
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 import type { SignalObject } from "#ui/utils/createSignalObject.js"
 
 export interface SearchFilterEntry {
@@ -138,7 +138,7 @@ function FilterDropdown(p: {
               role="option"
               aria-selected={state.isSelected(option)}
               onClick={() => p.onSelect(option)}
-              class={classMerge(
+              class={cn(
                 "flex w-full items-center justify-between border-t border-slate-100 dark:border-slate-800 px-4 py-2.5 text-left text-sm transition-colors",
                 state.isSelected(option)
                   ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-900 dark:text-emerald-100"

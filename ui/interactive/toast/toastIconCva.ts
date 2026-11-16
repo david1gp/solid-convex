@@ -1,6 +1,6 @@
 import { type ToastVariant, toastVariant } from "#ui/interactive/toast/toastVariant.js"
 import { classArr } from "#ui/utils/classArr.js"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 
 const classesTextFillBlack = "text-black fill-black"
 const classesTextFillWhite = "text-white fill-white"
@@ -37,5 +37,5 @@ export function toastIconCva(
   variant: ToastVariant | null = defaultVariant,
   ...customClasses: (string | boolean | undefined | null | 0)[]
 ) {
-  return classMerge("size-6 min-w-6 min-h-6", variants[variant ?? defaultVariant], ...customClasses)
+  return cn("size-6 min-w-6 min-h-6", variants[variant ?? defaultVariant], ...customClasses)
 }

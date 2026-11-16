@@ -5,7 +5,7 @@ import { languageSignal, languageSignalRegisterHandler } from "#src/app/i18n/lan
 import { ttl } from "#src/app/i18n/ttl.ts"
 import { CheckSingle } from "#ui/input/check/CheckSingle.jsx"
 import { CorvuPopoverIcon } from "#ui/interactive/popover/CorvuPopoverIcon.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import { tbLanguageDescription } from "./i18n/tbLanguageDescription.js"
 import { tbSelectLanguage } from "./i18n/tbSelectLanguage.js"
@@ -22,7 +22,7 @@ export function LanguageSwitcher(p: LanguageSwitcherProps) {
       icon={p.icon ?? mdiTranslateVariant}
       variant="ghost"
       title={p.title ?? ttl(tbSelectLanguage)}
-      class={classMerge("text-muted-foreground", p.class)}
+      class={cn("text-muted-foreground", p.class)}
       innerClass="flex flex-col gap-3 min-w-48"
     >
       <div class="">

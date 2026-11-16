@@ -1,4 +1,4 @@
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 
 export const classesPopoverContent = [
   "z-50", // positioning
@@ -12,5 +12,5 @@ export const classesPopoverContent = [
 ]
 
 export function classesPopoverContentMerge(innerClass?: string) {
-  return classMerge(classesPopoverContent, innerClass)
+  return cn(classesPopoverContent, innerClass)
 }

@@ -3,7 +3,7 @@ import { appNameClient } from "#src/app/text/appName.ts"
 import { type AuthLegalAgreeVariant, authLegalAgreeVariant } from "#src/auth/ui/sign_in/legal/authLegalAgreeVariant.tsx"
 import { AuthLegalAgree } from "#src/auth/ui/sign_in/legal/AuthLegalAgree.tsx"
 import { LogoImageText } from "#ui/static/logo/LogoImageText.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveChildrenAndClass } from "#ui/utils/MayHaveChildrenAndClass.ts"
 
 export interface AuthSplitLayoutProps extends MayHaveChildrenAndClass {
@@ -16,7 +16,7 @@ export interface AuthSplitLayoutProps extends MayHaveChildrenAndClass {
  * Right side uses bg-surface so it adapts via tokens. Normal page scroll; the panel sticks on lg. */
 export function AuthSplitLayout(p: AuthSplitLayoutProps) {
   return (
-    <div class={classMerge("grid min-h-dvh grid-cols-1 lg:grid-cols-[minmax(360px,5fr)_7fr]", p.class)}>
+    <div class={cn("grid min-h-dvh grid-cols-1 lg:grid-cols-[minmax(360px,5fr)_7fr]", p.class)}>
       <aside class="flex flex-col gap-6 bg-[#191919] p-6 text-[#f7f7f5] lg:sticky lg:top-0 lg:h-dvh lg:p-10">
         <LogoImageText
           to={urlOverview()}

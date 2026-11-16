@@ -1,6 +1,6 @@
 import type { ComponentProps, ParentComponent } from "solid-js"
 import { type Component, type JSXElement, mergeProps, Show, splitProps } from "solid-js"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 
 export interface TimelinePropsItem
   extends Omit<TimelineItemProps, "isActive" | "isActiveBullet" | "bulletSize" | "lineSize"> {
@@ -73,7 +73,7 @@ const TimelineItem: Component<TimelineItemProps> = (p) => {
   ])
   return (
     <li
-      class={classMerge(
+      class={cn(
         "relative border-l pb-8 pl-8",
         s.isLast && "border-l-transparent pb-0",
         s.isActive && !s.isLast && "border-l-primary",
@@ -105,10 +105,7 @@ export type TimelineItemBulletProps = {
 const TimelineItemBullet: Component<TimelineItemBulletProps> = (p) => {
   return (
     <div
-      class={classMerge(
-        "absolute top-0 flex items-center justify-center rounded-full border",
-        p.isActive && "border-primary",
-      )}
+      class={cn("absolute top-0 flex items-center justify-center rounded-full border", p.isActive && "border-primary")}
       style={{
         width: `${p.bulletSize}px`,
         height: `${p.bulletSize}px`,
@@ -129,7 +126,7 @@ const TimelineItemTitle: ParentComponent = (p) => {
 const TimelineItemDescription: Component<ComponentProps<"p">> = (p) => {
   const [s, rest] = splitProps(p, ["class", "children"])
   return (
-    <p class={classMerge("text-muted-foreground text-sm", s.class)} {...rest}>
+    <p class={cn("text-muted-foreground text-sm", s.class)} {...rest}>
       {s.children}
     </p>
   )

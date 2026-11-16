@@ -1,7 +1,7 @@
 import { isDevEnv } from "#src/utils/env/isDevEnv.ts"
 import { classInvertBlack } from "#ui/static/img/classInvertBlack.ts"
 import { Img } from "#ui/static/img/Img.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 export interface RandomIllustrationFromArrProps extends MayHaveClass {
@@ -18,7 +18,7 @@ export function RandomIllustrationFromArr(p: RandomIllustrationFromArrProps) {
     <Img
       alt={p.alt}
       src={src}
-      class={classMerge(
+      class={cn(
         "select-none pointer-events-none", // ignore mouse
         classInvertBlack, // illustrations
         "w-full mx-auto", // w

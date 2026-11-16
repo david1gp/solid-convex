@@ -4,7 +4,7 @@ import { ttt } from "#ui/i18n/ttt.ts"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { Icon } from "#ui/static/icon/Icon.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 export interface AppSidebarCollapseToggleProps extends MayHaveClass {
@@ -22,7 +22,7 @@ export function AppSidebarCollapseToggle(p: AppSidebarCollapseToggleProps) {
       aria-label={label()}
       title={label()}
       aria-expanded={!p.collapsed()}
-      class={classMerge("shrink-0", p.class)}
+      class={cn("shrink-0", p.class)}
     >
       <Icon path={p.collapsed() ? mdiChevronRight : mdiChevronLeft} class="size-5" />
     </ButtonIcon>

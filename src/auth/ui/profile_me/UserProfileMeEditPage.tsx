@@ -6,7 +6,7 @@ import { NavUserProfile } from "#src/app/nav/NavUserProfile.tsx"
 import { userSessionGet } from "#src/auth/ui/signals/userSessionSignal.ts"
 import { urlUserProfileMe, urlUserProfileMeEdit } from "#src/auth/url/pageRouteAuth.ts"
 import { PageWrapper } from "#ui/static/page/PageWrapper.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import { UserProfileMeEditForm } from "./UserProfileMeEditForm.js"
 import { userProfileMeEditFormStateManagement } from "./userProfileMeEditFormState.js"
 import { userProfileMeEditViewStateCreate } from "./userProfileMeEditViewStateCreate.ts"
@@ -43,7 +43,7 @@ export function UserProfileMeEditView(p: {
   const state = userProfileMeEditViewStateCreate(() => p)
 
   return (
-    <div class={classMerge("max-w-4xl mx-auto px-4 py-8")}>
+    <div class={cn("max-w-4xl mx-auto px-4 py-8")}>
       <h1 class="text-3xl font-bold mb-4">{ttc("Edit Profile")}</h1>
       <UserProfileMeEditForm sm={state.sm} onSave={p.onSave} cancelHref={p.cancelHref} />
     </div>

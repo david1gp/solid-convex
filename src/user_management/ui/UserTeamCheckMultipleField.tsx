@@ -3,7 +3,7 @@ import { userTeamCheckMultipleFieldStateCreate } from "#src/user_management/ui/u
 import type { UserTeamOption } from "#src/user_management/ui/userTeamOptionSchema.ts"
 import { CheckMultiple } from "#ui/input/check/CheckMultiple.tsx"
 import { Label } from "#ui/input/label/Label.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { SignalObject } from "#ui/utils/createSignalObject.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import type { MayHaveDisabled } from "#ui/utils/MayHaveDisabled.ts"
@@ -24,7 +24,7 @@ export function UserTeamCheckMultipleField(props: UserTeamCheckMultipleFieldProp
   })
 
   return (
-    <div class={classMerge("flex flex-col gap-2", props.class)}>
+    <div class={cn("flex flex-col gap-2", props.class)}>
       <Show when={props.label}>
         <Label for={props.id}>{props.label}</Label>
       </Show>

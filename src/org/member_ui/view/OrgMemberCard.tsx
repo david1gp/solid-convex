@@ -13,7 +13,7 @@ import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonExternal } from "#ui/interactive/link/LinkButton.jsx"
 import { toastAdd } from "#ui/interactive/toast/toastAdd.ts"
 import { toastVariant } from "#ui/interactive/toast/toastVariant.ts"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 export interface OrgMemberCardProps extends MayHaveClass, HasOrgHandle {
@@ -25,7 +25,7 @@ export interface OrgMemberCardProps extends MayHaveClass, HasOrgHandle {
 export function OrgMemberCard(p: OrgMemberCardProps) {
   return (
     <section
-      class={classMerge(
+      class={cn(
         "rounded-md border border-border bg-background", // card
         "p-4", // padding
         "flex flex-col justify-start gap-2", // layout children

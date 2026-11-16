@@ -3,7 +3,7 @@ import { Show } from "solid-js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { classesPageWrapper } from "#ui/static/page/classesPageWrapper.js"
 import { classArr } from "#ui/utils/classArr.js"
-import { classMerge } from "#ui/utils/classMerge.js"
+import { cn } from "cn"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
 import type { MayHaveInnerClass } from "#ui/utils/MayHaveInnerClass.js"
@@ -27,12 +27,12 @@ const classesPageWrapperInner = classArr(
 /** Centered success page with icon, title, and subtitle. */
 export function SuccessPage(p: SuccessPageProps) {
   return (
-    <div class={classMerge(classesPageWrapper, p.class)}>
-      <div class={classMerge(classesPageWrapperInner, p.innerClass)}>
+    <div class={cn(classesPageWrapper, p.class)}>
+      <div class={cn(classesPageWrapperInner, p.innerClass)}>
         <Show when={p.icon}>
           <Icon
             path={p.icon ?? mdiCheckCircleOutline}
-            class={classMerge(
+            class={cn(
               "w-16 h-16", // sizing
               "mx-auto", // positioning
               "fill-green-500",
@@ -41,7 +41,7 @@ export function SuccessPage(p: SuccessPageProps) {
           />
         </Show>
         <h1
-          class={classMerge(
+          class={cn(
             "text-2xl font-bold", // typography
             "text-gray-800 dark:text-white", // text color
             "mt-4", // spacing
@@ -53,7 +53,7 @@ export function SuccessPage(p: SuccessPageProps) {
         </h1>
         <Show when={p.subtitle}>
           <p
-            class={classMerge(
+            class={cn(
               "text-gray-600 dark:text-gray-300", // text color
               "mt-2", // spacing
               "text-center", // text

@@ -5,7 +5,7 @@ import { urlAuthProvider } from "#src/auth/url/urlAuthProvider.ts"
 import { urlSignInRedirectUrl } from "#src/auth/url/urlSignInRedirectUrl.ts"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonExternal } from "#ui/interactive/link/LinkButton.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import { capitalizeFirstLetter } from "#utils/text/capitalizeFirstLetter.js"
 
@@ -24,7 +24,7 @@ function SocialSignInButton(p: SocialSignInButtonProps) {
       href={url}
       icon={iconPath}
       variant={buttonVariant.outline}
-      class={classMerge("w-full", p.class)}
+      class={cn("w-full", p.class)}
       aria-label={text}
     >
       {text}

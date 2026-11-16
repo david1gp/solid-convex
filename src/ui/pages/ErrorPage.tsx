@@ -5,7 +5,7 @@ import { GoHomeLinkButton } from "#src/ui/links/GoHomeLinkButton.tsx"
 import styles from "#src/ui/loaders/AnimateFadeIn.module.css"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { Icon } from "#ui/static/icon/Icon.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { HasTitle } from "#ui/utils/HasTitle.ts"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
@@ -25,10 +25,10 @@ export function ErrorPage(p: ErrorPageProps) {
 
 function ErrorSection(p: ErrorPageProps) {
   return (
-    <section id={"error"} class={classMerge("flex flex-col gap-2 my-20", styles.animateFadeIn2s, p.class)}>
+    <section id={"error"} class={cn("flex flex-col gap-2 my-20", styles.animateFadeIn2s, p.class)}>
       <Icon
         path={p.icon ?? mdiAlertBoxOutline}
-        class={classMerge(
+        class={cn(
           "size-16 mx-auto", // sizing + layout
           "fill-red-500 dark:fill-red-600",
           // "fill-red-400 text-red-400 dark:fill-red-600 dark:text-red-600", // color
@@ -45,7 +45,7 @@ function OptionsSection(p: ErrorPageProps) {
   return (
     <section
       id={"options"}
-      class={classMerge("container max-w-7xl mx-auto text-center space-y-8", styles.animateFadeIn2s, p.class)}
+      class={cn("container max-w-7xl mx-auto text-center space-y-8", styles.animateFadeIn2s, p.class)}
     >
       {/* <h2>{ttt("If the problem persists contact support")}</h2> */}
       <GoBackLinkButton variant={buttonVariant.link} />

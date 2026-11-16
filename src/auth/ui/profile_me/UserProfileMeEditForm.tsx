@@ -6,7 +6,7 @@ import { formMode } from "#ui/input/form/formMode.ts"
 import { Button } from "#ui/interactive/button/Button.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import type { UserProfileMeEditFormStateManagement } from "./userProfileMeEditFormState.js"
 import { userProfileMeEditFormViewStateCreate } from "./userProfileMeEditFormViewStateCreate.ts"
@@ -20,7 +20,7 @@ export interface UserProfileMeEditFormProps extends MayHaveClass {
 export function UserProfileMeEditForm(p: UserProfileMeEditFormProps) {
   const state = userProfileMeEditFormViewStateCreate(() => p)
   return (
-    <div class={classMerge("rounded-md border border-border bg-background p-4 sm:p-5", p.class)}>
+    <div class={cn("rounded-md border border-border bg-background p-4 sm:p-5", p.class)}>
       <form class="space-y-6" onSubmit={state.handleSubmit}>
         <NameField sm={p.sm} />
         <BioField sm={p.sm} />

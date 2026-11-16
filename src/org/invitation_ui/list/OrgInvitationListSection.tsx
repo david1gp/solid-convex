@@ -11,7 +11,7 @@ import { SectionHeader } from "#src/ui/header/SectionHeader.tsx"
 import { PaginationControls } from "#src/ui/pagination/PaginationControls.tsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
-import { classMerge } from "#ui/utils/classMerge.ts"
+import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
 export interface OrgInvitationsProps extends HasOrgHandle, MayHaveClass {
@@ -34,7 +34,7 @@ export interface OrgInvitationListPagination {
 export function OrgInvitationListSection(p: OrgInvitationsProps) {
   const [s, rest] = splitProps(p, ["class", "pagination", "loading"])
   return (
-    <section id={orgPageSection.invitations} class={classMerge("space-y-1", "my-2", s.class)}>
+    <section id={orgPageSection.invitations} class={cn("space-y-1", "my-2", s.class)}>
       <Header {...rest} />
       <Show when={!p.loading} fallback={<p class="text-sm text-muted-foreground">{ttc("Loading invitations...")}</p>}>
         <Show when={p.invitations.length > 0} fallback={<NoOrgInvitationsText />}>

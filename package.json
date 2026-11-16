@@ -18,7 +18,7 @@
     "vite:clean": "rm -rf ./node_modules/.vite/deps",
     "vite:preview": "nice -5 vite preview",
     "build": "bun run rsbuild:build",
-    "rsbuild:dev": "clear && nice -5 rsbuild dev",
+    "rsbuild:dev": "(clear 2>/dev/null || true) && nice -5 rsbuild dev",
     "rsbuild:build": "nice -15 rsbuild build",
     "rsbuild:deploy": "bun --env-file=.env.production run rsbuild build && bun run frontend:upload && git tag -f frontend",
     "rsbuild:clean": "rm -rf node_modules/.cache",

@@ -18,13 +18,7 @@ export function SocialLoginButton(p: SocialLoginButtonProps) {
   const text = "Sign in with " + capitalizeFirstLetter(p.provider)
   const url = urlAuthProvider(p.provider, currentUrl)
   return (
-    <LinkButtonExternal
-      href={url}
-      icon={mdiIconPath}
-      variant={buttonVariant.outline}
-      class={p.class}
-      aria-label={text}
-    >
+    <LinkButtonExternal href={url} icon={mdiIconPath} variant={buttonVariant.outline} class={p.class} aria-label={text}>
       {text}
     </LinkButtonExternal>
   )

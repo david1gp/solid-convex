@@ -27,12 +27,7 @@ export function SignInErrorView(p: { errorMessage: string | null; signInHref?: s
           <h2 class="text-sm text-muted-foreground">
             {ttc("Please try again, if the problem persists contact support")}
           </h2>
-          <Show
-            when={p.signInHref}
-            fallback={
-              <GoSignInLinkButton variant={buttonVariant.link} />
-            }
-          >
+          <Show when={p.signInHref} fallback={<GoSignInLinkButton variant={buttonVariant.link} />}>
             {(href) => (
               <LinkButtonInternal to={href()} variant={buttonVariant.link}>
                 Go to Sign-In demo

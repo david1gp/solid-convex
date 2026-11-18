@@ -41,11 +41,7 @@ function ChildrenLeftCategory(s: DemoNavDataProps) {
   return (
     <>
       <NavSeparatingSlash />
-      <LinkButtonInternal
-        variant={buttonVariant.link}
-        to={`${s.demoPrefix}/${s.category}/`}
-        class="font-medium"
-      >
+      <LinkButtonInternal variant={buttonVariant.link} to={`${s.demoPrefix}/${s.category}/`} class="font-medium">
         {s.category}
       </LinkButtonInternal>
     </>

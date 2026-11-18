@@ -10,6 +10,7 @@ import {
   writeFileSync,
 } from "node:fs"
 import { createRequire } from "node:module"
+import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 import { parse } from "dotenv"
 
@@ -37,7 +38,7 @@ afterEach(() => {
 })
 
 function fixtureCreate(contents: string, environment = "development", failure = "0") {
-  const dir = mkdtempSync("/tmp/opencode/adaptive-convex-env-test-")
+  const dir = mkdtempSync(join(tmpdir(), "adaptive-convex-env-test-"))
   fixtures.push(dir)
   mkdirSync(join(dir, "ops/convex"), { recursive: true })
   mkdirSync(join(dir, "bin"))
@@ -258,7 +259,7 @@ test("missing files and unsupported targets fail without invoking Bun or Convex"
 test("the encoder validates complete stdin pairs before output, including multiline and malformed input", () => {
   const helper = join(root, "ops/convex/envPayloadEncode.ts")
   const encode = (input: string) =>
-    Bun.spawnSync([process.execPath, helper], { stdin: Buffer.from(input), cwd: "/tmp/opencode" })
+    Bun.spawnSync([process.execPath, helper], { stdin: Buffer.from(input), cwd: tmpdir() })
   const valid = encode("MULTILINE\0line one\nline two\0LITERAL\0\\n\\r\0CR\0a\rb\0CRLF\0a\r\nb\0")
   expect(valid.exitCode).toBe(0)
   expect(parse(valid.stdout.toString())).toEqual({

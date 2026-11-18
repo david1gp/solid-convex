@@ -48,7 +48,7 @@ Units reference `%h/solid-convex`, a symlink to the repo checkout that
   --env-file=.env.development`): compiles `convex/` and pushes to this
   machine's backend. `Wants=` starts the backend.
 - **`solid-convex-ui.service`** — demo frontend dev server (`bun run dev` →
-  rsbuild, `:3012` from `.env.development`; `:3016` is the standalone fallback).
+  rsbuild, port from `PORT`, else `PREVIEW_WEB_PORT`, else `:5173`).
 
 Quadlet services auto-enable on boot via their `[Install]` section — just
 `start` them (the two bun units still need `enable --now`).

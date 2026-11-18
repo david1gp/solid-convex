@@ -1,5 +1,5 @@
 [Unit]
-Description=solid-convex demo frontend dev server (rsbuild, :3016)
+Description=solid-convex demo frontend dev server (rsbuild, $PORT or :5173)
 # %h/solid-convex is a symlink to the repo checkout, created by
 # ops/systemd/install.bash. See ops/README.md.
 After=network-online.target

@@ -23,10 +23,25 @@ const publicProcessEnvDefines = Object.fromEntries(
   publicEnvNames.map((name) => [`process.env.${name}`, JSON.stringify(process.env[name]) ?? "undefined"]),
 )
 
+const appHosts = process.env.PUBLIC_BASE_URL_APP ? [new URL(process.env.PUBLIC_BASE_URL_APP).hostname] : []
+
 export default defineConfig({
   server: {
-    port: Number(process.env.PREVIEW_WEB_PORT ?? 3016),
-    strictPort: true,
+    // PORT (set by managed units and dev leases; the CLI --port flag wins
+    // over this), then the legacy PREVIEW_WEB_PORT, then the local default.
+    port: Number(process.env.PORT ?? process.env.PREVIEW_WEB_PORT) || 5173,
+    // Only demand the exact port when one was explicitly configured, so a
+    // default local dev server never blocks on (or takes) the preview port.
+    strictPort: Boolean(process.env.PORT ?? process.env.PREVIEW_WEB_PORT),
+    host: process.env.HOST || true,
+    allowedHosts: [
+      "localhost",
+      ...appHosts,
+      ...(process.env.DEV_ALLOWED_HOSTS?.split(",") ?? []),
+      ...(process.env.__VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS?.split(",") ?? []),
+    ]
+      .map((host) => host.trim())
+      .filter(Boolean),
   },
   html: {
     template: "./rsbuild.html",

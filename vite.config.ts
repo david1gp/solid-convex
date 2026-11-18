@@ -7,12 +7,24 @@ export default defineConfig(({ mode }) => {
 
   return {
     server: {
-      port: Number(process.env.PREVIEW_WEB_PORT ?? 3016),
-      strictPort: true,
+      // PORT (set by managed units and dev leases), then the legacy
+      // PREVIEW_WEB_PORT, then the local default. strictPort only when a
+      // port was explicitly configured, so default dev never takes the
+      // preview's port.
+      port: Number(process.env.PORT ?? process.env.PREVIEW_WEB_PORT) || 5173,
+      strictPort: Boolean(process.env.PORT ?? process.env.PREVIEW_WEB_PORT),
+      host: process.env.HOST || true,
       watch: {
         ignored: ["**/.github/**", "**/data/**", "**/dist/**", "**/ops/**", "**/out/**", "**/docs/**", "**/test/**"],
       },
-      allowedHosts: [...appHosts],
+      allowedHosts: [
+        ...appHosts,
+        "localhost",
+        ...(process.env.DEV_ALLOWED_HOSTS?.split(",") ?? []),
+        ...(process.env.__VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS?.split(",") ?? []),
+      ]
+        .map((host) => host.trim())
+        .filter(Boolean),
       fs: {
         // Allow serving files from one level up to the project root
         allow: [".."],

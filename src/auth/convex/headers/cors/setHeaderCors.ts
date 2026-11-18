@@ -44,8 +44,9 @@ function getAllowedOrigins(): string[] {
 
   const list = [baseUrlAppResult.data, baseUrlSiteResult.data]
   if (isDevEnv()) {
-    const vitePort = 3016
-    list.push("http://localhost:" + vitePort)
+    // Local dev origins: the PORT-based default (5173) and the legacy
+    // PREVIEW_WEB_PORT standalone fallback (3016).
+    list.push("http://localhost:5173", "http://localhost:3016")
   }
   return list
 }

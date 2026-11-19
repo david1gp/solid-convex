@@ -1,7 +1,7 @@
 /* @refresh reload */
 
 import { RouterProvider } from "@tanstack/solid-router"
-import { render } from "solid-js/web"
+import { render } from "@solidjs/web"
 import { demoRoutesCreate } from "#src/app/demos/demoRoutesCreate.tsx"
 import { getRoutesApp } from "#src/app/getRoutesApp.tsx"
 import { LayoutWrapperApp } from "#src/app/layout/LayoutWrapperApp.tsx"

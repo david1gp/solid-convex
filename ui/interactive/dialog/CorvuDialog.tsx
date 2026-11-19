@@ -1,6 +1,6 @@
 import { mdiClose } from "@adaptive-ds/mdi/mdiClose.js"
 import Dialog from "@corvu-next/dialog"
-import type { Accessor } from "solid-js"
+import { createSignal, type Accessor } from "solid-js"
 import { classesDisabledDirectly } from "#ui/classes/classesDisabledDirectly.js"
 import { type ButtonCvaProps, buttonCva2, buttonCvaIconOnly, buttonVariant } from "#ui/interactive/button/buttonCva.js"
 import { buttonIconCva } from "#ui/interactive/button/buttonIconCva.js"
@@ -39,10 +39,12 @@ export interface CorvuDialogProps
 /** Modal dialog with titled header and trigger button. */
 export function CorvuDialog(p: CorvuDialogProps) {
   const texts = p.texts ?? corvuDialogTextDefault
+  const [trigger, setTrigger] = createSignal<HTMLElement>()
 
   return (
-    <Dialog open={p.open} onOpenChange={p.onOpenChange}>
+    <Dialog open={p.open} onOpenChange={p.onOpenChange} finalFocusEl={trigger()}>
       <Dialog.Trigger
+        ref={setTrigger}
         class={buttonCva2(
           p.variant,
           classesButtonClickAnimation,

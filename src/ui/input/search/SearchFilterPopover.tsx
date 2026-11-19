@@ -22,7 +22,7 @@ export interface SearchFilterProps<T extends Record<string, string>> extends May
 }
 
 export function SearchFilterPopover<T extends Record<string, string>>(p: SearchFilterProps<T>) {
-  const title = p.title || ttc("Add filter")
+  const title = () => p.title || ttc("Add filter")
 
   function handleFilterSelect(fieldKey: string, value: string) {
     p.filterSignal.update({ [fieldKey]: value } as Partial<T>)
@@ -38,9 +38,9 @@ export function SearchFilterPopover<T extends Record<string, string>>(p: SearchF
       icon={mdiFilterVariant}
       variant={buttonVariant.filled}
       class={classArr("bg-gray-50", "border border-input", "rounded-lg", p.class)}
-      title={title}
+      title={title()}
     >
-      <h3 class="text-xl font-semibold mb-3">{title}</h3>
+      <h3 class="text-xl font-semibold mb-3">{title()}</h3>
       <div class="space-y-2">
         <For each={Object.entries(p.filterFields)}>
           {([fieldKey, fieldConfig]) => {

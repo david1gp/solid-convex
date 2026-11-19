@@ -21,7 +21,7 @@ export function LayoutWrapperConvex(p: LayoutWrapperConvexProps) {
   if (!convex) return null
   return (
     <>
-      <ConvexContext.Provider value={convex}>{p.children}</ConvexContext.Provider>
+      <ConvexContext value={convex}>{p.children}</ConvexContext>
       <Show when={!tailwindIndicatorHidden(location().pathname, location().search as Record<string, unknown>)}>
         <TailwindIndicator />
       </Show>

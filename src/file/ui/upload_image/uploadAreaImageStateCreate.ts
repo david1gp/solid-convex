@@ -1,8 +1,8 @@
-import type { JSX } from "solid-js"
 import type { UploadStatus } from "#src/file/model_field/uploadStatus.ts"
 import type { uploadHandlerImage } from "#src/file/ui/upload_image/uploadHandlerImage.tsx"
 import { generateId12 } from "#utils/ran/generateId12.js"
 import type { UploadAreaImageProps } from "./UploadAreaImage.tsx"
+import { type JSX } from "@solidjs/web"
 
 export function uploadAreaImageStateCreate(
   p: UploadAreaImageProps,

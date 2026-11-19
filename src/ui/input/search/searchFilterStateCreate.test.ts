@@ -1,3 +1,4 @@
+import { flush } from "solid-js"
 import { describe, expect, test } from "bun:test"
 import { createRoot } from "solid-js"
 import { searchFilterStateCreate } from "./searchFilterStateCreate.ts"
@@ -33,6 +34,7 @@ describe("searchFilterStateCreate", () => {
 
     state!.searchSignal.set("next")
     state!.filterSignal.update({ type: "strategy" })
+    flush()
     expect(state!.searchSignal.get()).toBe("next")
     expect(state!.debouncedSearch()).toBe("initial")
 
@@ -49,6 +51,7 @@ describe("searchFilterStateCreate", () => {
 
     currentUrl = "https://example.test/resources?search=back&type=report"
     for (const listener of listeners) listener()
+    flush()
     expect(state!.searchSignal.get()).toBe("back")
     expect(state!.debouncedSearch()).toBe("back")
     expect(state!.filterSignal.get().type).toBe("report")

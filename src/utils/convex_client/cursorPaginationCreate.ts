@@ -82,8 +82,7 @@ export function cursorPaginationCreate<Query extends FunctionReference<"query">,
   }
   const applyActiveSnapshotDebounced = debounce(applyActiveSnapshot, wait)
 
-  const stateSynchronize = () => {
-    const snapshot = rawSnapshot()
+  const stateSynchronize = (snapshot: typeof initialSnapshot) => {
     if (snapshot.stateSignature !== lastStateSignature) {
       lastStateSignature = snapshot.stateSignature
       stateVersion += 1
@@ -93,15 +92,18 @@ export function cursorPaginationCreate<Query extends FunctionReference<"query">,
     return snapshot
   }
 
-  createRenderEffect(() => {
-    const snapshot = stateSynchronize()
-    if (snapshot.requestSignature === activeRequestSignature && stateVersion === activeStateVersion) return
-    if (wait <= 0) {
-      applyActiveSnapshot(snapshot)
-      return
-    }
-    applyActiveSnapshotDebounced(snapshot)
-  })
+  createRenderEffect(
+    () => ({ snapshot: rawSnapshot(), cursor: cursor() }),
+    ({ snapshot }) => {
+      stateSynchronize(snapshot)
+      if (snapshot.requestSignature === activeRequestSignature && stateVersion === activeStateVersion) return
+      if (wait <= 0) {
+        applyActiveSnapshot(snapshot)
+        return
+      }
+      applyActiveSnapshotDebounced(snapshot)
+    },
+  )
 
   onCleanup(() => applyActiveSnapshotDebounced.clear())
 
@@ -118,7 +120,7 @@ export function cursorPaginationCreate<Query extends FunctionReference<"query">,
   const queryResult = queryCreate<Query>(options.query, queryArgs)
 
   const currentCacheKey = () => {
-    const snapshot = stateSynchronize()
+    const snapshot = rawSnapshot()
     return paginationCacheKeyCreate({
       identity: snapshot.identity ?? "",
       query: options.queryKey,
@@ -141,7 +143,7 @@ export function cursorPaginationCreate<Query extends FunctionReference<"query">,
 
   const page = () => {
     const currentResult = queryResult() as CursorQueryResult<Item> | undefined
-    const currentSnapshot = stateSynchronize()
+    const currentSnapshot = rawSnapshot()
     const currentRequestSignature = JSON.stringify({
       cursor: cursor(),
       requestSignature: currentSnapshot.requestSignature,
@@ -159,23 +161,28 @@ export function cursorPaginationCreate<Query extends FunctionReference<"query">,
     return cached
   }
 
-  createEffect(() => {
-    const currentResult = queryResult() as CursorQueryResult<Item> | undefined
-    if (!currentResult) return
-    const currentSnapshot = rawSnapshot()
-    const currentRequestSignature = JSON.stringify({
-      cursor: cursor(),
-      requestSignature: currentSnapshot.requestSignature,
-      stateVersion,
-    })
-    if (currentRequestSignature !== activePageRequestSignature()) return
-    if (currentSnapshot.requestSignature !== activeSnapshot().requestSignature || stateVersion !== activeStateVersion)
-      return
-    if (!currentSnapshot.identity) return
-    if (!isCursorQueryResult(currentResult)) return
-    if (!currentResult.success) return
-    paginationPageCacheSave(currentCacheKey(), currentResult.data, pageSchema, options.storage)
-  })
+  createEffect(
+    () => ({
+      currentResult: queryResult() as CursorQueryResult<Item> | undefined,
+      currentSnapshot: rawSnapshot(),
+      currentCursor: cursor(),
+      activeRequest: activePageRequestSignature(),
+      active: activeSnapshot(),
+      cacheKey: currentCacheKey(),
+    }),
+    ({ currentResult, currentSnapshot, currentCursor, activeRequest, active, cacheKey }) => {
+      if (!currentResult) return
+      const currentRequestSignature = JSON.stringify({
+        cursor: currentCursor,
+        requestSignature: currentSnapshot.requestSignature,
+        stateVersion,
+      })
+      if (currentRequestSignature !== activeRequest) return
+      if (currentSnapshot.requestSignature !== active.requestSignature || stateVersion !== activeStateVersion) return
+      if (!currentSnapshot.identity || !isCursorQueryResult(currentResult) || !currentResult.success) return
+      paginationPageCacheSave(cacheKey, currentResult.data, pageSchema, options.storage)
+    },
+  )
 
   const result = page
   const canNext = () => {
@@ -183,13 +190,10 @@ export function cursorPaginationCreate<Query extends FunctionReference<"query">,
     if (!current?.success) return false
     return !current.data.isDone && current.data.continueCursor.length > 0
   }
-  const canPrevious = () => {
-    stateSynchronize()
-    return history().length > 0
-  }
+  const canPrevious = () => rawSnapshot().stateSignature === lastStateSignature && history().length > 0
 
   const next = () => {
-    stateSynchronize()
+    stateSynchronize(rawSnapshot())
     if (rawSnapshot().requestSignature !== activeSnapshot().requestSignature || stateVersion !== activeStateVersion)
       return
     const current = page()
@@ -202,7 +206,7 @@ export function cursorPaginationCreate<Query extends FunctionReference<"query">,
   }
 
   const previous = () => {
-    stateSynchronize()
+    stateSynchronize(rawSnapshot())
     if (rawSnapshot().requestSignature !== activeSnapshot().requestSignature || stateVersion !== activeStateVersion)
       return
     const previousHistory = history()
@@ -221,7 +225,7 @@ export function cursorPaginationCreate<Query extends FunctionReference<"query">,
   }
 
   const loading = () => {
-    const snapshot = stateSynchronize()
+    const snapshot = rawSnapshot()
     const active = activeSnapshot()
     if (snapshot.requestSignature !== active.requestSignature || stateVersion !== activeStateVersion) return true
     return queryResult() === undefined
@@ -235,14 +239,8 @@ export function cursorPaginationCreate<Query extends FunctionReference<"query">,
     next,
     previous,
     loading,
-    cursor: () => {
-      stateSynchronize()
-      return cursor()
-    },
-    history: () => {
-      stateSynchronize()
-      return history()
-    },
+    cursor,
+    history,
     reset,
   }
 }

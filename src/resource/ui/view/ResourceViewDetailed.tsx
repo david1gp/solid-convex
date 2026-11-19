@@ -1,4 +1,4 @@
-import { Show, splitProps } from "solid-js"
+import { Show, omit } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import type { HasResourceModel } from "#src/resource/model/HasResourceModel.ts"
 import { ResourceTypeBadge } from "#src/resource/ui/view/ResourceTypeBadge.tsx"
@@ -21,9 +21,9 @@ export interface ResourceViewProps extends HasResourceModel, MayHaveClass {
 }
 
 export function ResourceViewDetailed(p: ResourceViewProps) {
-  const [s, rest] = splitProps(p, ["class"])
+  const rest = omit(p, "class")
   return (
-    <div class={classArr(classesGridCols3xl, "gap-4", s.class)}>
+    <div class={classArr(classesGridCols3xl, "gap-4", p.class)}>
       <ShowImage {...rest} />
       <Header {...rest} />
       <MetaSectionSummary description={rest.resource.description} />

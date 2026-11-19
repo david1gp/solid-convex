@@ -1,4 +1,4 @@
-import { onMount } from "solid-js"
+import { onSettled } from "solid-js"
 import { createSignInViaEmailStateManagement } from "#src/auth/ui/sign_in/via_email/createSignInViaEmailStateManagement.ts"
 import { addKeyboardListenerAlt } from "#src/auth/ui/sign_up/form/addKeyboardListenerAlt.ts"
 import { isDevEnv } from "#src/utils/env/isDevEnv.ts"
@@ -10,7 +10,7 @@ export function signInViaEmailFormStateCreate(factory: () => typeof createSignIn
   const sm = (factory() ?? createSignInViaEmailStateManagement)()
   let url: URL | null = null
   if (!demo) {
-    onMount(() => {
+    onSettled(() => {
       url = createUrl()
     })
     if (isDevEnv()) addKeyboardListenerAlt("t", sm.fillTestData)

@@ -12,15 +12,15 @@ import { cn } from "cn"
 
 /** Dismissible toast notification with icon and message. */
 export function Toast(p: ToastPropsInternal) {
-  const texts =
+  const texts = () =>
     p.texts ??
     ({
       close: ttt("Close Toast"),
     } as const)
 
   return (
-    <li role="status" aria-live="polite" aria-atomic={true} data-state={"open"} class={toastCva(p.variant, p.class)}>
-      <ToastHeader {...p} texts={texts} />
+    <li role="status" aria-live="polite" aria-atomic="true" data-state={"open"} class={toastCva(p.variant, p.class)}>
+      <ToastHeader {...p} texts={texts()} />
       <Show when={p.description}>
         <p class={cn("text-lg break-words", p.descriptionClass)}>{p.description}</p>
       </Show>

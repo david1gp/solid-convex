@@ -1,5 +1,5 @@
 import { Key } from "@solid-primitives/keyed"
-import { type JSXElement, Show, createUniqueId } from "solid-js"
+import { type Element as JSXElement, Show, createUniqueId } from "solid-js"
 import type { TabsTopText } from "#ui/interactive/tabs/TabsTopText.js"
 import { tabsTopTextDefault } from "#ui/interactive/tabs/TabsTopText.js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
@@ -102,7 +102,7 @@ function TabOption(p: TabOptionProps): JSXElement {
     <button
       type="button"
       role="tab"
-      aria-selected={isSelected(p)}
+      aria-selected={isSelected(p) ? "true" : "false"}
       id={makeTriggerId(p.baseId, p.value)}
       aria-controls={makeContentId(p.baseId, p.value)}
       data-state={isSelected(p) ? "active" : "inactive"}
@@ -134,7 +134,7 @@ function TabContent(p: TabOptionProps): JSXElement {
       aria-labelledby={makeTriggerId(p.baseId, p.value)}
       hidden={!isSelected(p)}
       // biome-ignore lint/a11y/noNoninteractiveTabindex: WAI-ARIA tabs pattern makes the tabpanel focusable
-      tabIndex={0}
+      tabindex={0}
       class={classArr("")}
     >
       {p.valueChildren(p.value)}

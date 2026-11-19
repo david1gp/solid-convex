@@ -33,9 +33,11 @@ export function orgViewPageStateCreate(orgHandle: () => string) {
     scope: orgHandle,
     itemSchema: orgInvitationSchema,
   })
-  createEffect(() => {
-    const result = getDataResult()
-    if (result?.success && result.data.org.name) orgNameSet(result.data.org.orgHandle, result.data.org.name)
-  })
+  createEffect(
+    () => getDataResult(),
+    (result) => {
+      if (result?.success && result.data.org.name) orgNameSet(result.data.org.orgHandle, result.data.org.name)
+    },
+  )
   return { getDataResult, membersPagination, invitationsPagination }
 }

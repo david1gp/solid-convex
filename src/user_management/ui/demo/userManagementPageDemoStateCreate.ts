@@ -68,25 +68,26 @@ export function userManagementPageDemoStateCreate(): UserManagementPageState {
   const syncErrorSignal = createSignalObject("")
 
   let lastSyncedUserId: string | null = null
-  createEffect(() => {
-    const currentId = selectedUserId()
-    const user = selectedUser()
-    if (!currentId) {
-      lastSyncedUserId = null
-      rolesSignal.set([])
-      teamIdsSignal.set([])
-      saveStatusSignal.set("")
-      saveErrorSignal.set("")
-      return
-    }
-    if (user && lastSyncedUserId !== user.userId) {
-      lastSyncedUserId = user.userId
-      rolesSignal.set([...(user.roles as UserRole[])])
-      teamIdsSignal.set([...user.teamIds])
-      saveStatusSignal.set("")
-      saveErrorSignal.set("")
-    }
-  })
+  createEffect(
+    () => ({ currentId: selectedUserId(), user: selectedUser() }),
+    ({ currentId, user }) => {
+      if (!currentId) {
+        lastSyncedUserId = null
+        rolesSignal.set([])
+        teamIdsSignal.set([])
+        saveStatusSignal.set("")
+        saveErrorSignal.set("")
+        return
+      }
+      if (user && lastSyncedUserId !== user.userId) {
+        lastSyncedUserId = user.userId
+        rolesSignal.set([...(user.roles as UserRole[])])
+        teamIdsSignal.set([...user.teamIds])
+        saveStatusSignal.set("")
+        saveErrorSignal.set("")
+      }
+    },
+  )
 
   const orgMap = new Map([["org-sample-1", "Sample Organization"]])
   const teamOptions = createMemo(() =>

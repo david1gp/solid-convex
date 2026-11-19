@@ -1,4 +1,4 @@
-import type { JSX } from "solid-js"
+import { type JSX } from "@solidjs/web";
 
 export const stylesBgDottedSparse = {
   "background-size": "10px 10px",

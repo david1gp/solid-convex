@@ -1,11 +1,12 @@
-import Dialog from "@corvu/dialog"
-import { type JSX, Show } from "solid-js"
+import Dialog from "@corvu-next/dialog"
+import { Show } from "solid-js"
 import type { HierarchyDeleteTarget } from "#src/hierarchy_delete/model/hierarchyDeleteTargetSchema.ts"
 import { HierarchyDeleteView } from "#src/hierarchy_delete/ui/HierarchyDeleteView.tsx"
 import type { HierarchyDeleteConfirmAction } from "#src/hierarchy_delete/ui/hierarchyDeleteConfirmAction.ts"
 import { hierarchyDeleteDialogStateCreate } from "#src/hierarchy_delete/ui/hierarchyDeleteDialogStateCreate.ts"
 import { classesDialogContentMerge, classesDialogOverlayMerge } from "#ui/interactive/dialog/classesDialogContent.js"
 import type { SignalObject } from "#ui/utils/createSignalObject.ts"
+import { type JSX } from "@solidjs/web"
 
 interface HierarchyDeleteDialogProps {
   target: () => HierarchyDeleteTarget | undefined

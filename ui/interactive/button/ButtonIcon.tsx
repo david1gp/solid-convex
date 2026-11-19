@@ -1,11 +1,12 @@
 import { mdiLoading } from "@adaptive-ds/mdi/mdiLoading.js"
-import { type Component, type ComponentProps, splitProps } from "solid-js"
+import { type Component, omit } from "solid-js"
 import { Button } from "#ui/interactive/button/Button.jsx"
 import type { ButtonCvaProps, ButtonVariant } from "#ui/interactive/button/buttonCva.js"
 import { buttonIconCva } from "#ui/interactive/button/buttonIconCva.js"
 import { classesButtonClickAnimation } from "#ui/interactive/button/classesButtonClickAnimation.js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { cn } from "cn"
+import { type ComponentProps } from "@solidjs/web"
 
 export interface ButtonIconProps extends ComponentProps<"button">, ButtonCvaProps {
   // icon
@@ -22,61 +23,58 @@ export interface ButtonIconProps extends ComponentProps<"button">, ButtonCvaProp
 
 /** Button with icon, loading, and validation states. */
 export const ButtonIcon: Component<ButtonIconProps> = (p) => {
-  const [s, rest] = splitProps(p, [
-    // icon
+  const rest = omit(
+    p,
     "icon",
     "iconRight",
     "iconClass",
-    // loading
     "isLoading",
-    // validating
     "validationMessage",
     "validationVariant",
     "validationIcon",
-    // button
     "variant",
     "class",
     "disabled",
     "onClick",
     "children",
-  ])
+  )
   const onClick2 = (e: any) => {
-    if (s.disabled) return
-    if (s.isLoading) return
-    if (s.validationMessage) return
-    if (s.onClick && typeof s.onClick === "function") {
-      s.onClick(e)
+    if (p.disabled) return
+    if (p.isLoading) return
+    if (p.validationMessage) return
+    if (p.onClick && typeof p.onClick === "function") {
+      p.onClick(e)
     }
   }
   return (
     <Button
-      class={cn(classesButtonClickAnimation, (s.isLoading || !!s.validationMessage) && "cursor-not-allowed", s.class)}
-      variant={s.validationMessage ? s.validationVariant : s.variant}
+      class={cn(classesButtonClickAnimation, (p.isLoading || !!p.validationMessage) && "cursor-not-allowed", p.class)}
+      variant={p.validationMessage ? p.validationVariant : p.variant}
       onClick={onClick2}
-      disabled={s.disabled}
-      aria-disabled={s.isLoading || !!s.validationMessage}
+      disabled={p.disabled}
+      aria-disabled={p.isLoading || !!p.validationMessage ? "true" : "false"}
       {...rest}
     >
-      {(s.isLoading || s.validationMessage || s.icon) && (
+      {(p.isLoading || p.validationMessage || p.icon) && (
         <Icon
-          path={(s.isLoading ? mdiLoading : s.validationMessage ? s.validationIcon : (s.icon ?? mdiLoading))!}
+          path={(p.isLoading ? mdiLoading : p.validationMessage ? p.validationIcon : (p.icon ?? mdiLoading))!}
           class={buttonIconCva(
-            s.validationMessage ? s.validationVariant : s.variant,
-            s.children && "mr-2",
-            s.isLoading && "animate-spin",
-            s.iconClass,
+            p.validationMessage ? p.validationVariant : p.variant,
+            p.children && "mr-2",
+            p.isLoading && "animate-spin",
+            p.iconClass,
           )}
         />
       )}
-      {s.validationMessage ? s.validationMessage : s.children}
-      {!s.isLoading && !s.validationMessage && s.iconRight && (
+      {p.validationMessage ? p.validationMessage : p.children}
+      {!p.isLoading && !p.validationMessage && p.iconRight && (
         <Icon
-          path={s.iconRight}
+          path={p.iconRight}
           class={buttonIconCva(
-            s.validationMessage ? s.validationVariant : s.variant,
-            s.children && "ml-2",
-            s.isLoading && "animate-spin",
-            s.iconClass,
+            p.validationMessage ? p.validationVariant : p.variant,
+            p.children && "ml-2",
+            p.isLoading && "animate-spin",
+            p.iconClass,
           )}
         />
       )}

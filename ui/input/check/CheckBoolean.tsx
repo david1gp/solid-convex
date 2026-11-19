@@ -41,7 +41,7 @@ export function CheckBoolean(p: CheckBooleanProps) {
       <div class="flex gap-2">
         <ButtonIcon
           role="option"
-          aria-selected={!currentValue()}
+          aria-selected={!currentValue() ? "true" : "false"}
           icon={!currentValue() ? mdiCheckboxMarkedCircle : mdiCheckboxBlankCircleOutline}
           onClick={() => p.valueSignal.set(false)}
           variant={!currentValue() ? (p.variant ?? buttonVariant.filled) : buttonVariant.outline}
@@ -53,7 +53,7 @@ export function CheckBoolean(p: CheckBooleanProps) {
 
         <ButtonIcon
           role="option"
-          aria-selected={currentValue()}
+          aria-selected={currentValue() ? "true" : "false"}
           icon={currentValue() ? mdiCheckboxMarkedCircle : mdiCheckboxBlankCircleOutline}
           onClick={() => p.valueSignal.set(true)}
           variant={currentValue() ? (p.variant ?? buttonVariant.filled) : buttonVariant.outline}

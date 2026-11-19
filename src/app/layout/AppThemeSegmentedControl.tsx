@@ -1,4 +1,4 @@
-import { For, onMount } from "solid-js"
+import { For, onSettled } from "solid-js"
 import { ttt, ttt1 } from "#ui/i18n/ttt.ts"
 import { Button } from "#ui/interactive/button/Button.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
@@ -31,7 +31,7 @@ function themeLabel(value: ThemeVariant): string {
  * options are ghost. Labels never truncate; the popover sizes intrinsically.
  */
 export function AppThemeSegmentedControl() {
-  onMount(() => {
+  onSettled(() => {
     themeInit()
   })
 
@@ -52,7 +52,7 @@ export function AppThemeSegmentedControl() {
           <Button
             type="button"
             variant={themeSignal.get() === option.value ? buttonVariant.subtle : buttonVariant.ghost}
-            aria-pressed={themeSignal.get() === option.value}
+            aria-pressed={themeSignal.get() === option.value ? "true" : "false"}
             title={themeLabel(option.value)}
             onClick={() => selectTheme(option.value)}
             class="min-w-0 justify-center gap-1"

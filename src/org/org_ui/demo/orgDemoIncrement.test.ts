@@ -1,3 +1,4 @@
+import { flush } from "solid-js"
 import { afterEach, expect, mock, test } from "bun:test"
 import { createRoot } from "solid-js"
 import { pageDemoFixtureStoreGet } from "#src/app/demos/pageDemoFixtureStoreGet.ts"
@@ -27,11 +28,15 @@ test("editing and removing an organization update only the shared gallery fixtur
       dispose = cleanup
       return orgDemoStateCreate(formMode.edit)
     })
+    flush()
     edit.form.state.name.set("Renamed Organization")
+    flush()
     await edit.form.handleSubmit({ preventDefault() {} } as SubmitEvent)
+    flush()
     expect(edit.org()?.name).toBe("Renamed Organization")
     expect(visited).toEqual(["/demos/org/sample-org"])
     const remove = orgDemoStateCreate(formMode.remove)
+    flush()
     await remove.form.handleSubmit({ preventDefault() {} } as SubmitEvent)
     expect(remove.org()).toBeUndefined()
     expect(orgDemoStateCreate().orgs()).toEqual([])
@@ -54,14 +59,18 @@ test("adding a member updates the organization-scoped gallery list without netwo
       dispose = cleanup
       return orgMemberDemoStateCreate()
     })
+    flush()
     state.form.state.role.set("guest")
+    flush()
     await state.form.handleSubmit({ preventDefault() {} } as SubmitEvent)
+    flush()
     expect(state.members().map((member) => [member.userId, member.role])).toEqual([
       ["sample-user", "member"],
       ["new-user", "guest"],
     ])
     expect(orgMemberDemoStateCreate().members()).toHaveLength(2)
     expect(visited).toEqual(["/demos/org/sample-org/members"])
+    flush()
     await state.form.handleSubmit({ preventDefault() {} } as SubmitEvent)
     expect(state.members()).toHaveLength(2)
     expect(state.userError()).toContain("already a member")

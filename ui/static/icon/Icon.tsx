@@ -14,7 +14,7 @@ export function Icon(p: IconProps) {
       viewBox={"0 0 24 24"}
       role="img"
       aria-label={p.title}
-      aria-hidden={!p.title}
+      aria-hidden={!p.title ? "true" : "false"}
       stroke-width={0.5}
       class={cn("size-6 shrink-0 align-middle fill-current", p.class)}
     >

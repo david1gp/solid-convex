@@ -1,10 +1,7 @@
+import { flush } from "solid-js"
 import { describe, expect, mock, test } from "bun:test"
 
-const solidJsClientPath = "solid-js/dist/solid.js"
-type SolidJsModule = typeof import("solid-js")
-const solidJsClient = (await import(solidJsClientPath)) as unknown as SolidJsModule
-mock.module("solid-js", () => solidJsClient)
-const { createRoot, createSignal } = solidJsClient
+import { createRoot, createSignal } from "solid-js"
 mock.restore()
 
 const { resourceDeletionWarningStateCreate } = await import("#src/resource/ui/resourceDeletionWarningStateCreate.ts")
@@ -40,10 +37,12 @@ describe("resourceDeletionWarningStateCreate", () => {
       expect(state.dangerText()).toBe("Warning: Deleting organization will cascade.")
 
       setCount(5)
+      flush()
       expect(state.count()).toBe(5)
       expect(state.countLabel()).toBe("5 resources will be permanently deleted")
 
       setDangerText("Immediate irreversible destruction.")
+      flush()
       expect(state.dangerText()).toBe("Immediate irreversible destruction.")
 
       dispose()

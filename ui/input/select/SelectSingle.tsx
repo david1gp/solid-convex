@@ -1,6 +1,6 @@
 import { mdiCheck } from "@adaptive-ds/mdi/mdiCheck.js"
-import Popover from "@corvu/popover"
-import { For, type JSX, Show } from "solid-js"
+import Popover from "@corvu-next/popover"
+import { For, Show } from "solid-js"
 import type { SelectSingleEntry, SelectSingleGroupEntry } from "#ui/input/select/SelectSingleEntry.js"
 import type { SelectSingleTexts } from "#ui/input/select/SelectSingleTexts.js"
 import { selectSingleStateCreate } from "#ui/input/select/selectSingleStateCreate.js"
@@ -19,6 +19,7 @@ import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
 import type { MayHaveDisabled } from "#ui/utils/MayHaveDisabled.js"
 import type { MayHaveId } from "#ui/utils/MayHaveId.js"
 import type { MayHaveInnerClass } from "#ui/utils/MayHaveInnerClass.js"
+import { type JSX } from "@solidjs/web";
 
 export interface SelectSingleProps
   extends HasValueSignalString,
@@ -184,7 +185,7 @@ function ListOption(p: ListOptionProps) {
       as={ButtonIcon}
       role="option"
       aria-label={label()}
-      aria-selected={isSelected()}
+      aria-selected={isSelected() ? "true" : "false"}
       iconRight={isSelected() ? mdiCheck : undefined}
       onKeyDown={(event) => handleOptionKeyDown(event, p.option, p.valueSignal, p.closePopover)}
       onClick={() => p.valueSignal.set(p.option)}

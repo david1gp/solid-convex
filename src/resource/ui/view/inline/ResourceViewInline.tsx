@@ -1,4 +1,4 @@
-import { Show, splitProps } from "solid-js"
+import { Show, omit } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import type { HasResourceModel } from "#src/resource/model/HasResourceModel.ts"
 import { ResourceTypeBadge } from "#src/resource/ui/view/ResourceTypeBadge.tsx"
@@ -20,9 +20,9 @@ export interface ResourceViewInlineProps extends HasResourceModel, MayHaveClass 
 }
 
 export function ResourceViewInline(p: ResourceViewInlineProps) {
-  const [s, rest] = splitProps(p, ["class"])
+  const rest = omit(p, "class")
   return (
-    <div class={classArr("flex flex-col xl:flex-row flex-wrap gap-8", s.class)}>
+    <div class={classArr("flex flex-col xl:flex-row flex-wrap gap-8", p.class)}>
       <Left {...rest} class="order-2 xl:order-1" />
       <Right {...rest} class="order-1 xl:order-2" />
     </div>

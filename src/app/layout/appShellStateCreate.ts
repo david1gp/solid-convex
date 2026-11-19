@@ -1,5 +1,5 @@
 import { useLocation } from "@tanstack/solid-router"
-import { createEffect, on } from "solid-js"
+import { createEffect } from "solid-js"
 import { autoLoginIfUserRoleOnly, userSessionSignal } from "#src/auth/ui/signals/userSessionSignal.ts"
 import { userSessionsSignal } from "#src/auth/ui/signals/userSessionsSignal.ts"
 import { createSidebarState } from "#ui/interactive/sidebar/createSidebarState.jsx"
@@ -11,11 +11,11 @@ export function appShellStateCreate() {
   const navigation = appShellNavigation
 
   createEffect(
-    on(
-      () => location().pathname,
-      () => sidebarState.openMobile.set(false),
-      { defer: true },
-    ),
+    () => location().pathname,
+    () => {
+      sidebarState.openMobile.set(false)
+    },
+    { defer: true },
   )
 
   const activeNavigationItem = () => {

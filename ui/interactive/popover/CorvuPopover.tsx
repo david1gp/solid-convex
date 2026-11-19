@@ -1,5 +1,5 @@
-import Popover from "@corvu/popover"
-import type { Accessor, ComponentProps, JSX } from "solid-js"
+import Popover from "@corvu-next/popover"
+import type { Accessor } from "solid-js"
 import { classesDisabledDirectly } from "#ui/classes/classesDisabledDirectly.js"
 import { type ButtonCvaProps, buttonCva2 } from "#ui/interactive/button/buttonCva.js"
 import { buttonIconCva } from "#ui/interactive/button/buttonIconCva.js"
@@ -9,9 +9,10 @@ import { Icon } from "#ui/static/icon/Icon.jsx"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
 import type { MayHaveInnerClass } from "#ui/utils/MayHaveInnerClass.js"
+import { type ComponentProps, type JSX } from "@solidjs/web";
 
 export interface CorvuPopoverProps
-  extends ComponentProps<"button">,
+  extends Omit<ComponentProps<"button">, "class">,
     ButtonCvaProps,
     MayHaveClass,
     MayHaveInnerClass,

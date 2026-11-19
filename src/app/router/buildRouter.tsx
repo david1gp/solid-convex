@@ -1,5 +1,5 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/solid-router"
-import type { Component, JSXElement } from "solid-js"
+import type { Component, Element as JSXElement } from "solid-js"
 
 /**
  * Loose route-tree node — the shape produced by the app's `getRoutes*()` helpers.

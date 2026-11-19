@@ -1,7 +1,7 @@
 import { mdiAlertCircle } from "@adaptive-ds/mdi/mdiAlertCircle.js"
 import { mdiCloudUpload } from "@adaptive-ds/mdi/mdiCloudUpload.js"
 import { mdiImage } from "@adaptive-ds/mdi/mdiImage.js"
-import { type JSX, Match, Show, Switch } from "solid-js"
+import { Match, Show, Switch } from "solid-js"
 import {
   type UploadStatus,
   uploadFileTexts,
@@ -11,6 +11,7 @@ import {
 import type { UploadAreaFileInfo } from "#src/file/ui/stats/UploadAreaFileInfo.ts"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { classArr } from "#ui/utils/classArr.ts"
+import { type JSX } from "@solidjs/web"
 
 interface UploadAreaViewProps {
   status: UploadStatus

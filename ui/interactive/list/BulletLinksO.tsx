@@ -1,4 +1,4 @@
-import { splitProps } from "solid-js"
+import { omit } from "solid-js"
 import { BulletLinks } from "#ui/interactive/list/BulletLinks.jsx"
 
 export interface BulletLinksOProps {
@@ -11,8 +11,8 @@ export interface BulletLinksOProps {
 
 /** Bullet link list variant that takes its links as an object. */
 export function BulletLinksO(p: BulletLinksOProps) {
-  const [s, rest] = splitProps(p, ["urlObject"])
-  const names = Object.keys(s.urlObject)
-  const urls = Object.values(s.urlObject)
+  const rest = omit(p, "urlObject")
+  const names = Object.keys(p.urlObject)
+  const urls = Object.values(p.urlObject)
   return <BulletLinks urls={urls} display={names} {...rest} />
 }

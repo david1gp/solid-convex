@@ -1,4 +1,4 @@
-import { createEffect, onCleanup } from "solid-js"
+import { createEffect, onCleanup, untrack } from "solid-js"
 import * as v from "valibot"
 import type { UserProjection } from "#src/user_management/model/userProjectionSchema.ts"
 import { stringSchemaId } from "#src/utils/valibot/stringSchema.ts"
@@ -114,18 +114,20 @@ export function userManagementRolesDialogStateCreate(inputs: {
   }
 
   if (typeof window !== "undefined") {
-    restoreFromUrl()
+    untrack(restoreFromUrl)
     window.addEventListener("popstate", restoreFromUrl)
     onCleanup(() => {
       window.removeEventListener("popstate", restoreFromUrl)
     })
   }
 
-  createEffect(() => {
-    const members = inputs.members?.()
-    if (!members || members.length === 0) return
-    restoreFromUrl()
-  })
+  createEffect(
+    () => inputs.members?.(),
+    (members) => {
+      if (!members || members.length === 0) return
+      untrack(restoreFromUrl)
+    },
+  )
 
   onCleanup(() => {
     if (idleHandle !== undefined && typeof window !== "undefined") {

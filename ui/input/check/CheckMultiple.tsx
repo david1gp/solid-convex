@@ -1,6 +1,6 @@
 import { mdiCheckboxBlankCircleOutline } from "@adaptive-ds/mdi/mdiCheckboxBlankCircleOutline.js"
 import { mdiCheckboxMarkedCircle } from "@adaptive-ds/mdi/mdiCheckboxMarkedCircle.js"
-import { For, Show, splitProps } from "solid-js"
+import { For, Show, omit } from "solid-js"
 import { classesTextMuted } from "#ui/classes/classesTextMuted.js"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.js"
@@ -33,7 +33,7 @@ export interface CheckMultipleProps<T extends string>
 
 /** Checkbox group selecting multiple values from options. */
 export function CheckMultiple<T extends string = string>(p: CheckMultipleProps<T>) {
-  const [local, others] = splitProps(p, ["class"])
+  const others = omit(p, "class")
   return (
     <div
       id={p.id}
@@ -44,7 +44,7 @@ export function CheckMultiple<T extends string = string>(p: CheckMultipleProps<T
         "rounded-md",
         "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
         "flex flex-col justify-center gap-1", // layout
-        local.class,
+        p.class,
       )}
     >
       <OptionList
@@ -103,7 +103,7 @@ function CheckOption<T extends string>(p: CheckOptionProps<T>) {
   return (
     <ButtonIcon
       role="option"
-      aria-selected={isSelected()}
+      aria-selected={isSelected() ? "true" : "false"}
       icon={isSelected() ? mdiCheckboxMarkedCircle : mdiCheckboxBlankCircleOutline}
       // iconRight={isSelected() ? mdiCheckboxMarkedCircle : mdiCheckboxBlankCircleOutline}
       onClick={() => toggleOption(p)}

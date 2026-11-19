@@ -24,14 +24,15 @@ export function userProfileMeChangeEmailStateCreate(actions: {
     e.preventDefault()
     if (submitting.get()) return
     const newEmail = email.get().trim()
-    passwordError.set(actions.hasPassword() && !password.get() ? "Current password is required" : "")
-    emailError.set(
+    const nextPasswordError = actions.hasPassword() && !password.get() ? "Current password is required" : ""
+    const nextEmailError =
       newEmail && a.safeParse(userProfileSchema.entries.email, newEmail).success
         ? ""
-        : "Please enter a valid email address",
-    )
+        : "Please enter a valid email address"
+    passwordError.set(nextPasswordError)
+    emailError.set(nextEmailError)
     codeError.set("")
-    if (passwordError.get() || emailError.get()) return
+    if (nextPasswordError || nextEmailError) return
     submitting.set(true)
     const result = await actions.request(newEmail, password.get())
     submitting.set(false)
@@ -48,13 +49,14 @@ export function userProfileMeChangeEmailStateCreate(actions: {
   async function confirm(e: SubmitEvent) {
     e.preventDefault()
     if (submitting.get()) return
-    codeError.set(/^\d{6}$/.test(code.get()) ? "" : "Please enter a valid 6-digit confirmation code")
-    emailError.set(
+    const nextCodeError = /^\d{6}$/.test(code.get()) ? "" : "Please enter a valid 6-digit confirmation code"
+    const nextEmailError =
       email.get() && a.safeParse(userProfileSchema.entries.email, email.get()).success
         ? ""
-        : "Please enter a valid email address",
-    )
-    if (codeError.get() || emailError.get()) return
+        : "Please enter a valid email address"
+    codeError.set(nextCodeError)
+    emailError.set(nextEmailError)
+    if (nextCodeError || nextEmailError) return
     submitting.set(true)
     const result = await actions.confirm(email.get(), code.get())
     submitting.set(false)

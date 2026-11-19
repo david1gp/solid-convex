@@ -14,10 +14,10 @@ export function userProfileMeImageStateCreate(actions: {
   const loading = createSignalObject(false)
   const message = createSignalObject("")
 
-  async function save() {
+  async function save(value: string) {
     if (loading.get()) return
     loading.set(true)
-    const result = await actions.save(image.get())
+    const result = await actions.save(value)
     loading.set(false)
     if (!result.success) {
       message.set(result.errorMessage)
@@ -28,7 +28,7 @@ export function userProfileMeImageStateCreate(actions: {
 
   async function uploadSuccess(data: { url: string }) {
     image.set(data.url)
-    await save()
+    await save(data.url)
   }
 
   async function selectFile(file: File) {
@@ -45,7 +45,7 @@ export function userProfileMeImageStateCreate(actions: {
   async function remove() {
     if (loading.get()) return
     image.set("")
-    if (actions.saveOnRemove) await save()
+    if (actions.saveOnRemove) await save("")
   }
 
   return {

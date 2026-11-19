@@ -1,3 +1,4 @@
+import { flush } from "solid-js"
 import { afterEach, expect, mock, test } from "bun:test"
 import { pageDemoFixtureStoreGet } from "#src/app/demos/pageDemoFixtureStoreGet.ts"
 import { pageDemoHref } from "#src/app/demos/pageDemoHref.ts"
@@ -27,14 +28,22 @@ test("valid demo sign-up reveals the confirmation link with the saved email and 
   }))
   const form = signUpDemoStateCreate()
   expect(page.confirmHref()).toBeUndefined()
+  flush()
   form.state.name.set("Alex Example")
+  flush()
   form.state.email.set("alex@example.com")
+  flush()
   form.state.pw.set("a-very-long-password-123")
+  flush()
   form.handleSubmit({ preventDefault() {} } as SubmitEvent)
+  flush()
   expect(form.errors.terms.get()).not.toBe("")
   expect(page.confirmHref()).toBeUndefined()
+  flush()
   form.state.terms.set(true)
+  flush()
   form.handleSubmit({ preventDefault() {} } as SubmitEvent)
+  flush()
   expect(page.confirmHref()).toBe("/demos/sign-up-confirm-email")
   expect(renderer.signUpMessage()).toContain("No account")
   expect(form.state.pw.get()).toBe("")
@@ -52,8 +61,11 @@ test("profile edits update only the in-memory demo profile", () => {
   globalThis.fetch = fetchSpy as unknown as typeof fetch
   const renderer = authRemainingPageDemoRendererStateCreate()
   const sm = userProfileMeEditFormStateManagement({ name: "Alex Example", bio: "", url: "" })
+  flush()
   sm.state.name.set("New Demo Name")
+  flush()
   renderer.profile.save(sm)
+  flush()
   expect(renderer.profile.profile().name).toBe("New Demo Name")
   expect(authRemainingPageDemoRendererStateCreate().profile.profile().name).toBe("New Demo Name")
   expect(fetchSpy).not.toHaveBeenCalled()
@@ -63,6 +75,7 @@ test("SSO demo never redirects, stores a preference, or starts authentication", 
   const state = allgroupsSsoDemoStateCreate()
   state.autoSignInToggle(true)
   state.loginClick()
+  flush()
   expect(state.autoSignIn()).toBe(true)
   expect(state.errorMessage()).toContain("no identity provider")
 })

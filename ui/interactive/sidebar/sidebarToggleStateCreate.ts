@@ -1,7 +1,7 @@
 import { mdiChevronLeft } from "@adaptive-ds/mdi/mdiChevronLeft.js"
 import { mdiChevronRight } from "@adaptive-ds/mdi/mdiChevronRight.js"
 import { mdiMenu } from "@adaptive-ds/mdi/mdiMenu.js"
-import { onCleanup, onMount } from "solid-js"
+import { onSettled } from "solid-js"
 import { ttt } from "#ui/i18n/ttt.js"
 import type { SidebarState } from "#ui/interactive/sidebar/SidebarState.jsx"
 
@@ -29,9 +29,9 @@ export function sidebarToggleStateCreate(p: {
     }
   }
 
-  onMount(() => {
+  onSettled(() => {
     window.addEventListener("keydown", handleGlobalKeyDown)
-    onCleanup(() => window.removeEventListener("keydown", handleGlobalKeyDown))
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown)
   })
 
   function toggleIcon(): string {

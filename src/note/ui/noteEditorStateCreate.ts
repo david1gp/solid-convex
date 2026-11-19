@@ -1,4 +1,4 @@
-import { createEffect, createMemo } from "solid-js"
+import { createEffect, createMemo, untrack } from "solid-js"
 import { noteTitleDerive } from "#src/note/model/noteTitleDerive.ts"
 import { createSignalObject } from "#ui/utils/createSignalObject.ts"
 
@@ -15,43 +15,47 @@ export function noteEditorStateCreate(
   onSave?: (content: string) => void | Promise<void>,
   noteKey?: () => string | undefined,
 ) {
-  const contentSignal = createSignalObject(initialContent())
-  const baselineSignal = createSignalObject(initialContent())
+  const initial = untrack(initialContent)
+  const contentSignal = createSignalObject(initial)
+  const baselineSignal = createSignalObject(initial)
   const isSavingSignal = createSignalObject(false)
   const isDirtySignal = createSignalObject(false)
   const hasConflictSignal = createSignalObject(false)
 
-  let lastKey: string | undefined = noteKey ? noteKey() : undefined
+  let lastKey: string | undefined = noteKey ? untrack(noteKey) : undefined
 
-  createEffect(() => {
-    const key = noteKey ? noteKey() : undefined
-    const remote = initialContent()
-    const currentBaseline = baselineSignal.get()
-    const currentlyDirty = isDirtySignal.get()
-
-    // 1. If note identity changed (switching notes), reset everything
-    if (key !== lastKey) {
-      lastKey = key
-      baselineSignal.set(remote)
-      contentSignal.set(remote)
-      isDirtySignal.set(false)
-      hasConflictSignal.set(false)
-      return
-    }
-
-    // 2. Same note: check if remote content changed from baseline
-    if (remote !== currentBaseline) {
-      if (currentlyDirty) {
-        // Do NOT overwrite user's unsaved dirty draft! Mark conflict instead.
-        hasConflictSignal.set(true)
-      } else {
-        // Not dirty: accept remote content cleanly
+  createEffect(
+    () => ({
+      key: noteKey ? noteKey() : undefined,
+      remote: initialContent(),
+      currentBaseline: baselineSignal.get(),
+      currentlyDirty: isDirtySignal.get(),
+    }),
+    ({ key, remote, currentBaseline, currentlyDirty }) => {
+      // 1. If note identity changed (switching notes), reset everything
+      if (key !== lastKey) {
+        lastKey = key
         baselineSignal.set(remote)
         contentSignal.set(remote)
+        isDirtySignal.set(false)
         hasConflictSignal.set(false)
+        return
       }
-    }
-  })
+
+      // 2. Same note: check if remote content changed from baseline
+      if (remote !== currentBaseline) {
+        if (currentlyDirty) {
+          // Do NOT overwrite user's unsaved dirty draft! Mark conflict instead.
+          hasConflictSignal.set(true)
+        } else {
+          // Not dirty: accept remote content cleanly
+          baselineSignal.set(remote)
+          contentSignal.set(remote)
+          hasConflictSignal.set(false)
+        }
+      }
+    },
+  )
 
   const title = createMemo(() => noteTitleDerive(contentSignal.get()))
 

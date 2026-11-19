@@ -1,4 +1,3 @@
-import type { JSX } from "solid-js"
 import type { AssignmentTarget } from "#src/assignment/model/assignmentTargetSchema.ts"
 import type { FileModel } from "#src/file/model/FileModel.ts"
 import { type UploadStatus, uploadStatus } from "#src/file/model_field/uploadStatus.ts"
@@ -6,6 +5,7 @@ import type { UploadAreaFileInfo } from "#src/file/ui/stats/UploadAreaFileInfo.t
 import { uploadHandlerFile } from "#src/file/ui/upload_file/uploadHandlerFile.tsx"
 import type { SignalObject } from "#ui/utils/createSignalObject.ts"
 import { generateId12 } from "#utils/ran/generateId12.js"
+import { type JSX } from "@solidjs/web"
 
 export function uploadAreaFileStateCreate(p: {
   id: () => string | undefined

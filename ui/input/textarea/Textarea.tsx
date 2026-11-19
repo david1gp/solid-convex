@@ -1,11 +1,12 @@
-import type { Component, ComponentProps } from "solid-js"
-import { splitProps } from "solid-js"
+import type { Component } from "solid-js"
+import { omit } from "solid-js"
 import { classesDisabledModifier } from "#ui/classes/classesDisabledModifier.js"
 import { cn } from "cn"
+import { type ComponentProps } from "@solidjs/web"
 
 /** Styled native multiline textarea element. */
 export const Textarea: Component<ComponentProps<"textarea">> = (p) => {
-  const [s, rest] = splitProps(p, ["class"])
+  const rest = omit(p, "class")
   return (
     <textarea
       class={cn(
@@ -18,7 +19,7 @@ export const Textarea: Component<ComponentProps<"textarea">> = (p) => {
         "px-3 py-2", // spacing
         "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background", // focus states
         classesDisabledModifier, // disabled
-        s.class,
+        p.class,
       )}
       {...rest}
     />

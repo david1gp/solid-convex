@@ -1,4 +1,4 @@
-import { onCleanup, onMount } from "solid-js"
+import { onCleanup, onSettled } from "solid-js"
 import * as a from "valibot"
 import { createResult, createResultError, type Result } from "#result"
 import { createSignalObject, type SignalObject } from "#ui/utils/createSignalObject.ts"
@@ -60,7 +60,7 @@ export function onDevModeSignalRegisterHandler(signal = inDevModeSignal) {
       signal.set(parsing.output)
     }
   }
-  onMount(() => {
+  onSettled(() => {
     if (typeof window === "undefined") return
     window.addEventListener("storage", handleStorageEvent)
   })

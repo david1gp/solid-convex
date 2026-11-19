@@ -136,7 +136,7 @@ function FilterDropdown(p: {
             <button
               type="button"
               role="option"
-              aria-selected={state.isSelected(option)}
+              aria-selected={state.isSelected(option) ? "true" : "false"}
               onClick={() => p.onSelect(option)}
               class={cn(
                 "flex w-full items-center justify-between border-t border-slate-100 dark:border-slate-800 px-4 py-2.5 text-left text-sm transition-colors",
@@ -184,7 +184,7 @@ function FilterButtons(p: {
                 variant={
                   p.buttonActive(filter) ? buttonVariant.filled : (filter.buttonVariant ?? buttonVariant.outline)
                 }
-                aria-pressed={p.activeFilterKey() === filter.key}
+                aria-pressed={p.activeFilterKey() === filter.key ? "true" : "false"}
                 onClick={() => p.onFilterClick(filter.key)}
                 class="min-w-0 flex-1 justify-center rounded-full border border-slate-200 text-sm font-medium shadow-sm dark:border-slate-700"
               >

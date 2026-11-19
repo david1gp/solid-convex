@@ -1,5 +1,5 @@
 import { debounce } from "@solid-primitives/scheduled"
-import { onCleanup, onMount } from "solid-js"
+import { onCleanup, onSettled } from "solid-js"
 import * as v from "valibot"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import type { SearchInputProps } from "#src/ui/input/search/SearchInputProps.ts"
@@ -46,7 +46,7 @@ export function searchInputStateCreate(props: () => SearchInputProps) {
     })
   }, props().debounceMs ?? debounceMs)
 
-  onMount(() => {
+  onSettled(() => {
     if (props().searchState) return
     loadSearchFromUrl()
     window.addEventListener("popstate", loadSearchFromUrl)

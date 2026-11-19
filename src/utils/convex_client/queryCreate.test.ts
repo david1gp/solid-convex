@@ -1,13 +1,9 @@
+import { convexContextRootCreate } from "#src/utils/convex_client/test/convexContextRootCreate.ts"
 import { describe, expect, mock, test } from "bun:test"
 import type { FunctionReference } from "convex/server"
 import { createResult, createResultError } from "#result"
 
-const solidJsClientPath = "solid-js/dist/solid.js"
-type SolidJsModule = typeof import("solid-js")
-const solidJsClient = (await import(solidJsClientPath)) as unknown as SolidJsModule
-mock.module("solid-js", () => solidJsClient)
-const { createRoot, createSignal, getOwner } = solidJsClient
-const { ConvexContext } = await import("./convexContext.ts")
+import { createRoot, createSignal, flush } from "solid-js"
 const { queryCreate } = await import("./queryCreate.ts")
 mock.restore()
 
@@ -42,9 +38,7 @@ describe("queryCreate", () => {
   test("preserves the backend result payload without wrapping it again", () => {
     const client = new FakeConvexClient()
     let getResult: (() => unknown) | undefined
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       getResult = queryCreate(query)
       return disposeRoot
     })
@@ -52,9 +46,11 @@ describe("queryCreate", () => {
     expect(getResult?.()).toBeUndefined()
     const backendResult = createResult({ value: "ok" })
     client.update?.(backendResult)
+    flush()
     expect(getResult?.()).toBe(backendResult)
     const rawResult = { value: "raw" }
     client.update?.(rawResult)
+    flush()
     expect(getResult?.()).toBe(rawResult)
     dispose()
   })
@@ -69,9 +65,7 @@ describe("queryCreate", () => {
     }
 
     let setOrgHandle: ((value: string) => void) | undefined
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       const [orgHandle, setHandle] = createSignal("")
       setOrgHandle = setHandle
       queryCreate(query, () => ({ orgHandle: orgHandle() }))
@@ -93,9 +87,7 @@ describe("queryCreate", () => {
       return () => undefined
     }
 
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       const resSkip = queryCreate(query, "skip")
       const resUndefined = queryCreate(query, undefined)
       const resFnUndefined = queryCreate(query, () => undefined)
@@ -126,9 +118,7 @@ describe("queryCreate", () => {
 
     let setArgs: ((value: { orgHandle: string } | undefined | "skip") => void) | undefined
     let getResult: (() => unknown) | undefined
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       const [args, set] = createSignal<{ orgHandle: string } | undefined | "skip">({
         orgHandle: "initial-org",
       })
@@ -137,8 +127,10 @@ describe("queryCreate", () => {
       return disposeRoot
     })
 
+    flush()
     expect(subscriptions).toEqual([{ orgHandle: "initial-org" }])
     client.update?.({ name: "Initial Org" })
+    flush()
     expect(getResult?.()).toEqual({ name: "Initial Org" })
 
     // Transition to undefined: cleanup runs, result is cleared, no new subscription
@@ -154,6 +146,7 @@ describe("queryCreate", () => {
     expect(subscriptions).toEqual([{ orgHandle: "initial-org" }, { orgHandle: "next-org" }])
     expect(getResult?.()).toBeUndefined()
     client.update?.({ name: "Next Org" })
+    flush()
     expect(getResult?.()).toEqual({ name: "Next Org" })
 
     // Transition to 'skip': cleanup runs again, result is cleared
@@ -169,15 +162,14 @@ describe("queryCreate", () => {
   test("records error Result when onError callback is invoked", () => {
     const client = new FakeConvexClient()
     let getResult: (() => unknown) | undefined
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       getResult = queryCreate(query, { orgHandle: "broken" })
       return disposeRoot
     })
 
     expect(getResult?.()).toBeUndefined()
     client.error?.(new Error("Subscription query failed"))
+    flush()
     expect(getResult?.()).toEqual(createResultError("queryCreate", "Subscription query failed"))
     dispose()
   })

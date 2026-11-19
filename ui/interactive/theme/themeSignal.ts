@@ -1,4 +1,4 @@
-import { isServer } from "solid-js/web"
+import { isServer } from "@solidjs/web"
 import * as v from "valibot"
 import { themeButtonTextDefault } from "#ui/interactive/theme/ThemeButtonText.js"
 import {

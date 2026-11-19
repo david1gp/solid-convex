@@ -1,3 +1,4 @@
+import { flush } from "solid-js"
 import { afterAll, beforeAll, describe, expect, test } from "bun:test"
 import { createRoot } from "solid-js"
 import { pageDemoFixtureStoreGet } from "#src/app/demos/pageDemoFixtureStoreGet.ts"
@@ -43,10 +44,14 @@ describe("resource page demo fixtures", () => {
           .resources()
           .map((r) => r.resourceId),
       ).toEqual(["sample-resource-1"])
+      flush()
       state.form.state.name.set("Local example")
+      flush()
       state.form.state.description.set("Created only in the page gallery")
+      flush()
       await state.form.handleSubmit({ preventDefault() {} } as SubmitEvent)
       const resources = resourcePageDemoFixturesGet()
+      flush()
       expect(resources.resources()).toHaveLength(2)
       expect(resources.get("demo-resource-2")?.name).toBe("Local example")
       expect(state.createdHref()).toBe("/demos/resources/demo-resource-2")

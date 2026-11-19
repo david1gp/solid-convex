@@ -8,7 +8,7 @@ export function createAction<Action extends FunctionReference<"action">>(
 ): (args: FunctionArgs<Action>) => Promise<Awaited<FunctionReturnType<Action>> | ResultErr> {
   const op = "createAction"
   const convex = useContext(ConvexContext)
-  if (convex === undefined) {
+  if (convex === null) {
     const error = createResultError(op, "No convex context")
     return () => Promise.resolve(error)
   }

@@ -2,7 +2,7 @@ import { mdiCheck } from "@adaptive-ds/mdi/mdiCheck.js"
 import { mdiClose } from "@adaptive-ds/mdi/mdiClose.js"
 import { mdiPlus } from "@adaptive-ds/mdi/mdiPlus.js"
 import { Key } from "@solid-primitives/keyed"
-import { For, mergeProps } from "solid-js"
+import { For, merge as mergeProps } from "solid-js"
 import type { SelectMultipleTexts } from "#ui/input/select/SelectMultipleTexts.js"
 import { selectMultipleTextDefault } from "#ui/input/select/SelectMultipleTexts.js"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
@@ -186,7 +186,7 @@ function ListOption(p: ListOptionProps) {
     <ButtonIcon
       // id={`${p.id}-option-${p.index}`}
       role="option"
-      aria-selected={optionIsSelected(p)}
+      aria-selected={optionIsSelected(p) ? "true" : "false"}
       iconRight={optionIsSelected(p) ? mdiCheck : undefined}
       onClick={() => {
         toggleOption(p)

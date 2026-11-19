@@ -1,4 +1,4 @@
-import { createEffect, onMount } from "solid-js"
+import { createEffect, onSettled } from "solid-js"
 import * as a from "valibot"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { otpSchema } from "#src/auth/model_field/otpSchema.ts"
@@ -15,7 +15,7 @@ export function enterOtpFormStateCreate(props: () => EnterOtpFormProps) {
   const email = createSignalObject(props().initialEmail ?? "")
   let url: URL | null = null
 
-  onMount(() => {
+  onSettled(() => {
     if (props().initialEmail !== undefined) return
     url = createUrl()
     const emailParam = searchParamGet("email", url)
@@ -40,14 +40,16 @@ export function enterOtpFormStateCreate(props: () => EnterOtpFormProps) {
     return false
   }
 
-  createEffect(() => {
-    const value = otp.get()
-    if (value.length === 6) {
-      validateOtp(value)
-      return
-    }
-    otpError.set("")
-  })
+  createEffect(
+    () => otp.get(),
+    (value) => {
+      if (value.length === 6) {
+        validateOtp(value)
+        return
+      }
+      otpError.set("")
+    },
+  )
 
   async function handleSubmit(e: SubmitEvent) {
     e.preventDefault()

@@ -1,4 +1,4 @@
-import { type JSXElement, Match, Switch } from "solid-js"
+import { type Element as JSXElement, Match, Switch } from "solid-js"
 import * as a from "valibot"
 import { api } from "#convex/_generated/api.js"
 import { ttc } from "#src/app/i18n/ttc.ts"

@@ -32,13 +32,15 @@ export function orgInvitationMutateStateCreate(p: {
     return result.errorMessage
   }
 
-  createEffect(() => {
-    const invitation = getInvitationData()
-    if (!invitation) {
-      return
-    }
-    sm.loadData(invitation)
-  })
+  createEffect(
+    () => getInvitationData(),
+    (invitation) => {
+      if (!invitation) {
+        return
+      }
+      sm.loadData(invitation)
+    },
+  )
 
   return { sm, getInvitation, getInvitationData, getInvitationErrorMessage }
 }

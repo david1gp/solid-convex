@@ -1,4 +1,4 @@
-import { splitProps } from "solid-js"
+import { omit } from "solid-js"
 import { CorvuDialog, type CorvuDialogProps } from "#ui/interactive/dialog/CorvuDialog.jsx"
 import { cn } from "cn"
 import type { SignalObject } from "#ui/utils/createSignalObject.js"
@@ -9,13 +9,13 @@ export interface SidebarMobileDrawerProps extends Omit<CorvuDialogProps, "open" 
 
 /** Mobile sidebar rendered as a left-anchored dialog drawer (house anatomy). */
 export function SidebarMobileDrawer(p: SidebarMobileDrawerProps) {
-  const [s, rest] = splitProps(p, ["open", "class", "innerClass"])
+  const rest = omit(p, "open", "class", "innerClass")
   return (
     <CorvuDialog
       {...rest}
-      open={s.open.get()}
-      onOpenChange={(open) => s.open.set(open)}
-      class={cn("hidden", s.class)}
+      open={p.open.get()}
+      onOpenChange={(open) => p.open.set(open)}
+      class={cn("hidden", p.class)}
       innerClass={cn(
         // left-anchored full-height drawer overrides the centered dialog card;
         // flex column so the sidebar content fills the height (footer at bottom)
@@ -25,7 +25,7 @@ export function SidebarMobileDrawer(p: SidebarMobileDrawerProps) {
         "rounded-none border-border shadow-none dark:border-border",
         "bg-surface dark:bg-surface",
         "p-0",
-        s.innerClass,
+        p.innerClass,
       )}
     />
   )

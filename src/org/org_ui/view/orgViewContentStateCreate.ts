@@ -1,4 +1,4 @@
-import { createEffect, onCleanup } from "solid-js"
+import { createEffect, onCleanup, untrack } from "solid-js"
 import * as v from "valibot"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { appIcons } from "#src/app/icon/appIcons.ts"
@@ -28,7 +28,7 @@ export function orgViewContentStateCreate(props: () => OrgViewContentProps) {
 
   const initialTab = initialTabGet()
   const selectedTab: SignalObject<string> = createSignalObject(
-    tabOptions().includes(initialTab) ? initialTab : "overview",
+    untrack(tabOptions).includes(initialTab) ? initialTab : "overview",
   )
 
   if (typeof window !== "undefined") {
@@ -47,13 +47,14 @@ export function orgViewContentStateCreate(props: () => OrgViewContentProps) {
     })
   }
 
-  createEffect(() => {
-    const options = tabOptions()
-    const current = selectedTab.get()
-    if (!options.includes(current)) {
-      selectedTab.set("overview")
-    }
-  })
+  createEffect(
+    () => ({ options: tabOptions(), current: selectedTab.get() }),
+    ({ options, current }) => {
+      if (!options.includes(current)) {
+        selectedTab.set("overview")
+      }
+    },
+  )
 
   let idleHandle: number | ReturnType<typeof setTimeout> | undefined
 
@@ -91,10 +92,12 @@ export function orgViewContentStateCreate(props: () => OrgViewContentProps) {
     })
   }
 
-  createEffect(() => {
-    const tab = selectedTab.get()
-    syncUrlSearchParam(tab)
-  })
+  createEffect(
+    () => selectedTab.get(),
+    (tab) => {
+      syncUrlSearchParam(tab)
+    },
+  )
 
   onCleanup(() => {
     if (idleHandle !== undefined && typeof window !== "undefined") {

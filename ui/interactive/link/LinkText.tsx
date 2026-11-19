@@ -1,19 +1,19 @@
 import { createLink } from "@tanstack/solid-router"
-import { splitProps } from "solid-js"
+import { omit } from "solid-js"
 import { classesTextLink } from "#ui/classes/classesTextLink.js"
 import type { LinkTextProps } from "#ui/interactive/link/LinkTextProps.jsx"
 import { cn } from "cn"
 
 /** Shared styled inline text-link anchor. */
 function TextAnchor(p: LinkTextProps) {
-  const [s, rest] = splitProps(p, ["class"])
+  const rest = omit(p, "class")
   return (
     <a
       class={cn(
         classesTextLink,
         "no-underline hover:underline", // underline
         "break-all", // line breaks
-        s.class,
+        p.class,
       )}
       {...rest}
     />

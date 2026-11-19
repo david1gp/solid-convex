@@ -1,4 +1,4 @@
-import { type ComponentProps, splitProps } from "solid-js"
+import { omit } from "solid-js"
 import { Input } from "#ui/input/input/Input.jsx"
 import type { HasId } from "#ui/utils/HasId.js"
 import type { MayHaveClassAndChildren } from "#ui/utils/MayHaveClassAndChildren.js"
@@ -11,19 +11,20 @@ export interface ResourceListSearchProps extends ComponentProps<"input"> {
 
 /** Text input with autocomplete suggestions from a datalist. */
 export function InputDatalist(p: ResourceListSearchProps) {
-  const [s, rest] = splitProps(p, ["id", "class", "type", "list"])
+  const rest = omit(p, "id", "class", "type", "list")
   const id = p.id ?? generateId12()
   const listId = id + "-options"
 
   return (
     <>
-      <Input id={id} type={s.type ?? "text"} class={p.class} list={listId} {...rest} />
+      <Input id={id} type={p.type ?? "text"} class={p.class} list={listId} {...rest} />
       <DataList id={listId} getOptions={p.getOptions} optionDisplayText={p.optionDisplayText} />
     </>
   )
 }
 
 import { Key } from "@solid-primitives/keyed"
+import { type ComponentProps } from "@solidjs/web"
 
 interface DataListProps extends HasId, MayHaveClassAndChildren {
   getOptions: () => string[]

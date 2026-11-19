@@ -73,7 +73,7 @@ export default defineConfig({
     pluginBabel({
       include: /\.(?:jsx|tsx)$/,
     }),
-    pluginSolid(),
+    pluginSolid({ solid: { moduleName: "@solidjs/web" } }),
   ],
   output: {
     distPath: {

@@ -1,3 +1,5 @@
+import { flush } from "solid-js"
+import { convexContextRootCreate } from "#src/utils/convex_client/test/convexContextRootCreate.ts"
 import { describe, expect, mock, test } from "bun:test"
 import { createResult } from "#result"
 
@@ -22,12 +24,7 @@ if (!globalThis.localStorage) {
   } as unknown as Storage
 }
 
-const solidJsClientPath = "solid-js/dist/solid.js"
-type SolidJsModule = typeof import("solid-js")
-const solidJsClient = (await import(solidJsClientPath)) as unknown as SolidJsModule
-mock.module("solid-js", () => solidJsClient)
-const { createRoot, createSignal, getOwner } = solidJsClient
-const { ConvexContext } = await import("#src/utils/convex_client/convexContext.ts")
+import { getOwner, createRoot, createSignal } from "solid-js"
 const { resourceFileRemovePageStateCreate } = await import("./resourceFileRemovePageStateCreate.ts")
 mock.restore()
 
@@ -54,6 +51,7 @@ class MockConvexClient {
   notifyQuery(matcher: (args: unknown) => boolean, value: unknown) {
     for (const sub of this.subscriptions) {
       if (matcher(sub.args)) {
+        flush()
         sub.update(value)
       }
     }
@@ -63,10 +61,7 @@ class MockConvexClient {
 describe("resourceFileRemovePageStateCreate", () => {
   test("confirmation blocks while file data is loading", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       const [resourceId] = createSignal("res-1")
       const [fileId] = createSignal("file-1")
       const state = resourceFileRemovePageStateCreate({ resourceId, fileId })
@@ -74,7 +69,9 @@ describe("resourceFileRemovePageStateCreate", () => {
       expect(state.isLoading()).toBe(true)
       expect(state.canConfirm()).toBe(false)
 
+      flush()
       state.typedConfirmation.set("DELETE")
+      flush()
       expect(state.canConfirm()).toBe(false)
 
       dispose()
@@ -83,10 +80,7 @@ describe("resourceFileRemovePageStateCreate", () => {
 
   test("confirmation blocks until typed confirmation matches displayName or DELETE", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       const [resourceId] = createSignal("res-1")
       const [fileId] = createSignal("file-1")
       const state = resourceFileRemovePageStateCreate({ resourceId, fileId })
@@ -100,22 +94,29 @@ describe("resourceFileRemovePageStateCreate", () => {
         }),
       )
 
+      flush()
       expect(state.isLoading()).toBe(false)
       expect(state.displayName()).toBe("dataset.csv")
       expect(state.canConfirm()).toBe(false)
 
       // Invalid input
+      flush()
       state.typedConfirmation.set("other.csv")
+      flush()
       expect(state.isTypedConfirmationValid()).toBe(false)
       expect(state.canConfirm()).toBe(false)
 
       // Match displayName
+      flush()
       state.typedConfirmation.set("dataset.csv")
+      flush()
       expect(state.isTypedConfirmationValid()).toBe(true)
       expect(state.canConfirm()).toBe(true)
 
       // Match DELETE keyword
+      flush()
       state.typedConfirmation.set("DELETE")
+      flush()
       expect(state.isTypedConfirmationValid()).toBe(true)
       expect(state.canConfirm()).toBe(true)
 
@@ -125,10 +126,7 @@ describe("resourceFileRemovePageStateCreate", () => {
 
   test("file storage objects are not claimed deleted; R2 storage is retained", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       const [resourceId] = createSignal("res-1")
       const [fileId] = createSignal("file-1")
       const state = resourceFileRemovePageStateCreate({ resourceId, fileId })
@@ -168,10 +166,7 @@ describe("resourceFileRemovePageStateCreate", () => {
     let successCalled = false
     let state!: ReturnType<typeof resourceFileRemovePageStateCreate>
 
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       const [resourceId] = createSignal("res-1")
       const [fileId] = createSignal("file-1")
       state = resourceFileRemovePageStateCreate({
@@ -194,10 +189,14 @@ describe("resourceFileRemovePageStateCreate", () => {
     )
 
     expect(getOwner()).toBeNull()
+    flush()
     state.typedConfirmation.set("DELETE")
+    flush()
     expect(state.canConfirm()).toBe(true)
 
+    flush()
     await state.onConfirm()
+    flush()
 
     expect(client.mutations.length).toBe(1)
     const firstMutation = client.mutations[0]

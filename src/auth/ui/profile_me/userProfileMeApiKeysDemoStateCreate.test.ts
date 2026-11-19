@@ -1,3 +1,4 @@
+import { flush } from "solid-js"
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "bun:test"
 import { createRoot } from "solid-js"
 import { pageDemoFixtureStoreGet } from "#src/app/demos/pageDemoFixtureStoreGet.ts"
@@ -29,15 +30,23 @@ describe("API key page demo state", () => {
     try {
       const { state } = dispose
       expect(state.page()?.page.map((key) => key.name)).toEqual(["Sample integration", "Retired integration"])
+      flush()
       state.nameChange("  ")
+      flush()
       await state.create(submit)
+      flush()
       expect(state.error()).toContain("Name")
       expect(state.page()?.page).toHaveLength(2)
 
+      flush()
       state.nameChange("  CI key  ")
+      flush()
       state.expiryChange("never")
+      flush()
       await state.create(submit)
+      flush()
       const secret = state.credential()
+      flush()
       expect(secret).toStartWith("demo_key_")
       expect(state.page()?.page[0]).toMatchObject({
         name: "CI key",
@@ -46,16 +55,25 @@ describe("API key page demo state", () => {
       })
       expect(state.page()?.page[0]?.expiresAt).toBeUndefined()
       expect(state.page()?.page[0]?.maskedCredential).not.toContain(secret)
+      flush()
       state.nameChange("blocked")
+      flush()
       await state.create(submit)
+      flush()
       expect(state.page()?.page).toHaveLength(3)
+      flush()
       state.dismiss()
+      flush()
       expect(state.credential()).toBe("")
       expect(state.page()?.page[0]?.maskedCredential).not.toContain(secret)
 
+      flush()
       state.expiryChange("1-day")
+      flush()
       state.nameChange("Expiring key")
+      flush()
       await state.create(submit)
+      flush()
       expect(state.page()?.page[0]?.expiresAt).toBe("2026-09-29T10:00:00.000Z")
       expect(requests).toBe(0)
     } finally {
@@ -75,21 +93,33 @@ describe("API key page demo state", () => {
     }))
     try {
       const active = state.page()!.page[0]!
+      flush()
       await state.revoke(active)
+      flush()
       expect(state.page()!.page[0]!.status).toBe("active")
       accept = true
+      flush()
       await state.rotate(active)
+      flush()
       expect(state.page()!.page[0]!.name).toBe(active.name)
       expect(state.page()!.page[0]!.id).not.toBe(active.id)
+      flush()
       expect(state.page()!.page.find((key) => key.id === active.id)?.status).toBe("revoked")
       const rotatedSecret = state.credential()
       expect(rotatedSecret).toStartWith("demo_key_")
+      flush()
       await state.revoke(state.page()!.page[0]!)
+      flush()
       expect(state.page()!.page[0]!.status).toBe("active")
+      flush()
       state.dismiss()
+      flush()
       await state.revoke(state.page()!.page[0]!)
+      flush()
       expect(state.page()!.page[0]!.status).toBe("revoked")
+      flush()
       await state.rotate(active)
+      flush()
       expect(state.credential()).toBe("")
       expect(state.page()!.page).toHaveLength(3)
     } finally {
@@ -104,18 +134,27 @@ describe("API key page demo state", () => {
     }))
     try {
       for (let i = 0; i < 5; i++) {
+        flush()
         state.nameChange(`Key ${i}`)
+        flush()
         await state.create(submit)
+        flush()
         state.dismiss()
+        flush()
       }
       expect(state.pageNumber()).toBe(1)
+      flush()
       expect(state.page()?.page).toHaveLength(5)
       expect(state.canNext()).toBe(true)
+      flush()
       state.next()
+      flush()
       expect(state.pageNumber()).toBe(2)
       expect(state.page()?.page).toHaveLength(2)
       expect(state.canPrevious()).toBe(true)
+      flush()
       state.previous()
+      flush()
       expect(state.pageNumber()).toBe(1)
     } finally {
       dispose()
@@ -129,18 +168,28 @@ describe("API key page demo state", () => {
     }))
     try {
       for (let i = 0; i < 5; i++) {
+        flush()
         state.nameChange(`Key ${i}`)
+        flush()
         await state.create(submit)
+        flush()
         state.dismiss()
+        flush()
       }
 
       const firstPageKey = state.page()!.page[0]!
+      flush()
       state.edit(firstPageKey)
+      flush()
       state.editNameChange("   ")
+      flush()
       await state.saveEdit(submit)
+      flush()
       expect(state.editError()).toContain("Name")
 
+      flush()
       state.next()
+      flush()
       expect(state.pageNumber()).toBe(2)
       expect(state.editingId()).toBeNull()
       expect(state.editName()).toBe("")
@@ -148,23 +197,37 @@ describe("API key page demo state", () => {
 
       const secondPageKey = state.page()!.page[0]!
       expect(secondPageKey.status).toBe("active")
+      flush()
       await state.revoke(secondPageKey)
+      flush()
       expect(state.page()!.page[0]!.status).toBe("revoked")
 
+      flush()
       state.edit(secondPageKey)
+      flush()
       state.editNameChange("   ")
+      flush()
       await state.saveEdit(submit)
+      flush()
       expect(state.editError()).toContain("Name")
+      flush()
       state.previous()
+      flush()
       expect(state.editingId()).toBeNull()
       expect(state.editName()).toBe("")
       expect(state.editError()).toBe("")
 
+      flush()
       state.edit(firstPageKey)
+      flush()
       state.editNameChange("   ")
+      flush()
       await state.saveEdit(submit)
+      flush()
       expect(state.editError()).toContain("Name")
+      flush()
       state.next()
+      flush()
       expect(state.editingId()).toBeNull()
       expect(state.editName()).toBe("")
       expect(state.editError()).toBe("")
@@ -179,16 +242,20 @@ describe("API key page demo state", () => {
       dispose,
     }))
     first.state.nameChange("Persistent key")
+    flush()
     await first.state.create(submit)
+    flush()
     const secret = first.state.credential()
     const createdKey = first.state.page()!.page[0]!
     first.state.dismiss()
+    flush()
     await first.state.revoke(createdKey)
     first.dispose()
 
     const storedFixture = pageDemoFixtureStoreGet().get<{
       get: () => { keys: ApiKeyListItem[]; sequence: number }
     }>("auth:api-keys")!
+    flush()
     expect(JSON.stringify(storedFixture.get())).not.toContain(secret)
 
     const second = createRoot((dispose) => ({ state: userProfileMeApiKeysDemoStateCreate(), dispose }))
@@ -196,7 +263,9 @@ describe("API key page demo state", () => {
       expect(second.state.credential()).toBe("")
       expect(second.state.page()!.page.find((key) => key.id === createdKey.id)?.status).toBe("revoked")
       second.state.nameChange("Next key")
+      flush()
       await second.state.create(submit)
+      flush()
       expect(String(second.state.page()!.page[0]!.id)).toBe("demo-key-4")
       expect(second.state.credential()).not.toBe(secret)
     } finally {
@@ -211,15 +280,24 @@ describe("API key page demo state", () => {
       dispose: disposeRoot,
     }))
     try {
+      flush()
       state.nameChange("Short-lived")
+      flush()
       state.expiryChange("1-day")
+      flush()
       await state.create(submit)
+      flush()
       state.dismiss()
+      flush()
       const key = state.page()!.page[0]!
       now += 2 * 24 * 60 * 60 * 1000
+      flush()
       expect(state.page()!.page[0]!.status).toBe("expired")
+      flush()
       await state.rotate(key)
+      flush()
       await state.revoke(key)
+      flush()
       expect(state.page()!.page).toHaveLength(3)
       expect(state.credential()).toBe("")
     } finally {
@@ -240,46 +318,76 @@ describe("API key page demo state", () => {
       const { state } = first
       const active = state.page()!.page[0]!
       const revoked = state.page()!.page[1]!
+      flush()
       state.edit(active)
+      flush()
       state.editNameChange("Discarded")
+      flush()
       state.cancelEdit()
+      flush()
       expect(state.editingId()).toBeNull()
       expect(state.page()!.page[0]).toEqual(active)
 
+      flush()
       state.edit(active)
+      flush()
       state.editNameChange("   ")
+      flush()
       await state.saveEdit(submit)
+      flush()
       expect(state.editError()).toContain("Name")
+      flush()
       state.editNameChange("x".repeat(81))
+      flush()
       await state.saveEdit(submit)
+      flush()
       expect(state.editError()).toContain("Name")
       expect(state.page()!.page[0]).toEqual(active)
+      flush()
       state.cancelEdit()
+      flush()
       expect(state.editError()).toBe("")
       expect(state.editName()).toBe("")
 
+      flush()
       state.edit(active)
+      flush()
       state.editNameChange("  Renamed integration  ")
+      flush()
       await state.saveEdit(submit)
+      flush()
       expect(state.editingId()).toBeNull()
       expect(state.editError()).toBe("")
       expect(state.page()!.page[0]).toEqual({ ...active, name: "Renamed integration" })
 
+      flush()
       state.edit(revoked)
+      flush()
       state.editNameChange("Retired renamed")
+      flush()
       await state.saveEdit(submit)
+      flush()
       expect(state.page()!.page[1]).toEqual({ ...revoked, name: "Retired renamed" })
 
+      flush()
       state.nameChange("Short lived")
+      flush()
       state.expiryChange("1-day")
+      flush()
       await state.create(submit)
+      flush()
       state.dismiss()
+      flush()
       now += 2 * 24 * 60 * 60 * 1000
       const expired = state.page()!.page[0]!
       expect(expired.status).toBe("expired")
+      flush()
       state.edit(expired)
+      flush()
       state.editNameChange("Expired renamed")
+      flush()
       await state.saveEdit(submit)
+      flush()
       expect(state.page()!.page[0]).toEqual({ ...expired, name: "Expired renamed" })
 
       first.dispose()

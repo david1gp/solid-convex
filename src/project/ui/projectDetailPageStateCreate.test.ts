@@ -1,3 +1,4 @@
+import { convexContextRootCreate } from "#src/utils/convex_client/test/convexContextRootCreate.ts"
 import { describe, expect, mock, test } from "bun:test"
 import { createResult, createResultError } from "#result"
 
@@ -22,11 +23,7 @@ if (!globalThis.localStorage) {
   } as unknown as Storage
 }
 
-const solidJsClientPath = "solid-js/dist/solid.js"
-type SolidJsModule = typeof import("solid-js")
-const solidJsClient = (await import(solidJsClientPath)) as unknown as SolidJsModule
-mock.module("solid-js", () => solidJsClient)
-const { createRoot, createSignal, getOwner } = solidJsClient
+import { createRoot, createSignal } from "solid-js"
 
 const [paramsSignal, setParamsSignal] = createSignal<Record<string, string>>({
   projectId: "proj-456",
@@ -40,7 +37,6 @@ mock.module("@tanstack/solid-router", () => ({
   useNavigate: () => () => undefined,
 }))
 
-const { ConvexContext } = await import("#src/utils/convex_client/convexContext.ts")
 const { projectDetailPageStateCreate } = await import("./projectDetailPageStateCreate.ts")
 mock.restore()
 
@@ -88,10 +84,7 @@ class MockConvexClient {
 describe("projectDetailPageStateCreate deleteTarget persistence", () => {
   test("deleteTarget remains stable when project query returns error during lock", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       setParamsSignal({ projectId: "proj-456", teamId: "team-123", orgHandle: "test-org" })
       const state = projectDetailPageStateCreate()
 
@@ -121,10 +114,7 @@ describe("projectDetailPageStateCreate deleteTarget persistence", () => {
 
   test("resolves loading to false and displays error when backend returns project not found", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       setParamsSignal({ projectId: "malformed-project-id", teamId: "team-123", orgHandle: "test-org" })
       const state = projectDetailPageStateCreate()
 
@@ -144,10 +134,7 @@ describe("projectDetailPageStateCreate deleteTarget persistence", () => {
 
   test("skips subscription when project ID parameter is missing and displays param error", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       setParamsSignal({ teamId: "team-123", orgHandle: "test-org" })
       const state = projectDetailPageStateCreate()
 
@@ -167,10 +154,7 @@ describe("projectDetailPageStateCreate deleteTarget persistence", () => {
 
   test("skips team ancestor query when no team ID is available", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       setParamsSignal({ projectId: "proj-standalone" })
       projectDetailPageStateCreate()
 
@@ -187,10 +171,7 @@ describe("projectDetailPageStateCreate deleteTarget persistence", () => {
 
   test("resolves loading to false on subscription onError", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       setParamsSignal({ projectId: "proj-456", teamId: "team-123", orgHandle: "test-org" })
       const state = projectDetailPageStateCreate()
 
@@ -207,10 +188,7 @@ describe("projectDetailPageStateCreate deleteTarget persistence", () => {
 
   test("initializes tab state with details, exposes tab options, text, and icons", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       setParamsSignal({ projectId: "proj-456", teamId: "team-123", orgHandle: "test-org" })
       const state = projectDetailPageStateCreate()
 

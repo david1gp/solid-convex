@@ -1,4 +1,4 @@
-import type { JSXElement } from "solid-js"
+import type { Element as JSXElement } from "solid-js"
 
 export interface MayHaveClassAndChildren {
   class?: string

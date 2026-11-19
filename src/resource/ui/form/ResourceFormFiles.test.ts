@@ -1,3 +1,4 @@
+import { flush } from "solid-js"
 import { afterAll, beforeAll, describe, expect, it } from "bun:test"
 import { createRoot } from "solid-js"
 import type { FileModel } from "#src/file/model/FileModel.ts"
@@ -33,6 +34,7 @@ describe("ResourceFormFiles state factory", () => {
       const state = resourceFormFilesStateCreate({ sm: () => sm })
 
       expect(state.persistedResourceId()).toBeUndefined()
+      flush()
       expect(state.assignment()).toEqual({ kind: "team", id: "team_99" })
       dispose()
     })
@@ -60,6 +62,7 @@ describe("ResourceFormFiles state factory", () => {
 
       const state = resourceFormFilesStateCreate({ sm: () => sm })
 
+      flush()
       expect(state.persistedResourceId()).toBe("persisted-resource-12345")
       dispose()
     })
@@ -87,10 +90,12 @@ describe("ResourceFormFiles state factory", () => {
       }
 
       state.fileUploadSuccess(mockFile)
+      flush()
       expect(state.files()).toHaveLength(1)
       expect(state.files()[0]?.fileId).toBe("file_test_999")
 
       state.fileRemove("file_test_999")
+      flush()
       expect(state.files()).toHaveLength(0)
       dispose()
     })

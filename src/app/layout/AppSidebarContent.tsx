@@ -2,7 +2,7 @@ import { mdiAccountOutline } from "@adaptive-ds/mdi/mdiAccountOutline.js"
 import { mdiCogOutline } from "@adaptive-ds/mdi/mdiCogOutline.js"
 import { mdiLogout } from "@adaptive-ds/mdi/mdiLogout.js"
 import { Link } from "@tanstack/solid-router"
-import { For, type JSX, Show } from "solid-js"
+import { For, Show } from "solid-js"
 import { urlOverview } from "#src/app/pages/urlOverview.ts"
 import { appNameClient } from "#src/app/text/appName.ts"
 import { urlUserProfileMe, urlUserProfileMeEdit } from "#src/auth/url/pageRouteAuth.ts"
@@ -15,6 +15,7 @@ import { Icon } from "#ui/static/icon/Icon.jsx"
 import { LogoImageText } from "#ui/static/logo/LogoImageText.jsx"
 import { AppThemeSegmentedControl } from "./AppThemeSegmentedControl.tsx"
 import type { AppShellState } from "./appShellStateCreate.ts"
+import { type JSX } from "@solidjs/web"
 
 function initialsOf(name: string): string {
   const initials = name
@@ -77,10 +78,10 @@ export function AppSidebarContent(p: {
                 <Link
                   to={item.href}
                   onClick={p.state.profileClose}
-                  aria-current={activeHref() === item.href ? "page" : undefined}
+                  data-current={activeHref() === item.href ? "page" : undefined}
                   title={isCollapsed() ? item.label : undefined}
                   aria-label={isCollapsed() ? item.label : undefined}
-                  class={`focus-ring flex h-7 items-center gap-2 rounded px-2 text-sm text-muted-foreground hover:bg-hover hover:text-foreground aria-[current=page]:bg-hover aria-[current=page]:font-medium aria-[current=page]:text-foreground${isCollapsed() ? " justify-center" : ""}`}
+                  class={`focus-ring flex h-7 items-center gap-2 rounded px-2 text-sm text-muted-foreground hover:bg-hover hover:text-foreground data-[current=page]:bg-hover data-[current=page]:font-medium data-[current=page]:text-foreground${isCollapsed() ? " justify-center" : ""}`}
                 >
                   <Icon path={item.icon} class="size-4 shrink-0 text-muted-foreground" />
                   <Show when={!isCollapsed()}>

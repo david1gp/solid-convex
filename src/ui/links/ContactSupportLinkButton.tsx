@@ -1,14 +1,14 @@
 import { mdiEmail } from "@adaptive-ds/mdi/mdiEmail.js"
-import { splitProps } from "solid-js"
+import { omit } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { urlSupportMailTo } from "#src/app/url/urlSupport.ts"
 import { LinkButtonExternal } from "#ui/interactive/link/LinkButton.jsx"
 import type { ButtonAnchorProps } from "#ui/interactive/link/LinkButtonProps.jsx"
 
 export function ContactSupportLinkButton(p: Omit<ButtonAnchorProps, "href">) {
-  const [s, rest] = splitProps(p, ["icon", "children"])
+  const rest = omit(p, "icon", "children")
   return (
-    <LinkButtonExternal icon={s.icon ?? mdiEmail} href={urlSupportMailTo} {...rest}>
+    <LinkButtonExternal icon={p.icon ?? mdiEmail} href={urlSupportMailTo} {...rest}>
       {ttc("Contact support")}
     </LinkButtonExternal>
   )

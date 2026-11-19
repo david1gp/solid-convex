@@ -37,7 +37,7 @@ const defaultVariant = badgeVariant.outline
 
 export function badgeCva1(
   variant: BadgeVariant | null = defaultVariant,
-  ...customClasses: (string | boolean | undefined | null | 0)[]
+  ...customClasses: import("@solidjs/web").JSX.ClassValue[]
 ) {
   return cn(baseClasses, variantClasses[variant ?? defaultVariant], customClasses)
 }

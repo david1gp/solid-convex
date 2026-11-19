@@ -1,3 +1,4 @@
+import { flush } from "solid-js"
 import { describe, expect, test } from "bun:test"
 import type { UserProjection } from "#src/user_management/model/userProjectionSchema.ts"
 import { userManagementRolesDialogStateCreate } from "./userManagementRolesDialogStateCreate.ts"
@@ -20,10 +21,12 @@ describe("userManagementRolesDialogStateCreate", () => {
     expect(state.editingUser()).toBeUndefined()
 
     state.openEdit(userFixture(["admin", "member"]))
+    flush()
     expect(state.editingUser()?.userId).toBe("user-1")
     expect(state.draftRoles.get()).toEqual(["admin", "member"])
 
     state.closeEdit()
+    flush()
     expect(state.editingUser()).toBeUndefined()
   })
 
@@ -37,8 +40,10 @@ describe("userManagementRolesDialogStateCreate", () => {
     })
     state.openEdit(userFixture(["admin"]))
     state.draftRoles.set([])
+    flush()
     await state.saveRoles()
     expect(calls).toBe(0)
+    flush()
     expect(state.errorMessage()).toBe("At least one role is required")
     expect(state.editingUser()).not.toBeUndefined()
   })
@@ -46,7 +51,9 @@ describe("userManagementRolesDialogStateCreate", () => {
   test("saveRoles reports a missing session instead of saving", async () => {
     const state = userManagementRolesDialogStateCreate({})
     state.openEdit(userFixture(["admin"]))
+    flush()
     await state.saveRoles()
+    flush()
     expect(state.errorMessage()).toBe("Role saving is unavailable: no session")
   })
 
@@ -60,7 +67,9 @@ describe("userManagementRolesDialogStateCreate", () => {
     })
     state.openEdit(userFixture(["user"]))
     state.draftRoles.set(["admin", "member"])
+    flush()
     await state.saveRoles()
+    flush()
     expect(received).toEqual({ roles: ["admin", "member"], userId: "user-1" })
     expect(state.editingUser()).toBeUndefined()
     expect(state.savedUserId()).toBe("user-1")
@@ -72,7 +81,9 @@ describe("userManagementRolesDialogStateCreate", () => {
       setRoles: async () => ({ success: false, errorMessage: "The last admin role cannot be removed" }),
     })
     state.openEdit(userFixture(["admin"]))
+    flush()
     await state.saveRoles()
+    flush()
     expect(state.errorMessage()).toBe("The last admin role cannot be removed")
     expect(state.editingUser()).not.toBeUndefined()
     expect(state.isUpdating("user-1")).toBe(false)
@@ -86,6 +97,7 @@ describe("userManagementRolesDialogStateCreate", () => {
         return { success: true, errorMessage: "" }
       },
     })
+    flush()
     await state.saveRoles()
     expect(calls).toBe(0)
   })

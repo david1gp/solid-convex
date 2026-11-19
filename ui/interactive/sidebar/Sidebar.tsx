@@ -1,4 +1,4 @@
-import { type JSXElement, Show, splitProps } from "solid-js"
+import { type Element as JSXElement, Show, omit } from "solid-js"
 import type { CorcuDialogTexts } from "#ui/interactive/dialog/CorcuDialogTexts.js"
 import { SidebarMobileDrawer } from "#ui/interactive/sidebar/SidebarMobileDrawer.jsx"
 import type { SidebarState } from "#ui/interactive/sidebar/SidebarState.jsx"
@@ -24,19 +24,19 @@ export interface SidebarProps extends MayHaveClass {
 
 /** Responsive sidebar switching between desktop and mobile drawer. */
 export function Sidebar(p: SidebarProps) {
-  const [s, rest] = splitProps(p, ["state", "defaultWidth", "debounceMs", "class", "desktopChildren", "mobileChildren"])
+  const rest = omit(p, "state", "defaultWidth", "debounceMs", "class", "desktopChildren", "mobileChildren")
   const state = sidebarStateCreate({
-    state: () => s.state,
-    defaultWidth: () => s.defaultWidth,
-    debounceMs: () => s.debounceMs,
+    state: () => p.state,
+    defaultWidth: () => p.defaultWidth,
+    debounceMs: () => p.debounceMs,
   })
 
   return (
     <>
-      <Show when={!state.isMobile() && state.desktopOpen()}>{s.desktopChildren}</Show>
+      <Show when={!state.isMobile() && state.desktopOpen()}>{p.desktopChildren}</Show>
       <Show when={state.isMobile()}>
         <SidebarMobileDrawer {...rest} open={state.mobileSignal}>
-          {s.mobileChildren}
+          {p.mobileChildren}
         </SidebarMobileDrawer>
       </Show>
     </>

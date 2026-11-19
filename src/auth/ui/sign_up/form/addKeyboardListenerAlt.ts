@@ -1,7 +1,7 @@
-import { onCleanup, onMount } from "solid-js"
+import { onSettled } from "solid-js"
 
 export function addKeyboardListenerAlt(key: string, fn: () => void) {
-  onMount(() => {
+  onSettled(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.altKey && e.key === key) {
         e.preventDefault()
@@ -9,8 +9,8 @@ export function addKeyboardListenerAlt(key: string, fn: () => void) {
       }
     }
     document.addEventListener("keydown", handleKeyDown)
-    onCleanup(() => {
+    return () => {
       document.removeEventListener("keydown", handleKeyDown)
-    })
+    }
   })
 }

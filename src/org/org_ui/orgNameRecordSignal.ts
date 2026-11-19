@@ -99,7 +99,7 @@ export function orgNameSaveToLocalStorage(record: Record<string, string>) {
   localStorage.setItem(orgNameLocalStorageKey, serialized)
 }
 
-import { onCleanup, onMount } from "solid-js"
+import { onCleanup, onSettled } from "solid-js"
 
 export function orgNameRecordSignalRegisterHandler(signal = orgNameRecordSignal) {
   function handleStorageEvent(event: StorageEvent) {
@@ -109,7 +109,7 @@ export function orgNameRecordSignalRegisterHandler(signal = orgNameRecordSignal)
     if (!parsingResult.success) return
     signal.set(parsingResult.data)
   }
-  onMount(() => {
+  onSettled(() => {
     if (typeof window === "undefined") return
     window.addEventListener("storage", handleStorageEvent)
   })

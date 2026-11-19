@@ -1,4 +1,4 @@
-import { type Component, type ComponentProps, splitProps } from "solid-js"
+import { type Component, omit } from "solid-js"
 import { classesDisabledDirectly } from "#ui/classes/classesDisabledDirectly.js"
 import { type ButtonCvaProps, buttonCvaIconOnly } from "#ui/interactive/button/buttonCva.js"
 import { buttonIconCva } from "#ui/interactive/button/buttonIconCva.js"
@@ -10,6 +10,7 @@ import type { HasTitle } from "#ui/utils/HasTitle.js"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"
 import { isDisabled } from "#ui/utils/MayHaveDisabledAccessor.js"
 import { isLoading, type MayHaveIsLoading } from "#ui/utils/MayHaveIsLoading.js"
+import { type ComponentProps } from "@solidjs/web"
 
 export interface ToggleButtonIconOnlyProps
   extends Omit<ComponentProps<"button">, "title" | "onClick">,
@@ -25,7 +26,8 @@ export interface ToggleButtonIconOnlyProps
 
 /** Icon-only button toggling a pressed signal. */
 export const ToggleButtonIconOnly: Component<ToggleButtonIconOnlyProps> = (p) => {
-  const [s, rest] = splitProps(p, [
+  const rest = omit(
+    p,
     "variant",
     "class",
     "isLoading",
@@ -38,34 +40,34 @@ export const ToggleButtonIconOnly: Component<ToggleButtonIconOnlyProps> = (p) =>
     "onPressedChange",
     "onClick",
     "children",
-  ])
+  )
   return (
     <button
-      class={buttonCvaIconOnly(s.variant, isLoading(p), isDisabled(p), classesButtonClickAnimation, s.class)}
-      title={s.title}
-      type={s.type ?? "button"}
-      aria-pressed={s.pressedSignal.get()}
-      data-state={s.pressedSignal.get() ? "on" : "off"}
+      class={buttonCvaIconOnly(p.variant, isLoading(p), isDisabled(p), classesButtonClickAnimation, p.class)}
+      title={p.title}
+      type={p.type ?? "button"}
+      aria-pressed={p.pressedSignal.get() ? "true" : "false"}
+      data-state={p.pressedSignal.get() ? "on" : "off"}
       data-disabled={isDisabled(p)}
       onClick={(e) => {
         const next = togglePressed(p)
-        if (s.onPressedChange) {
-          s.onPressedChange(next)
+        if (p.onPressedChange) {
+          p.onPressedChange(next)
         }
-        if (s.onClick) s.onClick(e)
+        if (p.onClick) p.onClick(e)
       }}
       {...rest}
     >
       <Icon
-        path={s.icon}
+        path={p.icon}
         class={buttonIconCva(
-          s.variant,
-          s.isLoading && "animate-spin-faster",
-          s.disabled && classesDisabledDirectly,
-          s.iconClass,
+          p.variant,
+          p.isLoading && "animate-spin-faster",
+          p.disabled && classesDisabledDirectly,
+          p.iconClass,
         )}
       />
-      {s.children}
+      {p.children}
     </button>
   )
 }

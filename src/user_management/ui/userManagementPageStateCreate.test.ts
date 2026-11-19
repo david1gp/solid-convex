@@ -1,3 +1,5 @@
+import { flush } from "solid-js"
+import { convexContextRootCreate } from "#src/utils/convex_client/test/convexContextRootCreate.ts"
 import { describe, expect, mock, test } from "bun:test"
 import { createResult, createResultError } from "#result"
 import type { UserProfile } from "#src/auth/model/UserProfile.ts"
@@ -24,11 +26,7 @@ if (!globalThis.localStorage) {
   } as unknown as Storage
 }
 
-const solidJsClientPath = "solid-js/dist/solid.js"
-type SolidJsModule = typeof import("solid-js")
-const solidJsClient = (await import(solidJsClientPath)) as unknown as SolidJsModule
-mock.module("solid-js", () => solidJsClient)
-const { createRoot, createSignal, getOwner } = solidJsClient
+import { createRoot, createSignal } from "solid-js"
 
 const [paramsSignal, setParamsSignal] = createSignal<Record<string, string>>({})
 
@@ -38,7 +36,6 @@ mock.module("@tanstack/solid-router", () => ({
   useNavigate: () => () => undefined,
 }))
 
-const { ConvexContext } = await import("#src/utils/convex_client/convexContext.ts")
 const { userSessionSignal } = await import("#src/auth/ui/signals/userSessionSignal.ts")
 const { userManagementPageStateCreate } = await import("./userManagementPageStateCreate.ts")
 mock.restore()
@@ -100,14 +97,14 @@ function nonAdminSessionCreate(): UserSession {
 
 describe("userManagementPageStateCreate singleUserQuery skip adoption", () => {
   test("single user query is not subscribed when no user is selected", () => {
+    flush()
     userSessionSignal.set(adminSessionCreate())
+    flush()
     setParamsSignal({})
+    flush()
 
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       userManagementPageStateCreate()
 
       const userProjectionGetSubs = client.subscriptions.filter((s) => {
@@ -121,14 +118,14 @@ describe("userManagementPageStateCreate singleUserQuery skip adoption", () => {
   })
 
   test("single user query is not subscribed when user is non-admin even if userId param is present", () => {
+    flush()
     userSessionSignal.set(nonAdminSessionCreate())
+    flush()
     setParamsSignal({ userId: "target-user-123" })
+    flush()
 
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       userManagementPageStateCreate()
 
       const userProjectionGetSubs = client.subscriptions.filter((s) => {
@@ -142,14 +139,14 @@ describe("userManagementPageStateCreate singleUserQuery skip adoption", () => {
   })
 
   test("single user query is subscribed with userId when admin and userId is selected", () => {
+    flush()
     userSessionSignal.set(adminSessionCreate())
+    flush()
     setParamsSignal({ userId: "target-user-456" })
+    flush()
 
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       userManagementPageStateCreate()
 
       const userProjectionGetSubs = client.subscriptions.filter((s) => {
@@ -167,14 +164,14 @@ describe("userManagementPageStateCreate singleUserQuery skip adoption", () => {
   })
 
   test("single user query subscribes and un-subscribes reactively when selection changes", async () => {
+    flush()
     userSessionSignal.set(adminSessionCreate())
+    flush()
     setParamsSignal({})
+    flush()
 
     const client = new MockConvexClient()
-    await createRoot(async (dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    await convexContextRootCreate(client, async (dispose) => {
       userManagementPageStateCreate()
 
       const getSingleSubs = () =>
@@ -185,15 +182,20 @@ describe("userManagementPageStateCreate singleUserQuery skip adoption", () => {
 
       expect(getSingleSubs()).toHaveLength(0)
 
+      flush()
       setParamsSignal({ userId: "target-user-789" })
+      flush()
       await Promise.resolve()
+      flush()
       expect(getSingleSubs()).toHaveLength(1)
       expect(getSingleSubs()[0]!.args).toEqual({
         token: "test-admin-token",
         userId: "target-user-789",
       })
 
+      flush()
       setParamsSignal({})
+      flush()
       await Promise.resolve()
       expect(getSingleSubs()).toHaveLength(0)
 

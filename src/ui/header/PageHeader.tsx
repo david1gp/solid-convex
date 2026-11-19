@@ -1,4 +1,4 @@
-import type { JSXElement } from "solid-js"
+import type { Element as JSXElement } from "solid-js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { cn } from "cn"
 import type { HasTitle } from "#ui/utils/HasTitle.ts"

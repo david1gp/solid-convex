@@ -13,9 +13,11 @@ export function orgListPageStateCreate() {
     identity: () => userSessionSignal.get()?.profile.userId ?? null,
     itemSchema: orgSchema,
   })
-  createEffect(() => {
-    const result = pagination.page()
-    if (result?.success) orgNameAddList(result.data.page)
-  })
+  createEffect(
+    () => pagination.page(),
+    (result) => {
+      if (result?.success) orgNameAddList(result.data.page)
+    },
+  )
   return pagination
 }

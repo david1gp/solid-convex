@@ -9,10 +9,12 @@ export function layoutWrapperConvexStateCreate(p: { title: () => string | undefi
     return { convex: () => null as ConvexClient | null }
   }
   const convex = new ConvexClient(baseUrlResult.data, { unsavedChangesWarning: false })
-  createEffect(() => {
-    const title = p.title()
-    if (!title) return
-    document.title = title
-  })
+  createEffect(
+    () => p.title(),
+    (title) => {
+      if (!title) return
+      document.title = title
+    },
+  )
   return { convex: () => convex as ConvexClient | null }
 }

@@ -13,7 +13,7 @@ export function ConsentSwitch(p: ConsentSwitchProps) {
     <button
       type="button"
       role="switch"
-      aria-checked={p.checked}
+      aria-checked={p.checked ? "true" : "false"}
       aria-label={p.label}
       disabled={p.disabled}
       onClick={p.onClick}

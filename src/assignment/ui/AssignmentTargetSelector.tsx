@@ -1,6 +1,5 @@
 import { mdiChevronDown } from "@adaptive-ds/mdi/mdiChevronDown.js"
-import { createUniqueId, For, Show, splitProps } from "solid-js"
-import type { JSX } from "solid-js"
+import { createUniqueId, For, Show, omit } from "solid-js"
 import type { AssignmentTargetSelectorProps } from "#src/assignment/ui/AssignmentTargetSelectorProps.ts"
 import { assignmentTargetLabelFormat } from "#src/assignment/ui/assignmentTargetLabelFormat.ts"
 import { assignmentTargetSelectorStateCreate } from "#src/assignment/ui/assignmentTargetSelectorStateCreate.ts"
@@ -10,15 +9,16 @@ import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
+import { type JSX } from "@solidjs/web"
 
 interface AssignmentSelectorComponentProps extends AssignmentTargetSelectorProps, MayHaveClass {}
 
 function StyledSelect(props: JSX.SelectHTMLAttributes<HTMLSelectElement>) {
-  const [local, rest] = splitProps(props, ["class"])
+  const rest = omit(props, "class")
 
   return (
     <div class="relative w-full min-w-0">
-      <select {...rest} class={cn(local.class, "appearance-none pl-3 pr-10")} />
+      <select {...rest} class={cn(props.class, "appearance-none pl-3 pr-10")} />
       <Icon
         path={mdiChevronDown}
         class="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-foreground"

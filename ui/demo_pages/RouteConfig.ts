@@ -1,4 +1,4 @@
-import type { Component, JSXElement } from "solid-js"
+import type { Component, Element as JSXElement } from "solid-js"
 
 export type RouteObject = {
   path: string

@@ -1,8 +1,8 @@
-import { createSignal, onMount } from "solid-js"
+import { createSignal, onSettled } from "solid-js"
 
 export function detailsDialogStateCreate() {
   const [enhanced, setEnhanced] = createSignal(false)
-  onMount(() => setEnhanced(true))
+  onSettled(() => { setEnhanced(true) })
 
   return { enhanced }
 }

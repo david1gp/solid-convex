@@ -1,5 +1,5 @@
 import { For, Show } from "solid-js"
-import { Dynamic } from "solid-js/web"
+import { Dynamic } from "@solidjs/web"
 import { AuthPageDemoRenderer } from "#src/app/demos/AuthPageDemoRenderer.tsx"
 import { appPageDemoRendererMap } from "#src/app/demos/appPageDemoRendererMap.tsx"
 import { pageDemoBoundaryStateCreate } from "#src/app/demos/pageDemoBoundaryStateCreate.ts"
@@ -48,9 +48,9 @@ export const resourceDemoRoutes = [
  * gallery boundary, without the gallery chrome (All demos link, centering, title).
  * Gallery and shell-wrapped routes share this so fixtures exist exactly once. */
 export function PageDemoContent(p: { entry?: (typeof pageRouteInventory)[number] }) {
-  const state = pageDemoBoundaryStateCreate(p.entry)
+  const state = pageDemoBoundaryStateCreate(() => p.entry)
   return (
-    <ConvexContext.Provider value={undefined}>
+    <ConvexContext value={null}>
       <Show
         when={p.entry}
         fallback={
@@ -124,6 +124,6 @@ export function PageDemoContent(p: { entry?: (typeof pageRouteInventory)[number]
           </>
         )}
       </Show>
-    </ConvexContext.Provider>
+    </ConvexContext>
   )
 }

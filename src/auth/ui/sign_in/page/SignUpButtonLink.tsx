@@ -1,5 +1,5 @@
 import { mdiArrowRight } from "@adaptive-ds/mdi/mdiArrowRight.js"
-import { type ComponentProps, splitProps } from "solid-js"
+import { omit } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { urlPageSignUp } from "#src/auth/url/pageRouteAuth.ts"
 import { urlSignInRedirectUrl } from "#src/auth/url/urlSignInRedirectUrl.ts"
@@ -7,13 +7,14 @@ import { createUrl } from "#src/utils/router/createUrl.ts"
 import { searchParamGet } from "#src/utils/router/searchParamGet.ts"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
+import { type ComponentProps } from "@solidjs/web"
 
 export interface SignUpButtonLinkProps extends Omit<ComponentProps<typeof LinkButtonInternal>, "to" | "href"> {
   text?: string
 }
 
 export function SignUpButtonLink(p: SignUpButtonLinkProps) {
-  const [s, rest] = splitProps(p, ["text", "children", "iconRight", "variant"])
+  const rest = omit(p, "text", "children", "iconRight", "variant")
   function getUrl() {
     const url = createUrl()
     const email = searchParamGet("email", url) ?? ""
@@ -23,11 +24,11 @@ export function SignUpButtonLink(p: SignUpButtonLinkProps) {
   return (
     <LinkButtonInternal
       to={getUrl()}
-      iconRight={s.iconRight ?? mdiArrowRight}
-      variant={s.variant ?? buttonVariant.contrast}
+      iconRight={p.iconRight ?? mdiArrowRight}
+      variant={p.variant ?? buttonVariant.contrast}
       {...rest}
     >
-      {s.text ?? ttc("Sign Up")}
+      {p.text ?? ttc("Sign Up")}
     </LinkButtonInternal>
   )
 }

@@ -1,5 +1,5 @@
-import { For, type JSX } from "solid-js"
-import { Dynamic } from "solid-js/web"
+import { For } from "solid-js"
+import { Dynamic } from "@solidjs/web"
 import type { DemoNavDataProps } from "#ui/demo_pages/DemoNavDataProps.js"
 import { LinkBlock } from "#ui/demo_pages/LinkBlock.jsx"
 import type { RouteObject } from "#ui/demo_pages/RouteConfig.js"
@@ -10,6 +10,7 @@ import { LayoutWrapperDemo } from "#ui/static/layout/LayoutWrapperDemo.jsx"
 import { classArr } from "#ui/utils/classArr.js"
 import { objectEntries } from "#utils/obj/objectEntries.js"
 import { objectKeys } from "#utils/obj/objectKeys.js"
+import { type JSX } from "@solidjs/web";
 
 const log = false
 

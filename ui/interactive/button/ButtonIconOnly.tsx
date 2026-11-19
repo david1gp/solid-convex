@@ -1,4 +1,4 @@
-import { type Component, type ComponentProps, splitProps } from "solid-js"
+import { type Component, omit } from "solid-js"
 import { classesDisabledDirectly } from "#ui/classes/classesDisabledDirectly.js"
 import { type ButtonCvaProps, buttonCvaIconOnly } from "#ui/interactive/button/buttonCva.js"
 import { buttonIconCva } from "#ui/interactive/button/buttonIconCva.js"
@@ -9,6 +9,7 @@ import type { HasTitle } from "#ui/utils/HasTitle.js"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"
 import { isDisabled } from "#ui/utils/MayHaveDisabledAccessor.js"
 import { isLoading, type MayHaveIsLoading } from "#ui/utils/MayHaveIsLoading.js"
+import { type ComponentProps } from "@solidjs/web"
 
 export interface ButtonIconOnlyProps
   extends Omit<ComponentProps<"button">, "title">,
@@ -22,43 +23,40 @@ export interface ButtonIconOnlyProps
 
 /** Rounded icon-only button; pass a single icon and no children. */
 export const ButtonIconOnly: Component<ButtonIconOnlyProps> = (p) => {
-  const [s, rest] = splitProps(p, [
-    // button
+  const rest = omit(
+    p,
     "variant",
     "class",
-    // state
     "isLoading",
-    // icons
     "title",
     "icon",
     "iconRight",
     "iconClass",
-    // default
     "type",
     "disabled",
     "children",
-  ])
+  )
   return (
     <button
-      class={buttonCvaIconOnly(s.variant, isLoading(p), isDisabled(p), classesButtonClickAnimation, s.class)}
-      title={s.title}
-      type={s.type ?? "button"}
+      class={buttonCvaIconOnly(p.variant, isLoading(p), isDisabled(p), classesButtonClickAnimation, p.class)}
+      title={p.title}
+      type={p.type ?? "button"}
       {...rest}
     >
-      {!s.iconRight && (
+      {!p.iconRight && (
         <Icon
-          path={s.icon}
+          path={p.icon}
           class={buttonIconCva(
-            s.variant,
-            s.children && "mr-2",
-            s.isLoading && "animate-spin-faster",
-            s.disabled && classesDisabledDirectly,
-            s.iconClass,
+            p.variant,
+            p.children && "mr-2",
+            p.isLoading && "animate-spin-faster",
+            p.disabled && classesDisabledDirectly,
+            p.iconClass,
           )}
         />
       )}
-      {s.children}
-      {s.iconRight && <Icon path={s.icon} class={buttonIconCva(s.variant, s.iconClass)} />}
+      {p.children}
+      {p.iconRight && <Icon path={p.icon} class={buttonIconCva(p.variant, p.iconClass)} />}
     </button>
   )
 }

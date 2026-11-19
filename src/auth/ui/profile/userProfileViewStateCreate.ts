@@ -5,6 +5,11 @@ import { userProfileFormStateManagement } from "./userProfileFormState.ts"
 
 export function userProfileViewStateCreate(profile: () => UserProfile) {
   const sm = userProfileFormStateManagement(formMode.view, {})
-  createEffect(() => sm.loadData(profile()))
+  createEffect(
+    () => profile(),
+    (value) => {
+      sm.loadData(value)
+    },
+  )
   return { sm, mode: formMode.view }
 }

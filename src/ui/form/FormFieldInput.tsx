@@ -60,9 +60,9 @@ export function FormFieldInput(p: FormFieldInputProps) {
           p.error && "border-destructive focus-visible:ring-destructive",
           p.config.class,
         )}
-        maxLength={p.config.maxLength ?? inputMaxLengthDefault}
+        maxlength={p.config.maxLength ?? inputMaxLengthDefault}
         disabled={p.disabled || p.mode === formMode.remove}
-        readOnly={formModeIsReadOnly(p.mode)}
+        readonly={formModeIsReadOnly(p.mode)}
       />
       <Show when={p.error}>
         <p class="text-destructive">{p.error}</p>

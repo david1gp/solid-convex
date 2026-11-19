@@ -1,4 +1,4 @@
-import { createSignal, onCleanup, onMount } from "solid-js"
+import { createSignal, onSettled } from "solid-js"
 import type { ThemeButtonText } from "#ui/interactive/theme/ThemeButtonText.js"
 import { themeButtonTextDefault } from "#ui/interactive/theme/ThemeButtonText.js"
 import { themeInit, themeRotate, themeSignal } from "#ui/interactive/theme/themeSignal.js"
@@ -14,11 +14,11 @@ export function themeButtonStateCreate(p: { texts: () => ThemeButtonText | undef
   // stored theme is applied before rendering the label.
   const [themeReady, setThemeReady] = createSignal(false)
 
-  onMount(() => {
+  onSettled(() => {
     themeInit()
     setThemeReady(true)
     window.addEventListener("keydown", handleGlobalKeyDown)
-    onCleanup(() => window.removeEventListener("keydown", handleGlobalKeyDown))
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown)
   })
 
   return {

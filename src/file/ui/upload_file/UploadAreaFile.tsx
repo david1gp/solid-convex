@@ -1,4 +1,4 @@
-import { type Accessor, type JSX, Show } from "solid-js"
+import { type Accessor, Show } from "solid-js"
 import type { AssignmentTarget } from "#src/assignment/model/assignmentTargetSchema.ts"
 import type { FileModel } from "#src/file/model/FileModel.ts"
 import type { UploadAreaFileInfo } from "#src/file/ui/stats/UploadAreaFileInfo.ts"
@@ -10,6 +10,7 @@ import { cn } from "cn"
 import type { SignalObject } from "#ui/utils/createSignalObject.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import type { MayHaveId } from "#ui/utils/MayHaveId.ts"
+import { type JSX } from "@solidjs/web"
 
 export interface UploadAreaFileProps extends MayHaveResourceId, MayHaveClass, MayHaveId {
   hasUploaded: Accessor<boolean>

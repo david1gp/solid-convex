@@ -1,5 +1,4 @@
-import type { ComponentProps } from "solid-js"
-import { Show, splitProps } from "solid-js"
+import { Show } from "solid-js"
 import { NavCrumbs } from "#src/app/nav/NavCrumbs.tsx"
 import type { DemoNavDataProps } from "#ui/demo_pages/DemoNavDataProps.ts"
 import { LinkBlock } from "#ui/demo_pages/LinkBlock.jsx"
@@ -8,14 +7,14 @@ import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { CorvuPopover } from "#ui/interactive/popover/CorvuPopover.jsx"
 import { objectEntries } from "#utils/obj/objectEntries.js"
 import { objectKeys } from "#utils/obj/objectKeys.js"
+import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
-export interface DemoNavProps extends DemoNavDataProps, ComponentProps<"nav"> {}
+export interface DemoNavProps extends DemoNavDataProps, MayHaveClass {}
 
 export function NavDemo(p: DemoNavProps) {
-  const [s] = splitProps(p, ["children", "category", "compName", "demoList", "demoPrefix", "class"])
   return (
     <NavCrumbs class={p.class}>
-      <ChildrenLeft {...s} />
+      <ChildrenLeft {...p} />
     </NavCrumbs>
   )
 }
@@ -57,9 +56,7 @@ function ChildrenLeftComp(s: DemoNavDataProps) {
   )
 }
 
-function ComponentPopover(
-  s: Pick<DemoNavProps, "class" | "children" | "category" | "compName" | "demoList" | "demoPrefix">,
-) {
+function ComponentPopover(s: Pick<DemoNavProps, "class" | "category" | "compName" | "demoList" | "demoPrefix">) {
   if (!s.category || !s.compName) return null
   const links = objectEntries(s.demoList)
     .filter(([category]) => category === s.category)

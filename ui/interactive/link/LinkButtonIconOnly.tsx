@@ -1,5 +1,5 @@
 import { createLink } from "@tanstack/solid-router"
-import { splitProps } from "solid-js"
+import { omit } from "solid-js"
 import { buttonCvaIconOnly } from "#ui/interactive/button/buttonCva.js"
 import { buttonIconCva } from "#ui/interactive/button/buttonIconCva.js"
 import { classesButtonClickAnimation } from "#ui/interactive/button/classesButtonClickAnimation.js"
@@ -9,7 +9,8 @@ import { isLoading } from "#ui/utils/MayHaveIsLoading.js"
 
 /** Shared styled icon-only button-anchor; base for both link variants. */
 function ButtonIconOnlyAnchor(p: ButtonAnchorProps) {
-  const [s, rest] = splitProps(p, [
+  const rest = omit(
+    p,
     "class",
     "variant",
     "newTab",
@@ -20,24 +21,24 @@ function ButtonIconOnlyAnchor(p: ButtonAnchorProps) {
     "children",
     "target",
     "rel",
-  ])
+  )
   return (
     <a
       class={buttonCvaIconOnly(
-        s.variant,
-        isLoading({ isLoading: s.isLoading }),
+        p.variant,
+        isLoading({ isLoading: p.isLoading }),
         false,
         classesButtonClickAnimation,
         "break-all", // line breaks for long links
-        s.class,
+        p.class,
       )}
-      target={s.newTab ? "_blank" : s.target}
-      rel={s.newTab ? "noopener noreferrer" : s.rel}
+      target={p.newTab ? "_blank" : p.target}
+      rel={p.newTab ? "noopener noreferrer" : p.rel}
       {...rest}
     >
-      {s.icon && <Icon path={s.icon} class={buttonIconCva(s.variant, s.children && "mr-2", s.iconClass)} />}
-      {s.children}
-      {s.iconRight && <Icon path={s.iconRight} class={buttonIconCva(s.variant, s.children && "ml-2", s.iconClass)} />}
+      {p.icon && <Icon path={p.icon} class={buttonIconCva(p.variant, p.children && "mr-2", p.iconClass)} />}
+      {p.children}
+      {p.iconRight && <Icon path={p.iconRight} class={buttonIconCva(p.variant, p.children && "ml-2", p.iconClass)} />}
     </a>
   )
 }

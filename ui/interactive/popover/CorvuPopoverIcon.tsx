@@ -1,5 +1,5 @@
 import Popover, { type TriggerProps } from "@corvu-next/popover"
-import { type Component, omit } from "solid-js"
+import { createSignal, type Component, omit } from "solid-js"
 import { classesDisabledDirectly } from "#ui/classes/classesDisabledDirectly.js"
 import { type ButtonCvaProps, buttonCvaIconOnly } from "#ui/interactive/button/buttonCva.js"
 import { buttonIconCva } from "#ui/interactive/button/buttonIconCva.js"
@@ -30,6 +30,7 @@ export interface CorvuPopoverIconProps
 
 /** Popover anchored to an icon-only trigger button. */
 export const CorvuPopoverIcon: Component<CorvuPopoverIconProps> = (p) => {
+  const [trigger, setTrigger] = createSignal<HTMLElement>()
   const rest = omit(
     p,
     "variant",
@@ -43,10 +44,12 @@ export const CorvuPopoverIcon: Component<CorvuPopoverIconProps> = (p) => {
     "children",
     "open",
     "onOpenChange",
+    "ref",
   )
 
   return (
     <Popover
+      finalFocusEl={trigger()}
       floatingOptions={{
         offset: 8,
         flip: true,
@@ -56,6 +59,10 @@ export const CorvuPopoverIcon: Component<CorvuPopoverIconProps> = (p) => {
       onOpenChange={p.onOpenChange}
     >
       <Popover.Trigger
+        ref={(element) => {
+          setTrigger(element)
+          if (typeof p.ref === "function") p.ref(element)
+        }}
         class={buttonCvaIconOnly(p.variant, isLoading(p), p.disabled === "" || p.disabled === true, classesButtonClickAnimation, p.class)}
         title={p.title}
         {...rest}

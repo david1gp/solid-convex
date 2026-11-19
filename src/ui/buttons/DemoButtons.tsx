@@ -18,6 +18,7 @@ import { CorvuDialog } from "#ui/interactive/dialog/CorvuDialog.jsx"
 import { LinkButtonExternal, LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { LinkButtonIconOnlyExternal } from "#ui/interactive/link/LinkButtonIconOnly.jsx"
 import { CorvuPopover } from "#ui/interactive/popover/CorvuPopover.jsx"
+import { CorvuPopoverIcon } from "#ui/interactive/popover/CorvuPopoverIcon.jsx"
 import { InfoPopover } from "#ui/interactive/popover/InfoPopover.jsx"
 import { ToggleButton } from "#ui/interactive/toggle/ToggleButton.jsx"
 import { ToggleButtonIconOnly } from "#ui/interactive/toggle/ToggleButtonIconOnly.jsx"
@@ -222,6 +223,9 @@ function PopoverDialogDemo() {
         <InfoPopover>
           <p>Help content anchored to the info icon trigger.</p>
         </InfoPopover>
+        <CorvuPopoverIcon icon={mdiInformationOutline} title="Icon popover">
+          <p>Popover content on an icon-only trigger.</p>
+        </CorvuPopoverIcon>
         <CorvuDialog
           icon={mdiInformationOutline}
           variant={buttonVariant.outline}

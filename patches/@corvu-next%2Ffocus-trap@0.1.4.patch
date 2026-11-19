@@ -1,0 +1,80 @@
+diff --git a/dist/index.js b/dist/index.js
+index 63180341ad623fc95160781af59b8e1a31f60283..fdffebf9fd5bb8e371ba364800f0978ecbf971f9 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -28,6 +28,7 @@ var createFocusTrap = (props) => {
+     return _focusableElements[_focusableElements.length - 1] ?? null;
+   });
+   let originalFocusedElement = null;
++  let activation = 0;
+   const mutationObserverCallback = () => {
+     afterPaint(() => {
+       loadFocusTrap(access(defaultedProps.element));
+@@ -47,6 +48,7 @@ var createFocusTrap = (props) => {
+     (next, prev) => {
+       if (!next) return;
+       const { container, observeChanges } = next;
++      const currentActivation = ++activation;
+       originalFocusedElement = document.activeElement;
+       untrack(() => {
+         loadFocusTrap(container);
+@@ -67,7 +69,7 @@ var createFocusTrap = (props) => {
+           observer.disconnect();
+         }
+         setFocusableElements(null);
+-        restoreFocus(container);
++        restoreFocus(container, currentActivation);
+       };
+     }
+   );
+@@ -159,8 +161,9 @@ var createFocusTrap = (props) => {
+       event.preventDefault();
+     }
+   };
+-  const restoreFocus = (container) => {
++  const restoreFocus = (container, currentActivation) => {
+     afterPaint(() => {
++      if (currentActivation !== activation) return;
+       const restoreFocus2 = access(defaultedProps.restoreFocus);
+       if (!restoreFocus2) return;
+       const finalFocusElement = access(defaultedProps.finalFocusElement) ?? originalFocusedElement;
+diff --git a/dist/index.jsx b/dist/index.jsx
+index 22bb09d56eeba89f667f213a705a1cb1e7e809b5..69958e594c16016968b00c0b1072ef8e35c17273 100644
+--- a/dist/index.jsx
++++ b/dist/index.jsx
+@@ -27,6 +27,7 @@ var createFocusTrap = (props) => {
+     return _focusableElements[_focusableElements.length - 1] ?? null;
+   });
+   let originalFocusedElement = null;
++  let activation = 0;
+   const mutationObserverCallback = () => {
+     afterPaint(() => {
+       loadFocusTrap(access(defaultedProps.element));
+@@ -46,6 +47,7 @@ var createFocusTrap = (props) => {
+     (next, prev) => {
+       if (!next) return;
+       const { container, observeChanges } = next;
++      const currentActivation = ++activation;
+       originalFocusedElement = document.activeElement;
+       untrack(() => {
+         loadFocusTrap(container);
+@@ -66,7 +68,7 @@ var createFocusTrap = (props) => {
+           observer.disconnect();
+         }
+         setFocusableElements(null);
+-        restoreFocus(container);
++        restoreFocus(container, currentActivation);
+       };
+     }
+   );
+@@ -158,8 +160,9 @@ var createFocusTrap = (props) => {
+       event.preventDefault();
+     }
+   };
+-  const restoreFocus = (container) => {
++  const restoreFocus = (container, currentActivation) => {
+     afterPaint(() => {
++      if (currentActivation !== activation) return;
+       const restoreFocus2 = access(defaultedProps.restoreFocus);
+       if (!restoreFocus2) return;
+       const finalFocusElement = access(defaultedProps.finalFocusElement) ?? originalFocusedElement;

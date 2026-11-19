@@ -150,5 +150,8 @@
   ],
   "repository": {
     "url": "git+https://github.com/david1gp/solid-convex.git"
+  },
+  "patchedDependencies": {
+    "@corvu-next/focus-trap@0.1.4": "patches/@corvu-next%2Ffocus-trap@0.1.4.patch"
   }
 }

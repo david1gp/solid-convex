@@ -1,5 +1,5 @@
 import Popover from "@corvu-next/popover"
-import type { Accessor } from "solid-js"
+import { createSignal, type Accessor } from "solid-js"
 import { classesDisabledDirectly } from "#ui/classes/classesDisabledDirectly.js"
 import { type ButtonCvaProps, buttonCva2 } from "#ui/interactive/button/buttonCva.js"
 import { buttonIconCva } from "#ui/interactive/button/buttonIconCva.js"
@@ -29,9 +29,10 @@ export interface CorvuPopoverProps
 
 /** Popover anchored to a labeled trigger button. */
 export function CorvuPopover(p: CorvuPopoverProps) {
-  // const [a, buttonProps] = splitProps(p.buttonProps, ["onClick"])
+  const [trigger, setTrigger] = createSignal<HTMLElement>()
   return (
     <Popover
+      finalFocusEl={trigger()}
       floatingOptions={{
         offset: 8,
         flip: true,
@@ -41,6 +42,7 @@ export function CorvuPopover(p: CorvuPopoverProps) {
       onOpenChange={p.onOpenChange}
     >
       <Popover.Trigger
+        ref={setTrigger}
         class={buttonCva2(
           p.variant,
           classesButtonClickAnimation,

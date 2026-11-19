@@ -12,7 +12,9 @@ export function appShellStateCreate() {
 
   createEffect(
     () => location().pathname,
-    () => sidebarState.openMobile.set(false),
+    () => {
+      sidebarState.openMobile.set(false)
+    },
     { defer: true },
   )
 

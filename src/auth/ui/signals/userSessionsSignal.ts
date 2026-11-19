@@ -76,7 +76,7 @@ export function userSessionsSaveToLocalStorage(sessions: UserSession[]) {
   localStorage.setItem(userSessionsLocalStorageKey, serialized)
 }
 
-import { onCleanup, onSettled as onMount } from "solid-js"
+import { onCleanup, onSettled } from "solid-js"
 
 export function userSessionsSignalRegisterHandler(signal = userSessionsSignal) {
   function handleStorageEvent(event: StorageEvent) {
@@ -88,7 +88,7 @@ export function userSessionsSignalRegisterHandler(signal = userSessionsSignal) {
       signal.set(parsing.output)
     }
   }
-  onMount(() => {
+  onSettled(() => {
     if (typeof window === "undefined") return
     window.addEventListener("storage", handleStorageEvent)
   })

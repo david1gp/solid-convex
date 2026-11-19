@@ -1,4 +1,4 @@
-import { onCleanup, onSettled as onMount } from "solid-js"
+import { onSettled } from "solid-js"
 import { createSignalObject } from "#ui/utils/createSignalObject.ts"
 import { consentAcceptAll } from "./consent/consentAcceptAll.js"
 import type { ConsentCategory } from "./consent/consentCategory.js"
@@ -53,7 +53,7 @@ export function cookieBannerStateCreate(p: {
     p.onShowSettingsChange?.(v)
   }
 
-  onMount(() => {
+  onSettled(() => {
     consentModeInit()
 
     const stored = consentGetStored(config())
@@ -81,7 +81,7 @@ export function cookieBannerStateCreate(p: {
 
     const event = config().preferencesEvent
     window.addEventListener(event, openPreferences)
-    onCleanup(() => window.removeEventListener(event, openPreferences))
+    return () => window.removeEventListener(event, openPreferences)
   })
 
   const close = () => {

@@ -1,4 +1,4 @@
-import { onCleanup, onSettled as onMount } from "solid-js"
+import { onSettled } from "solid-js"
 import { isServer } from "@solidjs/web"
 import { createSignalObject } from "#ui/utils/createSignalObject.ts"
 
@@ -18,14 +18,14 @@ function appSidebarCollapsedStorageLoad(): boolean {
 /** Load the persisted rail state on mount and follow cross-tab updates. */
 export function appSidebarCollapsedInit() {
   if (isServer) return
-  onMount(() => {
+  onSettled(() => {
     appSidebarCollapsedSignal.set(appSidebarCollapsedStorageLoad())
     const onStorage = (event: StorageEvent) => {
       if (event.key !== null && event.key !== appSidebarCollapsedStorageKey) return
       appSidebarCollapsedSignal.set(appSidebarCollapsedStorageLoad())
     }
     window.addEventListener("storage", onStorage)
-    onCleanup(() => window.removeEventListener("storage", onStorage))
+    return () => window.removeEventListener("storage", onStorage)
   })
 }
 

@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "@tanstack/solid-router"
-import { createEffect, createMemo, onCleanup, onSettled as onMount } from "solid-js"
+import { createEffect, createMemo, onCleanup, onSettled } from "solid-js"
 import * as v from "valibot"
 import { api } from "#convex/_generated/api.js"
 import type { UserRole } from "#src/auth/model_field/userRole.ts"
@@ -284,7 +284,7 @@ export function userManagementPageStateCreate() {
     }
   }
 
-  onMount(() => {
+  onSettled(() => {
     if (isAdmin()) {
       void syncUsers()
     }

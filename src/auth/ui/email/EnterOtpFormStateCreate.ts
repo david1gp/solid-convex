@@ -1,4 +1,4 @@
-import { createEffect, onSettled as onMount } from "solid-js"
+import { createEffect, onSettled } from "solid-js"
 import * as a from "valibot"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { otpSchema } from "#src/auth/model_field/otpSchema.ts"
@@ -15,7 +15,7 @@ export function enterOtpFormStateCreate(props: () => EnterOtpFormProps) {
   const email = createSignalObject(props().initialEmail ?? "")
   let url: URL | null = null
 
-  onMount(() => {
+  onSettled(() => {
     if (props().initialEmail !== undefined) return
     url = createUrl()
     const emailParam = searchParamGet("email", url)

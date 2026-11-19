@@ -1,4 +1,4 @@
-import { createEffect, createMemo, onSettled as onMount } from "solid-js"
+import { createEffect, createMemo, onSettled } from "solid-js"
 import { api } from "#convex/_generated/api.js"
 import type { Id } from "#convex/_generated/dataModel.js"
 import type { AssignmentTargetKind } from "#src/assignment/model/assignmentTargetKindSchema.ts"
@@ -47,7 +47,7 @@ export function assignmentTargetSelectorStateCreate(props: AssignmentTargetSelec
   const notesContinueCursor = createSignalObject<string | null>(null)
 
   // URL prefill on mount
-  onMount(() => {
+  onSettled(() => {
     const existing = props.valueSignal.get()
     if (!existing && typeof window !== "undefined" && window.location.search) {
       const prefill = assignmentUrlPrefillParse(window.location.search)

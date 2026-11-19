@@ -1,5 +1,5 @@
 import { debounce } from "@solid-primitives/scheduled"
-import { onCleanup, onSettled as onMount } from "solid-js"
+import { onCleanup, onSettled } from "solid-js"
 import * as a from "valibot"
 import { createSignalObject } from "#ui/utils/createSignalObject.ts"
 
@@ -24,7 +24,7 @@ export function profileMeStepSignalCreate() {
     urlWrite.clear()
     if (idle !== undefined) window.cancelIdleCallback(idle)
   })
-  onMount(() => {
+  onSettled(() => {
     if (typeof window === "undefined") return
     const parsed = a.safeParse(a.picklist(["1", "2"]), new URL(window.location.href).searchParams.get("step"))
     if (parsed.success) step.set(Number(parsed.output))

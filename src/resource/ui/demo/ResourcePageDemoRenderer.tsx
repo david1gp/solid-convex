@@ -1,5 +1,4 @@
-import type { JSX } from "@solidjs/web"
-import { Show } from "solid-js"
+import { Match, Show, Switch } from "solid-js"
 import { pageDemoHref } from "#src/app/demos/pageDemoHref.ts"
 import { resourcePageDemoAddStateCreate } from "#src/resource/ui/demo/resourcePageDemoAddStateCreate.ts"
 import { resourcePageDemoEditStateCreate } from "#src/resource/ui/demo/resourcePageDemoEditStateCreate.ts"
@@ -16,14 +15,25 @@ import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.tsx"
 /** Opt-in map: return undefined for any other family so the guarded placeholder remains. */
 export function ResourcePageDemoRenderer(p: { route: string }) {
   const state = resourcePageDemoRendererStateCreate()
-  const pages: Record<string, () => JSX.Element> = {
-    "/resources": () => <ResourceListDemo />,
-    "/resources/add": () => <ResourceAddDemo />,
-    "/resources/:resourceId": () => <ResourceViewDemo resourceId={state.resourceId()} />,
-    "/resources/:resourceId/edit": () => <ResourceEditDemo resourceId={state.resourceId()} />,
-    "/resources/:resourceId/remove": () => <ResourceRemoveDemo resourceId={state.resourceId()} />,
-  }
-  return pages[p.route]?.()
+  return (
+    <Switch>
+      <Match when={p.route === "/resources"}>
+        <ResourceListDemo />
+      </Match>
+      <Match when={p.route === "/resources/add"}>
+        <ResourceAddDemo />
+      </Match>
+      <Match when={p.route === "/resources/:resourceId"}>
+        <ResourceViewDemo resourceId={state.resourceId()} />
+      </Match>
+      <Match when={p.route === "/resources/:resourceId/edit"}>
+        <ResourceEditDemo resourceId={state.resourceId()} />
+      </Match>
+      <Match when={p.route === "/resources/:resourceId/remove"}>
+        <ResourceRemoveDemo resourceId={state.resourceId()} />
+      </Match>
+    </Switch>
+  )
 }
 
 function ResourceEditDemo(p: { resourceId: string }) {

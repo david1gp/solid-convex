@@ -50,10 +50,14 @@ export function searchFilterStateCreate<T extends Record<string, string>>(
 } {
   const searchKey = options.searchKey ?? "search"
   const wait = options.debounceMs ?? defaultDebounceMs
-  const search = createSignalObject("")
-  const filters = createSignalObject(defaultFilters)
-  const [debouncedSearch, setDebouncedSearch] = createSignal("")
-  const [debouncedFilters, setDebouncedFilters] = createSignal<T>(() => defaultFilters)
+  const initial =
+    typeof window === "undefined"
+      ? { search: "", filters: defaultFilters }
+      : valuesFromUrl(new URL(window.location.href))
+  const search = createSignalObject(initial.search)
+  const filters = createSignalObject(initial.filters)
+  const [debouncedSearch, setDebouncedSearch] = createSignal(initial.search)
+  const [debouncedFilters, setDebouncedFilters] = createSignal<T>(() => initial.filters)
   let isApplyingUrl = false
 
   const flush = searchFilterDebounceCreate(() => {
@@ -75,7 +79,6 @@ export function searchFilterStateCreate<T extends Record<string, string>>(
   }, wait)
 
   if (typeof window !== "undefined") {
-    applyUrl(new URL(window.location.href))
     window.addEventListener("popstate", handlePopState)
   }
 
@@ -89,14 +92,19 @@ export function searchFilterStateCreate<T extends Record<string, string>>(
     applyUrl(new URL(window.location.href))
   }
 
-  function applyUrl(nextUrl: URL) {
-    isApplyingUrl = true
+  function valuesFromUrl(nextUrl: URL) {
     const nextSearch = searchValueFromUrl(nextUrl.searchParams.get(searchKey))
     const nextFilters = { ...defaultFilters }
     for (const key of Object.keys(defaultFilters)) {
       const fallback = defaultFilters[key as keyof T]
       nextFilters[key as keyof T] = filterValueFromUrl(nextUrl.searchParams.get(key), fallback as string) as T[keyof T]
     }
+    return { search: nextSearch, filters: nextFilters }
+  }
+
+  function applyUrl(nextUrl: URL) {
+    isApplyingUrl = true
+    const { search: nextSearch, filters: nextFilters } = valuesFromUrl(nextUrl)
     search.set(nextSearch)
     filters.set(nextFilters)
     setDebouncedSearch(nextSearch)

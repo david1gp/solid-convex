@@ -1,6 +1,5 @@
 import { mdiChevronDown } from "@adaptive-ds/mdi/mdiChevronDown.js"
 import { createUniqueId, For, Show, splitProps } from "solid-js"
-import type { JSX } from "solid-js"
 import type { AssignmentTargetSelectorProps } from "#src/assignment/ui/AssignmentTargetSelectorProps.ts"
 import { assignmentTargetLabelFormat } from "#src/assignment/ui/assignmentTargetLabelFormat.ts"
 import { assignmentTargetSelectorStateCreate } from "#src/assignment/ui/assignmentTargetSelectorStateCreate.ts"
@@ -10,6 +9,7 @@ import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
+import { type JSX } from "@solidjs/web";
 
 interface AssignmentSelectorComponentProps extends AssignmentTargetSelectorProps, MayHaveClass {}
 

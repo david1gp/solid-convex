@@ -99,7 +99,7 @@ export function resourceNameSaveToLocalStorage(record: Record<string, string>) {
   localStorage.setItem(resourceNameLocalStorageKey, serialized)
 }
 
-import { onCleanup, onMount } from "solid-js"
+import { onCleanup, onSettled as onMount } from "solid-js"
 
 export function resourceNameRecordSignalRegisterHandler(signal = resourceNameRecordSignal) {
   function handleStorageEvent(event: StorageEvent) {

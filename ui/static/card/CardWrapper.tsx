@@ -1,6 +1,7 @@
-import { type ComponentProps, splitProps } from "solid-js"
+import { splitProps } from "solid-js"
 import { classesCardWrapperP4 } from "#ui/static/card/classesCardWrapper.js"
 import { cn } from "cn"
+import { type ComponentProps } from "@solidjs/web";
 
 export interface CardWrapperProps extends ComponentProps<"article"> {
   id?: string

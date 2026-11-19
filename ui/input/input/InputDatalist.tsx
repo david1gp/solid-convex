@@ -1,4 +1,4 @@
-import { type ComponentProps, splitProps } from "solid-js"
+import { splitProps } from "solid-js"
 import { Input } from "#ui/input/input/Input.jsx"
 import type { HasId } from "#ui/utils/HasId.js"
 import type { MayHaveClassAndChildren } from "#ui/utils/MayHaveClassAndChildren.js"
@@ -24,6 +24,7 @@ export function InputDatalist(p: ResourceListSearchProps) {
 }
 
 import { Key } from "@solid-primitives/keyed"
+import { type ComponentProps } from "@solidjs/web";
 
 interface DataListProps extends HasId, MayHaveClassAndChildren {
   getOptions: () => string[]

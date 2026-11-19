@@ -1,5 +1,5 @@
-import { onCleanup, onMount } from "solid-js"
-import { isServer } from "solid-js/web"
+import { onCleanup, onSettled as onMount } from "solid-js"
+import { isServer } from "@solidjs/web"
 import { createSignalObject } from "#ui/utils/createSignalObject.ts"
 
 export const appSidebarCollapsedStorageKey = "solid-convex:sidebar-collapsed"

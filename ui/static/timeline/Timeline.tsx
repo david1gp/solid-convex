@@ -1,6 +1,7 @@
-import type { ComponentProps, ParentComponent } from "solid-js"
-import { type Component, type JSXElement, mergeProps, Show, splitProps } from "solid-js"
+import type { ParentComponent } from "solid-js"
+import { type Component, type JSXElement, merge as mergeProps, Show, splitProps } from "solid-js"
 import { cn } from "cn"
+import { type ComponentProps } from "@solidjs/web";
 
 export interface TimelinePropsItem
   extends Omit<TimelineItemProps, "isActive" | "isActiveBullet" | "bulletSize" | "lineSize"> {

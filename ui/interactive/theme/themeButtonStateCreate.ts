@@ -1,4 +1,4 @@
-import { createSignal, onCleanup, onMount } from "solid-js"
+import { createSignal, onCleanup, onSettled as onMount } from "solid-js"
 import type { ThemeButtonText } from "#ui/interactive/theme/ThemeButtonText.js"
 import { themeButtonTextDefault } from "#ui/interactive/theme/ThemeButtonText.js"
 import { themeInit, themeRotate, themeSignal } from "#ui/interactive/theme/themeSignal.js"

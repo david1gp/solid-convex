@@ -1,4 +1,4 @@
-import { createStore, type SetStoreFunction } from "solid-js/store"
+import { createStore, type SetStoreFunction } from "solid-js"
 
 export function createStoreObject(
   store?: object | undefined,

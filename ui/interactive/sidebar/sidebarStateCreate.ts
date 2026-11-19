@@ -1,5 +1,5 @@
 import { debounce } from "@solid-primitives/scheduled"
-import { onMount } from "solid-js"
+import { onSettled as onMount } from "solid-js"
 import type { SidebarState } from "#ui/interactive/sidebar/SidebarState.jsx"
 
 export function sidebarStateCreate(p: {

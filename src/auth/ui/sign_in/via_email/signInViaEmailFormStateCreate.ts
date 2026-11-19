@@ -1,4 +1,4 @@
-import { onMount } from "solid-js"
+import { onSettled as onMount } from "solid-js"
 import { createSignInViaEmailStateManagement } from "#src/auth/ui/sign_in/via_email/createSignInViaEmailStateManagement.ts"
 import { addKeyboardListenerAlt } from "#src/auth/ui/sign_up/form/addKeyboardListenerAlt.ts"
 import { isDevEnv } from "#src/utils/env/isDevEnv.ts"

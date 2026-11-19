@@ -1,5 +1,6 @@
-import { type ComponentProps, splitProps } from "solid-js"
+import { splitProps } from "solid-js"
 import { cn } from "cn"
+import { type ComponentProps } from "@solidjs/web";
 
 export interface BlackBulletPointProps extends ComponentProps<"span"> {}
 

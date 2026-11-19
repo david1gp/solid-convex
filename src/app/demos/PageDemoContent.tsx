@@ -1,5 +1,5 @@
 import { For, Show } from "solid-js"
-import { Dynamic } from "solid-js/web"
+import { Dynamic } from "@solidjs/web"
 import { AuthPageDemoRenderer } from "#src/app/demos/AuthPageDemoRenderer.tsx"
 import { appPageDemoRendererMap } from "#src/app/demos/appPageDemoRendererMap.tsx"
 import { pageDemoBoundaryStateCreate } from "#src/app/demos/pageDemoBoundaryStateCreate.ts"

@@ -53,7 +53,7 @@ export function languageSaveToLocalStorage(language: Language) {
   localStorage.setItem(languageLocalStorageKey, language)
 }
 
-import { onCleanup, onMount } from "solid-js"
+import { onCleanup, onSettled as onMount } from "solid-js"
 
 export function languageSignalRegisterHandler(signal = languageSignal) {
   function handleStorageEvent(event: StorageEvent) {

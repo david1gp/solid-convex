@@ -1,7 +1,8 @@
-import type { Component, ComponentProps } from "solid-js"
+import type { Component } from "solid-js"
 import { splitProps } from "solid-js"
 import { classesLabel } from "#ui/input/label/classesLabel.js"
 import { cn } from "cn"
+import { type ComponentProps } from "@solidjs/web";
 
 /** Styled native label element for form fields. */
 export const Label: Component<ComponentProps<"label">> = (p) => {

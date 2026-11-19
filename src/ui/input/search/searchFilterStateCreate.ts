@@ -1,6 +1,6 @@
 import { debounce, type Scheduled } from "@solid-primitives/scheduled"
 import { type Accessor, createSignal, onCleanup } from "solid-js"
-import { isServer } from "solid-js/web"
+import { isServer } from "@solidjs/web"
 import * as v from "valibot"
 import { debounceMs as defaultDebounceMs } from "#src/utils/ui/debounceMs.ts"
 import { createSignalObject, type SignalObject } from "#ui/utils/createSignalObject.ts"

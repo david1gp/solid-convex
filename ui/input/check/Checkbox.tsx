@@ -1,12 +1,13 @@
 import { mdiCheckboxBlankOutline } from "@adaptive-ds/mdi/mdiCheckboxBlankOutline.js"
 import { mdiCheckboxMarked } from "@adaptive-ds/mdi/mdiCheckboxMarked.js"
-import { type ComponentProps, splitProps } from "solid-js"
+import { splitProps } from "solid-js"
 import { classesDisabledDirectly } from "#ui/classes/classesDisabledDirectly.js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { cn } from "cn"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
 import type { MayHaveDisabled } from "#ui/utils/MayHaveDisabled.js"
+import { type ComponentProps } from "@solidjs/web";
 
 interface CheckboxProps extends MayHaveClass, MayHaveChildren, MayHaveDisabled, ComponentProps<"checkbox"> {
   id?: string

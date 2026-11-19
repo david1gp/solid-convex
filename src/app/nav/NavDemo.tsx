@@ -1,4 +1,3 @@
-import type { ComponentProps } from "solid-js"
 import { Show, splitProps } from "solid-js"
 import { NavCrumbs } from "#src/app/nav/NavCrumbs.tsx"
 import type { DemoNavDataProps } from "#ui/demo_pages/DemoNavDataProps.ts"
@@ -8,6 +7,7 @@ import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { CorvuPopover } from "#ui/interactive/popover/CorvuPopover.jsx"
 import { objectEntries } from "#utils/obj/objectEntries.js"
 import { objectKeys } from "#utils/obj/objectKeys.js"
+import { type ComponentProps } from "@solidjs/web";
 
 export interface DemoNavProps extends DemoNavDataProps, ComponentProps<"nav"> {}
 

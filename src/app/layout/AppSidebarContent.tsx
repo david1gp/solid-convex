@@ -2,7 +2,7 @@ import { mdiAccountOutline } from "@adaptive-ds/mdi/mdiAccountOutline.js"
 import { mdiCogOutline } from "@adaptive-ds/mdi/mdiCogOutline.js"
 import { mdiLogout } from "@adaptive-ds/mdi/mdiLogout.js"
 import { Link } from "@tanstack/solid-router"
-import { For, type JSX, Show } from "solid-js"
+import { For, Show } from "solid-js"
 import { urlOverview } from "#src/app/pages/urlOverview.ts"
 import { appNameClient } from "#src/app/text/appName.ts"
 import { urlUserProfileMe, urlUserProfileMeEdit } from "#src/auth/url/pageRouteAuth.ts"
@@ -15,6 +15,7 @@ import { Icon } from "#ui/static/icon/Icon.jsx"
 import { LogoImageText } from "#ui/static/logo/LogoImageText.jsx"
 import { AppThemeSegmentedControl } from "./AppThemeSegmentedControl.tsx"
 import type { AppShellState } from "./appShellStateCreate.ts"
+import { type JSX } from "@solidjs/web";
 
 function initialsOf(name: string): string {
   const initials = name

@@ -1,4 +1,3 @@
-import type { JSX } from "solid-js"
 import { For, Match, Switch } from "solid-js"
 import { Link } from "@tanstack/solid-router"
 import { appIcons } from "#src/app/icon/appIcons.ts"
@@ -12,6 +11,7 @@ import { LoadingSection } from "#src/ui/pages/LoadingSection.tsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { Badge } from "#ui/static/badge/Badge.jsx"
+import { type JSX } from "@solidjs/web";
 
 export function OrgListView(p: {
   orgs?: OrgModel[]

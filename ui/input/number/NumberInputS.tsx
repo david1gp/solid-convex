@@ -2,7 +2,7 @@ import { mdiMinus } from "@adaptive-ds/mdi/mdiMinus.js"
 import { mdiMinusBox } from "@adaptive-ds/mdi/mdiMinusBox.js"
 import { mdiPlus } from "@adaptive-ds/mdi/mdiPlus.js"
 import { mdiPlusBox } from "@adaptive-ds/mdi/mdiPlusBox.js"
-import { type ComponentProps, type JSX, splitProps } from "solid-js"
+import { splitProps } from "solid-js"
 import { Input } from "#ui/input/input/Input.jsx"
 import type { NumberInputText } from "#ui/input/number/NumberInputTexts.jsx"
 import { numberInputTextDefault } from "#ui/input/number/NumberInputTexts.jsx"
@@ -11,6 +11,7 @@ import { type ButtonVariant, buttonVariant } from "#ui/interactive/button/button
 import { cn } from "cn"
 import type { SignalObject } from "#ui/utils/createSignalObject.js"
 import { safeParseInt } from "#utils/int/safeParseInt.js"
+import { type ComponentProps, type JSX } from "@solidjs/web";
 
 export interface NumberInputSProps extends ComponentProps<"input"> {
   valueSignal: SignalObject<number>

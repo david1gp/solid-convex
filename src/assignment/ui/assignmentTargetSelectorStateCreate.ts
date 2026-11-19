@@ -1,4 +1,4 @@
-import { createEffect, createMemo, onMount } from "solid-js"
+import { createEffect, createMemo, onSettled as onMount } from "solid-js"
 import { api } from "#convex/_generated/api.js"
 import type { Id } from "#convex/_generated/dataModel.js"
 import type { AssignmentTargetKind } from "#src/assignment/model/assignmentTargetKindSchema.ts"

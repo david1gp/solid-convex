@@ -1,9 +1,10 @@
-import { type ComponentProps, splitProps } from "solid-js"
+import { splitProps } from "solid-js"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import type { SignalObject } from "#ui/utils/createSignalObject.js"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
 import { isDisabled, type MayHaveDisabledAccessor } from "#ui/utils/MayHaveDisabledAccessor.js"
+import { type ComponentProps } from "@solidjs/web";
 
 /**
  * https://github.com/radix-ui/primitives/blob/main/packages/react/toggle/src/Toggle.tsx

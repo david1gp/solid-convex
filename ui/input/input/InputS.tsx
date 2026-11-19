@@ -1,6 +1,7 @@
-import { type ComponentProps, type JSX, splitProps } from "solid-js"
+import { splitProps } from "solid-js"
 import { Input } from "#ui/input/input/Input.jsx"
 import type { HasValueSignalString } from "#ui/utils/HasValueSignalString.js"
+import { type ComponentProps, type JSX } from "@solidjs/web";
 
 export interface InputSProps extends HasValueSignalString, ComponentProps<"input"> {}
 

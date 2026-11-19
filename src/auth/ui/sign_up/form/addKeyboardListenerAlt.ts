@@ -1,4 +1,4 @@
-import { onCleanup, onMount } from "solid-js"
+import { onCleanup, onSettled as onMount } from "solid-js"
 
 export function addKeyboardListenerAlt(key: string, fn: () => void) {
   onMount(() => {

@@ -1,5 +1,5 @@
 import { debounce } from "@solid-primitives/scheduled"
-import { onCleanup, onMount } from "solid-js"
+import { onCleanup, onSettled as onMount } from "solid-js"
 import * as a from "valibot"
 import { createSignalObject } from "#ui/utils/createSignalObject.ts"
 

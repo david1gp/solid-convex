@@ -1,4 +1,4 @@
-import { onCleanup, onMount } from "solid-js"
+import { onCleanup, onSettled as onMount } from "solid-js"
 import { createSignalObject } from "#ui/utils/createSignalObject.ts"
 import { consentAcceptAll } from "./consent/consentAcceptAll.js"
 import type { ConsentCategory } from "./consent/consentCategory.js"

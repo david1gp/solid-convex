@@ -1,6 +1,7 @@
-import type { Component, ComponentProps } from "solid-js"
+import type { Component } from "solid-js"
 import { splitProps } from "solid-js"
 import { cn } from "cn"
+import { type ComponentProps } from "@solidjs/web";
 
 export interface CodeBlockProps extends ComponentProps<"pre"> {
   data: string | object | unknown[]

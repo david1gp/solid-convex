@@ -1,5 +1,5 @@
 import { mdiArrowRight } from "@adaptive-ds/mdi/mdiArrowRight.js"
-import { type ComponentProps, splitProps } from "solid-js"
+import { splitProps } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { urlPageSignIn } from "#src/auth/url/pageRouteAuth.ts"
 import { urlSignInRedirectUrl } from "#src/auth/url/urlSignInRedirectUrl.ts"
@@ -7,6 +7,7 @@ import { createUrl } from "#src/utils/router/createUrl.ts"
 import { searchParamGet } from "#src/utils/router/searchParamGet.ts"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
+import { type ComponentProps } from "@solidjs/web";
 
 export interface SignInButtonLinkProps extends Omit<ComponentProps<typeof LinkButtonInternal>, "to" | "href"> {
   text?: string

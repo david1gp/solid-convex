@@ -1,6 +1,7 @@
-import { type Component, type ComponentProps, splitProps } from "solid-js"
+import { type Component, splitProps } from "solid-js"
 import { classesLabel } from "#ui/input/label/classesLabel.js"
 import { cn } from "cn"
+import { type ComponentProps } from "@solidjs/web";
 
 /** Label-styled span for non-associated pseudo labels. */
 export const LabelPseudo: Component<ComponentProps<"span">> = (p) => {

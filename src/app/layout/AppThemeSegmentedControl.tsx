@@ -1,4 +1,4 @@
-import { For, onMount } from "solid-js"
+import { For, onSettled as onMount } from "solid-js"
 import { ttt, ttt1 } from "#ui/i18n/ttt.ts"
 import { Button } from "#ui/interactive/button/Button.jsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"

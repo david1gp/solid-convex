@@ -1,6 +1,7 @@
-import type { Component, ComponentProps } from "solid-js"
+import type { Component } from "solid-js"
 import { splitProps } from "solid-js"
 import { cn } from "cn"
+import { type ComponentProps } from "@solidjs/web";
 
 const Table: Component<ComponentProps<"table">> = (p) => {
   const [s, rest] = splitProps(p, ["class"])

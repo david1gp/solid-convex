@@ -1,7 +1,7 @@
-import type { JSX } from "solid-js"
 import { splitProps } from "solid-js"
 import { NavCrumbs } from "#src/app/nav/NavCrumbs.tsx"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
+import { type JSX } from "@solidjs/web";
 
 export interface NavUserProfileProps extends MayHaveClass {
   childrenLeft: JSX.Element

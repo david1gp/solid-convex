@@ -1,6 +1,7 @@
-import type { Component, ComponentProps } from "solid-js"
+import type { Component } from "solid-js"
 import { splitProps } from "solid-js"
 import { type BadgeVariant, badgeCva1 } from "#ui/static/badge/badgeCva.jsx"
+import { type ComponentProps } from "@solidjs/web";
 
 export interface BadgeProps extends ComponentProps<"div"> {
   variant?: BadgeVariant

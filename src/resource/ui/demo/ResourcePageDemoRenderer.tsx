@@ -1,3 +1,4 @@
+import type { JSX } from "@solidjs/web"
 import { Show } from "solid-js"
 import { pageDemoHref } from "#src/app/demos/pageDemoHref.ts"
 import { resourcePageDemoAddStateCreate } from "#src/resource/ui/demo/resourcePageDemoAddStateCreate.ts"
@@ -15,7 +16,7 @@ import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.tsx"
 /** Opt-in map: return undefined for any other family so the guarded placeholder remains. */
 export function ResourcePageDemoRenderer(p: { route: string }) {
   const state = resourcePageDemoRendererStateCreate()
-  const pages: Record<string, () => import("solid-js").JSX.Element> = {
+  const pages: Record<string, () => JSX.Element> = {
     "/resources": () => <ResourceListDemo />,
     "/resources/add": () => <ResourceAddDemo />,
     "/resources/:resourceId": () => <ResourceViewDemo resourceId={state.resourceId()} />,

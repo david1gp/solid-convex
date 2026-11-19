@@ -53,7 +53,7 @@ export function searchFilterStateCreate<T extends Record<string, string>>(
   const search = createSignalObject("")
   const filters = createSignalObject(defaultFilters)
   const [debouncedSearch, setDebouncedSearch] = createSignal("")
-  const [debouncedFilters, setDebouncedFilters] = createSignal(defaultFilters)
+  const [debouncedFilters, setDebouncedFilters] = createSignal<T>(() => defaultFilters)
   let isApplyingUrl = false
 
   const flush = searchFilterDebounceCreate(() => {

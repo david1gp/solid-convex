@@ -18,16 +18,18 @@ export function resourceLoaderStateCreate(p: { resourceId: () => string }) {
     `resourceGetQuery/${p.resourceId()}`,
     a.union([resourceSchema, a.null()]),
   )
-  createEffect(() => {
-    const got = getData()
-    if (!got) return
-    if (!got.success) return
-    const data = got.data
-    if (!data) return
-    const name = data.name
-    if (!name) return
-    resourceNameSet(p.resourceId(), name)
-  })
+  createEffect(
+    () => ({ got: getData(), resourceId: p.resourceId() }),
+    ({ got, resourceId }) => {
+      if (!got) return
+      if (!got.success) return
+      const data = got.data
+      if (!data) return
+      const name = data.name
+      if (!name) return
+      resourceNameSet(resourceId, name)
+    },
+  )
 
   function loadedData(): ResourceModel | null {
     const data = getData()

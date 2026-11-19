@@ -121,11 +121,13 @@ export function userManagementRolesDialogStateCreate(inputs: {
     })
   }
 
-  createEffect(() => {
-    const members = inputs.members?.()
-    if (!members || members.length === 0) return
-    restoreFromUrl()
-  })
+  createEffect(
+    () => inputs.members?.(),
+    (members) => {
+      if (!members || members.length === 0) return
+      restoreFromUrl()
+    },
+  )
 
   onCleanup(() => {
     if (idleHandle !== undefined && typeof window !== "undefined") {

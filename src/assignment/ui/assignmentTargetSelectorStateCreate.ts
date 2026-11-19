@@ -98,65 +98,73 @@ export function assignmentTargetSelectorStateCreate(props: AssignmentTargetSelec
   }))
 
   // Accumulate queries results
-  createEffect(() => {
-    const q = orgsQuery()
-    if (!q || !q.success) return
-    const current = orgsList.get()
-    const existingIds = new Set(current.map((item) => item._id))
-    const fresh = q.data.page.filter((item) => !existingIds.has(item._id))
-    if (orgCursor.get() === null) {
-      orgsList.set(q.data.page)
-    } else if (fresh.length > 0) {
-      orgsList.set([...current, ...fresh])
-    }
-    orgsDone.set(q.data.isDone)
-    orgsContinueCursor.set(q.data.continueCursor)
-  })
+  createEffect(
+    () => ({ q: orgsQuery(), cursor: orgCursor.get() }),
+    ({ q, cursor }) => {
+      if (!q || !q.success) return
+      const current = orgsList.get()
+      const existingIds = new Set(current.map((item) => item._id))
+      const fresh = q.data.page.filter((item) => !existingIds.has(item._id))
+      if (cursor === null) {
+        orgsList.set(q.data.page)
+      } else if (fresh.length > 0) {
+        orgsList.set([...current, ...fresh])
+      }
+      orgsDone.set(q.data.isDone)
+      orgsContinueCursor.set(q.data.continueCursor)
+    },
+  )
 
-  createEffect(() => {
-    const q = teamsQuery()
-    if (!q || !q.success) return
-    const current = teamsList.get()
-    const existingIds = new Set(current.map((item) => item.teamId))
-    const fresh = q.data.page.filter((item) => !existingIds.has(item.teamId))
-    if (teamCursor.get() === null) {
-      teamsList.set(q.data.page)
-    } else if (fresh.length > 0) {
-      teamsList.set([...current, ...fresh])
-    }
-    teamsDone.set(q.data.isDone)
-    teamsContinueCursor.set(q.data.continueCursor)
-  })
+  createEffect(
+    () => ({ q: teamsQuery(), cursor: teamCursor.get() }),
+    ({ q, cursor }) => {
+      if (!q || !q.success) return
+      const current = teamsList.get()
+      const existingIds = new Set(current.map((item) => item.teamId))
+      const fresh = q.data.page.filter((item) => !existingIds.has(item.teamId))
+      if (cursor === null) {
+        teamsList.set(q.data.page)
+      } else if (fresh.length > 0) {
+        teamsList.set([...current, ...fresh])
+      }
+      teamsDone.set(q.data.isDone)
+      teamsContinueCursor.set(q.data.continueCursor)
+    },
+  )
 
-  createEffect(() => {
-    const q = projectsQuery()
-    if (!q || !q.success) return
-    const current = projectsList.get()
-    const existingIds = new Set(current.map((item) => item.projectId))
-    const fresh = q.data.page.filter((item) => !existingIds.has(item.projectId))
-    if (projectCursor.get() === null) {
-      projectsList.set(q.data.page)
-    } else if (fresh.length > 0) {
-      projectsList.set([...current, ...fresh])
-    }
-    projectsDone.set(q.data.isDone)
-    projectsContinueCursor.set(q.data.continueCursor)
-  })
+  createEffect(
+    () => ({ q: projectsQuery(), cursor: projectCursor.get() }),
+    ({ q, cursor }) => {
+      if (!q || !q.success) return
+      const current = projectsList.get()
+      const existingIds = new Set(current.map((item) => item.projectId))
+      const fresh = q.data.page.filter((item) => !existingIds.has(item.projectId))
+      if (cursor === null) {
+        projectsList.set(q.data.page)
+      } else if (fresh.length > 0) {
+        projectsList.set([...current, ...fresh])
+      }
+      projectsDone.set(q.data.isDone)
+      projectsContinueCursor.set(q.data.continueCursor)
+    },
+  )
 
-  createEffect(() => {
-    const q = notesQuery()
-    if (!q || !q.success) return
-    const current = notesList.get()
-    const existingIds = new Set(current.map((item) => item.noteId))
-    const fresh = q.data.page.filter((item) => !existingIds.has(item.noteId))
-    if (noteCursor.get() === null) {
-      notesList.set(q.data.page)
-    } else if (fresh.length > 0) {
-      notesList.set([...current, ...fresh])
-    }
-    notesDone.set(q.data.isDone)
-    notesContinueCursor.set(q.data.continueCursor)
-  })
+  createEffect(
+    () => ({ q: notesQuery(), cursor: noteCursor.get() }),
+    ({ q, cursor }) => {
+      if (!q || !q.success) return
+      const current = notesList.get()
+      const existingIds = new Set(current.map((item) => item.noteId))
+      const fresh = q.data.page.filter((item) => !existingIds.has(item.noteId))
+      if (cursor === null) {
+        notesList.set(q.data.page)
+      } else if (fresh.length > 0) {
+        notesList.set([...current, ...fresh])
+      }
+      notesDone.set(q.data.isDone)
+      notesContinueCursor.set(q.data.continueCursor)
+    },
+  )
 
   function emitCanonicalTarget(kind: SelectorKindChoice) {
     if (kind === "unassigned") {

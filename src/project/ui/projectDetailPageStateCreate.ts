@@ -79,12 +79,13 @@ export function projectDetailPageStateCreate() {
       : ""
   }
   const writer = projectStorageWriterCreate()
-  createEffect(() => {
-    const k = key()
-    if (!k) return
-    const value = result()
-    if (value?.success) writer.save(k, value.data)
-  })
+  createEffect(
+    () => ({ k: key(), value: result() }),
+    ({ k, value }) => {
+      if (!k) return
+      if (value?.success) writer.save(k, value.data)
+    },
+  )
 
   const project = () => {
     if (paramError()) return undefined
@@ -168,13 +169,14 @@ export function projectDetailPageStateCreate() {
     })
   }
 
-  createEffect(() => {
-    const options = tabOptions()
-    const current = selectedTab.get()
-    if (!options.includes(current as "details" | "notes")) {
-      selectedTab.set("details")
-    }
-  })
+  createEffect(
+    () => ({ options: tabOptions(), current: selectedTab.get() }),
+    ({ options, current }) => {
+      if (!options.includes(current as "details" | "notes")) {
+        selectedTab.set("details")
+      }
+    },
+  )
 
   let idleHandle: number | ReturnType<typeof setTimeout> | undefined
 
@@ -212,10 +214,12 @@ export function projectDetailPageStateCreate() {
     })
   }
 
-  createEffect(() => {
-    const tab = selectedTab.get()
-    syncUrlSearchParam(tab)
-  })
+  createEffect(
+    () => selectedTab.get(),
+    (tab) => {
+      syncUrlSearchParam(tab)
+    },
+  )
 
   onCleanup(() => {
     if (idleHandle !== undefined && typeof window !== "undefined") {

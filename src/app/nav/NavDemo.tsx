@@ -7,9 +7,9 @@ import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { CorvuPopover } from "#ui/interactive/popover/CorvuPopover.jsx"
 import { objectEntries } from "#utils/obj/objectEntries.js"
 import { objectKeys } from "#utils/obj/objectKeys.js"
-import { type ComponentProps } from "@solidjs/web"
+import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 
-export interface DemoNavProps extends DemoNavDataProps, ComponentProps<"nav"> {}
+export interface DemoNavProps extends DemoNavDataProps, MayHaveClass {}
 
 export function NavDemo(p: DemoNavProps) {
   return (
@@ -56,9 +56,7 @@ function ChildrenLeftComp(s: DemoNavDataProps) {
   )
 }
 
-function ComponentPopover(
-  s: Pick<DemoNavProps, "class" | "children" | "category" | "compName" | "demoList" | "demoPrefix">,
-) {
+function ComponentPopover(s: Pick<DemoNavProps, "class" | "category" | "compName" | "demoList" | "demoPrefix">) {
   if (!s.category || !s.compName) return null
   const links = objectEntries(s.demoList)
     .filter(([category]) => category === s.category)

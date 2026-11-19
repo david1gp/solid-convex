@@ -43,36 +43,40 @@ export const allgroupsSsoPageStateCreate = () => {
   }
 
   // If already authenticated, proceed to the safe destination immediately
-  createEffect(() => {
-    const session = userSessionSignal.get()
-    if (session !== null && userSessionIsStillValid(session)) {
-      // Authentication succeeded; local attempt cleanup is best effort and must not block navigation.
-      allgroupsSsoAttemptsReset()
-      const target = returnTarget()
-      void navigate({ to: target })
-    }
-  })
+  createEffect(
+    () => userSessionSignal.get(),
+    (session) => {
+      if (session !== null && userSessionIsStillValid(session)) {
+        // Authentication succeeded; local attempt cleanup is best effort and must not block navigation.
+        allgroupsSsoAttemptsReset()
+        const target = returnTarget()
+        void navigate({ to: target })
+      }
+    },
+  )
 
   let autoSignInInitiated = false
-  createEffect(() => {
-    const session = userSessionSignal.get()
-    if (autoSignInInitiated) return
-    if (session !== null && userSessionIsStillValid(session)) return
-    if (!autoSignIn.get()) return
+  createEffect(
+    () => ({ session: userSessionSignal.get(), enabled: autoSignIn.get() }),
+    ({ session, enabled }) => {
+      if (autoSignInInitiated) return
+      if (session !== null && userSessionIsStillValid(session)) return
+      if (!enabled) return
 
-    const record = allgroupsSsoAttemptRecord()
-    if (!record.success) {
-      errorMessage.set(record.errorMessage)
-      return
-    }
-    if (!record.data.allowed) {
-      errorMessage.set("Automatic sign-in was paused after multiple attempts. Please sign in manually.")
-      return
-    }
+      const record = allgroupsSsoAttemptRecord()
+      if (!record.success) {
+        errorMessage.set(record.errorMessage)
+        return
+      }
+      if (!record.data.allowed) {
+        errorMessage.set("Automatic sign-in was paused after multiple attempts. Please sign in manually.")
+        return
+      }
 
-    autoSignInInitiated = true
-    login()
-  })
+      autoSignInInitiated = true
+      login()
+    },
+  )
 
   const autoSignInToggle = (enabled: boolean) => {
     const preferenceWrite = allgroupsSsoPreferenceWrite(enabled)

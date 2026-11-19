@@ -70,14 +70,15 @@ export function notePageStateCreate() {
 
   const writer = noteStorageWriterCreate()
 
-  createEffect(() => {
-    if (!selectedNoteId()) return
-    const q = noteDetailQuery()
-    const key = cacheKey()
-    if (q?.success && key) {
-      writer.save(key, q.data)
-    }
-  })
+  createEffect(
+    () => ({ id: selectedNoteId(), q: noteDetailQuery(), key: cacheKey() }),
+    ({ id, q, key }) => {
+      if (!id) return
+      if (q?.success && key) {
+        writer.save(key, q.data)
+      }
+    },
+  )
 
   const currentNote = () => {
     if (!selectedNoteId()) return undefined

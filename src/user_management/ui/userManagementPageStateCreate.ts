@@ -172,29 +172,29 @@ export function userManagementPageStateCreate() {
 
   let lastSyncedUserId: string | null = null
 
-  createEffect(() => {
-    const currentId = selectedUserId()
-    const user = selectedUser()
+  createEffect(
+    () => ({ currentId: selectedUserId(), user: selectedUser() }),
+    ({ currentId, user }) => {
+      if (!currentId) {
+        lastSyncedUserId = null
+        rolesSignal.set([])
+        teamIdsSignal.set([])
+        saveStatusSignal.set("")
+        saveErrorSignal.set("")
+        partialFailureSignal.set(null)
+        return
+      }
 
-    if (!currentId) {
-      lastSyncedUserId = null
-      rolesSignal.set([])
-      teamIdsSignal.set([])
-      saveStatusSignal.set("")
-      saveErrorSignal.set("")
-      partialFailureSignal.set(null)
-      return
-    }
-
-    if (user && lastSyncedUserId !== user.userId) {
-      lastSyncedUserId = user.userId
-      rolesSignal.set([...(user.roles as UserRole[])])
-      teamIdsSignal.set([...user.teamIds])
-      saveStatusSignal.set("")
-      saveErrorSignal.set("")
-      partialFailureSignal.set(null)
-    }
-  })
+      if (user && lastSyncedUserId !== user.userId) {
+        lastSyncedUserId = user.userId
+        rolesSignal.set([...(user.roles as UserRole[])])
+        teamIdsSignal.set([...user.teamIds])
+        saveStatusSignal.set("")
+        saveErrorSignal.set("")
+        partialFailureSignal.set(null)
+      }
+    },
+  )
 
   const teamCursorSignal = createSignalObject<string | null>(null)
   const accumulatedTeamsSignal = createSignalObject<readonly UserTeamOption[]>([])
@@ -221,21 +221,23 @@ export function userManagementPageStateCreate() {
   })
 
   let nextCursor: string | null = null
-  createEffect(() => {
-    const tRes = teamsResult()
-    if (tRes?.success) {
-      hasMoreTeamsSignal.set(!tRes.data.isDone)
-      nextCursor = tRes.data.continueCursor
-      accumulatedTeamsSignal.set(
-        userTeamOptionsAccumulate({
-          existingOptions: accumulatedTeamsSignal.get(),
-          incomingPage: tRes.data.page,
-          orgMap: orgMap(),
-          selectedTeamIds: teamIdsSignal.get(),
-        }),
-      )
-    }
-  })
+  createEffect(
+    () => ({ tRes: teamsResult(), orgs: orgMap(), selectedTeamIds: teamIdsSignal.get() }),
+    ({ tRes, orgs, selectedTeamIds }) => {
+      if (tRes?.success) {
+        hasMoreTeamsSignal.set(!tRes.data.isDone)
+        nextCursor = tRes.data.continueCursor
+        accumulatedTeamsSignal.set(
+          userTeamOptionsAccumulate({
+            existingOptions: accumulatedTeamsSignal.get(),
+            incomingPage: tRes.data.page,
+            orgMap: orgs,
+            selectedTeamIds,
+          }),
+        )
+      }
+    },
+  )
 
   const loadMoreTeams = () => {
     if (hasMoreTeamsSignal.get() && nextCursor) {

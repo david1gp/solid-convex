@@ -12,9 +12,12 @@ export function orgLoaderStateCreate(p: { orgHandle: () => string }) {
     orgHandle: p.orgHandle(),
   }))
   const getData = createQueryCached(getDataQuery, `orgGetQuery/${p.orgHandle()}`, a.nullable(orgSchema))
-  createEffect(() => {
-    console.log("OrgLoader", getData())
-  })
+  createEffect(
+    () => getData(),
+    (data) => {
+      console.log("OrgLoader", data)
+    },
+  )
 
   return { getData }
 }

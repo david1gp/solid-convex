@@ -40,14 +40,16 @@ export function enterOtpFormStateCreate(props: () => EnterOtpFormProps) {
     return false
   }
 
-  createEffect(() => {
-    const value = otp.get()
-    if (value.length === 6) {
-      validateOtp(value)
-      return
-    }
-    otpError.set("")
-  })
+  createEffect(
+    () => otp.get(),
+    (value) => {
+      if (value.length === 6) {
+        validateOtp(value)
+        return
+      }
+      otpError.set("")
+    },
+  )
 
   async function handleSubmit(e: SubmitEvent) {
     e.preventDefault()

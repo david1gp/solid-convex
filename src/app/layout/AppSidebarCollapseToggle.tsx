@@ -21,7 +21,7 @@ export function AppSidebarCollapseToggle(p: AppSidebarCollapseToggleProps) {
       onClick={p.onToggle}
       aria-label={label()}
       title={label()}
-      aria-expanded={!p.collapsed()}
+      aria-expanded={p.collapsed() ? "false" : "true"}
       class={cn("shrink-0", p.class)}
     >
       <Icon path={p.collapsed() ? mdiChevronRight : mdiChevronLeft} class="size-5" />

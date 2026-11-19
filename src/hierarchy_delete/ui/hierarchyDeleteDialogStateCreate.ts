@@ -57,10 +57,12 @@ export function hierarchyDeleteDialogStateCreate(inputs: HierarchyDeleteDialogSt
     })
   }
 
-  createEffect(() => {
-    const open = isOpen.get()
-    syncUrlSearchParam(open)
-  })
+  createEffect(
+    () => isOpen.get(),
+    (open) => {
+      syncUrlSearchParam(open)
+    },
+  )
 
   onCleanup(() => {
     if (idleHandle !== undefined && typeof window !== "undefined") {

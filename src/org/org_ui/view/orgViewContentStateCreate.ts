@@ -47,13 +47,14 @@ export function orgViewContentStateCreate(props: () => OrgViewContentProps) {
     })
   }
 
-  createEffect(() => {
-    const options = tabOptions()
-    const current = selectedTab.get()
-    if (!options.includes(current)) {
-      selectedTab.set("overview")
-    }
-  })
+  createEffect(
+    () => ({ options: tabOptions(), current: selectedTab.get() }),
+    ({ options, current }) => {
+      if (!options.includes(current)) {
+        selectedTab.set("overview")
+      }
+    },
+  )
 
   let idleHandle: number | ReturnType<typeof setTimeout> | undefined
 
@@ -91,10 +92,12 @@ export function orgViewContentStateCreate(props: () => OrgViewContentProps) {
     })
   }
 
-  createEffect(() => {
-    const tab = selectedTab.get()
-    syncUrlSearchParam(tab)
-  })
+  createEffect(
+    () => selectedTab.get(),
+    (tab) => {
+      syncUrlSearchParam(tab)
+    },
+  )
 
   onCleanup(() => {
     if (idleHandle !== undefined && typeof window !== "undefined") {

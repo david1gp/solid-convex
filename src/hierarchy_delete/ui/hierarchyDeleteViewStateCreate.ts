@@ -138,27 +138,30 @@ export function hierarchyDeleteViewStateCreate(inputs: HierarchyDeleteViewStateI
   // When target changes to a new entity, clear previous job snapshot.
   let lastRootKey: string | undefined
   let lastFingerprint: string | undefined
-  createRenderEffect(() => {
-    const t = inputs.target()
-    const rootKey = t
-      ? `${t.kind}:${t.orgId ?? ""}:${t.orgHandle ?? ""}:${t.teamId ?? ""}:${t.projectId ?? ""}:${t.noteId ?? ""}`
-      : ""
-    const currentFp = fingerprint()
+  createRenderEffect(
+    () => {
+      const t = inputs.target()
+      const rootKey = t
+        ? `${t.kind}:${t.orgId ?? ""}:${t.orgHandle ?? ""}:${t.teamId ?? ""}:${t.projectId ?? ""}:${t.noteId ?? ""}`
+        : ""
+      return { rootKey, currentFp: fingerprint(), jobId: currentJobId.get() }
+    },
+    ({ rootKey, currentFp, jobId }) => {
+      if (lastRootKey !== undefined && rootKey !== lastRootKey) {
+        typedConfirmation.set("")
+        currentJobId.set(undefined)
+        frozenPreview.set(undefined)
+        jobStatus.set("idle")
+        jobProgressMessage.set("")
+        jobError.set("")
+      } else if (!jobId && lastFingerprint !== undefined && currentFp !== lastFingerprint) {
+        typedConfirmation.set("")
+      }
 
-    if (lastRootKey !== undefined && rootKey !== lastRootKey) {
-      typedConfirmation.set("")
-      currentJobId.set(undefined)
-      frozenPreview.set(undefined)
-      jobStatus.set("idle")
-      jobProgressMessage.set("")
-      jobError.set("")
-    } else if (!currentJobId.get() && lastFingerprint !== undefined && currentFp !== lastFingerprint) {
-      typedConfirmation.set("")
-    }
-
-    lastRootKey = rootKey
-    lastFingerprint = currentFp
-  })
+      lastRootKey = rootKey
+      lastFingerprint = currentFp
+    },
+  )
 
   const isTypedConfirmationValid = createMemo(() => {
     return hierarchyDeleteConfirmationIsValid(typedConfirmation.get(), rootName())
@@ -208,38 +211,47 @@ export function hierarchyDeleteViewStateCreate(inputs: HierarchyDeleteViewStateI
   })
 
   // Reactive subscription: watch status query by returned jobId
-  createRenderEffect(() => {
-    const res = statusQueryResult()
-    if (!res || !res.success) return
-    const job = res.data.job
-    if (!job) return
+  createRenderEffect(
+    () => ({
+      res: statusQueryResult(),
+      currentId: currentJobId.get(),
+      currentPreview: preview(),
+      frozen: frozenPreview.get(),
+    }),
+    ({ res, currentId, currentPreview, frozen }) => {
+      if (!res || !res.success) return
+      const job = res.data.job
+      if (!job) return
 
-    // If an active job exists on target but currentJobId is unset, bind it
-    if (!currentJobId.get() && (job.status === "pending" || job.status === "in_progress" || job.status === "failed")) {
-      currentJobId.set(job.jobId)
-      const p = preview()
-      if (p && !frozenPreview.get()) {
-        frozenPreview.set(p)
+      // If an active job exists on target but currentJobId is unset, bind it
+      if (!currentId && (job.status === "pending" || job.status === "in_progress" || job.status === "failed")) {
+        currentJobId.set(job.jobId)
+        if (currentPreview && !frozen) {
+          frozenPreview.set(currentPreview)
+        }
       }
-    }
 
-    if (currentJobId.get() === job.jobId) {
-      if (job.status === "pending") {
-        jobStatus.set("submitting")
-        jobProgressMessage.set("Deletion queued…")
-      } else if (job.status === "in_progress") {
-        jobStatus.set("in_progress")
-        jobProgressMessage.set("Processing deletion cascade…")
-      } else if (job.status === "completed") {
-        jobStatus.set("completed")
-        jobProgressMessage.set("Deletion completed successfully.")
-        inputs.onSuccess?.()
-      } else if (job.status === "failed" || (job.status as string) === "error") {
-        jobStatus.set("error")
-        jobError.set(job.error ?? "Deletion failed")
+      if (
+        currentId === job.jobId ||
+        (!currentId && (job.status === "pending" || job.status === "in_progress" || job.status === "failed"))
+      ) {
+        if (job.status === "pending") {
+          jobStatus.set("submitting")
+          jobProgressMessage.set("Deletion queued…")
+        } else if (job.status === "in_progress") {
+          jobStatus.set("in_progress")
+          jobProgressMessage.set("Processing deletion cascade…")
+        } else if (job.status === "completed") {
+          jobStatus.set("completed")
+          jobProgressMessage.set("Deletion completed successfully.")
+          inputs.onSuccess?.()
+        } else if (job.status === "failed" || (job.status as string) === "error") {
+          jobStatus.set("error")
+          jobError.set(job.error ?? "Deletion failed")
+        }
       }
-    }
-  })
+    },
+  )
 
   const onCancel = () => {
     typedConfirmation.set("")

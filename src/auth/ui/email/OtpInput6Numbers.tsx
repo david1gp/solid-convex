@@ -20,11 +20,11 @@ export function OtpInput6Numbers(p: OtpInput6NumbersProps) {
     <InputS
       id={p.id}
       type="text"
-      inputMode="numeric"
+      inputmode="numeric"
       placeholder="000000"
       valueSignal={p.valueSignal}
       onInput={handleInput}
-      maxLength={6}
+      maxlength={6}
       class={cn(
         "w-full text-center text-lg font-mono", // typography
         "border-2 rounded-md focus:outline-none focus:ring-2", // borders

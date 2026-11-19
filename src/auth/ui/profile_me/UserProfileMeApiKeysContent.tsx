@@ -55,7 +55,7 @@ export function UserProfileMeApiKeysContent(p: { stateFactory: typeof userProfil
                 class="block w-full rounded-md border border-input bg-background p-2 text-sm"
                 type="text"
                 required
-                maxLength={80}
+                maxlength={80}
                 value={state.name()}
                 onInput={(e) => state.nameChange(e.currentTarget.value)}
               />
@@ -115,7 +115,7 @@ export function UserProfileMeApiKeysContent(p: { stateFactory: typeof userProfil
                               class="block w-full rounded-md border border-input bg-background p-2 text-sm"
                               type="text"
                               required
-                              maxLength={80}
+                              maxlength={80}
                               value={state.editName()}
                               onInput={(e) => state.editNameChange(e.currentTarget.value)}
                             />

@@ -33,17 +33,19 @@ export function projectFormStateCreate(
     description: projectDataSchema.entries.description,
   })
   let loadedKey: string | undefined
-  createEffect(() => {
-    const draftKey = key()
-    if (loadedKey === draftKey) return
-    loadedKey = draftKey
-    untrack(() => {
-      const current = project()
-      const draft = projectStorageRead(draftKey, draftSchema)
-      name.set(draft.success ? draft.data.name : (current?.name ?? ""))
-      description.set(draft.success ? (draft.data.description ?? "") : (current?.description ?? ""))
-    })
-  })
+  createEffect(
+    () => key(),
+    (draftKey) => {
+      if (loadedKey === draftKey) return
+      loadedKey = draftKey
+      untrack(() => {
+        const current = project()
+        const draft = projectStorageRead(draftKey, draftSchema)
+        name.set(draft.success ? draft.data.name : (current?.name ?? ""))
+        description.set(draft.success ? (draft.data.description ?? "") : (current?.description ?? ""))
+      })
+    },
+  )
   const saveDraft = () => writer.save(key(), { name: name.get(), description: description.get() })
   const submit = async (event: SubmitEvent) => {
     event.preventDefault()

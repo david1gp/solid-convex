@@ -52,7 +52,7 @@ export function AppThemeSegmentedControl() {
           <Button
             type="button"
             variant={themeSignal.get() === option.value ? buttonVariant.subtle : buttonVariant.ghost}
-            aria-pressed={themeSignal.get() === option.value}
+            aria-pressed={themeSignal.get() === option.value ? "true" : "false"}
             title={themeLabel(option.value)}
             onClick={() => selectTheme(option.value)}
             class="min-w-0 justify-center gap-1"

@@ -1,3 +1,4 @@
+import { convexContextRootCreate } from "#src/utils/convex_client/test/convexContextRootCreate.ts"
 import { describe, expect, mock, test } from "bun:test"
 import { createResult, createResultError } from "#result"
 
@@ -22,11 +23,7 @@ if (!globalThis.localStorage) {
   } as unknown as Storage
 }
 
-const solidJsClientPath = "solid-js/dist/solid.js"
-type SolidJsModule = typeof import("solid-js")
-const solidJsClient = (await import(solidJsClientPath)) as unknown as SolidJsModule
-mock.module("solid-js", () => solidJsClient)
-const { createRoot, createSignal, getOwner } = solidJsClient
+import { createRoot, createSignal } from "solid-js"
 
 const [paramsSignal, setParamsSignal] = createSignal<Record<string, string>>({})
 const [locationSignal, setLocationSignal] = createSignal<{ pathname: string }>({ pathname: "/note" })
@@ -37,7 +34,6 @@ mock.module("@tanstack/solid-router", () => ({
   useNavigate: () => () => undefined,
 }))
 
-const { ConvexContext } = await import("#src/utils/convex_client/convexContext.ts")
 const { notePageStateCreate } = await import("./notePageStateCreate.ts")
 mock.restore()
 
@@ -85,10 +81,7 @@ class MockConvexClient {
 describe("notePageStateCreate query subscription and error handling", () => {
   test("skips note detail subscription when visiting empty note list with no selected note", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       setParamsSignal({})
       setLocationSignal({ pathname: "/note" })
       const state = notePageStateCreate()
@@ -110,10 +103,7 @@ describe("notePageStateCreate query subscription and error handling", () => {
 
   test("subscribes to note detail when note ID is present and displays error when backend returns not found", async () => {
     const client = new MockConvexClient()
-    await createRoot(async (dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    await convexContextRootCreate(client, async (dispose) => {
       setParamsSignal({ noteId: "malformed-note-id" })
       setLocationSignal({ pathname: "/note/malformed-note-id" })
       const state = notePageStateCreate()
@@ -143,10 +133,7 @@ describe("notePageStateCreate query subscription and error handling", () => {
 
   test("handles subscription onError without endless loading", async () => {
     const client = new MockConvexClient()
-    await createRoot(async (dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    await convexContextRootCreate(client, async (dispose) => {
       setParamsSignal({ noteId: "bad-id" })
       setLocationSignal({ pathname: "/note/bad-id" })
       const state = notePageStateCreate()

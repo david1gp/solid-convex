@@ -16,7 +16,7 @@ export function queryCreate<Query extends FunctionReference<"query">>(
 ): () => QueryResult<Query> {
   const op = "queryCreate"
   const convex = useContext(ConvexContext)
-  if (convex === undefined) {
+  if (convex === null) {
     const error = createResultError(op, "No convex context")
     return () => error
   }

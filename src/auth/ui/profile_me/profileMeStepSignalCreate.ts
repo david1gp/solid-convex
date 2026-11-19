@@ -25,6 +25,7 @@ export function profileMeStepSignalCreate() {
     if (idle !== undefined) window.cancelIdleCallback(idle)
   })
   onMount(() => {
+    if (typeof window === "undefined") return
     const parsed = a.safeParse(a.picklist(["1", "2"]), new URL(window.location.href).searchParams.get("step"))
     if (parsed.success) step.set(Number(parsed.output))
   })

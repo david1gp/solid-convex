@@ -8,7 +8,7 @@ export function mutationCreate<Mutation extends FunctionReference<"mutation">>(
 ): (args?: FunctionArgs<Mutation>) => Promise<FunctionReturnType<Mutation> | ResultErr> {
   const op = "mutationCreate"
   const convex = useContext(ConvexContext)
-  if (convex === undefined) {
+  if (convex === null) {
     const error = createResultError(op, "No convex context")
     return () => Promise.resolve(error)
   }

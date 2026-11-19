@@ -1,3 +1,5 @@
+import { flush } from "solid-js"
+import { convexContextRootCreate } from "#src/utils/convex_client/test/convexContextRootCreate.ts"
 import { describe, expect, mock, test } from "bun:test"
 import { createResult, createResultError } from "#result"
 
@@ -22,12 +24,7 @@ if (!globalThis.localStorage) {
   } as unknown as Storage
 }
 
-const solidJsClientPath = "solid-js/dist/solid.js"
-type SolidJsModule = typeof import("solid-js")
-const solidJsClient = (await import(solidJsClientPath)) as unknown as SolidJsModule
-mock.module("solid-js", () => solidJsClient)
-const { createRoot, createSignal, getOwner } = solidJsClient
-const { ConvexContext } = await import("#src/utils/convex_client/convexContext.ts")
+import { getOwner, createRoot, createSignal } from "solid-js"
 const { resourceDeletePageStateCreate } = await import("./resourceDeletePageStateCreate.ts")
 mock.restore()
 
@@ -54,6 +51,7 @@ class MockConvexClient {
   notifyQuery(matcher: (args: unknown) => boolean, value: unknown) {
     for (const sub of this.subscriptions) {
       if (matcher(sub.args)) {
+        flush()
         sub.update(value)
       }
     }
@@ -63,17 +61,16 @@ class MockConvexClient {
 describe("resourceDeletePageStateCreate", () => {
   test("confirmation blocks while count/preview is loading", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       const [resourceId] = createSignal("res-1")
       const state = resourceDeletePageStateCreate({ resourceId })
 
       expect(state.isLoading()).toBe(true)
       expect(state.canConfirm()).toBe(false)
 
+      flush()
       state.typedConfirmation.set("DELETE")
+      flush()
       // Still blocks because preview is loading
       expect(state.canConfirm()).toBe(false)
 
@@ -83,10 +80,7 @@ describe("resourceDeletePageStateCreate", () => {
 
   test("confirmation blocks until typed confirmation matches name or DELETE", async () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       const [resourceId] = createSignal("res-1")
       const state = resourceDeletePageStateCreate({ resourceId })
 
@@ -101,22 +95,29 @@ describe("resourceDeletePageStateCreate", () => {
         }),
       )
 
+      flush()
       expect(state.isLoading()).toBe(false)
       expect(state.title()).toBe("Annual Report")
       expect(state.canConfirm()).toBe(false)
 
       // Invalid input
+      flush()
       state.typedConfirmation.set("Wrong Name")
+      flush()
       expect(state.isTypedConfirmationValid()).toBe(false)
       expect(state.canConfirm()).toBe(false)
 
       // Match entity name
+      flush()
       state.typedConfirmation.set("Annual Report")
+      flush()
       expect(state.isTypedConfirmationValid()).toBe(true)
       expect(state.canConfirm()).toBe(true)
 
       // Match DELETE keyword
+      flush()
       state.typedConfirmation.set("DELETE")
+      flush()
       expect(state.isTypedConfirmationValid()).toBe(true)
       expect(state.canConfirm()).toBe(true)
 
@@ -126,10 +127,7 @@ describe("resourceDeletePageStateCreate", () => {
 
   test("blocks confirmation when linked files count exceeds preview limit and is truncated", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       const [resourceId] = createSignal("res-large")
       const state = resourceDeletePageStateCreate({ resourceId })
 
@@ -143,8 +141,11 @@ describe("resourceDeletePageStateCreate", () => {
         }),
       )
 
+      flush()
       expect(state.isTruncated()).toBe(true)
+      flush()
       state.typedConfirmation.set("DELETE")
+      flush()
       expect(state.isTypedConfirmationValid()).toBe(true)
       // Blocked because it's truncated
       expect(state.canConfirm()).toBe(false)
@@ -155,10 +156,7 @@ describe("resourceDeletePageStateCreate", () => {
 
   test("resource linked files are not claimed deleted; files and R2 storage are retained", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       const [resourceId] = createSignal("res-files")
       const state = resourceDeletePageStateCreate({ resourceId })
 
@@ -172,6 +170,7 @@ describe("resourceDeletePageStateCreate", () => {
         }),
       )
 
+      flush()
       const effects = state.effects()
       const resourceItem = effects.find((e) => e.key === "resource")
       const linksItem = effects.find((e) => e.key === "links")
@@ -203,10 +202,7 @@ describe("resourceDeletePageStateCreate", () => {
     let successCalled = false
     let state!: ReturnType<typeof resourceDeletePageStateCreate>
 
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       const [resourceId] = createSignal("res-1")
       state = resourceDeletePageStateCreate({
         resourceId,
@@ -228,10 +224,14 @@ describe("resourceDeletePageStateCreate", () => {
     )
 
     expect(getOwner()).toBeNull()
+    flush()
     state.typedConfirmation.set("DELETE")
+    flush()
     expect(state.canConfirm()).toBe(true)
 
+    flush()
     await state.onConfirm()
+    flush()
 
     expect(client.mutations.length).toBe(1)
     const firstMutation = client.mutations[0]

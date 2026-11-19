@@ -1,3 +1,4 @@
+import { flush } from "solid-js"
 import { afterAll, beforeAll, describe, expect, test } from "bun:test"
 import { createRoot } from "solid-js"
 import { pageDemoFixtureStoreGet } from "#src/app/demos/pageDemoFixtureStoreGet.ts"
@@ -24,8 +25,10 @@ describe("user-management page demo fixtures", () => {
 
       const updated = fixtures.assign("user-2", { roles: ["member", "admin"], teamIds: ["team-1"] })
       expect(updated?.roles).toEqual(["member", "admin"])
+      flush()
       expect(fixtures.get("user-2")?.teamIds).toEqual(["team-1"])
       fixtures.assign("user-2", { roles: ["member"], teamIds: ["team-2"] })
+      flush()
       expect(fixtures.get("user-2")?.roles).toEqual(["member"])
     } finally {
       dispose()

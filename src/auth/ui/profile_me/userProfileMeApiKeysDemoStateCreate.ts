@@ -76,8 +76,8 @@ export function userProfileMeApiKeysDemoStateCreate(
     }
   }
 
-  function issueKey(keyName: string, expiresAt?: string) {
-    const sequence = sharedFixture.get().sequence + 1
+  function issueKey(keyName: string, expiresAt?: string, previous = sharedFixture.get()) {
+    const sequence = previous.sequence + 1
     const suffix = String(sequence).padStart(3, "0")
     const id = `demo-key-${sequence}` as ApiKeyListItem["id"]
     const secret = `demo_key_${suffix}_sample_only_${suffix}`
@@ -92,7 +92,7 @@ export function userProfileMeApiKeysDemoStateCreate(
           ...(expiresAt && { expiresAt }),
           status: "active",
         },
-        ...sharedFixture.get().keys,
+        ...previous.keys,
       ],
     })
     pageIndex.set(0)
@@ -170,15 +170,13 @@ export function userProfileMeApiKeysDemoStateCreate(
   async function rotate(key: ApiKeyListItem) {
     if (credential.get() || editingId.get() === key.id || !keyIsActive(key.id)) return
     if (!confirm(ttc("Rotate this API key? The old credential will stop working immediately."))) return
-    sharedFixture.set({
-      ...sharedFixture.get(),
-      keys: sharedFixture
-        .get()
-        .keys.map((item) =>
-          item.id === key.id ? { ...item, revokedAt: new Date(now()).toISOString(), status: "revoked" } : item,
-        ),
+    const previous = sharedFixture.get()
+    issueKey(key.name, key.expiresAt, {
+      ...previous,
+      keys: previous.keys.map((item) =>
+        item.id === key.id ? { ...item, revokedAt: new Date(now()).toISOString(), status: "revoked" } : item,
+      ),
     })
-    issueKey(key.name, key.expiresAt)
     error.set("")
   }
 

@@ -1,3 +1,5 @@
+import { flush } from "solid-js"
+import { convexContextRootCreate } from "#src/utils/convex_client/test/convexContextRootCreate.ts"
 import { describe, expect, mock, test } from "bun:test"
 import { createResult, createResultError } from "#result"
 import type { HierarchyDeleteTarget } from "#src/hierarchy_delete/model/hierarchyDeleteTargetSchema.ts"
@@ -23,11 +25,7 @@ if (!globalThis.localStorage) {
   } as unknown as Storage
 }
 
-const solidJsClientPath = "solid-js/dist/solid.js"
-type SolidJsModule = typeof import("solid-js")
-const solidJsClient = (await import(solidJsClientPath)) as unknown as SolidJsModule
-mock.module("solid-js", () => solidJsClient)
-const { createRoot, createSignal, getOwner, useContext } = solidJsClient
+import { getOwner, createRoot, createSignal, useContext } from "solid-js"
 const { api } = await import("#convex/_generated/api.js")
 const { ConvexContext } = await import("#src/utils/convex_client/convexContext.ts")
 const { hierarchyDeleteViewStateCreate } = await import("./hierarchyDeleteViewStateCreate.ts")
@@ -65,6 +63,7 @@ class MockConvexClient {
   notifyQuery(matcher: (args: unknown) => boolean, value: unknown) {
     for (const sub of this.subscriptions) {
       if (matcher(sub.args)) {
+        flush()
         sub.update(value)
       }
     }
@@ -77,10 +76,7 @@ describe("hierarchyDeleteViewStateCreate", () => {
     let state!: ReturnType<typeof hierarchyDeleteViewStateCreate>
     let setTarget!: (target: HierarchyDeleteTarget | undefined) => void
 
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       const [target, set] = createSignal<HierarchyDeleteTarget | undefined>({
         kind: "org",
         orgId: "org-1",
@@ -94,7 +90,9 @@ describe("hierarchyDeleteViewStateCreate", () => {
       return disposeRoot
     })
 
+    flush()
     state.typedConfirmation.set("DELETE")
+    flush()
     expect(state.typedConfirmation.get()).toBe("DELETE")
 
     // Change target root
@@ -104,6 +102,7 @@ describe("hierarchyDeleteViewStateCreate", () => {
     })
 
     await Promise.resolve()
+    flush()
     expect(state.typedConfirmation.get()).toBe("")
     dispose()
   })
@@ -112,10 +111,7 @@ describe("hierarchyDeleteViewStateCreate", () => {
     const client = new MockConvexClient()
     let state!: ReturnType<typeof hierarchyDeleteViewStateCreate>
 
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       const [target] = createSignal<HierarchyDeleteTarget | undefined>({
         kind: "org",
         orgId: "org-1",
@@ -141,8 +137,11 @@ describe("hierarchyDeleteViewStateCreate", () => {
     })
 
     await Promise.resolve()
+    flush()
     expect(state.fingerprint()).toBe("fp-initial-111")
+    flush()
     state.typedConfirmation.set("Corp")
+    flush()
     expect(state.typedConfirmation.get()).toBe("Corp")
 
     // Send updated preview with different fingerprint
@@ -168,10 +167,7 @@ describe("hierarchyDeleteViewStateCreate", () => {
     let successCount = 0
 
     let state!: ReturnType<typeof hierarchyDeleteViewStateCreate>
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       const [target] = createSignal<HierarchyDeleteTarget | undefined>({
         kind: "org",
         orgId: "org-1",
@@ -205,11 +201,15 @@ describe("hierarchyDeleteViewStateCreate", () => {
       return disposeRoot
     })
 
+    flush()
     state.typedConfirmation.set("DELETE")
+    flush()
     expect(state.canConfirm()).toBe(true)
 
     // Confirm click
+    flush()
     await state.onConfirmClick()
+    flush()
 
     // After confirm submission, job is queued/in_progress, jobId is bound, but onSuccess is NOT called
     expect(state.activeJobId()).toBe("job-123")
@@ -236,6 +236,7 @@ describe("hierarchyDeleteViewStateCreate", () => {
       }),
     )
 
+    flush()
     expect(state.jobStatus.get()).toBe("completed")
     expect(successCount).toBe(1)
 
@@ -247,10 +248,7 @@ describe("hierarchyDeleteViewStateCreate", () => {
     let retryCalledWithJobId = ""
 
     let state!: ReturnType<typeof hierarchyDeleteViewStateCreate>
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       const [target] = createSignal<HierarchyDeleteTarget | undefined>({
         kind: "org",
         orgId: "org-1",
@@ -285,9 +283,13 @@ describe("hierarchyDeleteViewStateCreate", () => {
       return disposeRoot
     })
 
+    flush()
     state.typedConfirmation.set("Corp")
+    flush()
     await state.onConfirmClick()
+    flush()
 
+    flush()
     expect(state.activeJobId()).toBe("job-fail-1")
 
     // Notify job failed
@@ -311,12 +313,15 @@ describe("hierarchyDeleteViewStateCreate", () => {
       }),
     )
 
+    flush()
     expect(state.jobStatus.get()).toBe("error")
     expect(state.jobError.get()).toBe("R2 connection timeout during object deletion")
     expect(state.canRetry()).toBe(true)
 
     // Click retry
+    flush()
     await state.onRetryClick()
+    flush()
 
     expect(retryCalledWithJobId).toBe("job-fail-1")
     expect(state.jobStatus.get()).toBe("in_progress")
@@ -329,10 +334,7 @@ describe("hierarchyDeleteViewStateCreate", () => {
     const client = new MockConvexClient()
 
     let state!: ReturnType<typeof hierarchyDeleteViewStateCreate>
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       const [target] = createSignal<HierarchyDeleteTarget | undefined>({
         kind: "org",
         orgId: "org-1",
@@ -365,8 +367,11 @@ describe("hierarchyDeleteViewStateCreate", () => {
       return disposeRoot
     })
 
+    flush()
     state.typedConfirmation.set("DELETE")
+    flush()
     await state.onConfirmClick()
+    flush()
 
     // Notify job failed
     client.notifyQuery(
@@ -389,10 +394,13 @@ describe("hierarchyDeleteViewStateCreate", () => {
       }),
     )
 
+    flush()
     expect(state.canRetry()).toBe(true)
 
     // Click retry -> retry fails
+    flush()
     await state.onRetryClick()
+    flush()
 
     expect(state.jobStatus.get()).toBe("error")
     expect(state.jobError.get()).toBe("Cannot retry: root entity is not locked by this deletion job")
@@ -419,10 +427,8 @@ describe("hierarchyDeleteViewStateCreate", () => {
       let state!: ReturnType<typeof hierarchyDeleteViewStateCreate>
       let dispose!: () => void
 
-      createRoot((disposeRoot) => {
+      convexContextRootCreate(client, (disposeRoot) => {
         dispose = disposeRoot
-        const owner = getOwner()!
-        owner.context = { [ConvexContext.id]: client }
 
         const [target] = createSignal<HierarchyDeleteTarget | undefined>({
           kind: "team",
@@ -456,11 +462,15 @@ describe("hierarchyDeleteViewStateCreate", () => {
       expect(getOwner()).toBeNull()
 
       // Set typed confirmation to valid entity name
+      flush()
       state.typedConfirmation.set("Engineering")
+      flush()
       expect(state.canConfirm()).toBe(true)
 
       // 3. Confirm click executes outside owner - must NOT throw outside owner and must use factory closure
+      flush()
       await state.onConfirmClick()
+      flush()
 
       expect(client.mutations.length).toBe(1)
       const firstMutation = client.mutations[0]!
@@ -472,12 +482,17 @@ describe("hierarchyDeleteViewStateCreate", () => {
       expect(state.jobStatus.get()).toBe("in_progress")
 
       // 4. Test retry click without custom onRetry handler
+      flush()
       state.jobStatus.set("error")
+      flush()
       state.jobError.set("Network timeout")
+      flush()
       expect(state.canRetry()).toBe(true)
 
       // Retry click executes outside owner - must NOT throw outside owner and must use factory closure
+      flush()
       await state.onRetryClick()
+      flush()
 
       expect(client.mutations.length).toBe(2)
       const secondMutation = client.mutations[1]!
@@ -501,10 +516,7 @@ describe("hierarchyDeleteViewStateCreate", () => {
     let successCount = 0
 
     let state!: ReturnType<typeof hierarchyDeleteViewStateCreate>
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       const [target] = createSignal<HierarchyDeleteTarget | undefined>({
         kind: "org",
         orgId: "org-1",
@@ -537,10 +549,14 @@ describe("hierarchyDeleteViewStateCreate", () => {
       return disposeRoot
     })
 
+    flush()
     state.typedConfirmation.set("Corp")
+    flush()
     expect(state.canConfirm()).toBe(true)
 
+    flush()
     await state.onConfirmClick()
+    flush()
     expect(state.activeJobId()).toBe("job-shrink-1")
     expect(state.jobStatus.get()).toBe("in_progress")
 
@@ -595,6 +611,7 @@ describe("hierarchyDeleteViewStateCreate", () => {
       }),
     )
 
+    flush()
     expect(state.jobStatus.get()).toBe("completed")
     expect(successCount).toBe(1)
     expect(state.previewError()).toBeUndefined()
@@ -608,10 +625,7 @@ describe("hierarchyDeleteViewStateCreate", () => {
     let state!: ReturnType<typeof hierarchyDeleteViewStateCreate>
     let setTarget!: (target: HierarchyDeleteTarget | undefined) => void
 
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       const [target, set] = createSignal<HierarchyDeleteTarget | undefined>({
         kind: "org",
         orgId: "org-1",
@@ -642,8 +656,11 @@ describe("hierarchyDeleteViewStateCreate", () => {
       return disposeRoot
     })
 
+    flush()
     state.typedConfirmation.set("Corp")
+    flush()
     await state.onConfirmClick()
+    flush()
     expect(state.activeJobId()).toBe("job-active-1")
     expect(state.jobStatus.get()).toBe("in_progress")
 

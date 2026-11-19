@@ -1,3 +1,4 @@
+import { flush } from "solid-js"
 import { afterAll, beforeAll, describe, expect, test } from "bun:test"
 import { createRoot } from "solid-js"
 import { pageDemoFixtureStoreGet } from "#src/app/demos/pageDemoFixtureStoreGet.ts"
@@ -52,9 +53,13 @@ describe("resource page demo edit and remove", () => {
       dispose: disposeRoot,
     }))
     try {
+      flush()
       expect(state.form.state.name.get()).toBe("Sample resource")
+      flush()
       state.form.state.name.set("Updated sample resource")
+      flush()
       await state.form.handleSubmit({ preventDefault() {} } as SubmitEvent)
+      flush()
       expect(state.saved()).toBe(true)
       expect(resourcePageDemoFixturesGet().get("sample-resource-1")?.name).toBe("Updated sample resource")
       expect(resourcePageDemoFixturesGet().resources()).toHaveLength(1)
@@ -73,7 +78,9 @@ describe("resource page demo edit and remove", () => {
       dispose: disposeRoot,
     }))
     try {
+      flush()
       expect(state.form.state.name.get()).toBe("Sample resource")
+      flush()
       await state.form.handleSubmit({ preventDefault() {} } as SubmitEvent)
       expect(state.removed()).toBe(true)
       expect(resourcePageDemoFixturesGet().get("sample-resource-1")).toBeUndefined()

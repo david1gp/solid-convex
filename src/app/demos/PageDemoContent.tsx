@@ -50,7 +50,7 @@ export const resourceDemoRoutes = [
 export function PageDemoContent(p: { entry?: (typeof pageRouteInventory)[number] }) {
   const state = pageDemoBoundaryStateCreate(p.entry)
   return (
-    <ConvexContext value={undefined}>
+    <ConvexContext value={null}>
       <Show
         when={p.entry}
         fallback={

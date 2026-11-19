@@ -26,7 +26,7 @@
     "format:check": "biome format convex functions src package.json tsconfig.json biome.json",
     "check": "bun run format:check && bun run type-check && bun run test",
     "lint:convex": "eslint convex src",
-    "test": "bun test --isolate --env-file .env.development --path-ignore-patterns='convex-tests/**' --path-ignore-patterns='e2e/**'",
+    "test": "bun test --conditions=browser --isolate --env-file .env.development --path-ignore-patterns='convex-tests/**' --path-ignore-patterns='e2e/**'",
     "test:w": "bun test --isolate --env-file .env.development --path-ignore-patterns=convex-tests/** --watch",
     "test:e2e": "bun e2e/e2eRun.ts production",
     "test:e2e:dev": "bun e2e/e2eRun.ts dev",

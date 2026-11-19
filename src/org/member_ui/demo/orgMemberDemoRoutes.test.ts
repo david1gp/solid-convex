@@ -1,3 +1,4 @@
+import { flush } from "solid-js"
 import { afterEach, expect, mock, test } from "bun:test"
 import { createRoot } from "solid-js"
 import { pageDemoFixtureStoreGet } from "#src/app/demos/pageDemoFixtureStoreGet.ts"
@@ -53,8 +54,11 @@ test("editing a selected member changes only its shared organization fixture and
     })
     expect(edit.member()?.userId).toBe("sample-user")
     expect(edit.form.state.role.get()).toBe("member")
+    flush()
     edit.form.state.role.set("guest")
+    flush()
     await edit.form.handleSubmit({ preventDefault() {} } as SubmitEvent)
+    flush()
     expect(edit.member()?.role).toBe("guest")
     expect(pageDemoFixtureStoreGet().get<{ role: string }[]>("page-demo:org-members:sample-org")?.[0]?.role).toBe(
       "guest",
@@ -84,9 +88,11 @@ test("removing a member updates the shared fixture and the next add does not reu
       dispose = cleanup
       return orgMemberDemoStateCreate()
     })
+    flush()
     await state.form.handleSubmit({ preventDefault() {} } as SubmitEvent)
     memberId = "member-1"
     const remove = orgMemberDemoStateCreate(formMode.remove)
+    flush()
     await remove.form.handleSubmit({ preventDefault() {} } as SubmitEvent)
     expect(remove.member()).toBeUndefined()
     expect(
@@ -102,7 +108,9 @@ test("removing a member updates the shared fixture and the next add does not reu
     expect(visited.at(-1)).toBe("/demos/org/sample-org/members")
     const add = orgMemberDemoStateCreate()
     add.chooseUser("another-user")
+    flush()
     await add.form.handleSubmit({ preventDefault() {} } as SubmitEvent)
+    flush()
     expect(add.members().map((item) => item.memberId)).toEqual(["member-2", "member-3"])
   } finally {
     dispose()
@@ -121,7 +129,9 @@ test("missing member routes do not edit or remove unrelated fixture members", as
     memberId = "missing-member"
     const edit = orgMemberDemoStateCreate(formMode.edit)
     const remove = orgMemberDemoStateCreate(formMode.remove)
+    flush()
     await edit.form.handleSubmit({ preventDefault() {} } as SubmitEvent)
+    flush()
     await remove.form.handleSubmit({ preventDefault() {} } as SubmitEvent)
     expect(state.members().map((item) => item.memberId)).toEqual(["member-1"])
     expect(visited).toEqual([])

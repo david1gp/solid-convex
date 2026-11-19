@@ -1,3 +1,4 @@
+import { flush } from "solid-js"
 import { expect, test } from "bun:test"
 
 const storage = new Map<string, string>()
@@ -43,5 +44,6 @@ test("admin sessions remain selectable but are excluded from single-user auto-lo
   expect(autoLoginIfUserRoleOnly()).toBe(null)
 
   userSessionsSignal.set([session("user")])
+  flush()
   expect(autoLoginIfUserRoleOnly()?.profile.role).toBe("user")
 })

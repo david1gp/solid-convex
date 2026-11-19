@@ -1,3 +1,4 @@
+import { flush } from "solid-js"
 import { afterAll, beforeAll, describe, expect, test } from "bun:test"
 import { createRoot } from "solid-js"
 import { pageDemoFixtureStoreGet } from "#src/app/demos/pageDemoFixtureStoreGet.ts"
@@ -23,10 +24,15 @@ describe("project page demo fixtures", () => {
       expect(fixtures.projects()).toHaveLength(3)
 
       const added = fixtures.add({ name: "Docs Site", teamId: "team-1" })
+      flush()
       expect(fixtures.get(added.projectId)?.name).toBe("Docs Site")
+      flush()
       fixtures.edit(added.projectId, { name: "Docs Portal" })
+      flush()
       expect(fixtures.get(added.projectId)?.name).toBe("Docs Portal")
+      flush()
       fixtures.remove(added.projectId)
+      flush()
       expect(fixtures.get(added.projectId)).toBeUndefined()
       expect(fixtures.projects()).toHaveLength(3)
     } finally {

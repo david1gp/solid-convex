@@ -1,3 +1,4 @@
+import { convexContextRootCreate } from "#src/utils/convex_client/test/convexContextRootCreate.ts"
 import { describe, expect, mock, test } from "bun:test"
 import { createResult, createResultError } from "#result"
 
@@ -22,11 +23,7 @@ if (!globalThis.localStorage) {
   } as unknown as Storage
 }
 
-const solidJsClientPath = "solid-js/dist/solid.js"
-type SolidJsModule = typeof import("solid-js")
-const solidJsClient = (await import(solidJsClientPath)) as unknown as SolidJsModule
-mock.module("solid-js", () => solidJsClient)
-const { createRoot, createSignal, getOwner } = solidJsClient
+import { createRoot, createSignal } from "solid-js"
 
 const [paramsSignal, setParamsSignal] = createSignal<Record<string, string>>({
   teamId: "team-123",
@@ -39,7 +36,6 @@ mock.module("@tanstack/solid-router", () => ({
   useNavigate: () => () => undefined,
 }))
 
-const { ConvexContext } = await import("#src/utils/convex_client/convexContext.ts")
 const { teamDetailPageStateCreate } = await import("./teamDetailPageStateCreate.ts")
 mock.restore()
 
@@ -87,10 +83,7 @@ class MockConvexClient {
 describe("teamDetailPageStateCreate deleteTarget persistence", () => {
   test("deleteTarget remains stable when team query returns error during lock", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       setParamsSignal({ teamId: "team-123", orgHandle: "test-org" })
       const state = teamDetailPageStateCreate()
 
@@ -120,10 +113,7 @@ describe("teamDetailPageStateCreate deleteTarget persistence", () => {
 
   test("resolves loading to false and displays error when backend returns team not found", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       setParamsSignal({ teamId: "malformed-team-id", orgHandle: "test-org" })
       const state = teamDetailPageStateCreate()
 
@@ -143,10 +133,7 @@ describe("teamDetailPageStateCreate deleteTarget persistence", () => {
 
   test("skips subscription when team ID parameter is missing and displays param error", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       setParamsSignal({ orgHandle: "test-org" })
       const state = teamDetailPageStateCreate()
 
@@ -166,10 +153,7 @@ describe("teamDetailPageStateCreate deleteTarget persistence", () => {
 
   test("resolves loading to false on subscription onError", () => {
     const client = new MockConvexClient()
-    createRoot((dispose) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
-
+    convexContextRootCreate(client, (dispose) => {
       setParamsSignal({ teamId: "team-123", orgHandle: "test-org" })
       const state = teamDetailPageStateCreate()
 

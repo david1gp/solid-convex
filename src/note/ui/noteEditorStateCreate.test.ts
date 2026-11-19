@@ -1,10 +1,7 @@
+import { flush } from "solid-js"
 import { describe, expect, mock, test } from "bun:test"
 
-const solidJsClientPath = "solid-js/dist/solid.js"
-type SolidJsModule = typeof import("solid-js")
-const solidJsClient = (await import(solidJsClientPath)) as unknown as SolidJsModule
-mock.module("solid-js", () => solidJsClient)
-const { createRoot, createSignal } = solidJsClient
+import { createRoot, createSignal } from "solid-js"
 mock.restore()
 
 const { noteEditorStateCreate } = await import("#src/note/ui/noteEditorStateCreate.ts")
@@ -31,6 +28,7 @@ describe("noteEditorStateCreate", () => {
         currentTarget: { value: "# Local unsaved draft" } as HTMLTextAreaElement,
       } as InputEvent & { currentTarget: HTMLTextAreaElement })
 
+      flush()
       expect(state.content()).toBe("# Local unsaved draft")
       expect(state.isDirty()).toBe(true)
 
@@ -66,6 +64,7 @@ describe("noteEditorStateCreate", () => {
         currentTarget: { value: "# Note 1 modified" } as HTMLTextAreaElement,
       } as InputEvent & { currentTarget: HTMLTextAreaElement })
 
+      flush()
       expect(state.isDirty()).toBe(true)
 
       // Switch to note-2
@@ -105,6 +104,7 @@ describe("noteEditorStateCreate", () => {
         currentTarget: { value: "# Version 2 local" } as HTMLTextAreaElement,
       } as InputEvent & { currentTarget: HTMLTextAreaElement })
 
+      flush()
       expect(state.isDirty()).toBe(true)
 
       // Save note

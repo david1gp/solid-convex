@@ -33,11 +33,13 @@ export function userProfileMeChangePasswordStateCreate(actions: {
   async function confirm(e: SubmitEvent) {
     e.preventDefault()
     if (submitting.get()) return
-    codeError.set(/^\d{6}$/.test(code.get()) ? "" : "Please enter a valid 6-digit confirmation code")
-    passwordError.set(
-      a.safeParse(passwordSchema, password.get()).success ? "" : "Password must be at least 12 characters",
-    )
-    if (codeError.get() || passwordError.get()) return
+    const nextCodeError = /^\d{6}$/.test(code.get()) ? "" : "Please enter a valid 6-digit confirmation code"
+    const nextPasswordError = a.safeParse(passwordSchema, password.get()).success
+      ? ""
+      : "Password must be at least 12 characters"
+    codeError.set(nextCodeError)
+    passwordError.set(nextPasswordError)
+    if (nextCodeError || nextPasswordError) return
     submitting.set(true)
     const result = await actions.confirm(code.get(), password.get())
     submitting.set(false)

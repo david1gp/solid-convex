@@ -1,8 +1,8 @@
+import { convexContextRootCreate } from "#src/utils/convex_client/test/convexContextRootCreate.ts"
 import { describe, expect, test } from "bun:test"
 import type { FunctionReference } from "convex/server"
-import { createRoot, getOwner } from "solid-js"
+import { createRoot } from "solid-js"
 import { createResult, createResultError } from "#result"
-import { ConvexContext } from "./convexContext.ts"
 import { mutationCreate } from "./mutationCreate.ts"
 
 class FakeConvexClient {
@@ -35,9 +35,7 @@ describe("mutationCreate", () => {
     const backendResult = createResult({ value: "ok" })
     const client = new FakeConvexClient(backendResult)
     let runMutation: (() => Promise<unknown>) | undefined
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       runMutation = mutationCreate(mutation)
       return disposeRoot
     })
@@ -47,9 +45,7 @@ describe("mutationCreate", () => {
 
     const rawResult = { value: "raw" }
     const rawClient = new FakeConvexClient(rawResult)
-    const rawDispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: rawClient }
+    const rawDispose = convexContextRootCreate(rawClient, (disposeRoot) => {
       runMutation = mutationCreate(mutation)
       return disposeRoot
     })

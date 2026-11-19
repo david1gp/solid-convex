@@ -1,3 +1,4 @@
+import { flush } from "solid-js"
 import { expect, test } from "bun:test"
 
 const storage = new Map<string, string>()
@@ -40,9 +41,11 @@ test("an admin session enables Dev Mode outside development environments", () =>
   process.env.ENV_MODE = "production"
   try {
     userSessionsSignal.set([session("admin")])
+    flush()
     expect(hasDevMode()).toBe(true)
 
     userSessionsSignal.set([session("user")])
+    flush()
     expect(hasDevMode()).toBe(false)
   } finally {
     if (previousEnvMode === undefined) delete process.env.ENV_MODE

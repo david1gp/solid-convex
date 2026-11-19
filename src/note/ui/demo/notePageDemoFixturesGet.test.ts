@@ -1,3 +1,4 @@
+import { flush } from "solid-js"
 import { afterAll, beforeAll, describe, expect, test } from "bun:test"
 import { createRoot } from "solid-js"
 import { pageDemoFixtureStoreGet } from "#src/app/demos/pageDemoFixtureStoreGet.ts"
@@ -32,10 +33,15 @@ describe("note page demo fixtures", () => {
         projectId: "project-1",
         teamId: "team-1",
       })
+      flush()
       expect(fixtures.get(added.noteId)?.title).toBe("Added note")
+      flush()
       fixtures.edit(added.noteId, { content: "# Renamed\n\nbody", title: "Renamed" })
+      flush()
       expect(fixtures.get(added.noteId)?.title).toBe("Renamed")
+      flush()
       fixtures.remove(added.noteId)
+      flush()
       expect(fixtures.get(added.noteId)).toBeUndefined()
     } finally {
       dispose()

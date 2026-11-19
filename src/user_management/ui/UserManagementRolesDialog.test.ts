@@ -1,3 +1,4 @@
+import { flush } from "solid-js"
 import { describe, expect, test } from "bun:test"
 import { userManagementRolesDialogStateCreate } from "./userManagementRolesDialogStateCreate.ts"
 
@@ -34,7 +35,9 @@ describe("user management roles dialog copy", () => {
       syncedAt: "2026-10-14T00:00:00.000Z",
     })
     state.draftRoles.set([])
+    flush()
     await state.saveRoles()
+    flush()
     expect(state.errorMessage()).toBe("At least one role is required")
   })
 })

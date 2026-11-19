@@ -1,9 +1,9 @@
+import { convexContextRootCreate } from "#src/utils/convex_client/test/convexContextRootCreate.ts"
 import { describe, expect, test } from "bun:test"
 import type { FunctionReference } from "convex/server"
-import { createRoot, createSignal, getOwner } from "solid-js"
+import { createSignal, flush } from "solid-js"
 import * as a from "valibot"
 import { createResult } from "#result"
-import { ConvexContext } from "./convexContext.ts"
 import { cursorPaginationCreate } from "./cursorPaginationCreate.ts"
 
 type QueryUpdate = (value: unknown) => void
@@ -26,9 +26,7 @@ describe("cursorPaginationCreate", () => {
   test("moves through cursor history without fetching all pages", async () => {
     const client = new FakeConvexClient()
     let pagination: ReturnType<typeof cursorPaginationCreate<typeof query, string>>
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       pagination = cursorPaginationCreate({
         query,
         queryKey: "members",
@@ -47,6 +45,7 @@ describe("cursorPaginationCreate", () => {
     const state = pagination!
     expect(client.subscriptions).toHaveLength(1)
     client.subscriptions[0]!.update(createResult({ page: ["one"], isDone: false, continueCursor: "cursor-1" }))
+    flush()
     expect(state.page()?.success).toBe(true)
     expect(state.canNext()).toBe(true)
 
@@ -57,6 +56,7 @@ describe("cursorPaginationCreate", () => {
     expect(client.subscriptions.filter((subscription) => subscription.active)).toHaveLength(1)
 
     state.previous()
+    flush()
     expect(state.cursor()).toBeNull()
     expect(state.history()).toHaveLength(0)
 
@@ -67,9 +67,7 @@ describe("cursorPaginationCreate", () => {
     const client = new FakeConvexClient()
     const [scope, setScope] = createSignal("one")
     let pagination: ReturnType<typeof cursorPaginationCreate<typeof query, string>> | undefined
-    const dispose = createRoot((disposeRoot) => {
-      const owner = getOwner()!
-      owner.context = { [ConvexContext.id]: client }
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
       pagination = cursorPaginationCreate({
         query,
         queryKey: "members",
@@ -85,7 +83,9 @@ describe("cursorPaginationCreate", () => {
 
     await new Promise((resolve) => setTimeout(resolve, 0))
     client.subscriptions[0]!.update(createResult({ page: ["one"], isDone: false, continueCursor: "cursor-1" }))
+    flush()
     pagination!.next()
+    flush()
     expect(pagination!.history()).toHaveLength(1)
     setScope("two")
     await new Promise((resolve) => setTimeout(resolve, 0))

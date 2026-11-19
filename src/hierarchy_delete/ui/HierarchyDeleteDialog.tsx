@@ -6,7 +6,7 @@ import type { HierarchyDeleteConfirmAction } from "#src/hierarchy_delete/ui/hier
 import { hierarchyDeleteDialogStateCreate } from "#src/hierarchy_delete/ui/hierarchyDeleteDialogStateCreate.ts"
 import { classesDialogContentMerge, classesDialogOverlayMerge } from "#ui/interactive/dialog/classesDialogContent.js"
 import type { SignalObject } from "#ui/utils/createSignalObject.ts"
-import { type JSX } from "@solidjs/web";
+import { type JSX } from "@solidjs/web"
 
 interface HierarchyDeleteDialogProps {
   target: () => HierarchyDeleteTarget | undefined

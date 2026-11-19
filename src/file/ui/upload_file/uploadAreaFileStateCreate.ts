@@ -5,7 +5,7 @@ import type { UploadAreaFileInfo } from "#src/file/ui/stats/UploadAreaFileInfo.t
 import { uploadHandlerFile } from "#src/file/ui/upload_file/uploadHandlerFile.tsx"
 import type { SignalObject } from "#ui/utils/createSignalObject.ts"
 import { generateId12 } from "#utils/ran/generateId12.js"
-import { type JSX } from "@solidjs/web";
+import { type JSX } from "@solidjs/web"
 
 export function uploadAreaFileStateCreate(p: {
   id: () => string | undefined

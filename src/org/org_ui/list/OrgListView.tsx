@@ -11,7 +11,7 @@ import { LoadingSection } from "#src/ui/pages/LoadingSection.tsx"
 import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { Badge } from "#ui/static/badge/Badge.jsx"
-import { type JSX } from "@solidjs/web";
+import { type JSX } from "@solidjs/web"
 
 export function OrgListView(p: {
   orgs?: OrgModel[]

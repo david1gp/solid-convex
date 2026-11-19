@@ -10,7 +10,7 @@ import { cn } from "cn"
 import type { SignalObject } from "#ui/utils/createSignalObject.ts"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import type { MayHaveId } from "#ui/utils/MayHaveId.ts"
-import { type JSX } from "@solidjs/web";
+import { type JSX } from "@solidjs/web"
 
 export interface UploadAreaFileProps extends MayHaveResourceId, MayHaveClass, MayHaveId {
   hasUploaded: Accessor<boolean>

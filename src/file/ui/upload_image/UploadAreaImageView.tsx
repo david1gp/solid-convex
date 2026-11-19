@@ -11,7 +11,7 @@ import {
 import type { UploadAreaFileInfo } from "#src/file/ui/stats/UploadAreaFileInfo.ts"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { classArr } from "#ui/utils/classArr.ts"
-import { type JSX } from "@solidjs/web";
+import { type JSX } from "@solidjs/web"
 
 interface UploadAreaViewProps {
   status: UploadStatus

@@ -13,7 +13,7 @@ import {
   appSidebarCollapsedToggle,
 } from "./appSidebarCollapsedSignal.ts"
 import { appShellStateCreate } from "./appShellStateCreate.ts"
-import { type JSX } from "@solidjs/web";
+import { type JSX } from "@solidjs/web"
 
 /** Eventoren-style app shell: sidebar navigation with user popover, no top navbar. */
 export function AppShell(p: {

@@ -3,7 +3,7 @@ import { buttonVariant } from "#ui/interactive/button/buttonCva.ts"
 import { LinkButtonExternal, LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { cn } from "cn"
-import { type ComponentProps } from "@solidjs/web";
+import { type ComponentProps } from "@solidjs/web"
 
 export interface SectionHeaderProps extends PageHeaderProps {
   icon: string

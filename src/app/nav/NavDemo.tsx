@@ -1,4 +1,4 @@
-import { Show, splitProps } from "solid-js"
+import { Show } from "solid-js"
 import { NavCrumbs } from "#src/app/nav/NavCrumbs.tsx"
 import type { DemoNavDataProps } from "#ui/demo_pages/DemoNavDataProps.ts"
 import { LinkBlock } from "#ui/demo_pages/LinkBlock.jsx"
@@ -7,15 +7,14 @@ import { LinkButtonInternal } from "#ui/interactive/link/LinkButton.jsx"
 import { CorvuPopover } from "#ui/interactive/popover/CorvuPopover.jsx"
 import { objectEntries } from "#utils/obj/objectEntries.js"
 import { objectKeys } from "#utils/obj/objectKeys.js"
-import { type ComponentProps } from "@solidjs/web";
+import { type ComponentProps } from "@solidjs/web"
 
 export interface DemoNavProps extends DemoNavDataProps, ComponentProps<"nav"> {}
 
 export function NavDemo(p: DemoNavProps) {
-  const [s] = splitProps(p, ["children", "category", "compName", "demoList", "demoPrefix", "class"])
   return (
     <NavCrumbs class={p.class}>
-      <ChildrenLeft {...s} />
+      <ChildrenLeft {...p} />
     </NavCrumbs>
   )
 }

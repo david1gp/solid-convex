@@ -1,6 +1,6 @@
 import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
-import { type JSX } from "@solidjs/web";
+import { type JSX } from "@solidjs/web"
 
 export interface NavCrumbsProps extends MayHaveClass {
   children: JSX.Element

@@ -15,7 +15,7 @@ import { Icon } from "#ui/static/icon/Icon.jsx"
 import { LogoImageText } from "#ui/static/logo/LogoImageText.jsx"
 import { AppThemeSegmentedControl } from "./AppThemeSegmentedControl.tsx"
 import type { AppShellState } from "./appShellStateCreate.ts"
-import { type JSX } from "@solidjs/web";
+import { type JSX } from "@solidjs/web"
 
 function initialsOf(name: string): string {
   const initials = name

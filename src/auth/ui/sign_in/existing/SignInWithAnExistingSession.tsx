@@ -15,7 +15,7 @@ import { classArr } from "#ui/utils/classArr.ts"
 import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 import type { MayHaveInnerClass } from "#ui/utils/MayHaveInnerClass.ts"
-import { type JSX } from "@solidjs/web";
+import { type JSX } from "@solidjs/web"
 
 dayjs.extend(relativeTime)
 

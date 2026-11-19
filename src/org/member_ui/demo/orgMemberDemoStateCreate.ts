@@ -1,5 +1,6 @@
 import { debounce } from "@solid-primitives/scheduled"
 import { useNavigate, useParams } from "@tanstack/solid-router"
+import { untrack } from "solid-js"
 import * as a from "valibot"
 import { pageDemoFixtureStoreGet } from "#src/app/demos/pageDemoFixtureStoreGet.ts"
 import { pageDemoHref } from "#src/app/demos/pageDemoHref.ts"
@@ -22,31 +23,35 @@ export function orgMemberDemoStateCreate(
   const fixtureKey = () => `page-demo:org-members:${orgHandle()}`
   const store = pageDemoFixtureStoreGet()
   const members = createSignalObject<OrgMemberProfile[]>(
-    store.get<OrgMemberProfile[]>(fixtureKey()) ??
-      store.set(fixtureKey(), [
-        {
-          orgHandle: orgHandle(),
-          memberId: "member-1",
-          userId: "sample-user",
-          role: orgRole.member,
-          invitedBy: "demo",
-          createdAt: date,
-          updatedAt: date,
-          profile: { userId: "sample-user", name: "Sample User", role: "user", createdAt: date, updatedAt: date },
-        },
-      ]),
+    untrack(
+      () =>
+        store.get<OrgMemberProfile[]>(fixtureKey()) ??
+        store.set(fixtureKey(), [
+          {
+            orgHandle: orgHandle(),
+            memberId: "member-1",
+            userId: "sample-user",
+            role: orgRole.member,
+            invitedBy: "demo",
+            createdAt: date,
+            updatedAt: date,
+            profile: { userId: "sample-user", name: "Sample User", role: "user", createdAt: date, updatedAt: date },
+          },
+        ]),
+    ),
   )
   const member = () => members.get().find((item) => item.memberId === memberId())
+  const initialMember = untrack(member)
   const state = {
-    userId: createSignalObject(mode === formMode.add ? "new-user" : (member()?.userId ?? "")),
-    role: createSignalObject<string>(mode === formMode.add ? orgRole.member : (member()?.role ?? orgRole.member)),
+    userId: createSignalObject(mode === formMode.add ? "new-user" : (initialMember?.userId ?? "")),
+    role: createSignalObject<string>(mode === formMode.add ? orgRole.member : (initialMember?.role ?? orgRole.member)),
   }
   const errors = { userId: createSignalObject(""), role: createSignalObject("") }
   const isSubmitting = createSignalObject(false)
   const serverState = createSignalObject<OrgMemberModel>(
-    member() ?? {
+    initialMember ?? {
       memberId: "",
-      orgHandle: orgHandle(),
+      orgHandle: untrack(orgHandle),
       userId: "",
       role: orgRole.member,
       invitedBy: "demo",

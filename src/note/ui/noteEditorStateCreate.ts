@@ -1,4 +1,4 @@
-import { createEffect, createMemo } from "solid-js"
+import { createEffect, createMemo, untrack } from "solid-js"
 import { noteTitleDerive } from "#src/note/model/noteTitleDerive.ts"
 import { createSignalObject } from "#ui/utils/createSignalObject.ts"
 
@@ -15,13 +15,14 @@ export function noteEditorStateCreate(
   onSave?: (content: string) => void | Promise<void>,
   noteKey?: () => string | undefined,
 ) {
-  const contentSignal = createSignalObject(initialContent())
-  const baselineSignal = createSignalObject(initialContent())
+  const initial = untrack(initialContent)
+  const contentSignal = createSignalObject(initial)
+  const baselineSignal = createSignalObject(initial)
   const isSavingSignal = createSignalObject(false)
   const isDirtySignal = createSignalObject(false)
   const hasConflictSignal = createSignalObject(false)
 
-  let lastKey: string | undefined = noteKey ? noteKey() : undefined
+  let lastKey: string | undefined = noteKey ? untrack(noteKey) : undefined
 
   createEffect(
     () => ({

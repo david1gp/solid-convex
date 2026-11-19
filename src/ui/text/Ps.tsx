@@ -6,6 +6,5 @@ export interface PsProps extends MayHaveClass {
 }
 
 export function Ps(p: PsProps) {
-  const lines = p.text.split("\n")
-  return <For each={lines}>{(line) => <p class={p.class}>{line}</p>}</For>
+  return <For each={p.text.split("\n")}>{(line) => <p class={p.class}>{line}</p>}</For>
 }

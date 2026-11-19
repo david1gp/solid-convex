@@ -12,7 +12,7 @@ import { cn } from "cn"
 
 /** Dismissible toast notification with icon and message. */
 export function Toast(p: ToastPropsInternal) {
-  const texts =
+  const texts = () =>
     p.texts ??
     ({
       close: ttt("Close Toast"),
@@ -20,7 +20,7 @@ export function Toast(p: ToastPropsInternal) {
 
   return (
     <li role="status" aria-live="polite" aria-atomic="true" data-state={"open"} class={toastCva(p.variant, p.class)}>
-      <ToastHeader {...p} texts={texts} />
+      <ToastHeader {...p} texts={texts()} />
       <Show when={p.description}>
         <p class={cn("text-lg break-words", p.descriptionClass)}>{p.description}</p>
       </Show>

@@ -1,5 +1,6 @@
 import { debounce } from "@solid-primitives/scheduled"
 import { useNavigate, useParams } from "@tanstack/solid-router"
+import { untrack } from "solid-js"
 import * as a from "valibot"
 import { pageDemoFixtureStoreGet } from "#src/app/demos/pageDemoFixtureStoreGet.ts"
 import { pageDemoHref } from "#src/app/demos/pageDemoHref.ts"
@@ -24,7 +25,7 @@ export function orgInvitationDemoStateCreate() {
   const orgHandle = () => params().orgHandle ?? "sample-org"
   const invitationCode = () => params().invitationCode ?? "invite-1"
   const key = () => `page-demo:org-invitations:${orgHandle()}`
-  const invitations = createSignalObject(orgInvitationDemoFixturesGet(orgHandle()))
+  const invitations = createSignalObject(untrack(() => orgInvitationDemoFixturesGet(orgHandle())))
   const accepted = createSignalObject(false)
   const acceptedInvitation = createSignalObject<OrgInvitationModel | undefined>(undefined)
   const isSubmitting = createSignalObject(false)

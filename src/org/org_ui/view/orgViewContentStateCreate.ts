@@ -1,4 +1,4 @@
-import { createEffect, onCleanup } from "solid-js"
+import { createEffect, onCleanup, untrack } from "solid-js"
 import * as v from "valibot"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { appIcons } from "#src/app/icon/appIcons.ts"
@@ -28,7 +28,7 @@ export function orgViewContentStateCreate(props: () => OrgViewContentProps) {
 
   const initialTab = initialTabGet()
   const selectedTab: SignalObject<string> = createSignalObject(
-    tabOptions().includes(initialTab) ? initialTab : "overview",
+    untrack(tabOptions).includes(initialTab) ? initialTab : "overview",
   )
 
   if (typeof window !== "undefined") {

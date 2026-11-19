@@ -48,7 +48,7 @@ export const resourceDemoRoutes = [
  * gallery boundary, without the gallery chrome (All demos link, centering, title).
  * Gallery and shell-wrapped routes share this so fixtures exist exactly once. */
 export function PageDemoContent(p: { entry?: (typeof pageRouteInventory)[number] }) {
-  const state = pageDemoBoundaryStateCreate(p.entry)
+  const state = pageDemoBoundaryStateCreate(() => p.entry)
   return (
     <ConvexContext value={null}>
       <Show

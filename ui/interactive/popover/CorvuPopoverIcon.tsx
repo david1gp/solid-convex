@@ -1,4 +1,4 @@
-import Popover from "@corvu/popover"
+import Popover from "@corvu-next/popover"
 import { type Component, type ComponentProps, splitProps } from "solid-js"
 import { classesDisabledDirectly } from "#ui/classes/classesDisabledDirectly.js"
 import { type ButtonCvaProps, buttonCvaIconOnly } from "#ui/interactive/button/buttonCva.js"

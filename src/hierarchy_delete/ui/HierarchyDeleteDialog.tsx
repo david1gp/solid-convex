@@ -1,4 +1,4 @@
-import Dialog from "@corvu/dialog"
+import Dialog from "@corvu-next/dialog"
 import { type JSX, Show } from "solid-js"
 import type { HierarchyDeleteTarget } from "#src/hierarchy_delete/model/hierarchyDeleteTargetSchema.ts"
 import { HierarchyDeleteView } from "#src/hierarchy_delete/ui/HierarchyDeleteView.tsx"

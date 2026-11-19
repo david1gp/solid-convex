@@ -1,4 +1,4 @@
-import Dialog from "@corvu/dialog"
+import Dialog from "@corvu-next/dialog"
 import { Show } from "solid-js"
 import { userAvailableRolesRead } from "#src/user_management/ui/userAvailableRoles.ts"
 import type { UserManagementRolesDialogState } from "#src/user_management/ui/userManagementRolesDialogStateCreate.ts"

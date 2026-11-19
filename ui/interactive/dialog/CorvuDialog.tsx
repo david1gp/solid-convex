@@ -1,5 +1,5 @@
 import { mdiClose } from "@adaptive-ds/mdi/mdiClose.js"
-import Dialog from "@corvu/dialog"
+import Dialog from "@corvu-next/dialog"
 import type { Accessor, ComponentProps, JSX } from "solid-js"
 import { classesDisabledDirectly } from "#ui/classes/classesDisabledDirectly.js"
 import { type ButtonCvaProps, buttonCva2, buttonCvaIconOnly, buttonVariant } from "#ui/interactive/button/buttonCva.js"

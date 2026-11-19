@@ -224,7 +224,7 @@ const variantClasses = {
 
 export function buttonCva2(
   variant: ButtonVariant = buttonVariant.ghost,
-  ...customClasses: (string | boolean | undefined | null | 0)[]
+  ...customClasses: import("@solidjs/web").JSX.ClassValue[]
 ) {
   return cn(baseClasses, variantClasses[variant], customClasses)
 }
@@ -233,7 +233,7 @@ export function buttonCvaIconOnly(
   variant: ButtonVariant | undefined,
   isLoading: boolean | undefined,
   isDisabled: boolean | undefined,
-  ...customClasses: (string | boolean | undefined | null | 0)[]
+  ...customClasses: import("@solidjs/web").JSX.ClassValue[]
 ) {
   const classes = buttonCva2(
     variant ?? buttonVariant.ghost,

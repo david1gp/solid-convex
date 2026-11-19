@@ -15,7 +15,7 @@ export interface ToggleButtonProps
     MayHaveClass,
     MayHaveChildren,
     Omit<MayHaveDisabledAccessor, "disabled">,
-    ComponentProps<"button"> {
+    Omit<ComponentProps<"button">, "class"> {
   title: string
   onClick?: (e: MouseEvent & { currentTarget: HTMLButtonElement; target: Element }) => void
   onPressedChange?: (pressed: boolean) => void
@@ -32,7 +32,7 @@ export function ToggleButton(p: ToggleButtonProps) {
     <ButtonIcon
       type="button"
       title={p.title}
-      aria-pressed={p.pressedSignal.get()}
+      aria-pressed={p.pressedSignal.get() ? "true" : "false"}
       data-state={p.pressedSignal.get() ? "on" : "off"}
       data-disabled={isDisabled(p)}
       onClick={(e) => {

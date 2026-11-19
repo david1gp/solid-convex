@@ -16,7 +16,7 @@ export function BlackBulletPoint(p: BlackBulletPointProps) {
         p.class,
       )}
       style={{ "font-size": "0.5rem" }}
-      aria-hidden={true}
+      aria-hidden="true"
       {...rest}
     >
       ●

@@ -52,7 +52,7 @@ export const ButtonIcon: Component<ButtonIconProps> = (p) => {
       variant={p.validationMessage ? p.validationVariant : p.variant}
       onClick={onClick2}
       disabled={p.disabled}
-      aria-disabled={p.isLoading || !!p.validationMessage}
+      aria-disabled={p.isLoading || !!p.validationMessage ? "true" : "false"}
       {...rest}
     >
       {(p.isLoading || p.validationMessage || p.icon) && (

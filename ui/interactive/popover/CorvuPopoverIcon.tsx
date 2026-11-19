@@ -1,4 +1,4 @@
-import Popover from "@corvu-next/popover"
+import Popover, { type TriggerProps } from "@corvu-next/popover"
 import { type Component, omit } from "solid-js"
 import { classesDisabledDirectly } from "#ui/classes/classesDisabledDirectly.js"
 import { type ButtonCvaProps, buttonCvaIconOnly } from "#ui/interactive/button/buttonCva.js"
@@ -15,14 +15,15 @@ import { isLoading, type MayHaveIsLoading } from "#ui/utils/MayHaveIsLoading.js"
 import { type ComponentProps } from "@solidjs/web"
 
 export interface CorvuPopoverIconProps
-  extends Omit<ComponentProps<"button">, "title">,
+  extends Omit<ComponentProps<"button">, "title" | "class" | "ref" | "type">,
     ButtonCvaProps,
     HasIcon,
     HasTitle,
     MayHaveClass,
     MayHaveInnerClass,
     MayHaveChildren,
-    MayHaveIsLoading {
+    MayHaveIsLoading,
+    Pick<TriggerProps, "ref" | "type"> {
   open?: boolean
   onOpenChange?: (open: boolean) => void
 }
@@ -55,7 +56,7 @@ export const CorvuPopoverIcon: Component<CorvuPopoverIconProps> = (p) => {
       onOpenChange={p.onOpenChange}
     >
       <Popover.Trigger
-        class={buttonCvaIconOnly(p.variant, isLoading(p), p.disabled, classesButtonClickAnimation, p.class)}
+        class={buttonCvaIconOnly(p.variant, isLoading(p), p.disabled === "" || p.disabled === true, classesButtonClickAnimation, p.class)}
         title={p.title}
         {...rest}
       >

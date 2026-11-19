@@ -1,5 +1,5 @@
 import { mdiClose } from "@adaptive-ds/mdi/mdiClose.js"
-import Dialog from "@corvu-next/dialog"
+import Dialog, { type TriggerProps } from "@corvu-next/dialog"
 import { type Component, omit } from "solid-js"
 import { classesDisabledDirectly } from "#ui/classes/classesDisabledDirectly.js"
 import { type ButtonCvaProps, buttonCvaIconOnly, buttonVariant } from "#ui/interactive/button/buttonCva.js"
@@ -19,14 +19,15 @@ import { isLoading, type MayHaveIsLoading } from "#ui/utils/MayHaveIsLoading.js"
 import { type ComponentProps } from "@solidjs/web"
 
 export interface CorvuDialogIconProps
-  extends Omit<ComponentProps<"button">, "title">,
+  extends Omit<ComponentProps<"button">, "title" | "class" | "ref" | "type">,
     ButtonCvaProps,
     HasIcon,
     HasTitle,
     MayHaveClass,
     MayHaveInnerClass,
     MayHaveChildren,
-    MayHaveIsLoading {
+    MayHaveIsLoading,
+    Pick<TriggerProps, "ref" | "type"> {
   dialogTitle: string
   description?: string
   titleClass?: string
@@ -59,7 +60,7 @@ export const CorvuDialogIcon: Component<CorvuDialogIconProps> = (p) => {
   return (
     <Dialog>
       <Dialog.Trigger
-        class={buttonCvaIconOnly(p.variant, isLoading(p), p.disabled, classesButtonClickAnimation, p.class)}
+        class={buttonCvaIconOnly(p.variant, isLoading(p), p.disabled === "" || p.disabled === true, classesButtonClickAnimation, p.class)}
         title={p.title}
         {...rest}
       >

@@ -16,7 +16,7 @@ import type { MayHaveInnerClass } from "#ui/utils/MayHaveInnerClass.js"
 import { type ComponentProps, type JSX } from "@solidjs/web";
 
 export interface CorvuDialogProps
-  extends ComponentProps<"button">,
+  extends Omit<ComponentProps<"button">, "class">,
     ButtonCvaProps,
     MayHaveClass,
     MayHaveInnerClass,

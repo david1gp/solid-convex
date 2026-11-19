@@ -9,6 +9,6 @@ export type SetterSimplified<T> = (t: T) => void
 export type SignalObject<T> = { get: Accessor<T>; set: SetterSimplified<T> }
 
 export function createSignalObject<T>(v: T): SignalObject<T> {
-  const [get, set] = createSignal(v)
-  return { get, set }
+  const [get, set] = createSignal<T>(() => v)
+  return { get, set: (value) => { set(() => value) } }
 }

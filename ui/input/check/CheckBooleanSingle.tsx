@@ -41,7 +41,7 @@ export function CheckBooleanSingle(p: CheckBooleanSingleProps) {
     >
       <ButtonIcon
         role="option"
-        aria-selected={isSelected()}
+        aria-selected={isSelected() ? "true" : "false"}
         icon={isSelected() ? mdiCheckboxMarkedCircle : mdiCheckboxBlankCircleOutline}
         onClick={() => toggleOption(p)}
         variant={p.variant ?? buttonVariant.filled}

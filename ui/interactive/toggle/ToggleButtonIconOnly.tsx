@@ -46,7 +46,7 @@ export const ToggleButtonIconOnly: Component<ToggleButtonIconOnlyProps> = (p) =>
       class={buttonCvaIconOnly(p.variant, isLoading(p), isDisabled(p), classesButtonClickAnimation, p.class)}
       title={p.title}
       type={p.type ?? "button"}
-      aria-pressed={p.pressedSignal.get()}
+      aria-pressed={p.pressedSignal.get() ? "true" : "false"}
       data-state={p.pressedSignal.get() ? "on" : "off"}
       data-disabled={isDisabled(p)}
       onClick={(e) => {

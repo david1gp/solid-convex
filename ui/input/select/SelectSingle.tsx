@@ -185,7 +185,7 @@ function ListOption(p: ListOptionProps) {
       as={ButtonIcon}
       role="option"
       aria-label={label()}
-      aria-selected={isSelected()}
+      aria-selected={isSelected() ? "true" : "false"}
       iconRight={isSelected() ? mdiCheck : undefined}
       onKeyDown={(event) => handleOptionKeyDown(event, p.option, p.valueSignal, p.closePopover)}
       onClick={() => p.valueSignal.set(p.option)}

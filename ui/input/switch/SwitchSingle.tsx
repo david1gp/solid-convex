@@ -86,7 +86,7 @@ function Option(p: Option2Props) {
       type="button"
       role="radio"
       disabled={p.disabled}
-      aria-checked={isChecked(p)}
+      aria-checked={isChecked(p) ? "true" : "false"}
       data-checked={isChecked(p)}
       data-state={isChecked(p) ? "checked" : "unchecked"}
       data-disabled={p.disabled}

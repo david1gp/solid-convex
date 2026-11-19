@@ -102,7 +102,7 @@ function TabOption(p: TabOptionProps): JSXElement {
     <button
       type="button"
       role="tab"
-      aria-selected={isSelected(p)}
+      aria-selected={isSelected(p) ? "true" : "false"}
       id={makeTriggerId(p.baseId, p.value)}
       aria-controls={makeContentId(p.baseId, p.value)}
       data-state={isSelected(p) ? "active" : "inactive"}
@@ -134,7 +134,7 @@ function TabContent(p: TabOptionProps): JSXElement {
       aria-labelledby={makeTriggerId(p.baseId, p.value)}
       hidden={!isSelected(p)}
       // biome-ignore lint/a11y/noNoninteractiveTabindex: WAI-ARIA tabs pattern makes the tabpanel focusable
-      tabIndex={0}
+      tabindex={0}
       class={classArr("")}
     >
       {p.valueChildren(p.value)}

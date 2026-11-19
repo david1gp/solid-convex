@@ -186,7 +186,7 @@ function ListOption(p: ListOptionProps) {
     <ButtonIcon
       // id={`${p.id}-option-${p.index}`}
       role="option"
-      aria-selected={optionIsSelected(p)}
+      aria-selected={optionIsSelected(p) ? "true" : "false"}
       iconRight={optionIsSelected(p) ? mdiCheck : undefined}
       onClick={() => {
         toggleOption(p)

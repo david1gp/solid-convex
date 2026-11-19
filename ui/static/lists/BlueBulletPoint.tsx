@@ -17,7 +17,7 @@ export function BlueBulletPoint(p: BlueBulletPointProps) {
         p.class,
       )}
       style={{ "font-size": "0.5rem" }}
-      aria-hidden={true}
+      aria-hidden="true"
       {...rest}
     >
       ●

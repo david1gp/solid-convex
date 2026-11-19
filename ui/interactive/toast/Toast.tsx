@@ -19,7 +19,7 @@ export function Toast(p: ToastPropsInternal) {
     } as const)
 
   return (
-    <li role="status" aria-live="polite" aria-atomic={true} data-state={"open"} class={toastCva(p.variant, p.class)}>
+    <li role="status" aria-live="polite" aria-atomic="true" data-state={"open"} class={toastCva(p.variant, p.class)}>
       <ToastHeader {...p} texts={texts} />
       <Show when={p.description}>
         <p class={cn("text-lg break-words", p.descriptionClass)}>{p.description}</p>

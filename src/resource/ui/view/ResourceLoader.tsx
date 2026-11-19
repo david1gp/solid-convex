@@ -1,4 +1,4 @@
-import { type JSXElement, Match, Switch } from "solid-js"
+import { type Element as JSXElement, Match, Switch } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import type { HasResourceId } from "#src/resource/model/HasResourceId.ts"
 import type { HasResourceModel } from "#src/resource/model/HasResourceModel.ts"

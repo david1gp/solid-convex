@@ -1,4 +1,4 @@
-import { Show, splitProps } from "solid-js"
+import { Show, omit } from "solid-js"
 import { languageSignalGet } from "#src/app/i18n/languageSignal.ts"
 import { NavLinkButton } from "#src/app/nav/links/NavLinkButton.tsx"
 import { ResourceListNavButton } from "#src/app/nav/links/ResourceListNavButton.tsx"
@@ -14,11 +14,11 @@ import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 export interface NavAppDirProps extends NavResourceBreadcrumbsProps, MayHaveChildren, MayHaveClass {}
 
 export function NavResource(p: NavAppDirProps) {
-  const [s, rest] = splitProps(p, ["children", "class"])
+  const rest = omit(p, "children", "class")
   return (
     <div class="mb-6 flex flex-wrap items-center justify-between gap-2">
       <NavCrumbs class="mb-0">
-        <NavResourceBreadcrumbs {...rest}>{s.children}</NavResourceBreadcrumbs>
+        <NavResourceBreadcrumbs {...rest}>{p.children}</NavResourceBreadcrumbs>
       </NavCrumbs>
       <SiteNavLinkButton sitePath={getSitePath(p.resourceId)} />
     </div>

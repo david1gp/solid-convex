@@ -1,4 +1,4 @@
-import type { JSXElement } from "solid-js"
+import type { Element as JSXElement } from "solid-js"
 import type { ToastVariant } from "#ui/interactive/toast/toastVariant.js"
 import type { HasTitle } from "#ui/utils/HasTitle.js"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"

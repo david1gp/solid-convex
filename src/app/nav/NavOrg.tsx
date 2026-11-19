@@ -1,4 +1,4 @@
-import { Show, splitProps } from "solid-js"
+import { Show, omit } from "solid-js"
 import { NavLinkButton } from "#src/app/nav/links/NavLinkButton.tsx"
 import { OrganizationListNavButton } from "#src/app/nav/links/OrganizationListNavButton.tsx"
 import { NavBreadcrumbSeparator } from "#src/app/nav/NavBreadcrumbSeparator.tsx"
@@ -12,10 +12,10 @@ import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 export interface NavOrgProps extends NavOrgBreadcrumbsProps, MayHaveChildren, MayHaveClass {}
 
 export function NavOrg(p: NavOrgProps) {
-  const [s, rest] = splitProps(p, ["children", "class"])
+  const rest = omit(p, "children", "class")
   return (
     <NavCrumbs class={p.class}>
-      <NavOrgBreadcrumbs {...rest}>{s.children}</NavOrgBreadcrumbs>
+      <NavOrgBreadcrumbs {...rest}>{p.children}</NavOrgBreadcrumbs>
     </NavCrumbs>
   )
 }

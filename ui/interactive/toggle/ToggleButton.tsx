@@ -1,10 +1,10 @@
-import { splitProps } from "solid-js"
+import { omit } from "solid-js"
 import { ButtonIcon } from "#ui/interactive/button/ButtonIcon.jsx"
 import type { SignalObject } from "#ui/utils/createSignalObject.js"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
 import { isDisabled, type MayHaveDisabledAccessor } from "#ui/utils/MayHaveDisabledAccessor.js"
-import { type ComponentProps } from "@solidjs/web";
+import { type ComponentProps } from "@solidjs/web"
 
 /**
  * https://github.com/radix-ui/primitives/blob/main/packages/react/toggle/src/Toggle.tsx
@@ -27,24 +27,24 @@ type ToggleButtonStateProps = {
 
 /** Button toggling a pressed signal on click. */
 export function ToggleButton(p: ToggleButtonProps) {
-  const [s, rest] = splitProps(p, ["title", "pressedSignal", "disabled", "onPressedChange", "onClick", "children"])
+  const rest = omit(p, "title", "pressedSignal", "disabled", "onPressedChange", "onClick", "children")
   return (
     <ButtonIcon
       type="button"
-      title={s.title}
-      aria-pressed={s.pressedSignal.get()}
-      data-state={s.pressedSignal.get() ? "on" : "off"}
+      title={p.title}
+      aria-pressed={p.pressedSignal.get()}
+      data-state={p.pressedSignal.get() ? "on" : "off"}
       data-disabled={isDisabled(p)}
       onClick={(e) => {
         const next = togglePressed(p)
-        if (s.onPressedChange) {
-          s.onPressedChange(next)
+        if (p.onPressedChange) {
+          p.onPressedChange(next)
         }
-        if (s.onClick) s.onClick(e)
+        if (p.onClick) p.onClick(e)
       }}
       {...rest}
     >
-      {s.children}
+      {p.children}
     </ButtonIcon>
   )
 }

@@ -1,4 +1,4 @@
-import { type JSXElement, Match, Switch } from "solid-js"
+import { type Element as JSXElement, Match, Switch } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import type { HasOrgModel } from "#src/org/org_model/HasOrgModel.ts"
 import type { HasOrgHandle } from "#src/org/org_model_field/HasOrgHandle.ts"

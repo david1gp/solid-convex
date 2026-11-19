@@ -1,5 +1,5 @@
 import { mdiEmail } from "@adaptive-ds/mdi/mdiEmail.js"
-import { type Accessor, For, Show, splitProps } from "solid-js"
+import { type Accessor, For, Show, omit } from "solid-js"
 import { appIcons } from "#src/app/icon/appIcons.ts"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import type { OrgInvitationModel } from "#src/org/invitation_model/orgInvitationSchema.ts"
@@ -32,9 +32,9 @@ export interface OrgInvitationListPagination {
 }
 
 export function OrgInvitationListSection(p: OrgInvitationsProps) {
-  const [s, rest] = splitProps(p, ["class", "pagination", "loading"])
+  const rest = omit(p, "class", "pagination", "loading")
   return (
-    <section id={orgPageSection.invitations} class={cn("space-y-1", "my-2", s.class)}>
+    <section id={orgPageSection.invitations} class={cn("space-y-1", "my-2", p.class)}>
       <Header {...rest} />
       <Show when={!p.loading} fallback={<p class="text-sm text-muted-foreground">{ttc("Loading invitations...")}</p>}>
         <Show when={p.invitations.length > 0} fallback={<NoOrgInvitationsText />}>

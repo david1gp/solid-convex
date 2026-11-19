@@ -1,9 +1,9 @@
-import { splitProps } from "solid-js"
+import { omit } from "solid-js"
 import type { GridFeatureType } from "#ui/static/grid/GridFeatureType.js"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { classArr } from "#ui/utils/classArr.js"
 import { cn } from "cn"
-import { type ComponentProps } from "@solidjs/web";
+import { type ComponentProps } from "@solidjs/web"
 
 export interface FeatureGridSectionProps extends ComponentProps<"section"> {
   id: string
@@ -21,7 +21,8 @@ export interface FeatureGridSectionProps extends ComponentProps<"section"> {
 
 /** Section displaying features in a responsive icon grid. */
 export function FeatureGridSection(p: FeatureGridSectionProps) {
-  const [s, rest] = splitProps(p, [
+  const rest = omit(
+    p,
     "id",
     "title",
     "titleClass",
@@ -34,14 +35,14 @@ export function FeatureGridSection(p: FeatureGridSectionProps) {
     "gridClass",
     "cardClass",
     "class",
-  ])
+  )
   return (
-    <section id={s.id} class={cn("w-full", "py-25 px-4", s.class)} {...rest}>
-      <div class={classArr("max-w-7xl mx-auto", "text-center mb-8", s.headerClass)}>
+    <section id={p.id} class={cn("w-full", "py-25 px-4", p.class)} {...rest}>
+      <div class={classArr("max-w-7xl mx-auto", "text-center mb-8", p.headerClass)}>
         <h2 class={classArr("text-3xl sm:text-4xl font-bold", "mb-4", "group flex items-center justify-center")}>
-          <span>{s.title}</span>
+          <span>{p.title}</span>
           <a
-            href={"#" + s.id}
+            href={"#" + p.id}
             class="opacity-0 group-hover:opacity-100 p-1 rounded hidden sm:flex"
             title="Link to this section"
           >
@@ -51,13 +52,13 @@ export function FeatureGridSection(p: FeatureGridSectionProps) {
             />
           </a>
         </h2>
-        <p class={cn("text-xl text-muted-foreground mx-auto", s.subtitle1Class)}>{s.subtitle1}</p>
-        {s.subtitle2 && <p class={cn("text-xl text-muted-foreground mx-auto mt-1", s.subtitle2Class)}>{s.subtitle2}</p>}
+        <p class={cn("text-xl text-muted-foreground mx-auto", p.subtitle1Class)}>{p.subtitle1}</p>
+        {p.subtitle2 && <p class={cn("text-xl text-muted-foreground mx-auto mt-1", p.subtitle2Class)}>{p.subtitle2}</p>}
       </div>
 
-      <div class={cn("grid md:grid-cols-2 lg:grid-cols-3 gap-8", "max-w-7xl mx-auto", s.gridClass)}>
-        {s.features.map((feature) => (
-          <div class={cn("bg-white dark:bg-gray-800", "rounded-lg p-6", "shadow-md lg:shadow-lg", s.cardClass)}>
+      <div class={cn("grid md:grid-cols-2 lg:grid-cols-3 gap-8", "max-w-7xl mx-auto", p.gridClass)}>
+        {p.features.map((feature) => (
+          <div class={cn("bg-white dark:bg-gray-800", "rounded-lg p-6", "shadow-md lg:shadow-lg", p.cardClass)}>
             <div class="flex items-center gap-3 mb-4">
               <Icon path={feature.icon} class="size-8" />
               <h3 class="text-xl font-semibold">{feature.title}</h3>

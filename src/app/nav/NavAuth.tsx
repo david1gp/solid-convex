@@ -1,4 +1,4 @@
-import { splitProps } from "solid-js"
+import { omit } from "solid-js"
 import { LinkLikeNavText } from "#src/app/nav/links/LinkLikeNavText.tsx"
 import { urlOverview } from "#src/app/pages/urlOverview.ts"
 import { appNameClient } from "#src/app/text/appName.ts"
@@ -13,14 +13,14 @@ export interface NavAuthProps extends MayHaveChildren, MayHaveClass {
 
 /** Slim centered header for unauthenticated auth pages (no sidebar there). */
 export function NavAuth(p: NavAuthProps) {
-  const [s, rest] = splitProps(p, ["title", "children"])
+  const rest = omit(p, "title", "children")
   return (
     <header class={cn("mx-auto flex w-full max-w-md flex-col items-center gap-3 px-4 pt-10", rest.class)}>
       <LogoImageText to={urlOverview()} logoText={appNameClient()} logoTextClass="text-xl font-semibold" />
       <LinkLikeNavText isActive={false} class="p-0 text-lg">
-        {s.title}
+        {p.title}
       </LinkLikeNavText>
-      {s.children}
+      {p.children}
     </header>
   )
 }

@@ -1,7 +1,7 @@
-import { splitProps } from "solid-js"
+import { omit } from "solid-js"
 import { NavCrumbs } from "#src/app/nav/NavCrumbs.tsx"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
-import { type JSX } from "@solidjs/web";
+import { type JSX } from "@solidjs/web"
 
 export interface NavUserProfileProps extends MayHaveClass {
   childrenLeft: JSX.Element
@@ -10,11 +10,11 @@ export interface NavUserProfileProps extends MayHaveClass {
 }
 
 export function NavUserProfile(p: NavUserProfileProps) {
-  const [s, rest] = splitProps(p, ["childrenLeft", "children", "childrenRight"])
+  const rest = omit(p, "childrenLeft", "children", "childrenRight")
   return (
     <NavCrumbs {...rest}>
-      {s.childrenLeft}
-      {s.children ?? s.childrenRight}
+      {p.childrenLeft}
+      {p.children ?? p.childrenRight}
     </NavCrumbs>
   )
 }

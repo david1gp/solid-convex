@@ -1,7 +1,7 @@
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime.js"
 import utc from "dayjs/plugin/utc.js"
-import type { JSXElement } from "solid-js"
+import type { Element as JSXElement } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import { cn } from "cn"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"

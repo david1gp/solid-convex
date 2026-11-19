@@ -1,5 +1,5 @@
-import type { Component, JSXElement } from "solid-js"
-import { splitProps } from "solid-js"
+import type { Component, Element as JSXElement } from "solid-js"
+import { omit } from "solid-js"
 import { cn } from "cn"
 import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"
 import type { MayHaveSubtitle } from "#ui/utils/MayHaveSubtitle.js"
@@ -13,12 +13,12 @@ export interface FieldsetProps extends MayHaveChildren, MayHaveTitle, MayHaveSub
 
 /** Fieldset grouping inputs under a titled legend. */
 export const Fieldset: Component<FieldsetProps> = (p) => {
-  const [s, rest] = splitProps(p, ["children", "title", "titleClass", "titleChildren", "subtitleClass", "class"])
+  const rest = omit(p, "children", "title", "titleClass", "titleChildren", "subtitleClass", "class")
 
   return (
-    <fieldset class={cn(classesFieldset, s.class)} {...rest}>
-      <legend class={cn("px-1", s.titleClass)}>{s.titleChildren ?? s.title}</legend>
-      {s.children}
+    <fieldset class={cn(classesFieldset, p.class)} {...rest}>
+      <legend class={cn("px-1", p.titleClass)}>{p.titleChildren ?? p.title}</legend>
+      {p.children}
     </fieldset>
   )
 }

@@ -1,4 +1,4 @@
-import { For, Show, splitProps } from "solid-js"
+import { For, Show, omit } from "solid-js"
 import { ttc } from "#src/app/i18n/ttc.ts"
 import type { FileModel } from "#src/file/model/FileModel.ts"
 import { FileCardView, type FileCardViewProps } from "#src/file/ui/list/FileCardView.tsx"
@@ -72,14 +72,14 @@ interface FileCardProps extends FileCardViewProps {
 }
 
 function FileCardEdit(p: FileCardProps) {
-  const [s, rest] = splitProps(p, ["handleRemoveFile"])
+  const rest = omit(p, "handleRemoveFile")
   return (
     <FileCardView {...rest} showDownload={false}>
       <ButtonIconOnly
         icon={formModeIcon.remove}
         variant={buttonVariant.ghost}
         title={getFormModeTitle(formMode.remove, "File")}
-        onClick={() => s.handleRemoveFile(p.file.fileId)}
+        onClick={() => p.handleRemoveFile(p.file.fileId)}
       />
     </FileCardView>
   )

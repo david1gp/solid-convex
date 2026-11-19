@@ -1,4 +1,4 @@
-import { Show, splitProps } from "solid-js"
+import { Show, omit } from "solid-js"
 import { NavLinkButton } from "#src/app/nav/links/NavLinkButton.tsx"
 import { ResourceListNavButton } from "#src/app/nav/links/ResourceListNavButton.tsx"
 import { NavBreadcrumbSeparator } from "#src/app/nav/NavBreadcrumbSeparator.tsx"
@@ -15,10 +15,10 @@ import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 export interface NavFileProps extends NavFileBreadcrumbsProps, MayHaveChildren, MayHaveClass {}
 
 export function NavFile(p: NavFileProps) {
-  const [s, rest] = splitProps(p, ["children", "class"])
+  const rest = omit(p, "children", "class")
   return (
     <NavCrumbs class={p.class}>
-      <NavFileBreadcrumbs {...rest}>{s.children}</NavFileBreadcrumbs>
+      <NavFileBreadcrumbs {...rest}>{p.children}</NavFileBreadcrumbs>
     </NavCrumbs>
   )
 }

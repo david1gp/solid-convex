@@ -1,4 +1,4 @@
-import { splitProps } from "solid-js"
+import { omit } from "solid-js"
 import type { HasFileModel } from "#src/file/model/HasFileModel.ts"
 import { FileCardView } from "#src/file/ui/list/FileCardView.tsx"
 import { urlFileEdit, urlFileRemove } from "#src/file/url/urlFile.ts"
@@ -13,18 +13,18 @@ import type { MayHaveClass } from "#ui/utils/MayHaveClass.ts"
 export interface FileCardEditProps extends HasResourceId, HasFileModel, MayHaveClass, MayHaveChildren {}
 
 export function FileCardEdit(p: FileCardEditProps) {
-  const [s, rest] = splitProps(p, ["resourceId"])
+  const rest = omit(p, "resourceId")
   return (
     <FileCardView {...rest}>
       <LinkButtonIconOnlyInternal
         icon={formModeIcon.edit}
-        to={urlFileEdit(s.resourceId, rest.file.fileId)}
+        to={urlFileEdit(p.resourceId, rest.file.fileId)}
         variant={buttonVariant.ghost}
         title={getFormModeTitle(formMode.edit, "File")}
       />
       <LinkButtonIconOnlyInternal
         icon={formModeIcon.remove}
-        to={urlFileRemove(s.resourceId, rest.file.fileId)}
+        to={urlFileRemove(p.resourceId, rest.file.fileId)}
         variant={buttonVariant.ghost}
         title={getFormModeTitle(formMode.remove, "File")}
       />

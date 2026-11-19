@@ -1,5 +1,5 @@
 import Popover from "@corvu-next/popover"
-import { type Component, splitProps } from "solid-js"
+import { type Component, omit } from "solid-js"
 import { classesDisabledDirectly } from "#ui/classes/classesDisabledDirectly.js"
 import { type ButtonCvaProps, buttonCvaIconOnly } from "#ui/interactive/button/buttonCva.js"
 import { buttonIconCva } from "#ui/interactive/button/buttonIconCva.js"
@@ -12,7 +12,7 @@ import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
 import type { MayHaveInnerClass } from "#ui/utils/MayHaveInnerClass.js"
 import { isLoading, type MayHaveIsLoading } from "#ui/utils/MayHaveIsLoading.js"
-import { type ComponentProps } from "@solidjs/web";
+import { type ComponentProps } from "@solidjs/web"
 
 export interface CorvuPopoverIconProps
   extends Omit<ComponentProps<"button">, "title">,
@@ -29,24 +29,20 @@ export interface CorvuPopoverIconProps
 
 /** Popover anchored to an icon-only trigger button. */
 export const CorvuPopoverIcon: Component<CorvuPopoverIconProps> = (p) => {
-  const [s, rest] = splitProps(p, [
-    // button
+  const rest = omit(
+    p,
     "variant",
     "class",
-    // state
     "isLoading",
     "disabled",
-    // icons
     "title",
     "icon",
     "iconClass",
-    // popover
     "innerClass",
     "children",
-    // state
     "open",
     "onOpenChange",
-  ])
+  )
 
   return (
     <Popover
@@ -55,26 +51,26 @@ export const CorvuPopoverIcon: Component<CorvuPopoverIconProps> = (p) => {
         flip: true,
         shift: true,
       }}
-      open={s.open}
-      onOpenChange={s.onOpenChange}
+      open={p.open}
+      onOpenChange={p.onOpenChange}
     >
       <Popover.Trigger
-        class={buttonCvaIconOnly(s.variant, isLoading(p), s.disabled, classesButtonClickAnimation, s.class)}
-        title={s.title}
+        class={buttonCvaIconOnly(p.variant, isLoading(p), p.disabled, classesButtonClickAnimation, p.class)}
+        title={p.title}
         {...rest}
       >
         <Icon
-          path={s.icon}
+          path={p.icon}
           class={buttonIconCva(
-            s.variant,
+            p.variant,
             isLoading(p) && "animate-spin-faster",
-            s.disabled && classesDisabledDirectly,
-            s.iconClass,
+            p.disabled && classesDisabledDirectly,
+            p.iconClass,
           )}
         />
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Content class={classesPopoverContentMerge(s.innerClass)}>{s.children}</Popover.Content>
+        <Popover.Content class={classesPopoverContentMerge(p.innerClass)}>{p.children}</Popover.Content>
       </Popover.Portal>
     </Popover>
   )

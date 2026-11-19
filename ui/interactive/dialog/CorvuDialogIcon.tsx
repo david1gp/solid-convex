@@ -1,6 +1,6 @@
 import { mdiClose } from "@adaptive-ds/mdi/mdiClose.js"
 import Dialog from "@corvu-next/dialog"
-import { type Component, splitProps } from "solid-js"
+import { type Component, omit } from "solid-js"
 import { classesDisabledDirectly } from "#ui/classes/classesDisabledDirectly.js"
 import { type ButtonCvaProps, buttonCvaIconOnly, buttonVariant } from "#ui/interactive/button/buttonCva.js"
 import { buttonIconCva } from "#ui/interactive/button/buttonIconCva.js"
@@ -16,7 +16,7 @@ import type { MayHaveChildren } from "#ui/utils/MayHaveChildren.js"
 import type { MayHaveClass } from "#ui/utils/MayHaveClass.js"
 import type { MayHaveInnerClass } from "#ui/utils/MayHaveInnerClass.js"
 import { isLoading, type MayHaveIsLoading } from "#ui/utils/MayHaveIsLoading.js"
-import { type ComponentProps } from "@solidjs/web";
+import { type ComponentProps } from "@solidjs/web"
 
 export interface CorvuDialogIconProps
   extends Omit<ComponentProps<"button">, "title">,
@@ -36,18 +36,15 @@ export interface CorvuDialogIconProps
 
 /** Modal dialog opened by an icon-only trigger. */
 export const CorvuDialogIcon: Component<CorvuDialogIconProps> = (p) => {
-  const [s, rest] = splitProps(p, [
-    // button
+  const rest = omit(
+    p,
     "variant",
     "class",
-    // state
     "isLoading",
     "disabled",
-    // icons
     "title",
     "icon",
     "iconClass",
-    // dialog
     "innerClass",
     "children",
     "dialogTitle",
@@ -55,36 +52,36 @@ export const CorvuDialogIcon: Component<CorvuDialogIconProps> = (p) => {
     "titleClass",
     "descriptionClass",
     "texts",
-  ])
+  )
 
-  const texts = s.texts ?? corvuDialogTextDefault
+  const texts = p.texts ?? corvuDialogTextDefault
 
   return (
     <Dialog>
       <Dialog.Trigger
-        class={buttonCvaIconOnly(s.variant, isLoading(p), s.disabled, classesButtonClickAnimation, s.class)}
-        title={s.title}
+        class={buttonCvaIconOnly(p.variant, isLoading(p), p.disabled, classesButtonClickAnimation, p.class)}
+        title={p.title}
         {...rest}
       >
         <Icon
-          path={s.icon}
+          path={p.icon}
           class={buttonIconCva(
-            s.variant,
+            p.variant,
             isLoading(p) && "animate-spin-faster",
-            s.disabled && classesDisabledDirectly,
-            s.iconClass,
+            p.disabled && classesDisabledDirectly,
+            p.iconClass,
           )}
         />
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay class={classesDialogOverlayMerge()} />
-        <Dialog.Content class={classesDialogContentMerge(s.innerClass)}>
+        <Dialog.Content class={classesDialogContentMerge(p.innerClass)}>
           <header class="flex items-start justify-between mb-4">
             <div>
-              <Dialog.Label class={cn("text-lg font-semibold", s.titleClass)}>{s.dialogTitle}</Dialog.Label>
-              {s.description && (
-                <Dialog.Description class={cn("text-muted-foreground", s.descriptionClass)}>
-                  {s.description}
+              <Dialog.Label class={cn("text-lg font-semibold", p.titleClass)}>{p.dialogTitle}</Dialog.Label>
+              {p.description && (
+                <Dialog.Description class={cn("text-muted-foreground", p.descriptionClass)}>
+                  {p.description}
                 </Dialog.Description>
               )}
             </div>
@@ -92,7 +89,7 @@ export const CorvuDialogIcon: Component<CorvuDialogIconProps> = (p) => {
               <Icon path={mdiClose} class={buttonIconCva(buttonVariant.outline, "")} />
             </Dialog.Close>
           </header>
-          {s.children}
+          {p.children}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog>

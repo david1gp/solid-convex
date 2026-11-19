@@ -48,19 +48,19 @@ function FilterButton(
     return DateFilterButton(fieldKey, value, fieldConfig, onRemove)
   }
 
-  const optionLabel = fieldConfig.optionLabels(value)
-  const removeTitle = `Remove filter (${fieldConfig.label}): ${optionLabel}`
+  const optionLabel = () => fieldConfig.optionLabels(value)
+  const removeTitle = () => `Remove filter (${fieldConfig.label()}): ${optionLabel()}`
   return (
     <ButtonIcon
       onClick={() => onRemove(fieldKey)}
-      title={removeTitle}
+      title={removeTitle()}
       variant={buttonVariant.filled}
       iconRight={mdiClose}
       iconClass="ml-0"
       class="bg-gray-50 border border-input gap-2"
     >
       <span class="font-medium">{fieldConfig.label()}:</span>
-      <span>{optionLabel}</span>
+      <span>{optionLabel()}</span>
     </ButtonIcon>
   )
 }
@@ -71,11 +71,11 @@ function DateFilterButton(
   fieldConfig: FilterFieldConfig,
   onRemove: (fieldKey: string) => void,
 ) {
-  const removeTitle = `Remove ${fieldConfig.label} filter`
+  const removeTitle = () => `Remove ${fieldConfig.label()} filter`
   return (
     <ButtonIcon
       onClick={() => onRemove(fieldKey)}
-      title={removeTitle}
+      title={removeTitle()}
       variant={buttonVariant.filled}
       iconRight={mdiClose}
       class="bg-gray-50 border border-input gap-2"

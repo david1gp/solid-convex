@@ -3,7 +3,7 @@ import { describe, expect, mock, test } from "bun:test"
 import type { FunctionReference } from "convex/server"
 import { createResult, createResultError } from "#result"
 
-import { createRoot, createSignal, flush } from "solid-js"
+import { createComponent, createRoot, createSignal, flush } from "solid-js"
 const { queryCreate } = await import("./queryCreate.ts")
 mock.restore()
 
@@ -53,6 +53,40 @@ describe("queryCreate", () => {
     flush()
     expect(getResult?.()).toBe(rawResult)
     dispose()
+  })
+
+  test("defers synchronous subscription delivery and ignores it after disposal", async () => {
+    const client = new FakeConvexClient()
+    client.onUpdate = (_query, _args, update) => {
+      update({ value: "cached" })
+      return () => undefined
+    }
+    let result: (() => unknown) | undefined
+    const dispose = convexContextRootCreate(client, (disposeRoot) => {
+      createComponent(() => {
+        result = queryCreate(query)
+        return null
+      }, {})
+      return disposeRoot
+    })
+    expect(result?.()).toBeUndefined()
+    await Promise.resolve()
+    flush()
+    expect(result?.()).toEqual({ value: "cached" })
+    dispose()
+
+    let disposedResult: (() => unknown) | undefined
+    const disposeImmediately = convexContextRootCreate(client, (disposeRoot) => {
+      createComponent(() => {
+        disposedResult = queryCreate(query)
+        return null
+      }, {})
+      return disposeRoot
+    })
+    disposeImmediately()
+    await Promise.resolve()
+    flush()
+    expect(disposedResult?.()).toBeUndefined()
   })
 
   test("resubscribes when reactive arguments change", async () => {

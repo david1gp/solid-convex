@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "@tanstack/solid-router"
-import { createEffect, createMemo, onCleanup, onSettled } from "solid-js"
+import { createEffect, createMemo, onCleanup, onSettled, untrack } from "solid-js"
 import * as v from "valibot"
 import { api } from "#convex/_generated/api.js"
 import type { UserRole } from "#src/auth/model_field/userRole.ts"
@@ -229,7 +229,8 @@ export function userManagementPageStateCreate() {
         nextCursor = tRes.data.continueCursor
         accumulatedTeamsSignal.set(
           userTeamOptionsAccumulate({
-            existingOptions: accumulatedTeamsSignal.get(),
+            // Merge against the current accumulator without tracking it as an input.
+            existingOptions: untrack(() => accumulatedTeamsSignal.get()),
             incomingPage: tRes.data.page,
             orgMap: orgs,
             selectedTeamIds,

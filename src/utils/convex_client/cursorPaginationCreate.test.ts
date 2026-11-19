@@ -1,7 +1,7 @@
 import { convexContextRootCreate } from "#src/utils/convex_client/test/convexContextRootCreate.ts"
 import { describe, expect, test } from "bun:test"
 import type { FunctionReference } from "convex/server"
-import { createSignal, flush } from "solid-js"
+import { createComponent, createSignal, flush } from "solid-js"
 import * as a from "valibot"
 import { createResult } from "#result"
 import { cursorPaginationCreate } from "./cursorPaginationCreate.ts"
@@ -23,6 +23,44 @@ class FakeConvexClient {
 const query = {} as FunctionReference<"query">
 
 describe("cursorPaginationCreate", () => {
+  test("mounts inside a component and tracks changing inputs without diagnostics", () => {
+    const client = new FakeConvexClient()
+    const [identity, setIdentity] = createSignal("user-1")
+    const warnings: string[] = []
+    const originalWarn = console.warn
+    console.warn = (...args) => warnings.push(args.map(String).join(" "))
+    let pagination: ReturnType<typeof cursorPaginationCreate<typeof query, string>> | undefined
+    let dispose: (() => void) | undefined
+    try {
+      dispose = convexContextRootCreate(client, (disposeRoot) => {
+        createComponent(() => {
+          pagination = cursorPaginationCreate({
+            query,
+            queryKey: "members",
+            args: () => ({ token: identity() }),
+            identity,
+            itemSchema: a.string(),
+            debounceMs: 0,
+            storage: new MemoryStorage(),
+          })
+          return null
+        }, {})
+        return disposeRoot
+      })
+      flush()
+      client.subscriptions[0]!.update(createResult({ page: ["one"], isDone: true, continueCursor: "" }))
+      flush()
+      expect(pagination!.page()?.success).toBe(true)
+      setIdentity("user-2")
+      flush()
+      expect(client.subscriptions.at(-1)?.args).toMatchObject({ token: "user-2" })
+      expect(warnings.filter((message) => message.includes("STRICT_READ_UNTRACKED"))).toEqual([])
+    } finally {
+      dispose?.()
+      console.warn = originalWarn
+    }
+  })
+
   test("moves through cursor history without fetching all pages", async () => {
     const client = new FakeConvexClient()
     let pagination: ReturnType<typeof cursorPaginationCreate<typeof query, string>>

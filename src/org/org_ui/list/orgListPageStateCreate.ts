@@ -1,4 +1,4 @@
-import { createEffect } from "solid-js"
+import { createEffect, untrack } from "solid-js"
 import { api } from "#convex/_generated/api.js"
 import { userSessionSignal, userTokenGet } from "#src/auth/ui/signals/userSessionSignal.ts"
 import { orgSchema } from "#src/org/org_model/orgSchema.ts"
@@ -16,7 +16,8 @@ export function orgListPageStateCreate() {
   createEffect(
     () => pagination.page(),
     (result) => {
-      if (result?.success) orgNameAddList(result.data.page)
+      // Merge with the current cache without making cache changes retrigger this effect.
+      if (result?.success) untrack(() => orgNameAddList(result.data.page))
     },
   )
   return pagination

@@ -1,6 +1,6 @@
 import { debounce } from "@solid-primitives/scheduled"
 import type { FunctionArgs, FunctionReference } from "convex/server"
-import { type Accessor, createEffect, createRenderEffect, createSignal, onCleanup } from "solid-js"
+import { type Accessor, createEffect, createSignal, onCleanup, untrack } from "solid-js"
 import type { BaseSchema } from "valibot"
 import type { Result } from "#result"
 import { paginationCacheKeyCreate } from "#src/utils/cache/paginationCacheKeyCreate.ts"
@@ -67,17 +67,18 @@ export function cursorPaginationCreate<Query extends FunctionReference<"query">,
     return { args, filters, identity, requestSignature, scope, stateSignature }
   }
 
-  const initialSnapshot = rawSnapshot()
+  // Seed local state once; the effect below tracks and synchronizes every subsequent change.
+  const initialSnapshot = untrack(rawSnapshot)
   const [activeSnapshot, setActiveSnapshot] = createSignal(initialSnapshot, { equals: false })
   let activeRequestSignature = initialSnapshot.requestSignature
   let stateVersion = 0
   let activeStateVersion = 0
   let lastStateSignature = initialSnapshot.stateSignature
 
-  const applyActiveSnapshot = (snapshot: typeof initialSnapshot) => {
+  const applyActiveSnapshot = (snapshot: typeof initialSnapshot, requestCursor: string | null) => {
     activeRequestSignature = snapshot.requestSignature
     activeStateVersion = stateVersion
-    setRequestCursor(cursor())
+    setRequestCursor(requestCursor)
     setActiveSnapshot(snapshot)
   }
   const applyActiveSnapshotDebounced = debounce(applyActiveSnapshot, wait)
@@ -92,16 +93,18 @@ export function cursorPaginationCreate<Query extends FunctionReference<"query">,
     return snapshot
   }
 
-  createRenderEffect(
+  createEffect(
     () => ({ snapshot: rawSnapshot(), cursor: cursor() }),
-    ({ snapshot }) => {
+    ({ snapshot, cursor: currentCursor }) => {
+      const stateChanged = snapshot.stateSignature !== lastStateSignature
       stateSynchronize(snapshot)
       if (snapshot.requestSignature === activeRequestSignature && stateVersion === activeStateVersion) return
+      const nextCursor = stateChanged ? null : currentCursor
       if (wait <= 0) {
-        applyActiveSnapshot(snapshot)
+        applyActiveSnapshot(snapshot, nextCursor)
         return
       }
-      applyActiveSnapshotDebounced(snapshot)
+      applyActiveSnapshotDebounced(snapshot, nextCursor)
     },
   )
 

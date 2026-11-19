@@ -27,27 +27,35 @@ export function queryCreate<Query extends FunctionReference<"query">>(
   const getArgs: Accessor<FunctionArgs<Query> | "skip" | undefined> =
     typeof rawArgs === "function" ? (rawArgs as Accessor<FunctionArgs<Query> | "skip" | undefined>) : () => rawArgs
 
+  // Subscribe immediately, but avoid writes during the initial owned render.
   createRenderEffect(
     () => getArgs(),
     (fullArgs) => {
       const currentSubscriptionId = ++subscriptionId
-      setResult(undefined)
+      if (currentSubscriptionId > 1) setResult(undefined)
       if (fullArgs === undefined || fullArgs === "skip") {
         return
+      }
+      let subscribing = true
+      const deliver = (value: QueryResult<Query>) => {
+        const apply = () => {
+          if (currentSubscriptionId === subscriptionId) setResult(value)
+        }
+        if (subscribing) queueMicrotask(apply)
+        else apply()
       }
       const unsubscriber = convex.onUpdate(
         query,
         fullArgs,
         (nextResult) => {
-          if (currentSubscriptionId !== subscriptionId) return
-          setResult(nextResult)
+          deliver(nextResult)
         },
         (error) => {
-          if (currentSubscriptionId !== subscriptionId) return
           const message = error instanceof Error ? error.message : String(error)
-          setResult(createResultError(op, message))
+          deliver(createResultError(op, message))
         },
       )
+      subscribing = false
       return () => {
         if (currentSubscriptionId === subscriptionId) subscriptionId += 1
         unsubscriber()

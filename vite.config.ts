@@ -1,18 +1,16 @@
-import { defineConfig, loadEnv } from "vite"
 import solid from "@solidjs/vite-plugin"
+import { defineConfig, loadEnv } from "vite"
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "PUBLIC_")
   const appHosts = env.PUBLIC_BASE_URL_APP ? [new URL(env.PUBLIC_BASE_URL_APP).hostname] : []
+  const port = Number(process.env.PORT) || 5173
+  if (port === 3022) throw new Error("The preview port 3022 cannot be used by the Vite dev server")
 
   return {
     server: {
-      // PORT (set by managed units and dev leases), then the legacy
-      // PREVIEW_WEB_PORT, then the local default. strictPort only when a
-      // port was explicitly configured, so default dev never takes the
-      // preview's port.
-      port: Number(process.env.PORT ?? process.env.PREVIEW_WEB_PORT) || 5173,
-      strictPort: Boolean(process.env.PORT ?? process.env.PREVIEW_WEB_PORT),
+      port,
+      strictPort: Boolean(process.env.PORT),
       host: process.env.HOST || true,
       watch: {
         ignored: ["**/.github/**", "**/data/**", "**/dist/**", "**/ops/**", "**/out/**", "**/docs/**", "**/test/**"],

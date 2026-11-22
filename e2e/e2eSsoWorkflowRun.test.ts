@@ -1,6 +1,7 @@
 import { afterEach, expect, test } from "bun:test"
 import { createHash } from "node:crypto"
 import { mkdtemp, readFile, rm } from "node:fs/promises"
+import { tmpdir } from "node:os"
 import { join } from "node:path"
 import * as v from "valibot"
 import { createResult, createResultError } from "#result"
@@ -37,7 +38,7 @@ function session(id: string, creationTime = start + 20): E2eSsoSessionProof {
 }
 
 async function fixture() {
-  const root = await mkdtemp("/tmp/leo/opencode/solid-convex-sso-resume-test-")
+  const root = await mkdtemp(join(tmpdir(), "solid-convex-sso-resume-test-"))
   roots.push(root)
   const checkpointPath = join(root, "checkpoint.json")
   const checkpoint: E2eCheckpoint = {

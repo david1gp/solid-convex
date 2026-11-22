@@ -1,6 +1,9 @@
 import { spawnSync } from "node:child_process"
-import { resolve } from "node:path"
+import { readFileSync } from "node:fs"
+import { join, resolve } from "node:path"
+import { parse } from "dotenv"
 import { e2eBaseUrlGet } from "./config/e2eBaseUrlGet.ts"
+import { opencodeTmpRootGet } from "./config/opencodeTmpRootGet.ts"
 import { e2eRunnerRun } from "./e2eRunnerRun.ts"
 import { e2eSessionCleanupCreate } from "./sessionCleanup/e2eSessionCleanupCreate.ts"
 
@@ -9,8 +12,9 @@ if (targetArgument !== "production" && targetArgument !== "dev")
   throw new Error("Usage: bun e2e/e2eRun.ts <production|dev>")
 
 const target: "production" | "dev" = targetArgument
-const baseUrl = e2eBaseUrlGet(process.env, target)
-const checkpointDirectory = "/tmp/opencode/solid-convex/e2e"
+const previewEnv = target === "dev" ? parse(readFileSync(".env.preview")) : undefined
+const baseUrl = e2eBaseUrlGet({ ...process.env, PUBLIC_BASE_URL_APP: previewEnv?.PUBLIC_BASE_URL_APP }, target)
+const checkpointDirectory = join(opencodeTmpRootGet(), "solid-convex", "e2e")
 const cleanup = {
   production: e2eSessionCleanupCreate({ target: "production" }),
   dev: e2eSessionCleanupCreate({ target: "dev" }),

@@ -156,8 +156,10 @@ function SocialSignUpButton(p: SocialSignUpButtonProps) {
     const returnPath = searchParamGet("returnPath") || urlSignInRedirectUrl()
     return urlAuthProvider(p.provider, returnPath)
   }
+  const url = getReturnPath()
+  if (!url) return null
   return (
-    <LinkButtonExternal href={getReturnPath()} icon={props.mdiIconPath} variant={buttonVariant.outline} class={p.class}>
+    <LinkButtonExternal href={url} icon={props.mdiIconPath} variant={buttonVariant.outline} class={p.class}>
       {text}
     </LinkButtonExternal>
   )

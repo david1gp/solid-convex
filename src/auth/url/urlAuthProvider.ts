@@ -26,7 +26,6 @@ function urlOAuthSwitcher(provider: SocialLoginProvider, redirectUrl: string = "
 function urlAuthGithub(redirectUrl: string = ""): string {
   const clientIdResult = envGithubClientIdResult()
   if (!clientIdResult.success) {
-    console.error(clientIdResult.errorMessage)
     return ""
   }
   const clientId = clientIdResult.data
@@ -47,7 +46,6 @@ function urlAuthGithub(redirectUrl: string = ""): string {
 function urlAuthGoogle(redirectUrl: string = ""): string {
   const clientIdResult = envGoogleClientIdResult()
   if (!clientIdResult.success) {
-    console.error(clientIdResult.errorMessage)
     return ""
   }
   const clientId = clientIdResult.data
@@ -80,7 +78,6 @@ export function urlAuthAdmin(userId: string, redirectUrl: string = ""): string {
 function urlAuthMicrosoft(redirectUrl: string = ""): string {
   const clientIdResult = envMicrosoftClientIdResult()
   if (!clientIdResult.success) {
-    console.error(clientIdResult.errorMessage)
     return ""
   }
   const clientId = clientIdResult.data

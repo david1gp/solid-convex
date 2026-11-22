@@ -60,6 +60,8 @@ function CatalogGroup(p: { name: string; entries: CatalogEntry[] }) {
 export function DemoCatalog() {
   const catalog = demoCatalogDataCreate(demoList)
   const appEntries = catalog.pageDemos.map((entry) => ({ ...entry, href: appPageDemoHref(entry.route) }))
+  const shellEntries = [{ name: "Shell", path: "/demos/shell", href: "/demos/shell" }]
+  const appPageCount = appEntries.length + shellEntries.length
   const appGroups = areaGroupsCreate(appEntries)
   const galleryGroups = areaGroupsCreate(catalog.pageDemos)
   const componentCount = catalog.componentCategories.reduce((sum, category) => sum + category.demos.length, 0)
@@ -70,7 +72,7 @@ export function DemoCatalog() {
         <header class="border-b border-border pb-4">
           <h1 class="text-lg font-semibold">Demos</h1>
           <p class="text-xs text-muted-foreground">
-            {appEntries.length} app pages · {catalog.pageDemos.length} page gallery · {componentCount} component
+            {appPageCount} app pages · {catalog.pageDemos.length} page gallery · {componentCount} component
             examples
           </p>
         </header>
@@ -78,10 +80,10 @@ export function DemoCatalog() {
           <section>
             <div class="mb-2 flex items-center gap-2">
               <h2 class="text-xs font-semibold text-muted-foreground">App pages</h2>
-              <span class="rounded-full bg-hover px-1.5 py-0.5 text-xs">{appEntries.length + 1}</span>
+              <span class="rounded-full bg-hover px-1.5 py-0.5 text-xs">{appPageCount}</span>
             </div>
             <div class="space-y-4">
-              <CatalogGroup name="Shell" entries={[{ name: "Shell", path: "/demos/shell", href: "/demos/shell" }]} />
+              <CatalogGroup name="Shell" entries={shellEntries} />
               <For each={appGroups}>{(group) => <CatalogGroup name={group.area} entries={group.entries} />}</For>
             </div>
           </section>

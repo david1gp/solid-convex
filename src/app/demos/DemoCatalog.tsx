@@ -72,8 +72,7 @@ export function DemoCatalog() {
         <header class="border-b border-border pb-4">
           <h1 class="text-lg font-semibold">Demos</h1>
           <p class="text-xs text-muted-foreground">
-            {appPageCount} app pages · {catalog.pageDemos.length} page gallery · {componentCount} component
-            examples
+            {appPageCount} app pages · {catalog.pageDemos.length} page gallery · {componentCount} component examples
           </p>
         </header>
         <div class="mt-6 space-y-8">

@@ -61,7 +61,7 @@ export function AppSidebarContent(p: {
             to={urlOverview()}
             logoText={appNameClient()}
             logoTextClass="truncate text-sm font-semibold"
-            class="min-w-0 flex-1"
+            class="min-w-0 flex-1 px-0"
           />
         </Show>
         {p.headerAction}

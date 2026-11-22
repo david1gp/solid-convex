@@ -7,8 +7,11 @@ export function sidebarStateCreate(p: {
   defaultWidth: () => number | undefined
   debounceMs: () => number | undefined
 }) {
+  // Evaluate the same min-width media query as the Tailwind responsive classes, so JS
+  // mobile state and CSS always agree. window.innerWidth includes classic scrollbar
+  // width while media queries exclude it; that mismatch hid both sidebar and drawer.
   const checkMobile = debounce(
-    () => p.state().isMobile.set(window.innerWidth < (p.defaultWidth() ?? 768)),
+    () => p.state().isMobile.set(!window.matchMedia(`(min-width: ${p.defaultWidth() ?? 768}px)`).matches),
     p.debounceMs() ?? 100,
   )
   onSettled(() => {

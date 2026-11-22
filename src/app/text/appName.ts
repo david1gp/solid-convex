@@ -1,7 +1,7 @@
 export function appNameClient(): string {
-  return "Adaptive Convex Auth Solid"
+  return "Solid Convex"
 }
 
 export function appNameServer(): string {
-  return "Adaptive Convex Auth Solid"
+  return "Solid Convex"
 }

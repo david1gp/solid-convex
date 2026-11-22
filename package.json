@@ -8,7 +8,7 @@
     "deploy": "bun run frontend:deploy",
     "deploy:production": "bun run convex:deploy:production && bun run deploy",
     "frontend:deploy": "bun run rsbuild:deploy",
-    "frontend:upload": "bun run wrangler pages deploy ./dist --project-name=adaptive-solid-convex --commit-dirty=true",
+    "frontend:upload": "bun run wrangler pages deploy ./dist --project-name=adaptive-solid-convex --branch=main --commit-dirty=true",
     "frontend:tag": "git branch -f frontend",
     "frontend:create": "bunx wrangler pages project create solid-convex --production-branch=main",
     "dev": "bun run rsbuild:dev",

@@ -28,7 +28,7 @@ const appHosts = process.env.PUBLIC_BASE_URL_APP ? [new URL(process.env.PUBLIC_B
 const portOption =
   process.argv.find((arg) => arg.startsWith("--port="))?.slice(7) ??
   (process.argv.includes("--port") ? process.argv[process.argv.indexOf("--port") + 1] : undefined)
-if (process.argv.includes("dev") && (portOption ?? process.env.PORT) === "3022") {
+if (process.argv.includes("dev") && Number(portOption ?? process.env.PORT) === 3022) {
   throw new Error("Port 3022 is reserved for preview; choose a different dev PORT")
 }
 

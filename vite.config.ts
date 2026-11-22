@@ -1,11 +1,12 @@
 import solid from "@solidjs/vite-plugin"
 import { defineConfig, loadEnv } from "vite"
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, process.cwd(), "PUBLIC_")
   const appHosts = env.PUBLIC_BASE_URL_APP ? [new URL(env.PUBLIC_BASE_URL_APP).hostname] : []
   const port = Number(process.env.PORT) || 5173
-  if (port === 3022) throw new Error("The preview port 3022 cannot be used by the Vite dev server")
+  if (command === "serve" && port === 3022)
+    throw new Error("The preview port 3022 cannot be used by the Vite dev server")
 
   return {
     server: {

@@ -80,8 +80,11 @@ test("Authworks routes complete a verified session with access-token roles throu
         expect(location.origin).toBe(appBaseUrl)
         expect(location.pathname).toBe("/groups")
         expect(location.searchParams.get("from")).toBe("authworks")
-        expect(location.hash).toBe("#top")
-        expect(base64urlDecodeObject(location.searchParams.get("userSession") ?? "").success).toBe(true)
+        expect(new URLSearchParams(location.hash.slice(1)).get("returnHash")).toBe("#top")
+        expect(location.searchParams.has("userSession")).toBe(false)
+        expect(
+          base64urlDecodeObject(new URLSearchParams(location.hash.slice(1)).get("userSession") ?? "").success,
+        ).toBe(true)
         expect(mutationCalls).toEqual([
           {
             provider: "oidc",

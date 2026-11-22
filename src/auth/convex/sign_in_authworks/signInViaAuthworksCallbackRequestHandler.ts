@@ -114,6 +114,20 @@ export async function signInViaAuthworksCallbackRequestHandler(ctx: ActionCtx, r
     )
   }
 
+  const admissionOrgId = configResult.data.admissionOrgId
+  const resourceOwnerOrgId = claimsResult.data["urn:zitadel:iam:user:resourceowner:id"]
+  if (
+    admissionOrgId &&
+    (typeof resourceOwnerOrgId !== "string" || resourceOwnerOrgId.toLowerCase() !== admissionOrgId)
+  ) {
+    return oidcRequestErrorResponseCreate(
+      op,
+      "Authworks sign-in is restricted to the configured organization",
+      "auth.forbidden",
+      clearCookieHeaders,
+    )
+  }
+
   const idTokenName = claimsResult.data.given_name?.trim() || claimsResult.data.name?.trim()
   const userInfoResult = await oidcUserInfoGet({
     discovery: discoveryResult.data,

@@ -37,7 +37,12 @@ export function authworksConfigGet(): Result<AuthworksConfig> {
   if (authworksOrgId && !authworksOrganizationIdPattern.test(authworksOrgId)) {
     return createResultError(op, "invalid AUTHWORKS_ORGANIZATION_ID")
   }
+  const admissionOrgId = process.env[privateEnvVariableName.AUTHWORKS_ADMISSION_ORGANIZATION_ID]?.trim().toLowerCase()
+  if (admissionOrgId && !authworksOrganizationIdPattern.test(admissionOrgId)) {
+    return createResultError(op, "invalid AUTHWORKS_ADMISSION_ORGANIZATION_ID")
+  }
   const configuredScopes = authworksOrgId ? [...scopes, ...authworksZitadelRoleScopes] : scopes
+  if (admissionOrgId) configuredScopes.push("urn:zitadel:iam:user:resourceowner")
   const zitadelProjectId = process.env.ZITADEL_PROJECT_ID?.trim()
   if (zitadelProjectId) configuredScopes.push(`urn:zitadel:iam:org:project:id:${zitadelProjectId}:roles`)
   return createResult({
@@ -46,6 +51,7 @@ export function authworksConfigGet(): Result<AuthworksConfig> {
     clientSecret,
     scopes: [...new Set(configuredScopes)],
     ...(authworksOrgId ? { authworksOrgId } : {}),
+    ...(admissionOrgId ? { admissionOrgId } : {}),
   })
 }
 

@@ -11,6 +11,7 @@ import { base64urlDecodeObject } from "#utils/url/base64url.js"
 const issuer = "https://authworks.example.test"
 const clientId = "authworks-client-id"
 const authworksOrgId = "01a03273-0662-7b18-9b48-3a7ab29f0bfd"
+const resourceOwnerClaim = "urn:zitadel:iam:user:resourceowner:id"
 const apiBaseUrl = "https://api.example.test"
 const appBaseUrl = "https://app.example.test"
 const callbackUrl = `${apiBaseUrl}/api/auth/authworks/callback`
@@ -25,7 +26,7 @@ const discovery = {
   token_endpoint_auth_methods_supported: ["client_secret_basic"],
 }
 
-test("Authworks routes complete a verified session with access-token roles through Hono", async () => {
+test("Authworks admits the configured organization and keeps verified access-token roles", async () => {
   await withEnvironment(async () => {
     const { privateKey, publicJwk } = await signingKeysCreate()
     const userSession = createUserSession()
@@ -40,7 +41,7 @@ test("Authworks routes complete a verified session with access-token roles throu
         if (request.url === `${issuer}/.well-known/openid-configuration`) return Response.json(discovery)
         if (request.url === discovery.token_endpoint)
           return Response.json({
-            id_token: await idTokenCreate(privateKey, idTokenNonce),
+            id_token: await idTokenCreate(privateKey, idTokenNonce, { [resourceOwnerClaim]: authworksOrgId }),
             access_token: await accessTokenCreate(privateKey, {
               "urn:zitadel:iam:org:project:roles": { admin: { [authworksOrgId]: "primary.example.test" } },
             }),
@@ -64,6 +65,7 @@ test("Authworks routes complete a verified session with access-token roles throu
         expect(authorizationUrl.searchParams.get("redirect_uri")).toBe(callbackUrl)
         expect(authorizationUrl.searchParams.get("code_challenge_method")).toBe("S256")
         expect(authorizationUrl.searchParams.get("scope")).toContain("urn:zitadel:iam:org:project:role:member")
+        expect(authorizationUrl.searchParams.get("scope")?.split(" ")).toContain("urn:zitadel:iam:user:resourceowner")
         idTokenNonce = authorizationUrl.searchParams.get("nonce") ?? ""
         const cookie = startResponse.headers.get("set-cookie")?.split(";", 1)[0] ?? ""
         const state = authorizationUrl.searchParams.get("state") ?? ""
@@ -99,7 +101,52 @@ test("Authworks routes complete a verified session with access-token roles throu
         expect(scheduledCalls).toHaveLength(1)
       },
     )
-  })
+  }, authworksOrgId)
+})
+
+test.each([
+  { name: "missing", claims: {} },
+  { name: "mismatched", claims: { [resourceOwnerClaim]: "01a03273-0662-7b18-9b48-3a7ab29f0bfe" } },
+  { name: "malformed", claims: { [resourceOwnerClaim]: 123 } },
+])("Authworks denies admission when the verified organization claim is $name", async ({ claims }) => {
+  await withEnvironment(async () => {
+    const { privateKey, publicJwk } = await signingKeysCreate()
+    const mutationCalls: unknown[] = []
+    const ctx = actionContextCreate(mutationCalls, [], createUserSession())
+    let nonce = ""
+
+    await withFetch(
+      async (input, init) => {
+        const request = new Request(input, init)
+        if (request.url === `${issuer}/.well-known/openid-configuration`) return Response.json(discovery)
+        if (request.url === discovery.token_endpoint) {
+          return Response.json({ id_token: await idTokenCreate(privateKey, nonce, claims) })
+        }
+        if (request.url === discovery.jwks_uri) return Response.json({ keys: [publicJwk] })
+        throw new Error(`Unexpected request: ${request.url}`)
+      },
+      async () => {
+        const dispatcher = createHonoDispatcher()
+        addHttpRoutesAuth(dispatcher)
+        const start = await dispatcher.fetch(new Request(urlSignInViaAuthworks("/")), ctx)
+        expect(start.status).toBe(302)
+        const authorization = new URL(start.headers.get("location") ?? "")
+        nonce = authorization.searchParams.get("nonce") ?? ""
+        const cookie = start.headers.get("set-cookie")?.split(";", 1)[0] ?? ""
+        const state = authorization.searchParams.get("state") ?? ""
+        const response = await dispatcher.fetch(
+          new Request(`${callbackUrl}?state=${encodeURIComponent(state)}&code=authorization-code`, {
+            headers: { Cookie: cookie },
+          }),
+          ctx,
+        )
+
+        expect(response.status).toBe(403)
+        expect(response.headers.get("set-cookie")).toContain("Max-Age=0")
+        expect(mutationCalls).toHaveLength(0)
+      },
+    )
+  }, authworksOrgId)
 })
 
 test("Authworks callback without project roles signs in with the default role", async () => {
@@ -404,7 +451,7 @@ async function withFetch<T>(
   }
 }
 
-async function withEnvironment<T>(callback: () => Promise<T>): Promise<T> {
+async function withEnvironment<T>(callback: () => Promise<T>, admissionOrgId?: string): Promise<T> {
   const names = [
     "AUTH_SECRET",
     "AUTHWORKS_ISSUER",
@@ -413,6 +460,7 @@ async function withEnvironment<T>(callback: () => Promise<T>): Promise<T> {
     "AUTHWORKS_SCOPE",
     "AUTHWORKS_REDIRECT_URI",
     "AUTHWORKS_ORGANIZATION_ID",
+    "AUTHWORKS_ADMISSION_ORGANIZATION_ID",
     "PUBLIC_BASE_URL_API",
     "PUBLIC_BASE_URL_APP",
     "PUBLIC_BASE_URL_SITE",
@@ -425,6 +473,8 @@ async function withEnvironment<T>(callback: () => Promise<T>): Promise<T> {
   delete process.env.AUTHWORKS_SCOPE
   process.env.AUTHWORKS_REDIRECT_URI = callbackUrl
   process.env.AUTHWORKS_ORGANIZATION_ID = authworksOrgId
+  if (admissionOrgId === undefined) delete process.env.AUTHWORKS_ADMISSION_ORGANIZATION_ID
+  else process.env.AUTHWORKS_ADMISSION_ORGANIZATION_ID = admissionOrgId
   process.env.PUBLIC_BASE_URL_API = apiBaseUrl
   process.env.PUBLIC_BASE_URL_APP = appBaseUrl
   process.env.PUBLIC_BASE_URL_SITE = appBaseUrl

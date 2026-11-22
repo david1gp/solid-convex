@@ -143,6 +143,30 @@ test("authworksConfigGet rejects invalid Authworks settings without leaking secr
   )
 })
 
+test("authworksConfigGet validates the independent admission organization setting", async () => {
+  const environment = {
+    AUTHWORKS_ISSUER: "https://authworks.example.test",
+    AUTHWORKS_CLIENT_ID: "authworks-client-id",
+    AUTHWORKS_SCOPE: undefined,
+    AUTHWORKS_ORGANIZATION_ID: undefined,
+    ZITADEL_PROJECT_ID: undefined,
+  }
+  const orgId = "01a03273-0662-7b18-9b48-3a7ab29f0bfd"
+  await withEnvironment({ ...environment, AUTHWORKS_ADMISSION_ORGANIZATION_ID: orgId.toUpperCase() }, async () => {
+    const result = authworksConfigGet()
+    expect(result.success).toBe(true)
+    if (!result.success) return
+    expect(result.data.admissionOrgId).toBe(orgId)
+    expect(result.data.authworksOrgId).toBeUndefined()
+    expect(result.data.scopes).toEqual(["openid", "profile", "email", "urn:zitadel:iam:user:resourceowner"])
+  })
+  await withEnvironment({ ...environment, AUTHWORKS_ADMISSION_ORGANIZATION_ID: "not-a-uuid" }, async () => {
+    const result = authworksConfigGet()
+    expect(result.success).toBe(false)
+    if (!result.success) expect(result.errorMessage).toBe("invalid AUTHWORKS_ADMISSION_ORGANIZATION_ID")
+  })
+})
+
 async function withEnvironment(
   values: Record<string, string | undefined>,
   callback: () => Promise<void>,
@@ -154,9 +178,11 @@ async function withEnvironment(
     "AUTHWORKS_SCOPE",
     "AUTHWORKS_REDIRECT_URI",
     "AUTHWORKS_ORGANIZATION_ID",
+    "AUTHWORKS_ADMISSION_ORGANIZATION_ID",
     "ZITADEL_PROJECT_ID",
   ]
   const previous = new Map(names.map((name) => [name, process.env[name]]))
+  delete process.env.AUTHWORKS_ADMISSION_ORGANIZATION_ID
   for (const [name, value] of Object.entries(values)) {
     if (value === undefined) delete process.env[name]
     else process.env[name] = value

@@ -4,4 +4,5 @@ export type AuthworksConfig = {
   clientSecret?: string
   scopes: readonly string[]
   authworksOrgId?: string
+  admissionOrgId?: string
 }

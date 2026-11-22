@@ -20,7 +20,7 @@ export function LogoImageText(p: LogoImageTextProps) {
   return (
     <LinkButtonInternal to={p.to ?? "/"} variant={p.variant ?? buttonVariant.ghost} class={cn("flex gap-1.5", p.class)}>
       <Img src={p.logoUrl ?? "/logo.svg"} alt={"Logo"} zoomIn={false} class={cn("size-7 mr-1", p.imageClass)} />
-      <span class={cn("text-2xl font-bold", p.logoTextClass)}>{p.logoText}</span>
+      <span class={cn("break-normal text-2xl font-bold", p.logoTextClass)}>{p.logoText}</span>
     </LinkButtonInternal>
   )
 }

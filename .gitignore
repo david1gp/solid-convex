@@ -94,3 +94,7 @@ AGENTS.md
 /docs
 /commits.md
 bun.lock
+
+.preview/
+!.env.preview.example
+!.env.development.example

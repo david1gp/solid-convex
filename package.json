@@ -16,7 +16,6 @@
     "vite:build": "nice -15 vite build",
     "vite:deploy": "bun run vite:build && bun run frontend:upload && bun run frontend:tag",
     "vite:clean": "rm -rf ./node_modules/.vite/deps",
-    "vite:preview": "nice -5 vite preview",
     "build": "bun run rsbuild:build",
     "rsbuild:dev": "(clear 2>/dev/null || true) && nice -5 rsbuild dev",
     "rsbuild:build": "nice -15 rsbuild build",
@@ -41,8 +40,6 @@
     "convex:dev:dev": "export CI=1 && clear && convex dev --local",
     "convex:dev:test": "export CI=1 && convex dev --local --once",
     "convex:test": "export CI=1 && convex dev --local --once",
-    "convex:backend:up": "systemctl --user start solid-convex-backend solid-convex-dashboard",
-    "convex:backend:down": "systemctl --user stop solid-convex-backend solid-convex-dashboard",
     "convex:backend:update": "podman auto-update",
     "ui": "rsync -avh --delete ../../adaptive/solid-ui/ui/ ./ui/",
     "ui:push": "rsync -avh --delete ./ui/  ../../adaptive/solid-ui/ui/",
@@ -52,7 +49,14 @@
     "update": "bun x npm-check-updates -u && bun i",
     "update:commit": "bun x npm-check-updates -u && bun i && git add package.json && bun check && git commit -m \"chore(deps): update dependencies\" && git push",
     "clean": "rm -rf ./dist",
-    "reset": "rm -rf ./node_modules"
+    "reset": "rm -rf ./node_modules",
+    "build:preview": "bun --no-env-file scripts/previewBuild.ts",
+    "preview:start": "bun --no-env-file scripts/previewServer.ts",
+    "preview:deploy": "bun run build:preview && project-registry svc restart solid-convex --service preview-web && bash scripts/previewHealth.bash",
+    "preview:status": "project-registry svc status solid-convex --service preview-web",
+    "preview:logs": "project-registry svc logs solid-convex --service preview-web",
+    "convex:deploy:preview": "bash ops/convex/preview.bash deploy",
+    "deploy:preview": "bun run convex:deploy:preview && bun run preview:deploy"
   },
   "dependencies": {
     "@adaptive-ds/email-generator": "^0.21.0",

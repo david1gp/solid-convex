@@ -25,14 +25,17 @@ const publicProcessEnvDefines = Object.fromEntries(
 
 const appHosts = process.env.PUBLIC_BASE_URL_APP ? [new URL(process.env.PUBLIC_BASE_URL_APP).hostname] : []
 
+const portOption =
+  process.argv.find((arg) => arg.startsWith("--port="))?.slice(7) ??
+  (process.argv.includes("--port") ? process.argv[process.argv.indexOf("--port") + 1] : undefined)
+if (process.argv.includes("dev") && (portOption ?? process.env.PORT) === "3022") {
+  throw new Error("Port 3022 is reserved for preview; choose a different dev PORT")
+}
+
 export default defineConfig({
   server: {
-    // PORT (set by managed units and dev leases; the CLI --port flag wins
-    // over this), then the legacy PREVIEW_WEB_PORT, then the local default.
-    port: Number(process.env.PORT ?? process.env.PREVIEW_WEB_PORT) || 5173,
-    // Only demand the exact port when one was explicitly configured, so a
-    // default local dev server never blocks on (or takes) the preview port.
-    strictPort: Boolean(process.env.PORT ?? process.env.PREVIEW_WEB_PORT),
+    port: Number(process.env.PORT) || 5173,
+    strictPort: Boolean(process.env.PORT),
     host: process.env.HOST || true,
     allowedHosts: [
       "localhost",
@@ -77,7 +80,7 @@ export default defineConfig({
   ],
   output: {
     distPath: {
-      root: "dist",
+      root: process.env.PREVIEW_BUILD_DIST || "dist",
       html: "",
       js: "assets",
       css: "assets",

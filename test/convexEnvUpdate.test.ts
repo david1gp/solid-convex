@@ -248,7 +248,8 @@ test("CLI failure propagates its exit status, hides CLI output, and removes the 
 
 test("missing files and unsupported targets fail without invoking Bun or Convex", () => {
   const fixture = fixtureCreate("VALUE=local\n")
-  for (const target of ["", "invalid", "preview", "staging"]) expect(fixture.run(target).code).toBe(1)
+  for (const target of ["", "invalid", "staging"]) expect(fixture.run(target).code).toBe(1)
+  expect(fixture.run("preview").code).toBe(2)
   rmSync(join(fixture.dir, ".env.development"))
   expect(fixture.run().code).toBe(2)
   expect(fixture.records()).toEqual([])

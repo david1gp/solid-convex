@@ -136,6 +136,16 @@ test("any authenticated user can create, read, and edit notes with derived title
   })
 })
 
+test("a deleting note does not prevent listing other notes", async () => {
+  const { t, token, projectId } = await noteFixtureCreate()
+  const deleting = await t.mutation(api.note.noteCreateMutation, { token, projectId, content: "# Deleting" })
+  const active = await t.mutation(api.note.noteCreateMutation, { token, projectId, content: "# Active" })
+  if (!deleting.success || !active.success) throw new Error("Note fixture creation failed")
+  await t.run(async (ctx) => ctx.db.patch("notes", deleting.data, { deleting: true }))
+  const result = await t.query(api.note.noteListQuery, { token, projectId })
+  expect(result).toMatchObject({ success: true, data: { page: [{ noteId: active.data, title: "Active" }] } })
+})
+
 test("all public note operations reject missing and invalid credentials without changing data", async () => {
   const { t, token, projectId } = await noteFixtureCreate()
   const created = await t.mutation(api.note.noteCreateMutation, {

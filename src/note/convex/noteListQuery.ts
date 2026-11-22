@@ -50,6 +50,8 @@ export const noteListQuery = query({
       }
       const page: Note[] = []
       for (const note of result.page) {
+        // A deleting note must not make the entire list unavailable while its job runs.
+        if (note.deleting) continue
         const resolved = await noteGetFn(ctx, { ...data, noteId: note._id })
         if (!resolved.success) return resolved
         page.push(resolved.data)

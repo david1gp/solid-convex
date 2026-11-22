@@ -3,24 +3,19 @@ import { createResult, createResultError, type Result } from "#result"
 import { type UserSession, userSessionSchema } from "#src/auth/model/UserSession.ts"
 import { signInSessionNew } from "#src/auth/ui/sign_in/logic/signInSessionNew.ts"
 import { pageRouteAuth } from "#src/auth/url/pageRouteAuth.ts"
-import { createUrl } from "#src/utils/router/createUrl.ts"
 import { navigateTo } from "#src/utils/router/navigateTo.ts"
-import { searchParamGet } from "#src/utils/router/searchParamGet.ts"
 import { base64urlDecodeObject } from "#utils/url/base64url.js"
 
-export function signInLogic(): void {
+export function signInLogic(userSessionString: string | null): void {
   const op = "signInLogic"
 
-  const url = createUrl()
-
-  const userSessionString = searchParamGet("userSession", url)
   if (!userSessionString) {
     // do nothing, user should choose sign up/in method
     return
   }
 
   try {
-    const signedIn = signedInLogicResult(url)
+    const signedIn = signedInLogicResult(userSessionString)
     if (!signedIn.success) {
       const errorMessage = signedIn.errorMessage || "Unknown error"
       navigateToErrorPage(op, errorMessage)
@@ -38,11 +33,8 @@ export function navigateToErrorPage(op: string, errorMessage: string, error?: un
   navigateTo(`${pageRouteAuth.signInError}?errorMessage=${encodeURIComponent(errorMessage)}`)
 }
 
-function signedInLogicResult(url: URL): Result<UserSession> {
+function signedInLogicResult(userSessionString: string): Result<UserSession> {
   const op = "signedInLogic"
-  // check args
-  const userSessionString = searchParamGet("userSession", url)
-  if (!userSessionString) return createResultError(op, "!userSession")
   // decode session
   const decodedUserSessionObjectResult = base64urlDecodeObject(userSessionString)
   if (!decodedUserSessionObjectResult.success) return decodedUserSessionObjectResult

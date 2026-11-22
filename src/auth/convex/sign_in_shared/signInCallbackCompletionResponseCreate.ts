@@ -34,7 +34,10 @@ export async function signInCallbackCompletionResponseCreate(
     return new Response(jsonStringifyPretty(redirectUrlResult), { status: 500, headers })
   }
   const redirectUrl = redirectUrlResult.data
-  redirectUrl.searchParams.set("userSession", userSessionSerializedResult.data)
+  redirectUrl.searchParams.delete("userSession")
+  const fragment = new URLSearchParams({ userSession: userSessionSerializedResult.data })
+  if (redirectUrl.hash) fragment.set("returnHash", redirectUrl.hash)
+  redirectUrl.hash = fragment.toString()
 
   console.log("user signed in", { redirectPath: redirectUrl.pathname })
   try {

@@ -83,6 +83,38 @@ test("any authenticated user can create, read and edit projects without membersh
   })
 })
 
+test("project lists omit deleting projects and deleting ancestor subtrees", async () => {
+  const { t, token, teamId, otherTeamId, otherOrgId } = await projectFixtureCreate()
+  const active = await t.mutation(api.project.projectCreateMutation, { token, teamId, name: "Active" })
+  const deleting = await t.mutation(api.project.projectCreateMutation, { token, teamId, name: "Deleting" })
+  const underTeam = await t.mutation(api.project.projectCreateMutation, {
+    token,
+    teamId: otherTeamId,
+    name: "Under team",
+  })
+  if (!active.success || !deleting.success || !underTeam.success) throw new Error("Fixture creation failed")
+  await t.run(async (ctx) => {
+    await ctx.db.patch("projects", deleting.data, { deleting: true })
+    await ctx.db.patch("teams", otherTeamId, { deleting: true })
+  })
+  expect(await t.query(api.project.projectListQuery, { token })).toMatchObject({
+    success: true,
+    data: { page: [{ projectId: active.data }] },
+  })
+  await t.run(async (ctx) => {
+    await ctx.db.patch("teams", otherTeamId, { deleting: false })
+    await ctx.db.patch("orgs", otherOrgId, { deleting: true })
+  })
+  expect(await t.query(api.project.projectListQuery, { token })).toMatchObject({
+    success: true,
+    data: { page: [{ projectId: active.data }] },
+  })
+  const teams = await t.query(api.team.teamListQuery, { token })
+  expect(teams).toMatchObject({ success: true, data: { page: [{ teamId }] } })
+  const orgs = await t.query(api.org.orgListQuery, { token })
+  expect(orgs.success && orgs.data.page.some((org) => org._id === otherOrgId)).toBe(false)
+})
+
 test("all public project operations reject missing and invalid credentials without changing data", async () => {
   const { t, token, teamId } = await projectFixtureCreate()
   const created = await t.mutation(api.project.projectCreateMutation, { token, teamId, name: "Original" })

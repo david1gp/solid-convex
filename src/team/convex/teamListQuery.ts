@@ -26,7 +26,14 @@ export const teamListQuery = query({
         : ctx.db.query("teams").withIndex("by_creation_time")
       try {
         const result = await teams.paginate({ ...pagination, maximumRowsRead: 100 })
-        return createResult(paginationResultMap(result, teamDocToModel))
+        const visible = []
+        for (const team of result.page) {
+          if (team.deleting) continue
+          const parent = await ctx.db.get("orgs", team.orgId)
+          if (parent?.deleting) continue
+          visible.push(team)
+        }
+        return createResult(paginationResultMap({ ...result, page: visible }, teamDocToModel))
       } catch (error) {
         return createResultError(op, "Team pagination failed", String(error))
       }

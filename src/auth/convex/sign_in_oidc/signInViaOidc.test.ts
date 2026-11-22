@@ -67,8 +67,10 @@ test("OIDC routes complete a verified session through Hono", async () => {
         expect(location.origin).toBe(appBaseUrl)
         expect(location.pathname).toBe("/groups")
         expect(location.searchParams.get("from")).toBe("oidc")
-        expect(location.hash).toBe("#top")
-        expect(base64urlDecodeObject(location.searchParams.get("userSession") ?? "").success).toBe(true)
+        expect(location.searchParams.has("userSession")).toBe(false)
+        const fragment = new URLSearchParams(location.hash.slice(1))
+        expect(fragment.get("returnHash")).toBe("#top")
+        expect(base64urlDecodeObject(fragment.get("userSession") ?? "").success).toBe(true)
         expect(mutationCalls).toEqual([
           {
             provider: "oidc",

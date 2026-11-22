@@ -1,5 +1,7 @@
 import { createRootRoute, createRoute, createRouter, Outlet } from "@tanstack/solid-router"
 import type { Component, Element as JSXElement } from "solid-js"
+import { NotFoundPage } from "#src/app/router/NotFoundPage.tsx"
+import { routePageTitle } from "#src/app/router/routePageTitle.ts"
 
 /**
  * Loose route-tree node — the shape produced by the app's `getRoutes*()` helpers.
@@ -45,7 +47,10 @@ function buildRoute(parentRoute: any, node: RouteNode): any {
   } else if (hasChildren) {
     options.component = () => <Outlet />
   } else if (Comp) {
-    options.component = Comp
+    options.component = () => {
+      document.title = routePageTitle(node.path ?? "/")
+      return <Comp />
+    }
   }
 
   const route = createRoute(options)
@@ -66,6 +71,7 @@ export function buildRouter(routes: RouteNode[]) {
   const routeTree = rootRoute.addChildren(routes.map((route) => buildRoute(rootRoute, route)))
   return createRouter({
     routeTree,
+    defaultNotFoundComponent: NotFoundPage,
     scrollRestoration: true,
     defaultPreload: "intent",
     defaultPreloadDelay: 0,

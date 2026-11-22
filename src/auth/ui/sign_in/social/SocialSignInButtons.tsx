@@ -19,6 +19,8 @@ function SocialSignInButton(p: SocialSignInButtonProps) {
   const iconPath = p.provider === "google" ? mdiGoogle : mdiGithub
   const text = `Sign in with ${capitalizeFirstLetter(p.provider)}`
 
+  if (!url) return null
+
   return (
     <LinkButtonExternal
       href={url}

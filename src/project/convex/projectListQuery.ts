@@ -1,5 +1,6 @@
 import { query } from "#convex/_generated/server.js"
 import { createResult, createResultError } from "#result"
+import { hierarchyDeleteResultIsDeleting } from "#src/hierarchy_delete/convex/hierarchyDeleteResultIsDeleting.ts"
 import { projectContextFields } from "#src/project/convex/projectContextFields.ts"
 import { projectGetFn } from "#src/project/convex/projectGetFn.ts"
 import type { Project } from "#src/project/model/projectSchema.ts"
@@ -38,9 +39,10 @@ export const projectListQuery = query({
         return createResultError(op, "Project pagination failed", String(error))
       }
       const page: Project[] = []
-      // Validate each bounded page's ancestry, including stored derived orgId. Never silently skip invalid rows.
+      // Validate ancestry, but omit records in a deletion subtree from the bounded page.
       for (const project of result.page) {
         const resolved = await projectGetFn(ctx, { ...data, projectId: project._id })
+        if (!resolved.success && hierarchyDeleteResultIsDeleting(resolved)) continue
         if (!resolved.success) return resolved
         page.push(resolved.data)
       }

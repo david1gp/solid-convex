@@ -1,6 +1,7 @@
 import { ConvexClient } from "convex/browser"
 import { createEffect } from "solid-js"
 import { envBaseUrlConvexResult } from "#src/app/env/public/envBaseUrlConvexResult.ts"
+import { pageTitleFormat } from "#src/app/router/pageTitleFormat.ts"
 
 export function layoutWrapperConvexStateCreate(p: { title: () => string | undefined }) {
   const baseUrlResult = envBaseUrlConvexResult()
@@ -13,7 +14,7 @@ export function layoutWrapperConvexStateCreate(p: { title: () => string | undefi
     () => p.title(),
     (title) => {
       if (!title) return
-      document.title = title
+      document.title = pageTitleFormat(title)
     },
   )
   return { convex: () => convex as ConvexClient | null }

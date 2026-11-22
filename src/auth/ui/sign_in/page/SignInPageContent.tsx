@@ -17,6 +17,7 @@ import { SocialLoginButton } from "#src/auth/ui/sign_in/social/SocialLoginButton
 import { SignInViaEmailForm } from "#src/auth/ui/sign_in/via_email/SignInViaEmailForm.tsx"
 import { signInViaEmailDemoStateCreate } from "#src/auth/ui/sign_in/via_email/signInViaEmailDemoStateCreate.ts"
 import { SignInViaPasswordForm } from "#src/auth/ui/sign_in/via_pw/SignInViaPasswordForm.tsx"
+import { urlAuthProvider } from "#src/auth/url/urlAuthProvider.ts"
 import { signInViaPasswordDemoStateCreate } from "#src/auth/ui/sign_in/via_pw/signInViaPasswordDemoStateCreate.ts"
 import { Icon } from "#ui/static/icon/Icon.jsx"
 import { iconGithub } from "#ui/static/icons/iconGithub.ts"
@@ -65,33 +66,41 @@ export function SignInPageContent(p: MayHaveClass & { demo?: boolean }) {
 }
 
 function AuthSectionSocials() {
+  const google = Boolean(urlAuthProvider(loginProvider.google))
+  const github = enableGithub() && Boolean(urlAuthProvider(loginProvider.github))
   return (
-    <Show
-      when={enableGithub()}
-      fallback={
-        <AuthSectionCard icon={iconGoogle} title={ttc("Google")} subtitle={ttc("One-click sign in")}>
-          <SocialLoginButton provider={loginProvider.google} class="w-full" />
-        </AuthSectionCard>
-      }
-    >
-      <section class={classesAuthCard}>
-        <div class="mb-3 flex items-center gap-3">
-          <span class="grid size-9 shrink-0 place-items-center rounded-md bg-hover">
-            <Icon path={iconGoogle} class="size-5" />
-          </span>
-          <span class="grid size-9 shrink-0 place-items-center rounded-md bg-hover">
-            <Icon path={iconGithub} class="size-5" />
-          </span>
-          <div class="min-w-0">
-            <h2 class="text-sm font-semibold">{ttc("Socials")}</h2>
-            <p class="text-xs text-muted-foreground">{ttc("One-click sign in")}</p>
+    <Show when={google || github}>
+      <Show
+        when={google && github}
+        fallback={
+          <AuthSectionCard
+            icon={google ? iconGoogle : iconGithub}
+            title={google ? ttc("Google") : "GitHub"}
+            subtitle={ttc("One-click sign in")}
+          >
+            <SocialLoginButton provider={google ? loginProvider.google : loginProvider.github} class="w-full" />
+          </AuthSectionCard>
+        }
+      >
+        <section class={classesAuthCard}>
+          <div class="mb-3 flex items-center gap-3">
+            <span class="grid size-9 shrink-0 place-items-center rounded-md bg-hover">
+              <Icon path={iconGoogle} class="size-5" />
+            </span>
+            <span class="grid size-9 shrink-0 place-items-center rounded-md bg-hover">
+              <Icon path={iconGithub} class="size-5" />
+            </span>
+            <div class="min-w-0">
+              <h2 class="text-sm font-semibold">{ttc("Socials")}</h2>
+              <p class="text-xs text-muted-foreground">{ttc("One-click sign in")}</p>
+            </div>
           </div>
-        </div>
-        <div class="flex flex-col gap-2">
-          <SocialLoginButton provider={loginProvider.google} class="w-full" />
-          <SocialLoginButton provider={loginProvider.github} class="w-full" />
-        </div>
-      </section>
+          <div class="flex flex-col gap-2">
+            <SocialLoginButton provider={loginProvider.google} class="w-full" />
+            <SocialLoginButton provider={loginProvider.github} class="w-full" />
+          </div>
+        </section>
+      </Show>
     </Show>
   )
 }

@@ -1,5 +1,6 @@
 import { query } from "#convex/_generated/server.js"
 import { createResult, createResultError } from "#result"
+import { hierarchyDeleteResultIsDeleting } from "#src/hierarchy_delete/convex/hierarchyDeleteResultIsDeleting.ts"
 import { noteContextFields } from "#src/note/convex/noteContextFields.ts"
 import { noteGetFn } from "#src/note/convex/noteGetFn.ts"
 import type { Note } from "#src/note/model/noteSchema.ts"
@@ -51,6 +52,7 @@ export const noteListQuery = query({
       const page: Note[] = []
       for (const note of result.page) {
         const resolved = await noteGetFn(ctx, { ...data, noteId: note._id })
+        if (!resolved.success && hierarchyDeleteResultIsDeleting(resolved)) continue
         if (!resolved.success) return resolved
         page.push(resolved.data)
       }

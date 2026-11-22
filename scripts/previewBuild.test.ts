@@ -1,7 +1,8 @@
 import { expect, test } from "bun:test"
-import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises"
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
+import { previewDistSwap } from "./previewDistSwap"
 
 test("invalid preview backend refuses build without disturbing existing output", async () => {
   const root = await mkdtemp(join(tmpdir(), "preview-build-"))
@@ -22,9 +23,23 @@ test("invalid preview backend refuses build without disturbing existing output",
         `from "${import.meta.dir}/../node_modules/dotenv/lib/main.js"`,
       ),
     )
+    await Bun.write(join(root, "scripts", "previewDistSwap.ts"), Bun.file("scripts/previewDistSwap.ts"))
     const child = Bun.spawn(["bun", "--no-env-file", script], { cwd: root, stdout: "ignore", stderr: "ignore" })
     expect(await child.exited).not.toBe(0)
     expect(await readFile(join(root, ".preview", "dist", "index.html"), "utf8")).toBe("old build")
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
+test("failed new dist rename restores the previous build", async () => {
+  const root = await mkdtemp(join(tmpdir(), "preview-swap-"))
+  try {
+    const current = join(root, "dist")
+    await mkdir(current)
+    await writeFile(join(current, "index.html"), "old build")
+    await expect(previewDistSwap(current, join(root, "missing"), join(root, "backup"))).rejects.toThrow()
+    expect(await readFile(join(current, "index.html"), "utf8")).toBe("old build")
   } finally {
     await rm(root, { recursive: true, force: true })
   }

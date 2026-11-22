@@ -1,6 +1,7 @@
-import { chmod, mkdir, readdir, rename, rm } from "node:fs/promises"
+import { chmod, mkdir, readdir, rm } from "node:fs/promises"
 import { join, resolve } from "node:path"
 import { parse } from "dotenv"
+import { previewDistSwap } from "./previewDistSwap"
 
 const root = resolve(import.meta.dir, "..")
 const preview = join(root, ".preview")
@@ -62,21 +63,7 @@ async function main() {
       if (entry.isDirectory()) await groupDirs(join(dir, entry.name))
   }
   await groupDirs(next)
-  await rm(backup, { recursive: true, force: true })
-  let hadCurrent = false
-  try {
-    await rename(current, backup)
-    hadCurrent = true
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error
-  }
-  try {
-    await rename(next, current)
-  } catch (error) {
-    if (hadCurrent) await rename(backup, current)
-    throw error
-  }
-  await rm(backup, { recursive: true, force: true })
+  await previewDistSwap(current, next, backup)
   console.log("Preview build installed")
 }
 

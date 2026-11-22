@@ -1,4 +1,5 @@
 import { extname, join, relative, resolve, sep } from "node:path"
+import { previewPosthogUrlGet } from "./previewPosthogUrlGet"
 
 const root = resolve(process.cwd(), process.env.PREVIEW_DIST_DIR || ".preview/dist")
 const index = Bun.file(join(root, "index.html"))
@@ -33,10 +34,7 @@ const server = Bun.serve({
     if (url.pathname === "/__preview/health") return Response.json({ ok: true })
     if (/^\/ph-(api|ui)(\/|$)/.test(url.pathname)) {
       const api = url.pathname.startsWith("/ph-api")
-      const target = new URL(
-        url.pathname.replace(/^\/ph-(api|ui)/, "") + url.search,
-        api ? "https://eu.i.posthog.com" : "https://eu-assets.i.posthog.com",
-      )
+      const target = previewPosthogUrlGet(url)
       const headers = new Headers(request.headers)
       headers.delete("host")
       return fetch(target, {

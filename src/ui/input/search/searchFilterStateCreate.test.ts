@@ -3,6 +3,11 @@ import { describe, expect, test } from "bun:test"
 import { createRoot } from "solid-js"
 import { searchFilterStateCreate } from "./searchFilterStateCreate.ts"
 
+async function waitFor(condition: () => boolean) {
+  const deadline = Date.now() + 1000
+  while (!condition() && Date.now() < deadline) await new Promise((resolve) => setTimeout(resolve, 5))
+}
+
 describe("searchFilterStateCreate", () => {
   test("keeps input immediate and coalesces URL/server state", async () => {
     const previousWindow = globalThis.window
@@ -38,14 +43,14 @@ describe("searchFilterStateCreate", () => {
     expect(state!.searchSignal.get()).toBe("next")
     expect(state!.debouncedSearch()).toBe("initial")
 
-    await new Promise((resolve) => setTimeout(resolve, 15))
+    await waitFor(() => new URL(currentUrl).searchParams.get("search") === "next")
     expect(state!.debouncedSearch()).toBe("next")
     expect(state!.debouncedFilters().type).toBe("strategy")
     expect(new URL(currentUrl).searchParams.get("search")).toBe("next")
     expect(new URL(currentUrl).searchParams.get("type")).toBe("strategy")
 
     state!.searchSignal.set("")
-    await new Promise((resolve) => setTimeout(resolve, 15))
+    await waitFor(() => !new URL(currentUrl).searchParams.has("search"))
     expect(state!.debouncedSearch()).toBe("")
     expect(new URL(currentUrl).searchParams.has("search")).toBe(false)
 

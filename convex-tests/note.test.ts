@@ -146,6 +146,33 @@ test("a deleting note does not prevent listing other notes", async () => {
   expect(result).toMatchObject({ success: true, data: { page: [{ noteId: active.data, title: "Active" }] } })
 })
 
+test("note lists omit notes under deleting project, team and organization ancestors", async () => {
+  const { t, token, projectId, otherProjectId, otherTeamId, otherOrgId } = await noteFixtureCreate()
+  const active = await t.mutation(api.note.noteCreateMutation, { token, projectId, content: "# Active" })
+  const hidden = await t.mutation(api.note.noteCreateMutation, {
+    token,
+    projectId: otherProjectId,
+    content: "# Hidden",
+  })
+  if (!active.success || !hidden.success) throw new Error("Fixture creation failed")
+  for (const target of ["projects", "teams", "orgs"] as const) {
+    await t.run(async (ctx) => {
+      if (target === "projects") await ctx.db.patch("projects", otherProjectId, { deleting: true })
+      if (target === "teams") await ctx.db.patch("teams", otherTeamId, { deleting: true })
+      if (target === "orgs") await ctx.db.patch("orgs", otherOrgId, { deleting: true })
+    })
+    expect(await t.query(api.note.noteListQuery, { token })).toMatchObject({
+      success: true,
+      data: { page: [{ noteId: active.data }] },
+    })
+    await t.run(async (ctx) => {
+      if (target === "projects") await ctx.db.patch("projects", otherProjectId, { deleting: false })
+      if (target === "teams") await ctx.db.patch("teams", otherTeamId, { deleting: false })
+      if (target === "orgs") await ctx.db.patch("orgs", otherOrgId, { deleting: false })
+    })
+  }
+})
+
 test("all public note operations reject missing and invalid credentials without changing data", async () => {
   const { t, token, projectId } = await noteFixtureCreate()
   const created = await t.mutation(api.note.noteCreateMutation, {

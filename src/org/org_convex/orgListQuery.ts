@@ -27,5 +27,7 @@ export async function orgListQueryFn(
   args: OrgListValidatorType,
 ): PromiseResult<PaginationResultType<DocOrg>> {
   const result = await ctx.db.query("orgs").paginate(args.paginationOpts ?? paginationDefaultOptions)
-  return createResult(paginationResultMap(result, (org) => org))
+  return createResult(
+    paginationResultMap({ ...result, page: result.page.filter((org) => !org.deleting) }, (org) => org),
+  )
 }

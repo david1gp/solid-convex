@@ -109,6 +109,10 @@ test("project lists omit deleting projects and deleting ancestor subtrees", asyn
     success: true,
     data: { page: [{ projectId: active.data }] },
   })
+  const teams = await t.query(api.team.teamListQuery, { token })
+  expect(teams).toMatchObject({ success: true, data: { page: [{ teamId }] } })
+  const orgs = await t.query(api.org.orgListQuery, { token })
+  expect(orgs.success && orgs.data.page.some((org) => org._id === otherOrgId)).toBe(false)
 })
 
 test("all public project operations reject missing and invalid credentials without changing data", async () => {

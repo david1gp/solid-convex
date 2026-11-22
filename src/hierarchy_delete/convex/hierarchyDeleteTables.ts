@@ -64,6 +64,7 @@ export const hierarchyDeleteTables = {
     ),
     cursor: v.optional(v.number()),
     isRetryable: v.optional(v.boolean()),
+    workerGeneration: v.optional(v.number()),
     counts: v.object({
       orgs: v.number(),
       teams: v.number(),

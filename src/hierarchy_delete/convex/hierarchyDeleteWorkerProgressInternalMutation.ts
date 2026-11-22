@@ -1,8 +1,8 @@
 import { v } from "convex/values"
-import { internal } from "#convex/_generated/api.js"
 import type { Id } from "#convex/_generated/dataModel.js"
 import { internalMutation } from "#convex/_generated/server.js"
 import { createResult, createResultError } from "#result"
+import { hierarchyDeleteWorkerScheduleFn } from "#src/hierarchy_delete/convex/hierarchyDeleteWorkerScheduleFn.ts"
 import { nowIso } from "#utils/date/nowIso.js"
 
 export const hierarchyDeleteWorkerProgressInternalMutation = internalMutation({
@@ -54,11 +54,7 @@ export const hierarchyDeleteWorkerProgressInternalMutation = internalMutation({
     })
 
     if (args.status === "in_progress") {
-      await ctx.scheduler.runAfter(0, internal.hierarchyDeleteActions.hierarchyDeleteWorkerStepInternalAction, {
-        jobId: job._id,
-        expectedPhase: args.nextPhase,
-        expectedCursor: args.nextCursor,
-      })
+      await hierarchyDeleteWorkerScheduleFn(ctx, job._id, args.nextPhase, args.nextCursor)
     }
 
     return createResult({

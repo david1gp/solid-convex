@@ -112,7 +112,9 @@ async function setupLifecycleFixture(noteCount = 30) {
 }
 
 describe("hierarchyDelete registered entry durable lifecycle", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await import("../convex/hierarchyDeleteActions.ts")
+    await import("../convex/hierarchyDelete.ts")
     vi.useFakeTimers()
     vi.clearAllMocks()
   })
@@ -157,7 +159,7 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     expect(jobId).toBeDefined()
 
     // 4. Drain scheduled functions until worker failure stops scheduling
-    await t.finishAllScheduledFunctions(() => vi.runAllTimers())
+    await t.finishAllScheduledFunctions(() => vi.advanceTimersToNextTimerAsync())
 
     // 5. Verify job is durably marked failed in database with retryable state and exact error
     const failedJobDoc = await t.run(async (ctx) => ctx.db.get("hierarchyDeleteJobs", jobId as any))
@@ -214,7 +216,7 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     expect(retryResult.data.status).toBe("in_progress")
 
     // 8. Drain scheduled functions through all phases including >25 note batch transitions
-    await t.finishAllScheduledFunctions(() => vi.runAllTimers())
+    await t.finishAllScheduledFunctions(() => vi.advanceTimersToNextTimerAsync())
 
     // 9. Verify durable job record in database is completed
     const completedJobDoc = await t.run(async (ctx) => ctx.db.get("hierarchyDeleteJobs", jobId as any))
@@ -313,7 +315,7 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     expect(confirmResult.success).toBe(true)
     if (!confirmResult.success) throw new Error("Confirm mutation failed")
 
-    await t.finishAllScheduledFunctions(() => vi.runAllTimers())
+    await t.finishAllScheduledFunctions(() => vi.advanceTimersToNextTimerAsync())
 
     expect(userManagementCleanupActionFn).toHaveBeenCalledTimes(2)
     // Page 0 called with cursor "0"
@@ -357,7 +359,7 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     if (!confirmResult.success) throw new Error("Confirm mutation failed")
 
     const jobId = confirmResult.data.jobId
-    await t.finishAllScheduledFunctions(() => vi.runAllTimers())
+    await t.finishAllScheduledFunctions(() => vi.advanceTimersToNextTimerAsync())
 
     const failedJobDoc = await t.run(async (ctx) => ctx.db.get("hierarchyDeleteJobs", jobId as any))
     expect(failedJobDoc?.status).toBe("failed")
@@ -392,7 +394,7 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     expect(retryResult.success).toBe(true)
     if (!retryResult.success) throw new Error("Retry failed")
 
-    await t.finishAllScheduledFunctions(() => vi.runAllTimers())
+    await t.finishAllScheduledFunctions(() => vi.advanceTimersToNextTimerAsync())
 
     const completedJob = await t.run(async (ctx) => ctx.db.get("hierarchyDeleteJobs", jobId as any))
     expect(completedJob?.status).toBe("completed")
@@ -426,7 +428,7 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     if (!confirmResult.success) throw new Error("Confirm mutation failed")
 
     const jobId = confirmResult.data.jobId
-    await t.finishAllScheduledFunctions(() => vi.runAllTimers())
+    await t.finishAllScheduledFunctions(() => vi.advanceTimersToNextTimerAsync())
 
     const failedJobDoc = await t.run(async (ctx) => ctx.db.get("hierarchyDeleteJobs", jobId as any))
     expect(failedJobDoc?.status).toBe("failed")
@@ -457,7 +459,7 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     expect(retryResult.success).toBe(true)
     if (!retryResult.success) throw new Error("Retry failed")
 
-    await t.finishAllScheduledFunctions(() => vi.runAllTimers())
+    await t.finishAllScheduledFunctions(() => vi.advanceTimersToNextTimerAsync())
 
     const completedJob = await t.run(async (ctx) => ctx.db.get("hierarchyDeleteJobs", jobId as any))
     expect(completedJob?.status).toBe("completed")
@@ -504,7 +506,7 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     if (!confirmResult.success) throw new Error("Confirm mutation failed")
 
     const jobId = confirmResult.data.jobId
-    await t.finishAllScheduledFunctions(() => vi.runAllTimers())
+    await t.finishAllScheduledFunctions(() => vi.advanceTimersToNextTimerAsync())
 
     const failedJobDoc = await t.run(async (ctx) => ctx.db.get("hierarchyDeleteJobs", jobId as any))
     expect(failedJobDoc?.status).toBe("failed")
@@ -535,7 +537,7 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     expect(retryResult.success).toBe(true)
     if (!retryResult.success) throw new Error("Retry failed")
 
-    await t.finishAllScheduledFunctions(() => vi.runAllTimers())
+    await t.finishAllScheduledFunctions(() => vi.advanceTimersToNextTimerAsync())
 
     const completedJob = await t.run(async (ctx) => ctx.db.get("hierarchyDeleteJobs", jobId as any))
     expect(completedJob?.status).toBe("completed")
@@ -603,7 +605,7 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     expect(confirmResult.success).toBe(true)
     if (!confirmResult.success) throw new Error("Confirm mutation failed")
 
-    await t.finishAllScheduledFunctions(() => vi.runAllTimers())
+    await t.finishAllScheduledFunctions(() => vi.advanceTimersToNextTimerAsync())
 
     // Target note is deleted
     expect(await t.run(async (ctx) => ctx.db.get("notes", targetNoteId as any))).toBeNull()
@@ -658,7 +660,7 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     expect(confirmResult.success).toBe(true)
     if (!confirmResult.success) throw new Error("Confirm mutation failed")
 
-    await t.finishAllScheduledFunctions(() => vi.runAllTimers())
+    await t.finishAllScheduledFunctions(() => vi.advanceTimersToNextTimerAsync())
 
     // Project and descendant notes and files/resources are deleted
     expect(await t.run(async (ctx) => ctx.db.get("projects", projId))).toBeNull()
@@ -727,7 +729,7 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
     expect(confirmResult.success).toBe(true)
     if (!confirmResult.success) throw new Error("Confirm mutation failed")
 
-    await t.finishAllScheduledFunctions(() => vi.runAllTimers())
+    await t.finishAllScheduledFunctions(() => vi.advanceTimersToNextTimerAsync())
 
     // Zitadel team cleanup was called with teamId
     expect(userManagementCleanupActionFn).toHaveBeenCalledWith(
@@ -884,12 +886,15 @@ describe("hierarchyDelete registered entry durable lifecycle", () => {
 
     const scheduled = await t.run(async (ctx) => ctx.db.system.query("_scheduled_functions").collect())
     expect(scheduled.length).toBeGreaterThan(0)
-    expect(scheduled[0]?.name).toBe("hierarchyDeleteActions:hierarchyDeleteWorkerStepInternalAction")
-    expect(scheduled[0]?.args).toEqual([
+    const worker = scheduled.find(
+      (entry) => entry.name === "hierarchyDeleteActions:hierarchyDeleteWorkerStepInternalAction",
+    )
+    expect(worker?.args).toEqual([
       {
         jobId: confirmResult.data.jobId,
         expectedPhase: "delete_r2_objects",
         expectedCursor: 0,
+        expectedGeneration: 1,
       },
     ])
   })

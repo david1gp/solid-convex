@@ -3,6 +3,7 @@ import type { Id } from "#convex/_generated/dataModel.js"
 import { internalMutation } from "#convex/_generated/server.js"
 import { createResult, createResultError } from "#result"
 import { hierarchyDeleteRootLockCheckFn } from "#src/hierarchy_delete/convex/hierarchyDeleteRootLockCheckFn.ts"
+import { hierarchyDeleteWorkerWatchdogScheduleFn } from "#src/hierarchy_delete/convex/hierarchyDeleteWorkerWatchdogScheduleFn.ts"
 import type { HierarchyDeleteWorkerPhase } from "#src/hierarchy_delete/model/hierarchyDeleteWorkerPhaseSchema.ts"
 import { nowIso } from "#utils/date/nowIso.js"
 
@@ -11,6 +12,7 @@ export const hierarchyDeleteWorkerClaimInternalMutation = internalMutation({
     jobId: v.string(),
     expectedPhase: v.optional(v.string()),
     expectedCursor: v.optional(v.number()),
+    expectedGeneration: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
     const op = "hierarchyDeleteWorkerClaimInternalMutation"
@@ -24,6 +26,10 @@ export const hierarchyDeleteWorkerClaimInternalMutation = internalMutation({
         shouldStop: true as const,
         status: job.status,
       })
+    }
+
+    if (args.expectedGeneration !== undefined && job.workerGeneration !== args.expectedGeneration) {
+      return createResult({ shouldStop: true as const, reason: "stale_worker" })
     }
 
     if (args.expectedPhase !== undefined && job.phase !== undefined && job.phase !== args.expectedPhase) {
@@ -54,6 +60,9 @@ export const hierarchyDeleteWorkerClaimInternalMutation = internalMutation({
       return createResultError(op, "Root lock lost")
     }
 
+    // Renew the watchdog when execution actually starts, so time spent queued
+    // cannot expire the lease while a valid action is still running.
+    await hierarchyDeleteWorkerWatchdogScheduleFn(ctx, job._id, job.workerGeneration ?? 0)
     const now = nowIso()
     if (job.status === "pending") {
       await ctx.db.patch(job._id, {

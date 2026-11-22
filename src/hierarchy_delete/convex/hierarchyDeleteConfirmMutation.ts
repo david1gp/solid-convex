@@ -1,12 +1,12 @@
 import { v } from "convex/values"
 import * as a from "valibot"
-import { internal } from "#convex/_generated/api.js"
 import type { Id } from "#convex/_generated/dataModel.js"
 import { type MutationCtx, mutation } from "#convex/_generated/server.js"
 import { createResult, createResultError } from "#result"
 import { hierarchyDeleteRootResolveFn } from "#src/hierarchy_delete/convex/hierarchyDeleteRootResolveFn.ts"
 import { hierarchyDeleteScopeDiscoverFn } from "#src/hierarchy_delete/convex/hierarchyDeleteScopeDiscoverFn.ts"
 import { hierarchyDeleteTargetConvexFields } from "#src/hierarchy_delete/convex/hierarchyDeleteTargetConvexFields.ts"
+import { hierarchyDeleteWorkerScheduleFn } from "#src/hierarchy_delete/convex/hierarchyDeleteWorkerScheduleFn.ts"
 import type { HierarchyDeleteConfirmResult } from "#src/hierarchy_delete/model/hierarchyDeleteConfirmResultSchema.ts"
 import { hierarchyDeleteJobStateCreate } from "#src/hierarchy_delete/model/hierarchyDeleteJobStateCreate.ts"
 import { hierarchyDeleteTargetSchema } from "#src/hierarchy_delete/model/hierarchyDeleteTargetSchema.ts"
@@ -117,11 +117,7 @@ export const hierarchyDeleteConfirmMutation = mutation({
       })
 
       // Wire worker scheduling on creation with authoritative jobId
-      await ctx.scheduler.runAfter(0, internal.hierarchyDeleteActions.hierarchyDeleteWorkerStepInternalAction, {
-        jobId,
-        expectedPhase: "delete_r2_objects",
-        expectedCursor: 0,
-      })
+      await hierarchyDeleteWorkerScheduleFn(ctx, jobId, "delete_r2_objects", 0)
 
       console.info(op, { jobId, rootKind: root.kind, rootId: root.id, fingerprint: preview.fingerprint })
 

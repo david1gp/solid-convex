@@ -4,3 +4,4 @@ export { hierarchyDeleteStatusQuery } from "#src/hierarchy_delete/convex/hierarc
 export { hierarchyDeleteWorkerClaimInternalMutation } from "#src/hierarchy_delete/convex/hierarchyDeleteWorkerClaimInternalMutation.ts"
 export { hierarchyDeleteWorkerProgressInternalMutation } from "#src/hierarchy_delete/convex/hierarchyDeleteWorkerProgressInternalMutation.ts"
 export { hierarchyDeleteWorkerStepInternalMutation } from "#src/hierarchy_delete/convex/hierarchyDeleteWorkerStepInternalMutation.ts"
+export { hierarchyDeleteWorkerWatchdogInternalMutation } from "#src/hierarchy_delete/convex/hierarchyDeleteWorkerWatchdogInternalMutation.ts"

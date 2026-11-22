@@ -1,9 +1,9 @@
 import { v } from "convex/values"
-import { internal } from "#convex/_generated/api.js"
 import type { Id } from "#convex/_generated/dataModel.js"
 import { mutation } from "#convex/_generated/server.js"
 import { createResult, createResultError } from "#result"
 import { hierarchyDeleteRootLockCheckFn } from "#src/hierarchy_delete/convex/hierarchyDeleteRootLockCheckFn.ts"
+import { hierarchyDeleteWorkerScheduleFn } from "#src/hierarchy_delete/convex/hierarchyDeleteWorkerScheduleFn.ts"
 import { userAdminCheckFn } from "#src/user_management/convex/userAdminCheckFn.ts"
 import { authCredentialResolve } from "#src/utils/convex_backend/authCredentialResolve.ts"
 import { authMutationResult } from "#src/utils/convex_backend/authMutationResult.ts"
@@ -57,11 +57,7 @@ export const hierarchyDeleteRetryMutation = mutation({
       })
 
       // Schedule worker to resume with safe same frozen scope and persisted phase/cursor
-      await ctx.scheduler.runAfter(0, internal.hierarchyDeleteActions.hierarchyDeleteWorkerStepInternalAction, {
-        jobId: job._id,
-        expectedPhase: job.phase ?? "delete_r2_objects",
-        expectedCursor: job.cursor ?? 0,
-      })
+      await hierarchyDeleteWorkerScheduleFn(ctx, job._id, job.phase ?? "delete_r2_objects", job.cursor ?? 0)
 
       console.info(op, { jobId: job._id, rootKind: job.rootKind, rootId: job.rootId })
 

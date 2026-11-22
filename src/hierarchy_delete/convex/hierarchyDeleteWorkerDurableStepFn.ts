@@ -10,6 +10,7 @@ export interface HierarchyDeleteWorkerDurableStepArgs {
   jobId: string
   expectedPhase?: string
   expectedCursor?: number
+  expectedGeneration?: number
 }
 
 export async function hierarchyDeleteWorkerDurableStepFn(
@@ -25,6 +26,7 @@ export async function hierarchyDeleteWorkerDurableStepFn(
       jobId: args.jobId,
       expectedPhase: args.expectedPhase,
       expectedCursor: args.expectedCursor,
+      expectedGeneration: args.expectedGeneration,
     })
     if (!claimResult.success) {
       return claimResult
@@ -59,6 +61,12 @@ export async function hierarchyDeleteWorkerDurableStepFn(
       for (const fileId of batch) {
         const deleteResult = await r2ObjectDelete(fileId)
         if (!deleteResult.success) {
+          console.error(op, {
+            jobId: job.jobId,
+            phase: job.phase,
+            cursor: job.cursor,
+            error: deleteResult.errorMessage,
+          })
           return await ctx.runMutation(internal.hierarchyDelete.hierarchyDeleteWorkerProgressInternalMutation, {
             jobId: job.jobId,
             expectedPhase: job.phase,
@@ -113,6 +121,7 @@ export async function hierarchyDeleteWorkerDurableStepFn(
         const errorMessage = !cleanupResult.success
           ? cleanupResult.errorMessage
           : `User team cleanup encountered partial errors: ${cleanupResult.data.errors[0]?.message ?? "unknown error"}`
+        console.error(op, { jobId: job.jobId, phase: job.phase, cursor: job.cursor, error: errorMessage })
         return await ctx.runMutation(internal.hierarchyDelete.hierarchyDeleteWorkerProgressInternalMutation, {
           jobId: job.jobId,
           expectedPhase: job.phase,
@@ -160,6 +169,7 @@ export async function hierarchyDeleteWorkerDurableStepFn(
     })
   } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err)
+    console.error(op, { jobId: args.jobId, phase: activePhase, cursor: activeCursor, error: errorMsg })
     try {
       const progressResult = await ctx.runMutation(
         internal.hierarchyDelete.hierarchyDeleteWorkerProgressInternalMutation,

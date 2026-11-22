@@ -1,9 +1,9 @@
-import { internal } from "#convex/_generated/api.js"
 import type { Id } from "#convex/_generated/dataModel.js"
 import type { MutationCtx } from "#convex/_generated/server.js"
 import { createResult, createResultError, type PromiseResult } from "#result"
 import { hierarchyDeleteRootLockCheckFn } from "#src/hierarchy_delete/convex/hierarchyDeleteRootLockCheckFn.ts"
 import { hierarchyDeleteWorkerDbStepFn } from "#src/hierarchy_delete/convex/hierarchyDeleteWorkerDbStepFn.ts"
+import { hierarchyDeleteWorkerScheduleFn } from "#src/hierarchy_delete/convex/hierarchyDeleteWorkerScheduleFn.ts"
 import type { HierarchyDeleteJobState } from "#src/hierarchy_delete/model/hierarchyDeleteJobStateSchema.ts"
 import type { HierarchyDeleteWorkerPhase } from "#src/hierarchy_delete/model/hierarchyDeleteWorkerPhaseSchema.ts"
 import { nowIso } from "#utils/date/nowIso.js"
@@ -135,13 +135,7 @@ export async function hierarchyDeleteWorkerDbStepDurableFn(
   })
 
   if (nextStatus === "in_progress") {
-    if (ctx.scheduler && typeof ctx.scheduler.runAfter === "function") {
-      await ctx.scheduler.runAfter(0, internal.hierarchyDeleteActions.hierarchyDeleteWorkerStepInternalAction, {
-        jobId: job._id,
-        expectedPhase: nextState.phase,
-        expectedCursor: nextState.cursor,
-      })
-    }
+    await hierarchyDeleteWorkerScheduleFn(ctx, job._id, nextState.phase, nextState.cursor)
   }
 
   return createResult(nextState)
